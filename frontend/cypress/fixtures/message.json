@@ -1,0 +1,50 @@
+{
+  "data": {
+    "recipients": [
+      {
+        "recipient": {
+          "personnumber": "189001019802"
+        },
+        "address": {
+          "personNumber": "189001019802",
+          "personId": "12345678-1234-1234-1234-189001019802",
+          "success": true,
+          "errorMessage": null,
+          "givenname": "Person",
+          "lastname": "Personsson",
+          "gender": "M",
+          "civilStatus": "G ",
+          "nrDate": "20210101",
+          "classified": "N",
+          "protectedNR": "N",
+          "addresses": [
+            {
+              "address": "HEMVÄGEN 100",
+              "postalCode": "123 45",
+              "city": "STADEN",
+              "municipality": "1234",
+              "country": "SVERIGE",
+              "emigrated": false,
+              "addressType": "POPULATION_REGISTRATION_ADDRESS"
+            }
+          ]
+        }
+      }
+    ],
+    "response": {
+      "batchId": "11111111-2222-3333-4444-555555555555",
+      "messages": [
+        {
+          "messageId": "11111111-2222-3333-4444-555555555555",
+          "deliveries": [
+            {
+              "deliveryId": "11111111-2222-3333-4444-555555555555",
+              "messageType": "LETTER"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "message": "success"
+}

@@ -1,0 +1,106 @@
+[
+  {
+    "messageId": "12345-1234-123456-1234-123456789",
+    "deliveries": [
+      {
+        "delivery": {
+          "messageType": "DIGITAL_MAIL",
+          "status": "FAILED",
+          "content": {
+            "party": {
+              "partyIds": ["12345678-1234-1234-1234-189001019802"]
+            },
+            "sender": {
+              "supportInfo": {
+                "text": "Vänd dig till Sundsvalls kommun om du har frågor angående detta meddelande.",
+                "url": "https://www.sundsvall.se"
+              }
+            },
+            "subject": "test",
+            "contentType": "text/plain",
+            "attachments": [
+              {
+                "contentType": "application/pdf",
+                "content": "",
+                "filename": "document1.pdf"
+              },
+              {
+                "contentType": "application/pdf",
+                "content": "",
+                "filename": "document2.pdf"
+              }
+            ]
+          },
+          "timestamp": "2024-01-16T14:44:17.079372"
+        },
+        "recipient": {
+          "personId": "12345678-1234-1234-1234-189001019802",
+          "givenname": "Person",
+          "lastname": "Personsson",
+          "gender": "M",
+          "civilStatus": "G ",
+          "nrDate": "20210101",
+          "classified": "N",
+          "protectedNR": "N",
+          "addresses": [
+            {
+              "address": "HEMVÄGEN 100",
+              "postalCode": "123 45",
+              "city": "STADEN",
+              "municipality": "1234",
+              "country": "SVERIGE",
+              "emigrated": false,
+              "addressType": "POPULATION_REGISTRATION_ADDRESS"
+            }
+          ]
+        }
+      },
+      {
+        "delivery": {
+          "messageType": "SNAIL_MAIL",
+          "status": "SENT",
+          "content": {
+            "party": {
+              "partyId": "12345678-1234-1234-1234-189001019802"
+            },
+            "department": "Org Avdelning 2",
+            "attachments": [
+              {
+                "contentType": "application/pdf",
+                "content": "",
+                "filename": "document1.pdf"
+              },
+              {
+                "contentType": "application/pdf",
+                "content": "",
+                "filename": "document2.pdf"
+              }
+            ]
+          },
+          "timestamp": "2024-01-16T14:44:17.538371"
+        },
+        "recipient": {
+          "personId": "12345678-1234-1234-1234-189001019802",
+          "givenname": "Person",
+          "lastname": "Personsson",
+          "gender": "M",
+          "civilStatus": "G ",
+          "nrDate": "20210101",
+          "classified": "N",
+          "protectedNR": "N",
+          "addresses": [
+            {
+              "address": "HEMVÄGEN 100",
+              "postalCode": "123 45",
+              "city": "STADEN",
+              "municipality": "1234",
+              "country": "SVERIGE",
+              "emigrated": false,
+              "addressType": "POPULATION_REGISTRATION_ADDRESS"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

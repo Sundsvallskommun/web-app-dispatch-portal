@@ -1,0 +1,11 @@
+{
+  "data": {
+    "name": "Person Personsson",
+    "username": "perper",
+    "givenName": "Person",
+    "surname": "Personsson",
+    "email": "person@example.com",
+    "orgTree": "1|11|Organisation1¤3|111|OrgAvdelningar¤4|1111|Org Avdelning 1¤5|11111|Org Avdelning 1¤6|99999|Org Avdelning 1"
+  },
+  "message": "success"
+}

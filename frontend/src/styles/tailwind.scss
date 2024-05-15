@@ -1,0 +1,15 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import '../../public/fonts/fonts.css';
+
+@import './base.scss';
+@import './utilities.scss';
+@import './components.scss';
+@import './layouts/sidebar-layout.scss';
+@import './layouts/default-layout.scss';
+@import './layouts/page-header.scss';
+
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');

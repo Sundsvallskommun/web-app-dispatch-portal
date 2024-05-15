@@ -1,0 +1,18 @@
+import Head from 'next/head';
+import { ReactNode } from 'react';
+
+interface EmptyLayoutProps {
+  title: string;
+  children: ReactNode;
+}
+export default function EmptyLayout({ title, children }: EmptyLayoutProps) {
+  return (
+    <div className="EmptyLayout">
+      <Head>
+        <title>{title}</title>
+      </Head>
+
+      <div className="bg-gray-lighter min-h-screen">{children}</div>
+    </div>
+  );
+}

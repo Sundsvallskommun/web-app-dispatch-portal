@@ -1,0 +1,11 @@
+.PageHeader {
+  @apply w-full;
+  @apply pt-48 pb-48 px-12 md:px-32 xl:px-80;
+  @apply flex justify-center;
+}
+.PageHeaderContent {
+  @apply w-full;
+  @apply max-w-content;
+  @apply gap-16;
+  @apply flex flex-col justify-start items-start;
+}
