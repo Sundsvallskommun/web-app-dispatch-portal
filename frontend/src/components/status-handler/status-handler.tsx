@@ -1,7 +1,6 @@
 import { DigitalMailContent, MessageInformation, SnailMailContent } from '@interfaces/batch-status';
 import { getMessagesForBatch } from '@services/message-service';
-import { AutoTable, Label, Spinner, useSnackbar } from '@sk-web-gui/react';
-import { getReadableStatus, getStatusColor } from '@utils/status.utils';
+import { AutoTable, Spinner, useSnackbar } from '@sk-web-gui/react';
 import dayjs from 'dayjs';
 import { FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
