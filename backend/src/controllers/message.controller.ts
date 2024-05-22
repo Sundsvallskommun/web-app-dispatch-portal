@@ -1,8 +1,7 @@
-import { TEST_EMAIL, DEV } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import ApiService from '@/services/api.service';
-import { LetterResponse, sendEmail, sendLetter } from '@/services/message.service';
+import { LetterResponse, sendLetter } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
