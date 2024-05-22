@@ -44,11 +44,11 @@ export class MessageController {
 
     const res = await sendLetter(this.apiService, recipients, body.subject, body.body, body.department, files)
       .then(async res => {
-        const emailAddress = DEV ? TEST_EMAIL : req.user.email;
-        // What partyId to use?
-        const senderPersonId = req.user.personId;
-        const emailBody = `Ett meddelande har skickats: ${process.env.SAML_SUCCESS_REDIRECT}status/${res.response.batchId}`;
-        await sendEmail(this.apiService, senderPersonId, emailAddress, emailBody);
+        // TODO do not send status email for now
+        // const emailAddress = DEV ? TEST_EMAIL : req.user.email;
+        // const senderPersonId = req.user.personId;
+        // const emailBody = `Ett meddelande har skickats: ${process.env.SAML_SUCCESS_REDIRECT}status/${res.response.batchId}`;
+        // await sendEmail(this.apiService, senderPersonId, emailAddress, emailBody);
         return res;
       })
       .catch(e => {
@@ -94,8 +94,9 @@ export class MessageController {
     const url = `messaging/4.1/status/batch/${id}`;
     const messagePromises: Promise<MessageInformation>[] = await this.apiService
       .get<BatchStatus>({ url })
-      .then(b =>
-        b.data.messages.map(m => {
+      .then(b => {
+        console.log('Batch:', b);
+        return b.data.messages.map(m => {
           const messageUrl = `messaging/4.1/message/${m.messageId}`;
           return this.apiService
             .get<DeliveryInformation[]>({ url: messageUrl })
@@ -130,8 +131,8 @@ export class MessageController {
               logger.error('Error when fetching message information:', e);
               return e;
             });
-        }),
-      )
+        });
+      })
       .catch(e => {
         logger.error('Error when fetching batch status:', e);
         return e;
