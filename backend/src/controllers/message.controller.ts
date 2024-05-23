@@ -94,7 +94,6 @@ export class MessageController {
     const messagePromises: Promise<MessageInformation>[] = await this.apiService
       .get<BatchStatus>({ url })
       .then(b => {
-        console.log('Batch:', b);
         return b.data.messages.map(m => {
           const messageUrl = `messaging/4.1/message/${m.messageId}`;
           return this.apiService
