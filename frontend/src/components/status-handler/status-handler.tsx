@@ -1,7 +1,6 @@
 import { DigitalMailContent, MessageInformation, SnailMailContent } from '@interfaces/batch-status';
 import { getMessagesForBatch } from '@services/message-service';
-import { AutoTable, Label, Spinner, useSnackbar } from '@sk-web-gui/react';
-import { getReadableStatus, getStatusColor } from '@utils/status.utils';
+import { AutoTable, Spinner, useSnackbar } from '@sk-web-gui/react';
 import dayjs from 'dayjs';
 import { FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -124,7 +123,7 @@ const StatusHandler: React.FC<{ id: string }> = ({ id }) => {
           autodata={getAttachments()}
         ></AutoTable>
       </div>
-      <div className="flex flex-col gap-16  w-full">
+      {/* <div className="flex flex-col gap-16  w-full">
         <h2>Leveranser</h2>
         <AutoTable
           captionTitle="Leveranser"
@@ -172,13 +171,19 @@ const StatusHandler: React.FC<{ id: string }> = ({ id }) => {
               },
             },
           ]}
-          autodata={messages.map((message) => ({
-            ...message,
-            status:
-              message?.deliveries?.find((del) => del.delivery.status === 'SENT')?.delivery.messageType || 'FAILED',
-          }))}
+          autodata={messages.map((message) => {
+            // TODO Here we show the first messageType for which the delivery status===SENT, otherwise we show FAILED
+            // meaning that until some delivery is SENT, the status is FAILED meaning that the status to the user seems
+            // to be FAILED although the second delivery has not yet been processed
+            return {
+              ...message,
+              status: 'FAILED',
+              // status:
+              //   message?.deliveries?.find((del) => del.delivery.status === 'SENT')?.delivery.messageType || 'FAILED',
+            };
+          })}
         ></AutoTable>
-      </div>
+      </div> */}
     </>
   );
 };
