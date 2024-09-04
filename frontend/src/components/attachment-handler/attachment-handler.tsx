@@ -1,8 +1,7 @@
+import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
 import { Divider, FormControl } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
-import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
-import { all } from 'cypress/types/bluebird';
 
 export interface Attachment {
   file: File | undefined;
@@ -67,29 +66,10 @@ const AttachmentHandler: React.FC = () => {
         <div className="w-full">
           {attachmentList.length > 0 && (
             <div className="w-full px-32 gap-40">
-              {/* <h4 className="pb-8">Huvuddokument</h4> */}
-              {/* {attachmentList.filter((attach) => attach.main).length > 0 && (
-                <div className="gap-8 pb-32" data-cy="mainAttachment">
-                  {attachmentList.map((attach, index) => {
-                    if (attach.main) {
-                      return (
-                        <FileListItemComponent
-                          key={index}
-                          data={attach}
-                          handleRemove={handleRemove}
-                          handleMain={handleMain}
-                        />
-                      );
-                    }
-                  })}
-                </div>
-              )} */}
-
               {attachmentList.length > 0 && (
                 <div className="gap-8 pb-32" data-cy="attachments">
                   <h4 className="pb-8">Bifogade dokument</h4>
                   {attachmentList.map((attach, index) => {
-                    // if (!attach.main) {
                     return (
                       <FileListItemComponent
                         key={index}
@@ -98,7 +78,6 @@ const AttachmentHandler: React.FC = () => {
                         handleMain={handleMain}
                       />
                     );
-                    // }
                   })}
                 </div>
               )}
