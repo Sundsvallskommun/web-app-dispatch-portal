@@ -2,6 +2,7 @@ import FileUpload from '@components/file-upload/file-upload.component';
 import { Divider, FormControl } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
+import { all } from 'cypress/types/bluebird';
 
 export interface Attachment {
   file: File | undefined;
@@ -35,10 +36,13 @@ const AttachmentHandler: React.FC = () => {
 
   const handleMain = (index: number) => {
     const allFiles = getValues('attachmentList');
-    const oldIndex = allFiles.findIndex((attach) => attach.main);
-    allFiles[oldIndex] = { ...allFiles[oldIndex], main: false };
-    allFiles[index] = { ...allFiles[index], main: true };
-    setValue('attachmentList', allFiles);
+    console.log('Old list: ', allFiles);
+    // const oldIndex = allFiles.findIndex((attach) => attach.main);
+    // allFiles[oldIndex] = { ...allFiles[oldIndex], main: false };
+    // allFiles[index] = { ...allFiles[index], main: true };
+    const newFiles = allFiles.toSpliced(index, 1).toSpliced(0, 0, allFiles[index]);
+    console.log('New list: ', newFiles);
+    setValue('attachmentList', newFiles);
   };
 
   return (
@@ -63,8 +67,8 @@ const AttachmentHandler: React.FC = () => {
         <div className="w-full">
           {attachmentList.length > 0 && (
             <div className="w-full px-32 gap-40">
-              <h4 className="pb-8">Huvuddokument</h4>
-              {attachmentList.filter((attach) => attach.main).length > 0 && (
+              {/* <h4 className="pb-8">Huvuddokument</h4> */}
+              {/* {attachmentList.filter((attach) => attach.main).length > 0 && (
                 <div className="gap-8 pb-32" data-cy="mainAttachment">
                   {attachmentList.map((attach, index) => {
                     if (attach.main) {
@@ -79,22 +83,22 @@ const AttachmentHandler: React.FC = () => {
                     }
                   })}
                 </div>
-              )}
+              )} */}
 
-              {attachmentList.filter((attach) => !attach.main).length > 0 && (
-                <div className="gap-8 pb-32" data-cy="secondaryAttachments">
-                  <h4 className="pb-8">Bilagor</h4>
+              {attachmentList.length > 0 && (
+                <div className="gap-8 pb-32" data-cy="attachments">
+                  <h4 className="pb-8">Bifogade dokument</h4>
                   {attachmentList.map((attach, index) => {
-                    if (!attach.main) {
-                      return (
-                        <FileListItemComponent
-                          key={index}
-                          data={attach}
-                          handleRemove={handleRemove}
-                          handleMain={handleMain}
-                        />
-                      );
-                    }
+                    // if (!attach.main) {
+                    return (
+                      <FileListItemComponent
+                        key={index}
+                        data={attach}
+                        handleRemove={handleRemove}
+                        handleMain={handleMain}
+                      />
+                    );
+                    // }
                   })}
                 </div>
               )}
