@@ -1,8 +1,8 @@
 import { FormModel } from '@pages/index';
 import { useMessageStore } from '@services/recipient-service';
-import { Button, Dialog, Label } from '@sk-web-gui/react';
-import { useFormContext } from 'react-hook-form';
+import { Button, Dialog } from '@sk-web-gui/react';
 import { FileText } from 'lucide-react';
+import { useFormContext } from 'react-hook-form';
 
 interface ConfirmDialogProps {
   open: boolean;
