@@ -5,7 +5,6 @@ import { useFormContext } from 'react-hook-form';
 
 export interface Attachment {
   file: File | undefined;
-  main?: boolean;
 }
 export interface AttachmentFormModel {
   message: string;
@@ -20,27 +19,15 @@ const AttachmentHandler: React.FC = () => {
 
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
 
-  const handleRemove = (index: number, main?: boolean) => {
+  const handleRemove = (index: number) => {
     const allFiles = getValues('attachmentList');
-    if (main) {
-      const newIndex = allFiles.findIndex((attach) => !attach.main);
-      if (newIndex > -1) {
-        allFiles[newIndex] = { ...allFiles[newIndex], main: true };
-        setValue('attachmentList', allFiles);
-      }
-    }
     allFiles.splice(index, 1);
     setValue('attachmentList', allFiles);
   };
 
   const handleMain = (index: number) => {
     const allFiles = getValues('attachmentList');
-    console.log('Old list: ', allFiles);
-    // const oldIndex = allFiles.findIndex((attach) => attach.main);
-    // allFiles[oldIndex] = { ...allFiles[oldIndex], main: false };
-    // allFiles[index] = { ...allFiles[index], main: true };
     const newFiles = allFiles.toSpliced(index, 1).toSpliced(0, 0, allFiles[index]);
-    console.log('New list: ', newFiles);
     setValue('attachmentList', newFiles);
   };
 

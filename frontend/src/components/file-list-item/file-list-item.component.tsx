@@ -4,7 +4,7 @@ import { Attachment } from '@components/attachment-handler/attachment-handler';
 
 interface FileListItemComponentProps {
   data: Attachment & { index?: number };
-  handleRemove: (index: number, main?: boolean) => void;
+  handleRemove: (index: number) => void;
   handleMain?: (index: number) => void;
 }
 
@@ -50,7 +50,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
             aria-label="Ta bort fil"
             iconButton
             variant="tertiary"
-            onClick={() => handleRemove(data.index, data.main)}
+            onClick={() => handleRemove(data.index)}
             onMouseEnter={handleHover}
             onMouseLeave={() => setHover(false)}
             onFocus={handleFocus}

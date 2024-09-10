@@ -21,8 +21,8 @@ const formSchema = yup
     department: yup.string().required(),
     subject: yup.string().required(),
     body: yup.string().nullable(),
-    attachmentList: yup.array().test('HAS_MAIN', 'Du måste bifoga ett dokument', (value) => {
-      return value && value.findIndex((attachment) => attachment.main) > -1;
+    attachmentList: yup.array().test('HAS_MIN_ONE', 'Du måste bifoga ett dokument', (value) => {
+      return value && value.length > 0;
     }),
     recipientList: yup.array(),
   })
@@ -78,7 +78,7 @@ export default function Index() {
     setResponse(undefined);
   }, [myDepartment, reset, setRecipients, setResponse]);
 
-  const hasMainAttachment = watch('attachmentList').findIndex((attach) => attach.main) > -1;
+  const hasAtLeastOneAttachment = watch('attachmentList').length > 0;
 
   useEffect(() => {
     if (response) {
@@ -126,7 +126,11 @@ export default function Index() {
               <FormProvider {...controls}>
                 <FormStepper
                   steps={[
-                    { label: 'Lägg till textdokument', component: <AttachmentHandler />, valid: hasMainAttachment },
+                    {
+                      label: 'Lägg till textdokument',
+                      component: <AttachmentHandler />,
+                      valid: hasAtLeastOneAttachment,
+                    },
                     { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
                     { label: 'Ange avsändare', component: <SenderHandler /> },
                   ]}

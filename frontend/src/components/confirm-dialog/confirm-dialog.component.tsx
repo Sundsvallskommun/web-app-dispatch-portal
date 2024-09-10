@@ -27,11 +27,6 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose }) =
               <li key={`doc-${docIdx}`} className="flex items-center gap-8">
                 <FileText />
                 {doc?.file?.name}
-                {docIdx === 0 && (
-                  <Label inverted color="info">
-                    Huvuddokument
-                  </Label>
-                )}
               </li>
             ))}
           </ul>
