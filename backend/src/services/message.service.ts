@@ -1,3 +1,4 @@
+import { MUNICIPALITY_ID } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
 import { logger } from '@/utils/logger';
@@ -142,7 +143,7 @@ export const sendEmail: (api: ApiService, senderPersonId: string, emailAddress: 
   if (!emailAddress || !senderPersonId) {
     return Promise.resolve(false);
   }
-  const url = `messaging/4.1/email?async=false`;
+  const url = `messaging/5.0/${MUNICIPALITY_ID}/email?async=false`;
 
   const req: EmailRequest = {
     party: {
@@ -180,7 +181,7 @@ export const sendLetter: (
   department: string,
   files: Express.Multer.File[],
 ) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (api, recipients, subject, body, department, files) => {
-  const url = `messaging/4.1/letter?async=true`;
+  const url = `messaging/5.0/${MUNICIPALITY_ID}/letter?async=true`;
   const attachments = [];
   files.forEach(f => {
     const base64String = f.buffer.toString('base64');
