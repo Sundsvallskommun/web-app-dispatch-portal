@@ -4,6 +4,7 @@ import { HttpException } from '@exceptions/HttpException';
 import ApiService from '@services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { DepartmentStatistics } from '@interfaces/statistics.interface';
+import { MUNICIPALITY_ID } from '@/config';
 
 @Controller()
 export class StatisticsController {
@@ -13,7 +14,7 @@ export class StatisticsController {
   @UseBefore(authMiddleware)
   async getStatistics(@Res() response: any): Promise<DepartmentStatistics> {
     try {
-      const url = `messaging/5.0/statistics/departments`;
+      const url = `messaging/5.0/${MUNICIPALITY_ID}/statistics/departments`;
       const result = await this.apiService.get<DepartmentStatistics>({ url });
       const statistics = [];
       result.data[0].DEPARTMENT_STATISTICS.map(stats => {
