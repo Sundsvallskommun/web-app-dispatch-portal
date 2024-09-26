@@ -1,8 +1,8 @@
 import { FormModel } from '@pages/index';
 import { useMessageStore } from '@services/recipient-service';
-import { Button, Dialog, Label } from '@sk-web-gui/react';
-import { useFormContext } from 'react-hook-form';
+import { Button, Dialog } from '@sk-web-gui/react';
 import { FileText } from 'lucide-react';
+import { useFormContext } from 'react-hook-form';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -27,11 +27,6 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose }) =
               <li key={`doc-${docIdx}`} className="flex items-center gap-8">
                 <FileText />
                 {doc?.file?.name}
-                {doc.main && (
-                  <Label inverted color="info">
-                    Huvuddokument
-                  </Label>
-                )}
               </li>
             ))}
           </ul>

@@ -59,19 +59,10 @@ export const sendMessage: (
   recipients: RecipientWithAddress[]
 ) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (data, recipients) => {
   const messageFormData = new FormData();
-  const mainAttachment = data.attachmentList.find((attach) => attach.main);
 
-  if (mainAttachment && mainAttachment.file) {
-    const mainAttachmentFile = await file2blob(mainAttachment.file);
-    messageFormData.append(`files`, mainAttachmentFile.blob, mainAttachmentFile.attachment.name);
-  } else {
-    console.error('No main attachment found, cannot send message.');
-    throw new Error('No main attachment found.');
-  }
-
-  const secondaryAttachmentList = data.attachmentList.filter((attach) => !attach.main);
-  const secondaryAttachmentPromises: Promise<{ attachment: Attachment; blob: Blob }>[] =
-    secondaryAttachmentList?.map(async (f) => {
+  const attachmentList = data.attachmentList;
+  const attachmentPromises: Promise<{ attachment: Attachment; blob: Blob }>[] =
+    attachmentList?.map(async (f) => {
       const fileItem = f.file;
       if (fileItem) {
         const blobObject = file2blob(fileItem);
@@ -81,7 +72,7 @@ export const sendMessage: (
       }
     }) || [];
 
-  const res = await Promise.allSettled(secondaryAttachmentPromises)
+  const res = await Promise.allSettled(attachmentPromises)
     .then((r) => {
       r.forEach((r) => {
         if (r.status === 'fulfilled') {

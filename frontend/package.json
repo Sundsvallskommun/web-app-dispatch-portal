@@ -13,7 +13,8 @@
     "cypress": "dotenv cypress open",
     "cypress:headless": "cross-env ELECTRON_EXTRA_LAUNCH_ARGS=--disable-gpu-sandbox cypress run",
     "test": "yarn cypress",
-    "test:coverage": "yarn cypress:headless"
+    "test:coverage": "yarn cypress:headless",
+    "type-check": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
