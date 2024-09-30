@@ -5,11 +5,13 @@ import {
   useMessageStore
 } from '@services/recipient-service';
 import { Table, Label, RadioButton, SortMode, Input, Pagination, Select } from '@sk-web-gui/react';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import Button from "@sk-web-gui/button";
 
 export const RecipientList: React.FC = () => {
   const masked = (s: string) => s.slice(0, s.length - 4) + 'xxxx';
   const recipients = useMessageStore((state) => state.recipients);
+  const setRecipients = useMessageStore((state) => state.setRecipients);
   const [filter, setFilter] = useState<string>('all');
 
   const [_pageSize, setPageSize] = React.useState<number>(12);
@@ -41,25 +43,10 @@ export const RecipientList: React.FC = () => {
     return value
   }
 
-  const datarows = recipients.sort((a, b) => {
-    const order = sortOrder === SortMode.ASC ? -1 : 1;
-    if(sortColumn === "error") {
-      const aError = a.error ? mapRecipientError(a.error) : "Giltig";
-      const bError = b.error ? mapRecipientError(b.error) : "Giltig";
-      return aError < bError ? order : aError > bError ? order * -1 : 0;
-    } else {
-      return getDeepColumn(sortColumn, a) < getDeepColumn(sortColumn, b) ? order : getDeepColumn(sortColumn, a) > getDeepColumn(sortColumn, b) ? order * -1 : 0;
-    }
-  }).filter((recipient) => {
-    switch (filter) {
-      case 'valid':
-        return !recipient.error;
-      case 'invalid':
-        return recipient.error;
-      default:
-        return true;
-    }
-  }).slice((currentPage - 1) * _pageSize, currentPage * _pageSize);
+  const handleRemoveOne = (personNumber: string) => {
+    const result = recipients.filter((recipient) => personNumber !== recipient.recipient.personnumber)
+    setRecipients(result);
+  }
 
   return (
     <div className="w-full">
@@ -111,10 +98,29 @@ export const RecipientList: React.FC = () => {
               Status
             </Table.SortButton>) : (<>Status</>)}
           </Table.HeaderColumn>
+          <Table.HeaderColumn className="bg-background-color-mixin-1"></Table.HeaderColumn>
         </Table.Header>
 
         <Table.Body>
-          {datarows.map((d, idx) => (
+          {recipients.sort((a, b) => {
+            const order = sortOrder === SortMode.ASC ? -1 : 1;
+            if(sortColumn === "error") {
+              const aError = a.error ? mapRecipientError(a.error) : "Giltig";
+              const bError = b.error ? mapRecipientError(b.error) : "Giltig";
+              return aError < bError ? order : aError > bError ? order * -1 : 0;
+            } else {
+              return getDeepColumn(sortColumn, a) < getDeepColumn(sortColumn, b) ? order : getDeepColumn(sortColumn, a) > getDeepColumn(sortColumn, b) ? order * -1 : 0;
+            }
+          }).filter((recipient) => {
+            switch (filter) {
+              case 'valid':
+                return !recipient.error;
+              case 'invalid':
+                return recipient.error;
+              default:
+                return true;
+            }
+          }).slice((currentPage - 1) * _pageSize, currentPage * _pageSize).map((d, idx) => (
             <Table.Row key={`row-${idx}`}>
               <Table.Column>{masked(d.recipient.personnumber)}</Table.Column>
               <Table.Column>{<span>{d.address?.lastname && d.address?.givenname ? `${d.address?.lastname}, ${d?.address?.givenname}` : ''}</span>}</Table.Column>
@@ -138,6 +144,11 @@ export const RecipientList: React.FC = () => {
                     Giltig
                   </Label>
                 )}
+              </Table.Column>
+              <Table.Column>
+                <Button size="sm" onClick={() => handleRemoveOne(d?.recipient.personnumber)}>
+                  Ta bort
+                </Button>
               </Table.Column>
             </Table.Row>
           ))}

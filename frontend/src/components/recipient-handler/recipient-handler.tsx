@@ -60,7 +60,7 @@ const RecipientHandler: React.FC = () => {
     setError(undefined);
     getRecipient(recipient.replace('-', '').replace(' ', ''))
       .then((res) => {
-        setRecipients(res);
+        setRecipients(recipients.concat(res));
         setIsLoadingRecipients(false);
       })
       .catch((e) => {
@@ -93,6 +93,7 @@ const RecipientHandler: React.FC = () => {
   const handleSubmitSingleRecipient = () => {
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
+      setValue('singleRecipient', '');
     } else if (recipient.length < 12) {
       setFormError('singleRecipient', { message: 'För få siffror i personnumret' });
     } else if (recipient.length > 13) {
@@ -121,7 +122,7 @@ const RecipientHandler: React.FC = () => {
                   handleRemove();
                 }}
               >
-                Enskild mottagare
+                Enskilda mottagare
               </Button>
             </MenuBar.Item>
             <MenuBar.Item>
@@ -131,7 +132,7 @@ const RecipientHandler: React.FC = () => {
                   handleRemove();
                 }}
               >
-                Flera mottagare
+                Importera mottagare
               </Button>
             </MenuBar.Item>
           </MenuBar>
@@ -156,7 +157,7 @@ const RecipientHandler: React.FC = () => {
                   onSearch={() => handleSubmitSingleRecipient()}
                 />
 
-                <FormHelperText className="w-full">Exempel: 189001019802</FormHelperText>
+                <FormHelperText className="w-full">Exempel: 198509101234</FormHelperText>
                 {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
               </FormControl>
             </div>
