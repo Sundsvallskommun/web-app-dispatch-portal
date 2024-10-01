@@ -2,10 +2,12 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { Spinner, Table, SortMode, Select, Input, Pagination } from '@sk-web-gui/react';
 import { useStatistics } from '@services/statistics-service';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Statistics } from '@interfaces/statistics.interface';
+import { useDepartments } from '@services/departments-service';
 export const StatisticsPage = () => {
   const { departmentStatistics, loaded } = useStatistics();
+  const { departments } = useDepartments();
   const [sortColumn, setSortColumn] = React.useState<string>('department');
   const [sortOrder, setSortOrder] = React.useState(SortMode.ASC);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -32,14 +34,20 @@ export const StatisticsPage = () => {
     return value;
   };
 
-  const tableRows = departmentStatistics
+  const filteredStatistics = useMemo(() => {
+    return departmentStatistics.filter((stats) => {
+      return departments.some((dep) => dep.orgDisplayName === stats.department);
+    });
+  }, [departmentStatistics, departments]);
+
+  const tableRows = filteredStatistics
     .sort((a, b) => {
       const order = sortOrder === SortMode.ASC ? -1 : 1;
       return getDeepColumn(sortColumn, a) < getDeepColumn(sortColumn, b)
         ? order
         : getDeepColumn(sortColumn, a) > getDeepColumn(sortColumn, b)
-        ? order * -1
-        : 0;
+          ? order * -1
+          : 0;
     })
     .slice((currentPage - 1) * _pageSize, currentPage * _pageSize)
     .map((statistics, idx: number) => {
@@ -112,7 +120,7 @@ export const StatisticsPage = () => {
             })}
           </Table.Body>
 
-          {departmentStatistics.length > 12 && (
+          {filteredStatistics.length > 12 && (
             <Table.Footer>
               <div className="sk-table-bottom-section sk-table-pagination-mobile">
                 <label className="sk-table-bottom-section-label" htmlFor="paginationSelect">
@@ -124,7 +132,7 @@ export const StatisticsPage = () => {
                   value={currentPage.toString()}
                   onSelectValue={(value: string) => setCurrentPage(parseInt(value, 10))}
                 >
-                  {[...Array.from(Array(Math.ceil(departmentStatistics.length / _pageSize)).keys())].map((page) => (
+                  {[...Array.from(Array(Math.ceil(filteredStatistics.length / _pageSize)).keys())].map((page) => (
                     <Select.Option key={`pagipage-${page}`} value={(page + 1).toString()}>
                       {page + 1}
                     </Select.Option>
@@ -135,7 +143,7 @@ export const StatisticsPage = () => {
                 <div className="sk-table-paginationwrapper">
                   <Pagination
                     className="sk-table-pagination"
-                    pages={Math.ceil(departmentStatistics.length / _pageSize)}
+                    pages={Math.ceil(filteredStatistics.length / _pageSize)}
                     activePage={currentPage}
                     showConstantPages
                     pagesAfter={1}
