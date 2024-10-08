@@ -226,7 +226,7 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
           </NextLink>{' '}
         </p>
       </Accordion.Item>
-      <Accordion.Item header="Var skickas tekniska frågor och felanmälan?">
+      <Accordion.Item header="Var skickar jag tekniska frågor och felanmälan?">
         <p>Vid tekniska frågor, problem och felanmälan hör du av dig till IT-support.</p>
         <p>
           <strong>Kontaktuppgifter till IT-support:</strong>
@@ -239,7 +239,7 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
           </a>
         </p>
       </Accordion.Item>
-      <Accordion.Item header="Hur görs formatändring av dokument klass 3?">
+      <Accordion.Item header="Hur gör jag formatändring av dokument klass 3?">
         <p>
           I Postportalen skickar du dokument i formatet PDF. Om du behöver ändra format på ett dokument som innehåller
           klass 3-information är det viktigt att hanteringen sker lokalt på din dator. Det betyder att både platsen du
