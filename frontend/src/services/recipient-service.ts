@@ -39,6 +39,8 @@ export interface RecipientWithAddress {
   error?: RecipientError;
 }
 
+export const ssnPattern = /^$|^((19|20)[0-9]{6}-?[0-9]{4})$/gi;
+
 export const mapRecipientError = (e: RecipientError) => {
   switch (e) {
     case 'MISSING':

@@ -4,7 +4,7 @@ import { Attachment } from '@components/attachment-handler/attachment-handler';
 
 interface FileListItemComponentProps {
   data: Attachment & { index?: number };
-  handleRemove: (index: number, main?: boolean) => void;
+  handleRemove: (index: number) => void;
   handleMain?: (index: number) => void;
 }
 
@@ -33,7 +33,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
       </div>
 
       <div className="flex flex-wrap gap-16 break-words">
-        {!data.main && (
+        {data.index !== 0 && (
           <Button
             variant="secondary"
             size="sm"
@@ -41,7 +41,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
             aria-label="Ta bort fil"
             className="px-14 py-16"
           >
-            Gör till huvuddokument
+            Lägg först i listan
           </Button>
         )}
 
@@ -50,7 +50,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
             aria-label="Ta bort fil"
             iconButton
             variant="tertiary"
-            onClick={() => handleRemove(data.index, data.main)}
+            onClick={() => handleRemove(data.index)}
             onMouseEnter={handleHover}
             onMouseLeave={() => setHover(false)}
             onFocus={handleFocus}

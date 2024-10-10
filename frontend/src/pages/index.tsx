@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useMessageStore } from '@services/recipient-service';
 import { useUserStore } from '@services/user-service/user-service';
+import { Button } from '@sk-web-gui/react';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -20,8 +21,8 @@ const formSchema = yup
     department: yup.string().required(),
     subject: yup.string().required(),
     body: yup.string().nullable(),
-    attachmentList: yup.array().test('HAS_MAIN', 'Du måste bifoga ett dokument', (value) => {
-      return value && value.findIndex((attachment) => attachment.main) > -1;
+    attachmentList: yup.array().test('HAS_MIN_ONE', 'Du måste bifoga ett dokument', (value) => {
+      return value && value.length > 0;
     }),
     recipientList: yup.array(),
   })
@@ -45,6 +46,7 @@ export default function Index() {
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const response = useMessageStore((state) => state.response);
   const setResponse = useMessageStore((state) => state.setResponse);
+  const [success, setSuccess] = useState(false);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
 
@@ -76,11 +78,12 @@ export default function Index() {
     setResponse(undefined);
   }, [myDepartment, reset, setRecipients, setResponse]);
 
-  const hasMainAttachment = watch('attachmentList').findIndex((attach) => attach.main) > -1;
+  const hasAtLeastOneAttachment = watch('attachmentList').length > 0;
 
   useEffect(() => {
     if (response) {
-      router.push(`/status/${response.response.batchId}`);
+      // router.push(`/status/${response.response.batchId}`);
+      setSuccess(true);
       resetAll();
     }
   }, [resetAll, response, router]);
@@ -104,17 +107,38 @@ export default function Index() {
       <div className="text-lg mb-11 pt-48">
         <div className="flex flex-row gap-32 lg:gap-48 xl:gap-80 flex-wrap lg:flex-nowrap justify-between">
           <div className="w-full lg:w-7/12">
-            <FormProvider {...controls}>
-              <FormStepper
-                steps={[
-                  { label: 'Lägg till textdokument', component: <AttachmentHandler />, valid: hasMainAttachment },
-                  { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
-                  { label: 'Ange avsändare', component: <SenderHandler /> },
-                ]}
-                onChangeStep={setStep}
-                submitButton={<SubmitHandler />}
-              ></FormStepper>
-            </FormProvider>
+            {success ? (
+              <>
+                <h2>Klart!</h2>
+                <p className="my-md text-base">Ditt utskick har gjorts.</p>
+                <Button
+                  className="mt-lg"
+                  color="vattjom"
+                  onClick={() => {
+                    resetAll();
+                    setSuccess(false);
+                  }}
+                >
+                  Gör ett nytt utskick
+                </Button>
+              </>
+            ) : (
+              <FormProvider {...controls}>
+                <FormStepper
+                  steps={[
+                    {
+                      label: 'Lägg till textdokument',
+                      component: <AttachmentHandler />,
+                      valid: hasAtLeastOneAttachment,
+                    },
+                    { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
+                    { label: 'Ange avsändare', component: <SenderHandler /> },
+                  ]}
+                  onChangeStep={setStep}
+                  submitButton={<SubmitHandler />}
+                ></FormStepper>
+              </FormProvider>
+            )}
           </div>
           <div className="w-full lg:w-4/12">
             <ContentCard>

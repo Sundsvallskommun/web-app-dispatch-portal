@@ -1,6 +1,6 @@
 import FileUpload from '@components/file-upload/file-upload.component';
 import { RecipientList } from '@components/recipient-list/recipient-list';
-import { getRecipient, getRecipients, useMessageStore } from '@services/recipient-service';
+import { getRecipient, getRecipients, ssnPattern, useMessageStore } from '@services/recipient-service';
 import {
   Button,
   Divider,
@@ -58,7 +58,7 @@ const RecipientHandler: React.FC = () => {
   const fetchRecipient = () => {
     setIsLoadingRecipients(true);
     setError(undefined);
-    getRecipient(recipient)
+    getRecipient(recipient.replace('-', '').replace(' ', ''))
       .then((res) => {
         setRecipients(res);
         setIsLoadingRecipients(false);
@@ -91,11 +91,11 @@ const RecipientHandler: React.FC = () => {
   }, [current]);
 
   const handleSubmitSingleRecipient = () => {
-    if (recipient && recipient?.length === 12) {
+    if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
     } else if (recipient.length < 12) {
       setFormError('singleRecipient', { message: 'För få siffror i personnumret' });
-    } else if (recipient.length > 12) {
+    } else if (recipient.length > 13) {
       setFormError('singleRecipient', { message: 'För många siffror i personnumret' });
     }
   };
@@ -144,11 +144,11 @@ const RecipientHandler: React.FC = () => {
                   {...register('singleRecipient')}
                   value={recipient}
                   className="w-full"
-                  showSearchButton={dirtyFields.singleRecipient && recipient.length === 12}
+                  showSearchButton={dirtyFields.singleRecipient && ssnPattern.test(recipient)}
                   showResetButton={recipients.length > 0 && recipient}
-                  type="number"
+                  type="text"
                   size="md"
-                  maxLength={12}
+                  maxLength={13}
                   minLength={12}
                   placeholder="ååååmmddxxxx"
                   hideExtra

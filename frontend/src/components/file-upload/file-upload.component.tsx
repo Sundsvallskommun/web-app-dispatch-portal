@@ -87,12 +87,12 @@ const FileUpload: React.FC<{
             setFileErrors((fileErrors) => [...fileErrors, s]);
           } else if (N === allowMax) {
             if (N === allowMax && allowReplace) {
-              replace({ file, main: true });
+              replace({ file });
             } else {
               setError(`För många valda filer - max ${allowMax} st kan läggas till.`);
             }
           } else {
-            append({ file, main: N === 0 });
+            append({ file });
             N += 1;
             setValue(`newItem`, undefined);
             setError(undefined);
