@@ -176,7 +176,7 @@ const RecipientHandler: React.FC = () => {
             </div>
           )}
 
-          {recipientList?.length && recipients && current === 1 ? (
+          {recipientList?.length && recipients.length && current === 1 ? (
             <div className="pt-24">
               <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
             </div>
