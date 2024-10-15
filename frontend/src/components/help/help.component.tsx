@@ -29,6 +29,25 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
           skriver ut och skickar posten med vanlig, fysisk post.
         </p>
       </Accordion.Item>
+      <Accordion.Item header="Vilka rutiner gäller för dokument som skickas i Postportalen?">
+        <p>
+          Varje verksamhet ansvarar för att arbetssätt gällande hantering av sekretess och säkerhetsklassning följs
+          enligt gällande informationshanteringsplan.
+        </p>
+      </Accordion.Item>
+
+      <Accordion.Item header="Vad gäller för undertecknande av beslut?">
+        <p>
+          Många beslut kan skickas genom Postportalen utan att de först behöver undertecknas. Dock gäller det inte alla
+          beslut. Därför behöver varje verksamhet ta eget ansvar för att kontrollera vad som gäller.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Vad gäller för skyddade personuppgifter?">
+        <p>
+          Postportalen hanterar inte post till personer med skyddade personuppgifter. Om du skulle råka skriva in ett
+          personnummer som tillhör en person med skyddade personuppgifter går det inte att komma vidare.
+        </p>
+      </Accordion.Item>
       <Accordion.Item header="Hur skapar jag en tillgänglig pdf?">
         <p>
           Det vanligaste sättet att skapa en pdf är att spara om ett dokument från Word till pdf-format. Gå till fliken
@@ -73,9 +92,14 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
       </Accordion.Item>
       <Accordion.Item header="Vad kostar utskrift och porto?">
         <p>
-          Porto för en normalförsändelse för ett brev under 50 gram ligger på 12,50 kronor. Med utskriftskostnad blir
-          det en totalkostnad på minimum 14,68 kr. Det här är enligt en beslutad prislista via funktionsstyrgrupp
-          administration.
+          Porto för en normalförsändelse med brev under 50 gram ligger på 15,00 kronor. Med utskriftskostnad blir det en
+          totalkostnad på minimum 17,28 kr.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Vad kostar det att skicka post till digital postlåda?">
+        <p>
+          Kostnaden för att skicka dokument till digital postlåda är 1.50 kr – 3.00 kr. Kostnaden baseras på antal
+          utskick som görs per månad.
         </p>
       </Accordion.Item>
       <Accordion.Item header="Vad gäller för avlidna/dödsbon?">
@@ -122,6 +146,18 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
           funktion för att personen ska kunna bekräfta mottagandet av delgivningen, antingen via exempelvis BankID eller
           QR-kod. Det finns inga direkta krav på hur bekräftandet av mottagaren ska gå till, men det ska gå att bevisa
           att en specifik person har blivit delgiven.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Hur komprimerar jag mina filer?">
+        <p>
+          Du kan själv komprimera din pdf. Öppna programmet där du skapat din pdf. Välj Arkiv och sedan Minska
+          filstorlek eller Komprimera PDF. Spara filen.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Kan jag skicka flera filer?">
+        <p>
+          Du kan som mest skicka fyra filer, och storleken på det du skickar kan som mest vara 2 MB. Om du behöver
+          skicka fler eller större filer måste du tyvärr skicka dem med fysisk post.
         </p>
       </Accordion.Item>
     </>
@@ -190,16 +226,29 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
           </NextLink>{' '}
         </p>
       </Accordion.Item>
-      <Accordion.Item header="Kan jag skicka flera filer?">
+      <Accordion.Item header="Var skickar jag tekniska frågor och felanmälan?">
+        <p>Vid tekniska frågor, problem och felanmälan hör du av dig till IT-support.</p>
         <p>
-          Du kan som mest skicka fyra filer, och storleken på det du skickar kan som mest vara 2 MB. Om du behöver
-          skicka fler eller större filer måste du tyvärr skicka dem med fysisk post.
+          <strong>Kontaktuppgifter till IT-support:</strong>
+        </p>
+        <p>Telefon: 060-19 15 00</p>
+        <p>
+          E-post:{' '}
+          <a className="text-vattjom-text-primary" href="support@sundsvall.se">
+            support@sundsvall.se
+          </a>
         </p>
       </Accordion.Item>
-      <Accordion.Item header="Hur komprimerar jag mina filer?">
+      <Accordion.Item header="Hur gör jag formatändring av dokument klass 3?">
         <p>
-          Du kan själv komprimera din pdf. Öppna programmet där du skapat din pdf. Välj Arkiv och sedan Minska
-          filstorlek eller Komprimera PDF. Spara filen.
+          I Postportalen skickar du dokument i formatet PDF. Om du behöver ändra format på ett dokument som innehåller
+          klass 3-information är det viktigt att hanteringen sker lokalt på din dator. Det betyder att både platsen du
+          väljer att ladda ner dokumentet till och det program du använder behöver finnas på din dator och inte i en
+          molntjänst.
+        </p>
+        <p>
+          När dokumentet är färdigt raderar du det permanent från din dator. Det går att göra via kortkommandot: Shift +
+          Delete. Raderas det utan kortkommandot måste du gå in i papperskorgen och även radera det där.
         </p>
       </Accordion.Item>
     </>
