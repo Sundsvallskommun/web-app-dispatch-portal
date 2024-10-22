@@ -91,6 +91,8 @@ const FileUpload: React.FC<{
             } else {
               setError(`För många valda filer - max ${allowMax} st kan läggas till.`);
             }
+          } else if (file.size === 0) {
+            setError('Filen du försöker bifoga är tom. Försök igen.');
           } else {
             append({ file });
             N += 1;
