@@ -123,21 +123,26 @@ export default function Index() {
                 </Button>
               </>
             ) : (
-              <FormProvider {...controls}>
-                <FormStepper
-                  steps={[
-                    {
-                      label: 'Lägg till textdokument',
-                      component: <AttachmentHandler />,
-                      valid: hasAtLeastOneAttachment,
-                    },
-                    { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
-                    { label: 'Ange avsändare', component: <SenderHandler /> },
-                  ]}
-                  onChangeStep={setStep}
-                  submitButton={<SubmitHandler />}
-                ></FormStepper>
-              </FormProvider>
+              <div>
+                <div className="w-full mb-lg p-md bg-inverted-warning rounded text-inverted-warning-background-100 text-base">
+                  Störningar kan just nu förekomma i Postportalen.
+                </div>
+                <FormProvider {...controls}>
+                  <FormStepper
+                    steps={[
+                      {
+                        label: 'Lägg till textdokument',
+                        component: <AttachmentHandler />,
+                        valid: hasAtLeastOneAttachment,
+                      },
+                      { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
+                      { label: 'Ange avsändare', component: <SenderHandler /> },
+                    ]}
+                    onChangeStep={setStep}
+                    submitButton={<SubmitHandler />}
+                  ></FormStepper>
+                </FormProvider>
+              </div>
             )}
           </div>
           <div className="w-full lg:w-4/12">
