@@ -125,8 +125,8 @@ export default function Index() {
             ) : (
               <div>
                 <div className="w-full mb-lg p-md bg-inverted-warning rounded text-inverted-warning-background-100 text-base">
-                  Just nu är det störningar vid massutskick. Skicka större utskick med traditionell brevpost tills
-                  problemet är löst.
+                  Just nu är det störningar vid massutskick via csv-fil. Skicka större utskick med traditionell brevpost
+                  tills problemet är löst.
                 </div>
                 <FormProvider {...controls}>
                   <FormStepper
