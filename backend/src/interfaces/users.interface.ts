@@ -12,10 +12,13 @@ export interface User {
   orgTree?: string;
 }
 export interface Permissions {
-  canEdit: boolean;
-  canView: boolean;
+  canSendSMS: boolean;
 }
 
-export type Roles = 'sg_mea_prh_handlaggare' | 'sg_mea_kc_handlaggare' | 'sg_mea_prh_utvecklare' | 'sg_mea_prh_guest';
+/** Internal roles */
+export type InternalRole = 'sms';
+export enum InternalRoleEnum {
+  'sms',
+}
 
-export type RolesMap = Map<Roles, Partial<Permissions>>;
+export type InternalRoleMap = Map<InternalRole, Partial<Permissions>>;
