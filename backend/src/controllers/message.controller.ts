@@ -67,7 +67,7 @@ export class MessageController {
   @Get('/batchstatus/:id')
   @OpenAPI({ summary: 'Return batch status' })
   async status(@Param('id') id: string) {
-    const url = `messaging/5.0/${MUNICIPALITY_ID}/status/batch/${id}`;
+    const url = `messaging/5.4/${MUNICIPALITY_ID}/status/batch/${id}`;
     const res = await this.apiService.get<BatchStatus>({ url }).catch(e => {
       logger.error('Error when fetching batch status:', e);
       return e;
@@ -79,7 +79,7 @@ export class MessageController {
   @Get('/message/:id')
   @OpenAPI({ summary: 'Return message information' })
   async messageInfo(@Param('id') id: string) {
-    const url = `messaging/5.0/${MUNICIPALITY_ID}/message/${id}`;
+    const url = `messaging/5.4/${MUNICIPALITY_ID}/message/${id}`;
     const res = await this.apiService.get<MessageInformation>({ url }).catch(e => {
       logger.error('Error when fetching message information:', e);
       return e;
@@ -91,12 +91,12 @@ export class MessageController {
   @Get('/batchmessages/:id')
   @OpenAPI({ summary: 'Return messages information for batch' })
   async batchMessagesInfo(@Param('id') id: string) {
-    const url = `messaging/5.0/${MUNICIPALITY_ID}/status/batch/${id}`;
+    const url = `messaging/5.4/${MUNICIPALITY_ID}/status/batch/${id}`;
     const messagePromises: Promise<MessageInformation>[] = await this.apiService
       .get<BatchStatus>({ url })
       .then(b => {
         return b.data.messages.map(m => {
-          const messageUrl = `messaging/5.0/${MUNICIPALITY_ID}/message/${m.messageId}`;
+          const messageUrl = `messaging/5.4/${MUNICIPALITY_ID}/message/${m.messageId}`;
           return this.apiService
             .get<DeliveryInformation[]>({ url: messageUrl })
             .then(async res => {

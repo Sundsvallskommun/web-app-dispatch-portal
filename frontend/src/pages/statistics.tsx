@@ -1,15 +1,37 @@
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
-import { Spinner, Table, SortMode, Select, Input, Pagination } from '@sk-web-gui/react';
-import { useStatistics } from '@services/statistics-service';
-import React from 'react';
+import { Spinner, Table, SortMode, Select, Input, Pagination, MenuBar, DatePicker } from '@sk-web-gui/react';
+import { getStatisticsByDate } from '@services/statistics-service';
+import React, { useEffect } from 'react';
 import { Statistics } from '@interfaces/statistics.interface';
 export const StatisticsPage = () => {
-  const { departmentStatistics, loaded } = useStatistics();
+  const [loaded, setLoaded] = React.useState<boolean>(true);
   const [sortColumn, setSortColumn] = React.useState<string>('department');
   const [sortOrder, setSortOrder] = React.useState(SortMode.ASC);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [_pageSize, setPageSize] = React.useState<number>(12);
+  const [departmentStatistics, setDepartmentStatistics] = React.useState<Statistics[]>([]);
+  const [currentDate, setCurrentDate] = React.useState<string>('');
+  const [currentDateButton, setCurrentDateButton] = React.useState<number | undefined>();
+  const [currentDateInput, setcurrentDateInput] = React.useState<string>('');
+
+  useEffect(() => {
+    const from = currentDate ?? new Date(0).toLocaleDateString();
+    const to = new Date().toLocaleDateString();
+
+    getStatisticsByDate(from, to)
+    .then((res) => {
+      setDepartmentStatistics(res);
+    })
+    .catch((e) => {
+      console.error(e);
+    }).finally(() => {
+      if (!loaded) {
+        setLoaded(true)
+      }
+    });
+  }, [currentDate, loaded])
+
   const handleSorting = (column: string) => {
     if (sortColumn !== column) {
       setSortColumn(column);
@@ -17,6 +39,29 @@ export const StatisticsPage = () => {
       setSortOrder(sortOrder === SortMode.ASC ? SortMode.DESC : SortMode.ASC);
     }
   };
+
+  const handleDatebutton = (index: number, days: number) => {
+    const cutOffDate = new Date();
+    cutOffDate.setDate(cutOffDate.getDate() - days);
+    
+    setCurrentDateButton(index);
+    setCurrentDate(cutOffDate.toLocaleDateString());
+    setcurrentDateInput('');
+  }
+
+  const handleDateChange = (date: string) => {
+    setCurrentDateButton(undefined);
+    setCurrentDate(date);
+    setcurrentDateInput(new Date(date).toLocaleDateString());
+  };
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('sv', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
 
   const getDeepColumn = (column: string, object: Statistics) => {
     const columns = column.split('.');
@@ -66,6 +111,29 @@ export const StatisticsPage = () => {
         </PageHeader>
       }
     >
+      <div className="lg:flex flex-row justify-end mb-16 gap-12">
+        {currentDate && <div className="flex-grow flex content-center self-center"><p>visar utskick mellan {formatDate(currentDate)} - {formatDate(new Date().toLocaleDateString())}</p></div>}
+        <div className="flex gap-12">
+        <MenuBar current={currentDateButton}>
+          <MenuBar.Item>
+            <button onClick={() => handleDatebutton(0, 7)}>7 dagar</button>
+          </MenuBar.Item>
+          <MenuBar.Item>
+            <button onClick={() => handleDatebutton(1, 14)}>14 dagar</button>
+          </MenuBar.Item>
+          <MenuBar.Item>
+            <button onClick={() => handleDatebutton(2, 30)}>30 dagar</button>
+          </MenuBar.Item>
+          <MenuBar.Item>
+            <button onClick={() => handleDatebutton(3, 365)}>1 år</button>
+          </MenuBar.Item>
+          <MenuBar.Item>
+            <DatePicker value={currentDateInput} max={new Date().toLocaleDateString()} onChange={(e) => handleDateChange(e.target.value)} />
+          </MenuBar.Item>
+        </MenuBar>
+        </div>
+      </div>
+
       <div className="max-w-full mb-80">
         <Table background={true}>
           <Table.Header className="bg-white">
