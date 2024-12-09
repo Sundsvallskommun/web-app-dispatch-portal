@@ -1,5 +1,6 @@
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
+import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
 import { Divider, FormControl } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
 
@@ -47,6 +48,7 @@ const AttachmentHandler: React.FC = () => {
             allowMax={maxMain + maxSecondary}
             accept={['.pdf', '.PDF']}
             helperText="Maximal filstorlek: 2 MB. Tillåtna filtyper: pdf"
+            maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
           />
         </FormControl>
 

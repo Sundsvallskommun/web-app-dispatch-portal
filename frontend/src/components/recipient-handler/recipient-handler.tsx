@@ -1,6 +1,13 @@
 import FileUpload from '@components/file-upload/file-upload.component';
 import { RecipientList } from '@components/recipient-list/recipient-list';
-import { getRecipient, getRecipients, ssnPattern, useMessageStore } from '@services/recipient-service';
+import {
+  getRecipient,
+  getRecipients,
+  MAX_RECIPIENT_FILE_SIZE_MB,
+  MAX_RECIPIENT_ROW_SIZE,
+  ssnPattern,
+  useMessageStore,
+} from '@services/recipient-service';
 import {
   Button,
   Divider,
@@ -51,8 +58,23 @@ const RecipientHandler: React.FC = () => {
       })
       .catch((e) => {
         console.error(e);
+        let errorMessage: string;
+        switch (e.message) {
+          case 'NO_FILE':
+            errorMessage = 'Ingen fil vald';
+            break;
+          case 'MAX_SIZE':
+            errorMessage = `Filen får ej överstiga ${MAX_RECIPIENT_FILE_SIZE_MB}MB`;
+            break;
+          case 'MAX_RECIPIENT_ROW_SIZE':
+            errorMessage = `Filen får inte innehålla fler än ${MAX_RECIPIENT_ROW_SIZE} rader`;
+            break;
+          default:
+            errorMessage = 'Något gick fel när mottagarlistan hanterades';
+        }
         setIsLoadingRecipients(false);
-        setError('Något gick fel när mottagarlistan hanterades');
+        setError(errorMessage);
+        setRecipients([]);
       });
   };
   const fetchRecipient = () => {
@@ -88,6 +110,7 @@ const RecipientHandler: React.FC = () => {
   useEffect(() => {
     setRecipients([]);
     setValue('recipientList', []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
   const handleSubmitSingleRecipient = () => {
@@ -168,9 +191,14 @@ const RecipientHandler: React.FC = () => {
                   showLabel
                   fieldName="recipientList"
                   accept={['.csv', '.CSV']}
-                  helperText="Tillåtna filtyper: csv"
+                  helperText="Tillåtna filtyper: csv. Maximalt antal rader: 250"
                   allowMax={1}
                   allowReplace={allowReplace}
+                  maxFileSizeMB={MAX_RECIPIENT_FILE_SIZE_MB}
+                  onErrorReset={() => {
+                    setError(undefined);
+                    setRecipients([]);
+                  }}
                 />
               </FormControl>
             </div>
@@ -193,7 +221,7 @@ const RecipientHandler: React.FC = () => {
               </>
             </div>
           )}
-          <div>{error && <FormErrorMessage>{error}</FormErrorMessage>}</div>
+          <div>{error && <FormErrorMessage className="my-8">{error}</FormErrorMessage>}</div>
           {recipients?.length > 0 && !isLoadingRecipients && (
             <div className="w-full mt-40">
               <h4 className="mb-16 text-h4-sm">Mottagare</h4>

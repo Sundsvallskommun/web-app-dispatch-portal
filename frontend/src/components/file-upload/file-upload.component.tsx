@@ -14,6 +14,8 @@ const FileUpload: React.FC<{
   helperText?: string;
   showLabel?: boolean;
   allowReplace?: boolean;
+  maxFileSizeMB?: number;
+  onErrorReset?: () => void;
 }> = (props) => {
   const {
     fieldName,
@@ -24,6 +26,8 @@ const FileUpload: React.FC<{
     helperText,
     showLabel,
     allowReplace = false,
+    maxFileSizeMB = MAX_ATTACHMENT_FILE_SIZE_MB,
+    onErrorReset,
   } = props;
   const [error, setError] = useState<string>();
   const [fileErrors, setFileErrors] = useState<string[]>([]);
@@ -66,6 +70,7 @@ const FileUpload: React.FC<{
   const fileHandler = () => {
     setFileErrors([]);
     setError(undefined);
+    onErrorReset && onErrorReset();
     // e.preventDefault();
     let N = added;
     for (let i = 0; i < newItem.length; i += 1) {
@@ -81,7 +86,7 @@ const FileUpload: React.FC<{
             const t = `Fel filtyp - ${file.name}`;
             // setError(t);
             setFileErrors((fileErrors) => [...fileErrors, t]);
-          } else if (file.size / 1024 / 1024 > MAX_ATTACHMENT_FILE_SIZE_MB) {
+          } else if (file.size / 1024 / 1024 > maxFileSizeMB) {
             const s = `Filen är för stor (${(file.size / 1024 / 1024).toFixed(1)} MB) - ${file.name}`;
             // setError(s);
             setFileErrors((fileErrors) => [...fileErrors, s]);
