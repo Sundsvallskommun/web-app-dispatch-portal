@@ -1,6 +1,6 @@
 import { apiService } from '@services/api-service';
-import { create } from 'zustand';
 import { __DEV__ } from '@sk-web-gui/react';
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { LetterResponse } from './message-service';
 
@@ -92,20 +92,16 @@ export const getRecipients = async (files: { file?: File }[]): Promise<Recipient
     const formData = new FormData();
     formData.append(`files`, blob, fileItem.name);
 
-    const checkRecipientsRows = (recipients: RecipientWithAddress[]) => {
-      if (recipients.length > MAX_RECIPIENT_ROW_SIZE) {
-        throw new Error('MAX_RECIPIENT_ROW_SIZE');
-      }
-      return recipients;
-    };
-
     const postFile = () =>
       apiService
         .post<{ data: RecipientWithAddress[] }, FormData>(`recipients`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
-        .then((r) => checkRecipientsRows(r.data.data))
+        .then((r) => r.data.data)
         .catch((e) => {
+          if (e.response.data.message === 'MAX_RECIPIENT_ROW_SIZE') {
+            throw new Error('MAX_RECIPIENT_ROW_SIZE');
+          }
           console.error('Something went wrong when posting recipient list.');
           throw e;
         });

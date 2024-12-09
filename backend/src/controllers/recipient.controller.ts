@@ -1,3 +1,4 @@
+import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import ApiService from '@/services/api.service';
 import { buildRecipientListFromPersonnumber, buildRecipientsList, RecipientWithAddress } from '@/services/recipient.service';
@@ -28,7 +29,11 @@ export class RecipientController {
   }> {
     const base64String = files[0].buffer.toString('base64');
     const data = Buffer.from(base64String, 'base64').toString('utf-8');
-    const recipientsWithAddresses = await buildRecipientsList(this.apiService, data);
+    const recipientsWithAddresses = await buildRecipientsList(this.apiService, data).catch(e => {
+      if (e.message === 'MAX_RECIPIENT_ROW_SIZE') {
+        throw new HttpException(400, 'MAX_RECIPIENT_ROW_SIZE');
+      }
+    });
     return response
       .send({ data: recipientsWithAddresses, message: 'success' } as {
         data: RecipientWithAddress[];
