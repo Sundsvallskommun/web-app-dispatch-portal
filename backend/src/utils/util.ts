@@ -54,3 +54,8 @@ export const formatOrgNr = (orgNr: string, format: OrgNumberFormat = OrgNumberFo
   }
   return format === OrgNumberFormat.DASH ? orgNumber.substring(0, 6) + '-' + orgNumber.substring(6, 10) : orgNumber;
 };
+
+export const isPersonNumber = (input: string): boolean => {
+  const regex = /^(?:\d{8}-?\d{4}|\d{12})$/;
+  return regex.test(input);
+};
