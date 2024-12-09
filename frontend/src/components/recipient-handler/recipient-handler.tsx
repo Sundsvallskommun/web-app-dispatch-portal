@@ -1,3 +1,4 @@
+import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
 import { RecipientList } from '@components/recipient-list/recipient-list';
 import {
@@ -15,13 +16,12 @@ import {
   FormErrorMessage,
   FormHelperText,
   FormLabel,
-  Spinner,
   MenuBar,
   SearchField,
+  Spinner,
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -204,7 +204,7 @@ const RecipientHandler: React.FC = () => {
             </div>
           )}
 
-          {recipientList?.length && recipients.length && current === 1 ? (
+          {recipientList?.length && recipients?.length && current === 1 ? (
             <div className="pt-24">
               <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
             </div>
