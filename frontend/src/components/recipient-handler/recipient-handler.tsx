@@ -180,7 +180,7 @@ const RecipientHandler: React.FC = () => {
                   onSearch={() => handleSubmitSingleRecipient()}
                 />
 
-                <FormHelperText className="w-full">Exempel: 198509101234</FormHelperText>
+                <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText>
                 {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
               </FormControl>
             </div>
