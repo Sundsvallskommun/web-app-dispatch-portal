@@ -1,6 +1,14 @@
+import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
 import { RecipientList } from '@components/recipient-list/recipient-list';
-import { getRecipient, getRecipients, ssnPattern, useMessageStore } from '@services/recipient-service';
+import {
+  getRecipient,
+  getRecipients,
+  MAX_RECIPIENT_FILE_SIZE_MB,
+  MAX_RECIPIENT_ROW_SIZE,
+  ssnPattern,
+  useMessageStore,
+} from '@services/recipient-service';
 import {
   Button,
   Divider,
@@ -8,13 +16,12 @@ import {
   FormErrorMessage,
   FormHelperText,
   FormLabel,
-  Spinner,
   MenuBar,
   SearchField,
+  Spinner,
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -51,8 +58,23 @@ const RecipientHandler: React.FC = () => {
       })
       .catch((e) => {
         console.error(e);
+        let errorMessage: string;
+        switch (e.message) {
+          case 'NO_FILE':
+            errorMessage = 'Ingen fil vald';
+            break;
+          case 'MAX_SIZE':
+            errorMessage = `Filen får ej överstiga ${MAX_RECIPIENT_FILE_SIZE_MB}MB`;
+            break;
+          case 'MAX_RECIPIENT_ROW_SIZE':
+            errorMessage = `Filen får inte innehålla fler än ${MAX_RECIPIENT_ROW_SIZE} rader`;
+            break;
+          default:
+            errorMessage = 'Något gick fel när mottagarlistan hanterades';
+        }
         setIsLoadingRecipients(false);
-        setError('Något gick fel när mottagarlistan hanterades');
+        setError(errorMessage);
+        setRecipients([]);
       });
   };
   const fetchRecipient = () => {
@@ -60,7 +82,7 @@ const RecipientHandler: React.FC = () => {
     setError(undefined);
     getRecipient(recipient.replace('-', '').replace(' ', ''))
       .then((res) => {
-        setRecipients(res);
+        setRecipients(recipients.concat(res));
         setIsLoadingRecipients(false);
       })
       .catch((e) => {
@@ -88,11 +110,13 @@ const RecipientHandler: React.FC = () => {
   useEffect(() => {
     setRecipients([]);
     setValue('recipientList', []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
   const handleSubmitSingleRecipient = () => {
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
+      setValue('singleRecipient', '');
     } else if (recipient.length < 12) {
       setFormError('singleRecipient', { message: 'För få siffror i personnumret' });
     } else if (recipient.length > 13) {
@@ -121,7 +145,7 @@ const RecipientHandler: React.FC = () => {
                   handleRemove();
                 }}
               >
-                Enskild mottagare
+                Enskilda mottagare
               </Button>
             </MenuBar.Item>
             <MenuBar.Item>
@@ -131,7 +155,7 @@ const RecipientHandler: React.FC = () => {
                   handleRemove();
                 }}
               >
-                Flera mottagare
+                Importera mottagare
               </Button>
             </MenuBar.Item>
           </MenuBar>
@@ -156,7 +180,7 @@ const RecipientHandler: React.FC = () => {
                   onSearch={() => handleSubmitSingleRecipient()}
                 />
 
-                <FormHelperText className="w-full">Exempel: 189001019802</FormHelperText>
+                <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText>
                 {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
               </FormControl>
             </div>
@@ -167,15 +191,20 @@ const RecipientHandler: React.FC = () => {
                   showLabel
                   fieldName="recipientList"
                   accept={['.csv', '.CSV']}
-                  helperText="Tillåtna filtyper: csv"
+                  helperText="Tillåtna filtyper: csv. Maximalt antal rader: 250"
                   allowMax={1}
                   allowReplace={allowReplace}
+                  maxFileSizeMB={MAX_RECIPIENT_FILE_SIZE_MB}
+                  onErrorReset={() => {
+                    setError(undefined);
+                    setRecipients([]);
+                  }}
                 />
               </FormControl>
             </div>
           )}
 
-          {recipientList?.length && recipients && current === 1 ? (
+          {recipientList?.length && recipients?.length && current === 1 ? (
             <div className="pt-24">
               <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
             </div>
@@ -192,7 +221,7 @@ const RecipientHandler: React.FC = () => {
               </>
             </div>
           )}
-          <div>{error && <FormErrorMessage>{error}</FormErrorMessage>}</div>
+          <div>{error && <FormErrorMessage className="my-8">{error}</FormErrorMessage>}</div>
           {recipients?.length > 0 && !isLoadingRecipients && (
             <div className="w-full mt-40">
               <h4 className="mb-16 text-h4-sm">Mottagare</h4>

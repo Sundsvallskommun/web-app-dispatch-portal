@@ -1,10 +1,11 @@
 import { apiService } from '@services/api-service';
-import { create } from 'zustand';
 import { __DEV__ } from '@sk-web-gui/react';
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { LetterResponse } from './message-service';
 
-const MAX_RECIPIENT_FILE_SIZE_MB = 50;
+export const MAX_RECIPIENT_FILE_SIZE_MB = 50;
+export const MAX_RECIPIENT_ROW_SIZE = 250;
 
 export interface Recipient {
   personnumber: string;
@@ -28,7 +29,7 @@ export interface Citizenaddress {
       postalCode: string;
       city: string;
       country: string;
-    }
+    },
   ];
   errorMessage?: string;
 }
@@ -98,6 +99,9 @@ export const getRecipients = async (files: { file?: File }[]): Promise<Recipient
         })
         .then((r) => r.data.data)
         .catch((e) => {
+          if (e.response.data.message === 'MAX_RECIPIENT_ROW_SIZE') {
+            throw new Error('MAX_RECIPIENT_ROW_SIZE');
+          }
           console.error('Something went wrong when posting recipient list.');
           throw e;
         });

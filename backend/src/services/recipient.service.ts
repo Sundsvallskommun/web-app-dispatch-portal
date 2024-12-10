@@ -1,7 +1,9 @@
 import { luhnCheck } from '@/utils/util';
+import dayjs from 'dayjs';
 import ApiService from './api.service';
 import { parseCsv } from './csv-service/csv-service';
-import dayjs from 'dayjs';
+
+const MAX_RECIPIENT_ROW_SIZE = 250;
 
 export interface Recipient {
   personnumber: string;
@@ -71,6 +73,10 @@ export const buildRecipientListFromPersonnumber: (api: ApiService, personnumber:
 
 export const buildRecipientsList: (api: ApiService, csvString: string) => Promise<RecipientWithAddress[]> = async (api, csvString) => {
   const recipients: Recipient[] = parseCsv(csvString);
+
+  if (recipients.length > MAX_RECIPIENT_ROW_SIZE) {
+    throw new Error('MAX_RECIPIENT_ROW_SIZE');
+  }
 
   const [invalidRecipients, validRecipients] = recipients.reduce(
     ([invalid, valid], recipient) => {
