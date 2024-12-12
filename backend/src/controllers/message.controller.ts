@@ -7,11 +7,12 @@ import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.servi
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
-import { IsString } from 'class-validator';
+import { ArrayMinSize, IsArray, IsString } from 'class-validator';
+import  { Response } from 'express';
 import { Body, Controller, Get, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
-class RequestBody {
+class RequestBodyMail {
   @IsString()
   recipients: string;
   subject: string;
@@ -19,17 +20,64 @@ class RequestBody {
   department: string;
 }
 
+class RequestBodySMS  {
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMinSize(1)
+  recipients: string[];
+  @IsString()
+  message: string;
+}
+
+interface smsDTO {
+  sender: string;
+  message: string;
+  parties: { mobileNumber: string }[];
+}
+
+interface SMSReponse {
+  batchId: string;
+  messages: {
+    messageId: string;
+    deliveries: {
+      deliveryId: string;
+      messageType: string;
+    }[];
+  }[];
+}
+
 @Controller()
 export class MessageController {
   private apiService = new ApiService();
   SERVICE = `messaging/6.0`;
+
+  @Post('/sms')
+  @OpenAPI({ summary: 'Send SMS to recipients' })
+  @UseBefore(authMiddleware)
+  async sendSMS(@Body() body: RequestBodySMS, @Res() response: Response) {
+    const { message, recipients } = body;
+    const data = {
+      message,
+      parties: recipients.map(rec => ({ 'mobileNumber': rec })),
+      sender: 'svallkommun',
+    }
+    const url = `messaging/5.4/${MUNICIPALITY_ID}/sms/batch`;
+    const res = await this.apiService.post<SMSReponse, smsDTO>({ url, data }).catch(e => {
+      console.log('Error when sending sms:', e);
+      throw new Error('Error when sending sms');
+    });
+
+    return response
+      .send({ data: res.data, message: 'success' })
+      .status(200);
+  }
 
   @Post('/message/')
   @OpenAPI({ summary: 'Send attachment to recipients' })
   @UseBefore(authMiddleware)
   async recipients(
     @Req() req: RequestWithUser,
-    @Body() body: RequestBody,
+    @Body() body: RequestBodyMail,
     @Res() response: any,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
   ): Promise<{

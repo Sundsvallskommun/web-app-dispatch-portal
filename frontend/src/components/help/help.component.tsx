@@ -3,7 +3,7 @@ import { Accordion, Link, List, useGui } from '@sk-web-gui/react';
 import NextLink from 'next/link';
 
 interface HelpProps {
-  show?: 'recipients' | 'documents' | 'sender';
+  show?: 'recipients' | 'documents' | 'sender' | 'sms';
   size?: 'sm' | 'md';
 }
 
@@ -253,6 +253,23 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
       </Accordion.Item>
     </>
   );
+  const sms = (
+    <>
+      <Accordion.Item header="Vilket format på mottagarens mobilnummer?">
+        <p>
+          lorem ipsum...
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="nästa fråga?">
+        <p>
+          lorem ipsum
+        </p>
+        <p>
+          Använd gärna <Link href="/files/example.csv">exempelfilen</Link> när du skapar din mottagarlista.
+        </p>
+      </Accordion.Item>
+    </>
+  );
 
   return (
     <Accordion className="w-full" size={size} allowMultipleOpen>
@@ -260,6 +277,8 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
         recipients
       ) : show === 'documents' ? (
         documents
+      ) : show === 'sms' ? (
+        sms
       ) : show === 'sender' ? (
         sender
       ) : (
