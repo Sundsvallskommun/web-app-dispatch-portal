@@ -1,6 +1,7 @@
 import { MUNICIPALITY_ID } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
+import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
 import { LetterResponse, sendLetter } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
@@ -53,7 +54,7 @@ export class MessageController {
 
   @Post('/sms')
   @OpenAPI({ summary: 'Send SMS to recipients' })
-  @UseBefore(authMiddleware)
+  @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
   async sendSMS(@Body() body: RequestBodySMS, @Res() response: Response) {
     const { message, recipients } = body;
     const data = {

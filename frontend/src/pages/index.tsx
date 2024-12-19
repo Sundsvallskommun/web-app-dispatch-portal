@@ -2,11 +2,26 @@ import { Card } from '@sk-web-gui/react';
 import NextLink from 'next/link';
 
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
+import { useUserStore } from '@services/user-service/user-service';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 export default function Index() {
+  const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
+  const user = useUserStore((state) => state.user);
+  const router = useRouter();
+
+  useEffect(() => {
+    if(!user.permissions.canSendSMS) {
+      router.push('send/mail');
+      return;
+    }
+    setIsCheckingPermissions(false);
+  }, [user.permissions.canSendSMS, router]);
+
   return (
     <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">Skicka post.</h1>
+      {!isCheckingPermissions && <><h1 className="sr-only">Skicka post.</h1>
       <div className="flex self-center flex-col text-lg mb-11 pt-48 max-w-max">
         <div className="text-center">
           <p className="text-base mb-16">Skicka meddelande till invånare med vår postportal</p>
@@ -25,7 +40,7 @@ export default function Index() {
               </Card.Body>
             </Card>
           </NextLink>
-          <NextLink href="/send/sms" legacyBehavior passHref>
+          {user.permissions.canSendSMS && <NextLink href="/send/sms" legacyBehavior passHref>
             <Card className="flex-1 mb-32" color="vattjom" invert={true} useHoverEffect={true}>
               <Card.Body className="">
                 <Card.Header>
@@ -36,9 +51,9 @@ export default function Index() {
                 </Card.Text>
               </Card.Body>
             </Card>
-          </NextLink>
+          </NextLink>}
         </div>
-      </div>
+      </div></>}
     </DefaultLayout>
   );
 }
