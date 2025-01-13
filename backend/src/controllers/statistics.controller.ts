@@ -14,7 +14,7 @@ export class StatisticsController {
   @UseBefore(authMiddleware)
   async getStatistics(@Res() response: any): Promise<DepartmentStatistics> {
     try {
-      const url = `messaging/5.0/${MUNICIPALITY_ID}/statistics/departments`;
+      const url = `messaging/6.0/${MUNICIPALITY_ID}/statistics/departments`;
       const result = await this.apiService.get<DepartmentStatistics>({ url });
       const statistics = [];
       result.data[0].DEPARTMENT_STATISTICS.map(stats => {
