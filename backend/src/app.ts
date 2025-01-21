@@ -46,6 +46,7 @@ import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import ApiService from './services/api.service';
+import { User } from './interfaces/users.interface';
 
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
@@ -114,7 +115,22 @@ const samlStrategy = new Strategy(
       if (DEV) {
         employee = TEST_USERNAME;
       }
-      const employeeDetails = await apiService.get<any>({ url: `employee/1.0/portalpersondata/PERSONAL/${employee}` });
+      const dummyUser: User = {
+        id: 0,
+        personId: '',
+        name: '',
+        givenName: '',
+        surname: '',
+        email: '',
+        password: '',
+        username: '',
+        groups: '',
+        permissions: {
+          canEdit: false,
+          canView: false,
+        },
+      };
+      const employeeDetails = await apiService.get<any>({ url: `employee/1.0/portalpersondata/PERSONAL/${employee}` }, dummyUser);
       const { personid, orgTree } = employeeDetails.data;
 
       const findUser = {

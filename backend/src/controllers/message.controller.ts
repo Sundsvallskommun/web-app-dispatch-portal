@@ -42,7 +42,7 @@ export class MessageController {
       throw new Error('Could not parse recipient list');
     }
 
-    const res = await sendLetter(this.apiService, recipients, body.subject, body.body, body.department, files)
+    const res = await sendLetter(req.user, this.apiService, recipients, body.subject, body.body, body.department, files)
       .then(async res => {
         // TODO do not send status email for now
         // const emailAddress = DEV ? TEST_EMAIL : req.user.email;
@@ -66,9 +66,9 @@ export class MessageController {
 
   @Get('/batchstatus/:id')
   @OpenAPI({ summary: 'Return batch status' })
-  async status(@Param('id') id: string) {
+  async status(@Req() req: RequestWithUser, @Param('id') id: string) {
     const url = `messaging/5.0/${MUNICIPALITY_ID}/status/batch/${id}`;
-    const res = await this.apiService.get<BatchStatus>({ url }).catch(e => {
+    const res = await this.apiService.get<BatchStatus>({ url }, req.user).catch(e => {
       logger.error('Error when fetching batch status:', e);
       return e;
     });
@@ -78,9 +78,9 @@ export class MessageController {
 
   @Get('/message/:id')
   @OpenAPI({ summary: 'Return message information' })
-  async messageInfo(@Param('id') id: string) {
+  async messageInfo(@Req() req: RequestWithUser, @Param('id') id: string) {
     const url = `messaging/5.0/${MUNICIPALITY_ID}/message/${id}`;
-    const res = await this.apiService.get<MessageInformation>({ url }).catch(e => {
+    const res = await this.apiService.get<MessageInformation>({ url }, req.user).catch(e => {
       logger.error('Error when fetching message information:', e);
       return e;
     });
@@ -90,22 +90,22 @@ export class MessageController {
 
   @Get('/batchmessages/:id')
   @OpenAPI({ summary: 'Return messages information for batch' })
-  async batchMessagesInfo(@Param('id') id: string) {
+  async batchMessagesInfo(@Req() req: RequestWithUser, @Param('id') id: string) {
     const url = `messaging/5.0/${MUNICIPALITY_ID}/status/batch/${id}`;
     const messagePromises: Promise<MessageInformation>[] = await this.apiService
-      .get<BatchStatus>({ url })
+      .get<BatchStatus>({ url }, req.user)
       .then(b => {
         return b.data.messages.map(m => {
           const messageUrl = `messaging/5.0/${MUNICIPALITY_ID}/message/${m.messageId}`;
           return this.apiService
-            .get<DeliveryInformation[]>({ url: messageUrl })
+            .get<DeliveryInformation[]>({ url: messageUrl }, req.user)
             .then(async res => {
               const deliveryPromises = res.data.map(async delivery => {
                 if (Object.keys(delivery.content).includes('party')) {
                   const partyId = delivery.content['party']['partyIds'] || delivery.content['party']['partyId'];
                   if (partyId) {
                     const citizenUrl = `citizen/2.0/${partyId}`;
-                    const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }).catch(e => {
+                    const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }, req.user).catch(e => {
                       logger.error('Error when fetching recipient adress:', e);
                       console.log('Error when fetching recipient adress:', e);
                       return undefined;

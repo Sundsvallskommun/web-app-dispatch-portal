@@ -4,6 +4,7 @@ import { logger } from '@utils/logger';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import ApiTokenService from './api-token.service';
+import { User } from '@/interfaces/users.interface';
 
 export class ApiResponse<T> {
   data: T;
@@ -58,13 +59,13 @@ class ApiService {
     //   },
     // );
   }
-  private async request<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
+  private async request<T>(config: AxiosRequestConfig, user: User): Promise<ApiResponse<T>> {
     const defaultParams = {};
     const preparedConfig: AxiosRequestConfig = {
       ...config,
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
-      headers: { ...config.headers },
+      headers: { ...config.headers, sentbyuser: user.username },
       params: { ...defaultParams, ...config.params },
       url: apiURL(config.url),
     };
@@ -96,28 +97,28 @@ class ApiService {
     }
   }
 
-  public async get<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
+  public async get<T>(config: AxiosRequestConfig, user: User): Promise<ApiResponse<T>> {
     console.log('MAKING GET REQUEST TO URL', config.url);
-    return this.request<T>({ ...config, method: 'GET' });
+    return this.request<T>({ ...config, method: 'GET' }, user);
   }
 
-  public async post<T, D>(config: AxiosRequestConfig<D>): Promise<ApiResponse<T>> {
+  public async post<T, D>(config: AxiosRequestConfig<D>, user: User): Promise<ApiResponse<T>> {
     console.log('MAKING POST REQUEST TO URL', config.url);
-    return this.request<T>({ ...config, method: 'POST' });
+    return this.request<T>({ ...config, method: 'POST' }, user);
   }
 
-  public async patch<T, D>(config: AxiosRequestConfig<D>): Promise<ApiResponse<T>> {
+  public async patch<T, D>(config: AxiosRequestConfig<D>, user: User): Promise<ApiResponse<T>> {
     console.log('MAKING PATCH REQUEST TO URL', config.url);
-    return this.request<T>({ ...config, method: 'PATCH' });
+    return this.request<T>({ ...config, method: 'PATCH' }, user);
   }
 
-  public async put<T, D>(config: AxiosRequestConfig<D>): Promise<ApiResponse<T>> {
+  public async put<T, D>(config: AxiosRequestConfig<D>, user: User): Promise<ApiResponse<T>> {
     console.log('MAKING PUT REQUEST TO URL', config.url);
-    return this.request<T>({ ...config, method: 'PUT' });
+    return this.request<T>({ ...config, method: 'PUT' }, user);
   }
 
-  public async delete<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'DELETE' });
+  public async delete<T>(config: AxiosRequestConfig, user: User): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, method: 'DELETE' }, user);
   }
 }
 export default ApiService;

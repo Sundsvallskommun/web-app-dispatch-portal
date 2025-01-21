@@ -1,3 +1,4 @@
+import { User } from '@/interfaces/users.interface';
 import ApiService from '@/services/api.service';
 import { logger } from '@/utils/logger';
 import { Controller, Get } from 'routing-controllers';
@@ -14,7 +15,22 @@ export class HealthController {
     const data = {
       status: 'OK',
     };
-    const res = await this.apiService.post<{ status: string }, any>({ url, data }).catch(e => {
+    const dummyUser: User = {
+      id: 0,
+      personId: '',
+      name: '',
+      givenName: '',
+      surname: '',
+      email: '',
+      password: '',
+      username: '',
+      groups: '',
+      permissions: {
+        canEdit: false,
+        canView: false,
+      },
+    };
+    const res = await this.apiService.post<{ status: string }, any>({ url, data }, dummyUser).catch(e => {
       logger.error('Error when doing health check:', e);
       return e;
     });
