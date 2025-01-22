@@ -134,6 +134,8 @@ export interface EmailMessageRequest {
   attachments?: EmailMessageAttachment[];
 }
 
+const MESSAGING_SERVICE = `messaging/6.0`;
+
 export const sendEmail: (user: User, api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
   user,
   api,
@@ -145,7 +147,7 @@ export const sendEmail: (user: User, api: ApiService, senderPersonId: string, em
   if (!emailAddress || !senderPersonId) {
     return Promise.resolve(false);
   }
-  const url = `messaging/5.0/${MUNICIPALITY_ID}/email?async=false`;
+  const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/email?async=false`;
 
   const req: EmailRequest = {
     party: {
@@ -184,7 +186,7 @@ export const sendLetter: (
   department: string,
   files: Express.Multer.File[],
 ) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, subject, body, department, files) => {
-  const url = `messaging/5.0/${MUNICIPALITY_ID}/letter?async=true`;
+  const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/letter?async=true`;
   const attachments = [];
   files.forEach(f => {
     const base64String = f.buffer.toString('base64');

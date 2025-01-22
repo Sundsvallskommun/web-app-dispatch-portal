@@ -19,6 +19,7 @@ import {
   SECRET_KEY,
   SESSION_MEMORY,
   SWAGGER_ENABLED,
+  TEST_EMAIL,
   TEST_USERNAME,
 } from '@config';
 import errorMiddleware from '@middlewares/error.middleware';
@@ -47,6 +48,7 @@ import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import ApiService from './services/api.service';
 import { User } from './interfaces/users.interface';
+import { authorizeGroups, getPermissions, getRole } from '@/services/authorization.service';
 
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
@@ -103,12 +105,24 @@ const samlStrategy = new Strategy(
     const groups = profile['http://schemas.xmlsoap.org/claims/Group']?.join(',') ?? profile['groups'];
     const username = profile['urn:oid:0.9.2342.19200300.100.1.1'];
 
-    if (!givenName || !sn || !email || !groups || !username) {
+    if (!givenName || !sn || !email || !username) {
       return done(null, null, {
         name: 'SAML_MISSING_ATTRIBUTES',
         message: 'Missing profile attributes',
       });
     }
+
+    if (!authorizeGroups(groups)) {
+      logger.error('Group authorization failed. Is the user a member of the authorized groups?');
+      return done(null, null, {
+        name: 'SAML_MISSING_GROUP',
+        message: 'SAML_MISSING_GROUP',
+      });
+    }
+
+    const groupList: string[] = groups !== undefined ? (groups.split(',').map(x => x.toLowerCase()) as string[]) : [];
+
+    const appGroups: string[] = groupList.length > 0 ? groupList : [];
 
     try {
       let employee = username;
@@ -126,8 +140,7 @@ const samlStrategy = new Strategy(
         username: '',
         groups: '',
         permissions: {
-          canEdit: false,
-          canView: false,
+          canSendSMS: false,
         },
       };
       const employeeDetails = await apiService.get<any>({ url: `employee/1.0/portalpersondata/PERSONAL/${employee}` }, dummyUser);
@@ -137,11 +150,13 @@ const samlStrategy = new Strategy(
         name: `${givenName} ${sn}`,
         givenName: givenName,
         surname: sn,
-        username: username,
-        email: email,
-        groups: groups.split(','),
+        username: DEV ? TEST_USERNAME : username,
+        email: DEV ? TEST_EMAIL : email,
         personId: personid,
         orgTree,
+        groups: appGroups,
+        role: getRole(appGroups),
+        permissions: getPermissions(appGroups),
       };
 
       logger.info('Found user:', findUser);
