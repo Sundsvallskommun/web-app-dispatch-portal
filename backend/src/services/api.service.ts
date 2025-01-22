@@ -65,10 +65,11 @@ class ApiService {
       ...config,
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
-      headers: { ...config.headers, sentbyuser: user.username },
+      headers: { ...config.headers, 'x-issuer': user.username },
       params: { ...defaultParams, ...config.params },
       url: apiURL(config.url),
     };
+    console.log('REQUEST CONFIG HEADERS', preparedConfig.headers);
     try {
       const res = await this.instance(preparedConfig);
       return { data: res.data, message: 'success' };
