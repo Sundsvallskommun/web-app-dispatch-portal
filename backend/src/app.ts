@@ -47,7 +47,8 @@ import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import ApiService from './services/api.service';
-import { authorizeGroups, getPermissions, getRole } from '@/services/authorization.service';
+import { User } from './interfaces/users.interface';
+import { getPermissions, getRole } from '@/services/authorization.service';
 
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
@@ -111,13 +112,18 @@ const samlStrategy = new Strategy(
       });
     }
 
-    if (!authorizeGroups(groups)) {
-      logger.error('Group authorization failed. Is the user a member of the authorized groups?');
-      return done(null, null, {
-        name: 'SAML_MISSING_GROUP',
-        message: 'SAML_MISSING_GROUP',
-      });
-    }
+    // --------------------------------------
+    // Disable group authorization for now
+    // All groups are allowed in Postportalen
+    //
+    // if (!authorizeGroups(groups)) {
+    //   logger.error('Group authorization failed. Is the user a member of the authorized groups?');
+    //   return done(null, null, {
+    //     name: 'SAML_MISSING_GROUP',
+    //     message: 'SAML_MISSING_GROUP',
+    //   });
+    // }
+    // --------------------------------------
 
     const groupList: string[] = groups !== undefined ? (groups.split(',').map(x => x.toLowerCase()) as string[]) : [];
 
@@ -128,7 +134,21 @@ const samlStrategy = new Strategy(
       if (DEV) {
         employee = TEST_USERNAME;
       }
-      const employeeDetails = await apiService.get<any>({ url: `employee/1.0/portalpersondata/PERSONAL/${employee}` });
+      const dummyUser: User = {
+        id: 0,
+        personId: '',
+        name: '',
+        givenName: '',
+        surname: '',
+        email: '',
+        password: '',
+        username: '',
+        groups: '',
+        permissions: {
+          canSendSMS: false,
+        },
+      };
+      const employeeDetails = await apiService.get<any>({ url: `employee/1.0/portalpersondata/PERSONAL/${employee}` }, dummyUser);
       const { personid, orgTree } = employeeDetails.data;
 
       const findUser = {

@@ -1,10 +1,11 @@
-import { Controller, Get, Res, UseBefore } from 'routing-controllers';
+import { Controller, Get, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { HttpException } from '@exceptions/HttpException';
 import ApiService from '@services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { DepartmentStatistics } from '@interfaces/statistics.interface';
 import { MUNICIPALITY_ID } from '@/config';
+import { RequestWithUser } from '@/interfaces/auth.interface';
 
 @Controller()
 export class StatisticsController {
@@ -12,10 +13,10 @@ export class StatisticsController {
   @Get('/statistics/departments')
   @OpenAPI({ summary: 'Return department statistics' })
   @UseBefore(authMiddleware)
-  async getStatistics(@Res() response: any): Promise<DepartmentStatistics> {
+  async getStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<DepartmentStatistics> {
     try {
       const url = `messaging/6.0/${MUNICIPALITY_ID}/statistics/departments`;
-      const result = await this.apiService.get<DepartmentStatistics>({ url });
+      const result = await this.apiService.get<DepartmentStatistics>({ url }, req.user);
       const statistics = [];
       result.data[0].DEPARTMENT_STATISTICS.map(stats => {
         statistics.push({

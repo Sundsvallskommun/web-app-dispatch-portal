@@ -34,7 +34,7 @@ export class DepartmentsController {
   @UseBefore(authMiddleware)
   async getDepartments(@Req() req: RequestWithUser, @Res() response: any): Promise<any> {
     try {
-      const orgtree = await this.apiService.get<Organization>({ url: 'mdviewer/1.0/13/orgtree' });
+      const orgtree = await this.apiService.get<Organization>({ url: 'mdviewer/1.0/13/orgtree' }, req.user);
       const departments = findDepartments(orgtree.data);
 
       return response.send(departments);
