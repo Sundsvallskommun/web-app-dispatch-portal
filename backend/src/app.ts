@@ -112,13 +112,18 @@ const samlStrategy = new Strategy(
       });
     }
 
-    if (!authorizeGroups(groups)) {
-      logger.error('Group authorization failed. Is the user a member of the authorized groups?');
-      return done(null, null, {
-        name: 'SAML_MISSING_GROUP',
-        message: 'SAML_MISSING_GROUP',
-      });
-    }
+    // --------------------------------------
+    // Disable group authorization for now
+    // All groups are allowed in Postportalen
+    //
+    // if (!authorizeGroups(groups)) {
+    //   logger.error('Group authorization failed. Is the user a member of the authorized groups?');
+    //   return done(null, null, {
+    //     name: 'SAML_MISSING_GROUP',
+    //     message: 'SAML_MISSING_GROUP',
+    //   });
+    // }
+    // --------------------------------------
 
     const groupList: string[] = groups !== undefined ? (groups.split(',').map(x => x.toLowerCase()) as string[]) : [];
 
