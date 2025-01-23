@@ -2,6 +2,7 @@ import { MUNICIPALITY_ID } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
 import { logger } from '@/utils/logger';
+import { User } from '@/interfaces/users.interface';
 
 export interface AgnosticMessageResponse {
   messageId: string;
@@ -135,7 +136,8 @@ export interface EmailMessageRequest {
 
 const MESSAGING_SERVICE = `messaging/6.0`;
 
-export const sendEmail: (api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
+export const sendEmail: (user: User, api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
+  user,
   api,
   senderPersonId,
   emailAddress,
@@ -163,7 +165,7 @@ export const sendEmail: (api: ApiService, senderPersonId: string, emailAddress: 
   };
 
   const res = api
-    .post<any, EmailRequest>({ url, data: req })
+    .post<any, EmailRequest>({ url, data: req }, user)
     .then(async (res: ApiResponse<any>) => {
       return true;
     })
@@ -176,13 +178,14 @@ export const sendEmail: (api: ApiService, senderPersonId: string, emailAddress: 
 };
 
 export const sendLetter: (
+  user: User,
   api: ApiService,
   recipients: RecipientWithAddress[],
   subject: string,
   body: string,
   department: string,
   files: Express.Multer.File[],
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (api, recipients, subject, body, department, files) => {
+) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, subject, body, department, files) => {
   const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/letter?async=true`;
   const attachments = [];
   files.forEach(f => {
@@ -219,7 +222,7 @@ export const sendLetter: (
   }
 
   return api
-    .post<LetterResponse, LetterRequest>({ url, data: request })
+    .post<LetterResponse, LetterRequest>({ url, data: request }, user)
     .then(async (res: ApiResponse<LetterResponse>) => {
       return { recipients, response: res.data };
     })
