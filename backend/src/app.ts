@@ -48,7 +48,7 @@ import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import ApiService from './services/api.service';
 import { User } from './interfaces/users.interface';
-import { authorizeGroups, getPermissions, getRole } from '@/services/authorization.service';
+import { getPermissions, getRole } from '@/services/authorization.service';
 
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
