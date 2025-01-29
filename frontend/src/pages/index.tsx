@@ -1,7 +1,5 @@
 import AttachmentHandler, { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
-import ContentCard from '@components/content-card/content-card';
 import { FormStepper } from '@components/form-stepper/form-stepper.component';
-import { Help } from '@components/help/help.component';
 import RecipientHandler, { RecipientListFormModel } from '@components/recipient-handler/recipient-handler';
 import { SenderFormModel, SenderHandler } from '@components/sender-handler/sender-handler.component';
 import SubmitHandler from '@components/submit-handler/submit-handler';
@@ -14,7 +12,6 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-
 const formSchema = yup
   .object({
     message: yup.string().nullable(),
@@ -140,11 +137,12 @@ export default function Index() {
               </FormProvider>
             )}
           </div>
-          <div className="w-full lg:w-4/12">
+          {/* Not 100% sure if this is needed later.. */}
+          {/* <div className="w-full lg:w-4/12">
             <ContentCard>
               <Help show={step === 0 ? 'documents' : step === 1 ? 'recipients' : step === 2 ? 'sender' : undefined} />
             </ContentCard>
-          </div>
+          </div> */}
         </div>
       </div>
     </DefaultLayout>
