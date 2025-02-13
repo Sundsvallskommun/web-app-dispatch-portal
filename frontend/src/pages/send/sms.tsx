@@ -5,7 +5,6 @@ import {
   FormLabel,
   Input,
   Textarea,
-  Select,
   Divider,
   Button,
   Chip,
@@ -17,23 +16,10 @@ import * as yup from 'yup';
 import ContentCard from '@components/content-card/content-card';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Help } from '@components/help/help.component';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SendHorizontal } from 'lucide-react';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { ApiResponse, apiService } from '@services/api-service';
-
-interface Country {
-  name: string;
-  code: string;
-}
-
-const countries: Country[] = [
-  { name: 'Sverige', code: '+46' },
-  { name: 'Norge', code: '+47' },
-  { name: 'Denmark', code: '+45' },
-  { name: 'Finland', code: '+358' },
-  { name: 'Island', code: '+354' },
-];
 
 const phoneNumberRegex =
   /^\+((?:9[679]|8[035789]|6[789]|5[90]|42|3[578]|2[1-689])|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[70]|7|1)(?:\W*\d){0,13}\d$/;
@@ -50,7 +36,7 @@ const formSchema = yup
 const initialValues = {
   country: '0',
   message: '',
-  singleRecipient: countries[0].code,
+  singleRecipient: '+46',
   recipientList: [],
 };
 
@@ -81,18 +67,10 @@ export default function SendEmailPage() {
     getValues,
     register,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = controls;
 
   const recipientList = watch('recipientList');
-  const country = watch('country');
-
-  useEffect(() => {
-    const country = getValues('country');
-    const { code } = countries[country];
-    setValue('singleRecipient', code);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [country]);
 
   const handleRemove = (recipient) => {
     const recipients = getValues('recipientList');
@@ -104,8 +82,6 @@ export default function SendEmailPage() {
 
   const addRecipient = () => {
     setError('');
-    const country = getValues('country');
-    const { code } = countries[country];
     const recipients = getValues('recipientList');
     const recipient = getValues('singleRecipient');
     const alreadyExists = recipients.indexOf(recipient);
@@ -119,7 +95,7 @@ export default function SendEmailPage() {
       setError('Formatet på telefonnumret är felaktigt');
       return;
     }
-    setValue('singleRecipient', code);
+    setValue('singleRecipient', initialValues.singleRecipient);
     setValue('recipientList', [...getValues('recipientList'), recipient]);
   };
 
@@ -187,17 +163,6 @@ export default function SendEmailPage() {
                     </div>
                     <div className="w-full p-12">
                       <div className="flex gap-16">
-                        <FormControl id="country">
-                          <FormLabel>Land</FormLabel>
-                          <Select {...register('country')} defaultValue={getValues('country')}>
-                            {countries?.map((country, index) => (
-                              <Select.Option key={country.name} value={index}>
-                                {country.name}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </FormControl>
-
                         <FormControl invalid={!!error} id="recipient" className="flex-grow" size="md">
                           <FormLabel>Mottagarens mobilnummer</FormLabel>
                           <Input {...register('singleRecipient')} />
@@ -252,7 +217,6 @@ export default function SendEmailPage() {
                   className="mt-16 self-end"
                   rightIcon={<Icon icon={<SendHorizontal />} />}
                   loading={isSending}
-                  //disabled={!isValid}
                 >
                   Skicka sms
                 </Button>
