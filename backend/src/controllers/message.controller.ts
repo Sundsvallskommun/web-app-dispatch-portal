@@ -55,15 +55,15 @@ export class MessageController {
   @Post('/sms')
   @OpenAPI({ summary: 'Send SMS to recipients' })
   @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
-  async sendSMS(@Body() body: RequestBodySMS, @Res() response: Response) {
+  async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
     const { message, recipients } = body;
     const data = {
       message,
       parties: recipients.map(rec => ({ 'mobileNumber': rec })),
       sender: SMS_SENDER,
     }
-    const url = `messaging/${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
-    const res = await this.apiService.post<SMSReponse, smsDTO>({ url, data }).catch(e => {
+    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
+    const res = await this.apiService.post<SMSReponse, smsDTO>({ url, data }, req.user).catch(e => {
       console.log('Error when sending sms:', e);
       throw new Error('Error when sending sms');
     });
