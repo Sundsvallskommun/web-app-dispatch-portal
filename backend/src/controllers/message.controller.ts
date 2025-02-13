@@ -1,4 +1,4 @@
-import { MUNICIPALITY_ID } from '@/config';
+import { MUNICIPALITY_ID, SMS_SENDER } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
@@ -60,9 +60,9 @@ export class MessageController {
     const data = {
       message,
       parties: recipients.map(rec => ({ 'mobileNumber': rec })),
-      sender: 'svallkommun',
+      sender: SMS_SENDER,
     }
-    const url = `messaging/5.4/${MUNICIPALITY_ID}/sms/batch`;
+    const url = `messaging/${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
     const res = await this.apiService.post<SMSReponse, smsDTO>({ url, data }).catch(e => {
       console.log('Error when sending sms:', e);
       throw new Error('Error when sending sms');
