@@ -255,18 +255,33 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
   );
   const sms = (
     <>
-      <Accordion.Item header="Vilket format på mottagarens mobilnummer?">
-        <p>
-          lorem ipsum...
-        </p>
+      <Accordion.Item header="Tänk på det här innan du skickar ditt sms">
+        <p>Tänk en extra gång tonen och på mängden text i ditt meddelande. Skriv begripligt, tydligt och vänligt.</p>
+        <p>Inled alltid med Hej och beskriv tydligt vad du vill säga. Organisationens namn kommer stå som avsändare så vid behov behöver du skriva vilken enhet/förvaltning/avdelning du skickar från.</p>
+
+        <p>Exempel:</p>
+
+        <p>Hej!</p> 
+        <p>Du har fått ett nytt meddelande kopplat till ditt Sundsvallsförslag. Läs mer på Mina sidor på Sundsvall.se.</p>
+
+        <p>Hej!</p>
+        <p>Din dator har nu ominstallerats och du kan hämta den hos Digitalisering och IT på Tivolivägen 10. Ring på klockan när du kommer. Välkommen!</p>
       </Accordion.Item>
-      <Accordion.Item header="nästa fråga?">
-        <p>
-          lorem ipsum
-        </p>
-        <p>
-          Använd gärna <Link href="/files/example.csv">exempelfilen</Link> när du skapar din mottagarlista.
-        </p>
+      <Accordion.Item header="Hur lägger jag till flera mottagare?">
+        <p>När du skrivit ditt meddelande kan du lägga till ett eller flera telefonnummer innan du klickar på skicka.</p>
+      </Accordion.Item>
+      <Accordion.Item header="Vart skickar jag tekniska frågor och felanmälan?">
+        <p>Vid tekniska frågor, problem och felanmälan hör du av dig till IT-support.</p>
+          <p>
+            <strong>Kontaktuppgifter till IT-support:</strong>
+          </p>
+          <p>Telefon: 060-19 15 00</p>
+          <p>
+            E-post:{' '}
+            <a className="text-vattjom-text-primary" href="support@sundsvall.se">
+              support@sundsvall.se
+            </a>
+          </p>
       </Accordion.Item>
     </>
   );
