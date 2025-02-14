@@ -1,4 +1,4 @@
-import { FormModel } from '@pages/index';
+import { FormModel } from '@pages/send/mail';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, Dialog } from '@sk-web-gui/react';
 import { FileText } from 'lucide-react';

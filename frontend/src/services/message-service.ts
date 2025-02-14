@@ -1,5 +1,5 @@
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@interfaces/batch-status';
-import { FormModel } from '@pages/index';
+import { FormModel } from '@pages/send/mail';
 import { ApiResponse, apiService } from './api-service';
 import { RecipientWithAddress, toBase64 } from './recipient-service';
 
