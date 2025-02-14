@@ -1,5 +1,5 @@
 import { ConfirmDialog } from '@components/confirm-dialog/confirm-dialog.component';
-import { FormModel } from '@pages/index';
+import { FormModel } from '@pages/send/mail';
 import { sendMessage } from '@services/message-service';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, useSnackbar } from '@sk-web-gui/react';

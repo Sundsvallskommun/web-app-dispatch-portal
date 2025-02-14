@@ -1,6 +1,6 @@
 import '@jestRoot/__mocks__/services.mock';
 import '@jestRoot/__mocks__/context.mock';
-import Index from '@pages/index';
+import Index from '@pages/send/mail';
 import { render, screen, act, waitFor, within } from '@testing-library/react'
 import { AppWrapper } from '@contexts/app.context';
 import { useRouter } from 'next/router'
