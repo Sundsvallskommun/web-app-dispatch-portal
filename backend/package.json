@@ -14,6 +14,7 @@
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "eslint --ignore-path .gitignore --ext .ts src/",
     "lint:fix": "npm run lint -- --fix",
+    "type-check": "tsc --pretty --noEmit",
     "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
@@ -44,7 +45,7 @@
     "memorystore": "^1.6.7",
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
-    "passport-saml": "^3.2.4",
+    "@node-saml/passport-saml": "^5.0.1",
     "qs": "^6.11.1",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.10.4",
