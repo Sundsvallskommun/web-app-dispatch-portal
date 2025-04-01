@@ -7,8 +7,4 @@ export const mainMenuItems = [
     href: '/statistics',
     label: 'Statistik',
   },
-  {
-    href: '/help',
-    label: 'Hjälp',
-  },
 ];

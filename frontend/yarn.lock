@@ -1384,6 +1384,13 @@
     "@sk-web-gui/utils" "1.1.0"
     lucide-react "^0.292.0"
 
+"@sk-web-gui/icon@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@sk-web-gui/icon/-/icon-3.0.2.tgz#eb49a7ed11079813f7a94d9e89f2ab22a8d81a01"
+  integrity sha512-UNE4VO73TszSDtQyMmbi5uyHHo5r5m9aOqwZfQx7XoWYGlvKWWG+aS6r9k6OoM/PJpQMHHjkK3wJHkbXAmwDlg==
+  dependencies:
+    "@sk-web-gui/utils" "2.1.0"
+
 "@sk-web-gui/image@1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@sk-web-gui/image/-/image-1.0.4.tgz#d9ebca6e1213e2a9ceaf7955797bd89cec194abb"
@@ -1445,6 +1452,15 @@
   dependencies:
     "@sk-web-gui/divider" "1.0.4"
     "@sk-web-gui/utils" "1.1.0"
+
+"@sk-web-gui/lucide-icon@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@sk-web-gui/lucide-icon/-/lucide-icon-1.0.2.tgz#bf665472c012feef596f4374188857778473375d"
+  integrity sha512-lpTq4U0jjH8vC399XtADPFZozpGbSwM2tLf39deRPgEcEg/nNvik13T4Dp3Yce0NMSYC5Moo3YOPddk5a5K1kg==
+  dependencies:
+    "@sk-web-gui/icon" "3.0.2"
+    "@sk-web-gui/utils" "2.1.0"
+    lucide-react "^0.372.0"
 
 "@sk-web-gui/menu-vertical@1.0.6":
   version "1.0.6"
@@ -1677,6 +1693,15 @@
     clsx "^1.2.1"
     color-string "^1.9.1"
     usehooks-ts "^2.12.0"
+
+"@sk-web-gui/utils@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@sk-web-gui/utils/-/utils-2.1.0.tgz#778530954f874d3d6cbca2ea29b5888f5942bce1"
+  integrity sha512-r1pq+XKo7YfQoxbPjPtpeCSrE7VHVeBBz0MkTPApsjgfTS7n30fRw7Ht6JJLaygEmKQ0G7/Yn8t4As0U9H9M4A==
+  dependencies:
+    clsx "^2.1.1"
+    color-string "^1.9.1"
+    usehooks-ts "^3.1.0"
 
 "@swc/helpers@0.5.2":
   version "0.5.2"
@@ -2723,7 +2748,7 @@ clsx@^1.2.1:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
   integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
-clsx@^2.1.0:
+clsx@^2.1.0, clsx@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
@@ -5288,6 +5313,11 @@ lucide-react@^0.292.0:
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.292.0.tgz#c8a06b2ccd8a348a88669def3c0291c035de2884"
   integrity sha512-rRgUkpEHWpa5VCT66YscInCQmQuPCB1RFRzkkxMxg4b+jaL0V12E3riWWR2Sh5OIiUhCwGW/ZExuEO4Az32E6Q==
 
+lucide-react@^0.372.0:
+  version "0.372.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.372.0.tgz#bb032d1e34ffca2eba016f951aabd261bbffacbe"
+  integrity sha512-0cKdqmilHXWUwWAWnf6CrrjHD8YaqPMtLrmEHXolZusNTr9epULCsiJwIOHk2q1yFxdEwd96D4zShlAj67UJdA==
+
 lucide-static@^0.292.0:
   version "0.292.0"
   resolved "https://registry.yarnpkg.com/lucide-static/-/lucide-static-0.292.0.tgz#64725b3b0e4173ac5a77dd8b97ec9a4be8b1d8d1"
@@ -6876,6 +6906,13 @@ usehooks-ts@^2.12.0:
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/usehooks-ts/-/usehooks-ts-2.16.0.tgz#31deaa2f1147f65666aae925bd890b54e63b0d3f"
   integrity sha512-bez95WqYujxp6hFdM/CpRDiVPirZPxlMzOH2QB8yopoKQMXpscyZoxOjpEdaxvV+CAWUDSM62cWnqHE0E/MZ7w==
+  dependencies:
+    lodash.debounce "^4.0.8"
+
+usehooks-ts@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/usehooks-ts/-/usehooks-ts-3.1.0.tgz#156119f36efc85f1b1952616c02580f140950eca"
+  integrity sha512-bBIa7yUyPhE1BCc0GmR96VU/15l/9gP1Ch5mYdLcFBaFGQsdmXkvjV0TtOqW1yUd6VjIwDunm+flSciCQXujiw==
   dependencies:
     lodash.debounce "^4.0.8"
 
