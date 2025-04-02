@@ -133,7 +133,7 @@ export interface EmailMessageRequest {
   attachments?: EmailMessageAttachment[];
 }
 
-const MESSAGING_SERVICE = `messaging/6.0`;
+const MESSAGING_SERVICE = `messaging/6.1`;
 
 export const sendEmail: (api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
   api,

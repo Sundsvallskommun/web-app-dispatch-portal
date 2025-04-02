@@ -2,6 +2,7 @@ import { luhnCheck } from '@/utils/util';
 import dayjs from 'dayjs';
 import ApiService from './api.service';
 import { parseCsv } from './csv-service/csv-service';
+import { MUNICIPALITY_ID } from '@/config';
 
 const MAX_RECIPIENT_ROW_SIZE = 250;
 
@@ -114,10 +115,10 @@ export const buildRecipientsList: (api: ApiService, csvString: string) => Promis
 };
 
 export const fetchAddressesForSsn = async (api: ApiService, identifiers: string[]): Promise<Citizenaddress[]> => {
-  const citizens = await api.post<CitizenId[], any>({ url: 'citizen/2.0/guid/batch', data: identifiers }).then(res => res.data);
+  const citizens = await api.post<CitizenId[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/guid/batch`, data: identifiers }).then(res => res.data);
   const validCitizens = citizens.filter(citizen => citizen.personId);
   const addresses = await api
-    .post<Citizenaddress[], any>({ url: 'citizen/2.0/batch', data: validCitizens.map(citizen => citizen.personId) })
+    .post<Citizenaddress[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/batch`, data: validCitizens.map(citizen => citizen.personId) })
     .then(res => res.data);
   return citizens.map(citizen => ({ ...citizen, ...addresses.find(address => address.personId === citizen.personId) }));
 };
