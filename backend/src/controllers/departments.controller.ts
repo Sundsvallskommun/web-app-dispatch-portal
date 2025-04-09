@@ -5,6 +5,7 @@ import authMiddleware from '@/middlewares/auth.middleware';
 import ApiService from '@/services/api.service';
 import { Controller, Get, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
+import { MUNICIPALITY_ID } from '@/config';
 
 const findDepartments = (org: Organization) => {
   const allDeps = [];
@@ -34,7 +35,7 @@ export class DepartmentsController {
   @UseBefore(authMiddleware)
   async getDepartments(@Req() req: RequestWithUser, @Res() response: any): Promise<any> {
     try {
-      const orgtree = await this.apiService.get<Organization>({ url: 'mdviewer/1.0/13/orgtree' });
+      const orgtree = await this.apiService.get<Organization>({ url: `company/1.0/${MUNICIPALITY_ID}/13/orgtree` });
       const departments = findDepartments(orgtree.data);
 
       return response.send(departments);

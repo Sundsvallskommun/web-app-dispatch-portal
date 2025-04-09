@@ -25,8 +25,8 @@ export const SenderHandler: React.FC = () => {
             <FormLabel>Förvaltning</FormLabel>
             <Select {...register('department')} defaultValue={getValues('department')}>
               {departments?.map((dep) => (
-                <Select.Option key={dep.organizationId} value={dep.orgDisplayName}>
-                  {dep.orgDisplayName}
+                <Select.Option key={dep.organizationId} value={dep.orgName}>
+                  {dep.orgName}
                 </Select.Option>
               ))}
             </Select>

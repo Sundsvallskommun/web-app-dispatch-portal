@@ -22,7 +22,7 @@ class RequestBody {
 @Controller()
 export class MessageController {
   private apiService = new ApiService();
-  SERVICE = `messaging/6.0`;
+  SERVICE = `messaging/6.1`;
 
   @Post('/message/')
   @OpenAPI({ summary: 'Send attachment to recipients' })

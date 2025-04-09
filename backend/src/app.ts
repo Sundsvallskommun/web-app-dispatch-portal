@@ -3,6 +3,7 @@ import {
   CREDENTIALS,
   DEV,
   LOG_FORMAT,
+  MUNICIPALITY_ID,
   NODE_ENV,
   ORIGIN,
   PORT,
@@ -128,7 +129,7 @@ const samlStrategy = new Strategy(
       if (DEV) {
         employee = TEST_USERNAME;
       }
-      const employeeDetails = await apiService.get<any>({ url: `employee/1.0/portalpersondata/PERSONAL/${employee}` });
+      const employeeDetails = await apiService.get<any>({ url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` });
       const { personid, orgTree } = employeeDetails.data;
 
       const findUser = {

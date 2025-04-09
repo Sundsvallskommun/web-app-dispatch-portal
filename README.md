@@ -9,9 +9,10 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 | API             | Version |
 | --------------- | ------: |
 | SimulatorServer |     2.0 |
-| Messaging       |     6.0 |
-| MDViewer        |     1.0 |
-| Employee        |     1.0 |
+| Messaging       |     6.1 |
+| Company         |     1.0 |
+| Employee        |     2.0 |
+| Citizen         |     3.0 |
 
 ## Utveckling
 
