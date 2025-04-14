@@ -122,9 +122,7 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
         </p>
       </Accordion.Item>
       <Accordion.Item header="När kan en delgivning skickas via Postportalen?">
-        <p>
-          En delgivning kan skickas via Postportalen om det gäller en förenklad delgivning eller en vanlig delgivning.
-        </p>
+        <p>En delgivning kan skickas via Portportalen om det gäller en förenklad delgivning.</p>
       </Accordion.Item>
       <Accordion.Item header="Vad är en förenklad delgivning?">
         <p>
