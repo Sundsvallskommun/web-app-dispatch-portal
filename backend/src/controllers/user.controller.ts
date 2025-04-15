@@ -64,7 +64,8 @@ export class UserController {
       params: {
         width: width,
       },
-    });
+      req.user,
+    );
     return res.data;
   }
 }
