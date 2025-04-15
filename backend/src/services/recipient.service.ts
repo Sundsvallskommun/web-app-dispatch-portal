@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import ApiService from './api.service';
 import { parseCsv } from './csv-service/csv-service';
 import { MUNICIPALITY_ID } from '@/config';
+import { User } from '@/interfaces/users.interface';
 
 const MAX_RECIPIENT_ROW_SIZE = 250;
 
@@ -53,7 +54,8 @@ const isMinor: (ssn: string) => boolean = ssn => {
   return lessThanEighteenYearsOld;
 };
 
-export const buildRecipientListFromPersonnumber: (api: ApiService, personnumber: string) => Promise<RecipientWithAddress[]> = async (
+export const buildRecipientListFromPersonnumber: (user: User, api: ApiService, personnumber: string) => Promise<RecipientWithAddress[]> = async (
+  user,
   api,
   personnumber,
 ) => {
@@ -63,7 +65,7 @@ export const buildRecipientListFromPersonnumber: (api: ApiService, personnumber:
     return [{ recipient: { personnumber }, error: 'INVALID_SSN' }];
   } else {
     try {
-      const address = await fetchAddressesForSsn(api, [personnumber]);
+      const address = await fetchAddressesForSsn(user, api, [personnumber]);
       return [{ recipient: { personnumber }, error: address[0]?.errorMessage ? 'MISSING' : undefined, address: address[0] }];
     } catch (error) {
       console.error('Error occurred while fetching addresses:', error);
@@ -72,7 +74,11 @@ export const buildRecipientListFromPersonnumber: (api: ApiService, personnumber:
   }
 };
 
-export const buildRecipientsList: (api: ApiService, csvString: string) => Promise<RecipientWithAddress[]> = async (api, csvString) => {
+export const buildRecipientsList: (user: User, api: ApiService, csvString: string) => Promise<RecipientWithAddress[]> = async (
+  user,
+  api,
+  csvString,
+) => {
   const recipients: Recipient[] = parseCsv(csvString);
 
   if (recipients.length > MAX_RECIPIENT_ROW_SIZE) {
@@ -97,6 +103,7 @@ export const buildRecipientsList: (api: ApiService, csvString: string) => Promis
 
   try {
     const addresses = await fetchAddressesForSsn(
+      user,
       api,
       validRecipients.map(recipient => recipient.personnumber),
     );
@@ -114,11 +121,11 @@ export const buildRecipientsList: (api: ApiService, csvString: string) => Promis
   }
 };
 
-export const fetchAddressesForSsn = async (api: ApiService, identifiers: string[]): Promise<Citizenaddress[]> => {
-  const citizens = await api.post<CitizenId[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/guid/batch`, data: identifiers }).then(res => res.data);
+export const fetchAddressesForSsn = async (user: User, api: ApiService, identifiers: string[]): Promise<Citizenaddress[]> => {
+  const citizens = await api.post<CitizenId[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/guid/batch`, data: identifiers }, user).then(res => res.data);
   const validCitizens = citizens.filter(citizen => citizen.personId);
   const addresses = await api
-    .post<Citizenaddress[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/batch`, data: validCitizens.map(citizen => citizen.personId) })
+    .post<Citizenaddress[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/batch`, data: validCitizens.map(citizen => citizen.personId) }, user)
     .then(res => res.data);
   return citizens.map(citizen => ({ ...citizen, ...addresses.find(address => address.personId === citizen.personId) }));
 };

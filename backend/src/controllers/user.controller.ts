@@ -58,13 +58,16 @@ export class UserController {
     }
 
     const url = `employee/2.0/${MUNICIPALITY_ID}/${personId}/personimage`;
-    const res = await this.apiService.get<any>({
-      url,
-      responseType: 'arraybuffer',
-      params: {
-        width: width,
+    const res = await this.apiService.get<any>(
+      {
+        url,
+        responseType: 'arraybuffer',
+        params: {
+          width: width,
+        },
       },
-    });
+      req.user,
+    );
     return res.data;
   }
 }
