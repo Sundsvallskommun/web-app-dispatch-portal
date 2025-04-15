@@ -151,7 +151,7 @@ const samlStrategy = new Strategy(
           canSendSMS: false,
         },
       };
-      const employeeDetails = await apiService.get<any>({ url: `employee/2.0/portalpersondata/PERSONAL/${employee}` }, dummyUser);
+      const employeeDetails = await apiService.get<any>({ url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` }, dummyUser);
       const { personid, orgTree } = employeeDetails.data;
 
       const findUser = {
