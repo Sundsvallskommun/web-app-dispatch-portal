@@ -18,3 +18,14 @@ export const useStatistics = (): { departmentStatistics: Statistics[]; loaded: b
 
   return { departmentStatistics: data, loaded }
 }
+
+export const getStatisticsByDate: (from: string, to: string) => Promise<Statistics[]> = async (from, to) => {
+  if (!from && !to) {
+    return Promise.reject('No "to" and "from" supplied');
+  }
+  const params = { from, to };
+  const res = await apiService.get<Statistics[]>(`statistics/departments`, { params }).catch((e) => {
+    throw e;
+  });
+  return res.data;
+};

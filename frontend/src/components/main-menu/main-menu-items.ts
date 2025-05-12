@@ -1,7 +1,11 @@
 export const mainMenuItems = [
   {
     href: '/',
-    label: 'Skicka post',
+    label: 'Skicka meddelande',
+  },
+  {
+    href: '/my-statistics',
+    label: 'Dina utskick',
   },
   {
     href: '/statistics',

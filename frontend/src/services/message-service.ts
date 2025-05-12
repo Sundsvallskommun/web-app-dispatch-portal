@@ -1,7 +1,7 @@
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@interfaces/batch-status';
-import { FormModel } from '@pages/index';
+import { FormModel } from '@pages/send/mail';
 import { ApiResponse, apiService } from './api-service';
-import { RecipientWithAddress, toBase64 } from './recipient-service';
+import { AddWithAddress, RecipientWithAddress, toBase64 } from './recipient-service';
 
 export const MAX_ATTACHMENT_FILE_SIZE_MB = 2;
 export interface Attachment {
@@ -56,8 +56,9 @@ const file2blob = async (fileItem: File) => {
 // Use multipart/form-data
 export const sendMessage: (
   data: FormModel,
-  recipients: RecipientWithAddress[]
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (data, recipients) => {
+  recipients: RecipientWithAddress[],
+  addresses: AddWithAddress[],
+) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (data, recipients, addresses) => {
   const messageFormData = new FormData();
 
   const attachmentList = data.attachmentList;
@@ -88,6 +89,7 @@ export const sendMessage: (
       messageFormData.append('department', data.department);
       messageFormData.append('subject', data.subject);
       messageFormData.append('recipients', JSON.stringify(recipients));
+      messageFormData.append('addresses', JSON.stringify(addresses));
       return apiService
         .post<ApiResponse<{ recipients: RecipientWithAddress[]; response: LetterResponse }>, FormData>(
           `message`,

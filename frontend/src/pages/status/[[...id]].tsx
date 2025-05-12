@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 
 export default function Status() {
   const router = useRouter();
-  const { id } = router.query;
+  const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
 
   return (
     <DefaultLayout
@@ -21,7 +21,7 @@ export default function Status() {
     >
       <div className="w-full">
         <div className="flex flex-col gap-32 justify-start max-w-[120rem]">
-          <StatusHandler id={Array.isArray(id) ? id[0] : id || ''} />
+          <StatusHandler id={id ?? ''} />
           <NextLink href="/" legacyBehavior passHref>
             <a className="sk-btn sk-btn-primary sk-btn-md w-fit" data-color="vattjom">
               Gör ett nytt utskick

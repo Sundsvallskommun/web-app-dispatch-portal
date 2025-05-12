@@ -9,6 +9,7 @@ import NextLink from 'next/link';
 import { ReactNode, useRef } from 'react';
 import { shallow } from 'zustand/shallow';
 import { userMenuGroups } from './userMenuGroups';
+import { Menu } from 'lucide-react';
 
 interface DefaultLayoutProps {
   title: string;
@@ -42,7 +43,8 @@ export default function DefaultLayout({ title, pageheader, children }: DefaultLa
       </NextLink>
       <div className="z-10">
         <Header
-          title={`Postportalen`}
+          title={`Postportal`}
+          subtitle={'Sundsvalls kommun'}
           LogoLinkWrapperComponent={<NextLink legacyBehavior={true} href={'/'} passHref />}
           userMenu={
             <span data-cy="usermenu">
@@ -57,15 +59,15 @@ export default function DefaultLayout({ title, pageheader, children }: DefaultLa
           mobileMenu={
             <PopupMenu align="end">
               <PopupMenu.Button data-cy="mobilemenu" iconButton color="primary" variant="primary">
-                <Icon name="menu" />
+                <Icon icon={<Menu />} />
               </PopupMenu.Button>
               <PopupMenu.Panel>
                 <PopupMenu.Items>
                   <PopupMenu.Group>
                     {mainMenuItems.map((item, index) => (
                       <PopupMenu.Item key={`mainmenu-${index}`}>
-                        <NextLink href={item.href} legacyBehavior passHref>
-                          <a href={item.href}>{item.label}</a>
+                        <NextLink href={item.href}>
+                          {item.label}
                         </NextLink>
                       </PopupMenu.Item>
                     ))}

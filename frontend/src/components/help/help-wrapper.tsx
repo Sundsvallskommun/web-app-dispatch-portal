@@ -1,6 +1,6 @@
-import LucideIcon from '@sk-web-gui/lucide-icon';
-import { Button, Header, cx } from '@sk-web-gui/react';
+import { Button, Header, cx, Icon } from '@sk-web-gui/react';
 import React from 'react';
+import { HelpCircle, X } from 'lucide-react';
 
 export const HelpWrapper: React.FC<{
   show: boolean;
@@ -18,7 +18,7 @@ export const HelpWrapper: React.FC<{
     >
       <Header className="h-[64px] flex justify-between" wrapperClasses="py-4 px-40">
         <div className="text-h4-sm flex items-center gap-12">
-          <LucideIcon name="circle-help" /> {label}
+          <Icon icon={<HelpCircle />} /> {label}
         </div>
         <Button
           tabIndex={show ? 0 : -1}
@@ -30,7 +30,7 @@ export const HelpWrapper: React.FC<{
           }}
           data-cy="close-help-wrapper"
         >
-          <LucideIcon name="x" data-cy="close-help-wrapper-icon" />
+          <Icon icon={<X />} data-cy="close-help-wrapper-icon" />
         </Button>
       </Header>
       {children}
