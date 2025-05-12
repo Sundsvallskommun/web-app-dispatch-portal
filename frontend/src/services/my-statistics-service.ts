@@ -4,7 +4,7 @@ import { apiService } from "@services/api-service";
 import { Message, Messages } from "@interfaces/statistics.interface";
 
 export interface AttachmentResponse {
-  data: Uint8Array<ArrayBuffer>;
+  data: ArrayBuffer;
   error?: never;
 }
 
@@ -67,7 +67,7 @@ export const useMessage = (messageId: string): { message: Message; loaded: boole
 
 export const getAttachmentFile: (messageId: string, fileName: string) => Promise<AttachmentResponse | AttachmentError> = (messageId, fileName) =>
   apiService
-    .get<Uint8Array<ArrayBuffer>>(`/my-statistics/attachment/${messageId}/${fileName}`, { responseType: 'arraybuffer'})
+    .get<ArrayBuffer>(`/my-statistics/attachment/${messageId}/${fileName}`, { responseType: 'arraybuffer'})
     .then((res) => res)
     .catch(
       (e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' })

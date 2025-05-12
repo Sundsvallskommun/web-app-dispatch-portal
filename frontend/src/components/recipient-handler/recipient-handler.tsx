@@ -9,7 +9,6 @@ import {
   MAX_RECIPIENT_FILE_SIZE_MB,
   MAX_RECIPIENT_ROW_SIZE,
   RecipientWithAddress,
-  ssnPattern,
   useMessageStore,
 } from '@services/recipient-service';
 import {
