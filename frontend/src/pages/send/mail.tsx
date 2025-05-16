@@ -6,7 +6,6 @@ import SubmitHandler from '@components/submit-handler/submit-handler';
 import { yupResolver } from '@hookform/resolvers/yup';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useMessageStore } from '@services/recipient-service';
-import { useUserStore } from '@services/user-service/user-service';
 import { Button, Icon } from '@sk-web-gui/react';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
@@ -49,15 +48,8 @@ export default function SendMailPage() {
   const response = useMessageStore((state) => state.response);
   const setResponse = useMessageStore((state) => state.setResponse);
   const [success, setSuccess] = useState(false);
-  const user = useUserStore((state) => state.user);
   const router = useRouter();
 
-  const myDepartment = user?.orgTree
-    ? user.orgTree
-        .split('¤')
-        ?.find((dep) => dep.charAt(0) === '2')
-        ?.split('|')[2]
-    : '';
 
   const controls = useForm<Partial<FormModel>>({
     resolver: yupResolver(formSchema),
@@ -66,20 +58,14 @@ export default function SendMailPage() {
     reValidateMode: 'onChange',
   });
 
-  const { watch, reset, setValue } = controls;
-
-  useEffect(() => {
-    if (myDepartment) {
-      setValue('department', myDepartment, { shouldDirty: false, shouldValidate: false });
-    }
-  }, [myDepartment, setValue]);
+  const { watch, reset } = controls;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
     setAddresses([]);
-    reset({ ...initialValues, department: myDepartment, subject: `Utskick från ${myDepartment}` });
+    reset({ ...initialValues, department: '', subject: '' });
     setResponse(undefined);
-  }, [myDepartment, reset, setRecipients, setResponse, setAddresses]);
+  }, [setRecipients, setAddresses, reset, setResponse]);
 
   const watchAttachmentList = watch('attachmentList');
   const hasAtLeastOneAttachment = watchAttachmentList ? watchAttachmentList.length > 0 : false;
