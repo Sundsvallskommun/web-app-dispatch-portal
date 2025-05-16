@@ -17,10 +17,10 @@ import { BadgeCheck } from 'lucide-react';
 
 const formSchema = yup
   .object({
-    message: yup.string(),
-    department: yup.string(),
-    subject: yup.string(),
-    body: yup.string(),
+    message: yup.string().nullable(),
+    department: yup.string().required(),
+    subject: yup.string().required(),
+    body: yup.string().nullable(),
     attachmentList: yup.array().test('HAS_MIN_ONE', 'Du måste bifoga ett dokument', (value) => {
       return value && value.length > 0;
     }),
@@ -59,7 +59,7 @@ export default function SendMailPage() {
         ?.split('|')[2]
     : '';
 
-  const controls = useForm<Partial<FormModel>>({
+  const controls = useForm({
     resolver: yupResolver(formSchema),
     values: initialValues,
     mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
