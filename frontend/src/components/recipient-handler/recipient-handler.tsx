@@ -310,7 +310,6 @@ const RecipientHandler: React.FC = () => {
                   onClick={() => setIsAddWithAddressOpen(true)}
                   color="vattjom"
                   inverted
-                  leftIcon={<Icon icon={<Plus />} />}
                 >
                   Lägg till med adress
                 </Button>
