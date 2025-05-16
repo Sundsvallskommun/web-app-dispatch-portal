@@ -14,7 +14,6 @@ const headers: Array<AutoTableHeader | string> = [
   {
     label: 'Mottagare',
     renderColumn: (value, item) => {
-      
       // Added with address
       if (item?.firstName) {
         return (<>
@@ -24,7 +23,7 @@ const headers: Array<AutoTableHeader | string> = [
 
       // Added with file or SSN
       return (<>
-        {item?.address?.givenname} {item?.address?.lastName}, {item?.address?.personNumber}
+        {item?.address?.givenname} {item?.address?.lastname}, {item?.address?.personNumber}
       </>)
   }
   },
