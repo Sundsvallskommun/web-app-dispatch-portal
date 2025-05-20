@@ -19,7 +19,6 @@ import {
   FormLabel,
   SearchField,
   Link,
-  Icon,
   Spinner,
   RadioButton,
   cx,
@@ -27,7 +26,6 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Plus } from 'lucide-react';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
