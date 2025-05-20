@@ -31,8 +31,7 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
       </Accordion.Item>
       <Accordion.Item header="Vilka rutiner gäller för dokument som skickas i Postportalen?">
         <p>
-          Varje verksamhet ansvarar för att arbetssätt gällande hantering av sekretess och säkerhetsklassning följs
-          enligt gällande informationshanteringsplan.
+          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med säkerhetsklass 3.
         </p>
       </Accordion.Item>
 
@@ -162,9 +161,12 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
   );
   const recipients = (
     <>
-      <Accordion.Item header="Hur skickar jag post till en person?">
+      <Accordion.Item header="Hur skickar jag post i Postportalen?">
         <p>
-          Skriv in personnumret till personen du ska skicka till. Skriv personnumren med tolv siffror, utan bindestreck.
+          Skriv in personnumret, använd tolv siffror. Om mottagaren har digital brevlåda skickas filen till den. Om mottagaren saknar digital brevlåda skickas filen som brevpost till mottagarens folkbokföringsadress.
+        </p>
+        <p>
+          Om du inte har tillgång till personnumret går det bra att skriva in mottagarens adress. I det fallet kommer filen att skickas direkt som brevpost till den adressen.
         </p>
       </Accordion.Item>
       <Accordion.Item header="Hur skapar jag en mottagarlista?">
@@ -247,6 +249,24 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
         <p>
           När dokumentet är färdigt raderar du det permanent från din dator. Det går att göra via kortkommandot: Shift +
           Delete. Raderas det utan kortkommandot måste du gå in i papperskorgen och även radera det där.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Hur ska jag hantera dokumentet som har säkerhetsklass 3?">
+        <p>
+          Det är viktigt att dokument som  innehåller säkerhetsklass 3-information hanteras lokalt på din dator. Det betyder att både platsen du väljer att ladda ner dokumentet till och det program du använder behöver finnas på din dator och inte i en molntjänst. Det här gäller även om du behöver ändra formatet på dokumentet.
+        </p>
+        <p>
+          När dokumentet är färdigt raderar du det permanent från din dator. Det går att göra via kortkommandot: Shift + Delete. Raderas det utan kortkommandot måste du gå in i papperskorgen och även radera det där.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Vilka säkerhetsrutiner gäller för dokument som skickas i Postportalen?">
+        <p>
+          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med säkerhetsklass 3.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Hur skickas filer från Public 360?">
+        <p>
+          I diariesystemet Public 360 är det möjligt att dra de pdf-filer du önskar skicka direkt från sidopanelen till Postportalen.
         </p>
       </Accordion.Item>
     </>
