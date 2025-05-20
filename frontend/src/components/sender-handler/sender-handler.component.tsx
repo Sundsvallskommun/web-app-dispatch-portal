@@ -9,7 +9,7 @@ export interface SenderFormModel {
 }
 
 export const  SenderHandler: React.FC = () => {
-  const { register, getValues } = useFormContext<SenderFormModel>();
+  const { register } = useFormContext<SenderFormModel>();
   const { departments, loaded } = useDepartments();
 
   return !loaded ? (
@@ -34,9 +34,12 @@ export const  SenderHandler: React.FC = () => {
           <FormControl className="w-full">
             <FormLabel className="text-label-medium">Avsändare <span className="font-normal">(Din förvaltning)</span></FormLabel>
             <p className="text-small text-secondary">Förvaltningen visas inte i utskicket. Uppgiften behövs för att Kontorsservice ska kunna fakturera din förvaltning för utskicket.</p>
-            <Select className="w-full" {...register('department')} defaultValue={getValues('department')}>
-              {departments?.map((dep) => (
-                <Select.Option key={dep.organizationId} value={dep.orgName}>
+            <Select className="w-full" {...register('department')} defaultValue={''}>
+              <Select.Option value="" disabled>
+                Välj avsändare
+              </Select.Option>
+              {departments?.map((dep, index) => (
+                <Select.Option key={index} value={dep.orgName}>
                   {dep.orgName}
                 </Select.Option>
               ))}
