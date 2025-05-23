@@ -52,7 +52,7 @@ interface SMSReponse {
 @Controller()
 export class MessageController {
   private apiService = new ApiService();
-  SERVICE = `messaging/6.1`;
+  SERVICE = `messaging/7.0`;
 
   @Post('/sms')
   @OpenAPI({ summary: 'Send SMS to recipients' })
@@ -158,7 +158,7 @@ export class MessageController {
                 if (Object.keys(delivery.content).includes('party')) {
                   const partyId = delivery.content['party']['partyIds'] || delivery.content['party']['partyId'];
                   if (partyId) {
-                    const citizenUrl = `citizen/2.0/${partyId}`;
+                    const citizenUrl = `citizen/3.0/${partyId}`;
                     const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }, req.user).catch(e => {
                       logger.error('Error when fetching recipient adress:', e);
                       console.log('Error when fetching recipient adress:', e);
