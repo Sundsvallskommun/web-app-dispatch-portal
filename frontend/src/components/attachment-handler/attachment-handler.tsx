@@ -63,7 +63,6 @@ const AttachmentHandler: React.FC = () => {
           <h4 className="pb-6">Lägg till textfil</h4>
           <p className="text-base pb-6">
           Ladda upp filer som ska ingå i ditt digitala brev, till exempel textfiler, fakturor och andra bilagor. Filerna får tillsammans ha en storlek på maximalt 1.5 MB{' '}
-            <strong>Någon info om säkerhetsklassade dokument?</strong>
           </p>
           <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
