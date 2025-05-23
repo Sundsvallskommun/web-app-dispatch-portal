@@ -18,10 +18,11 @@ const headers: Array<AutoTableHeader | string> = [
     property: 'digitalMail.sent',
     label: 'Digitala brev (antal)',
   },
-  {
+  // NOTE: To be implemented in the future
+  /* {
     property: 'sms.sent',
     label: 'Sms (antal)',
-  },
+  }, */
 ];
 
 export const StatisticsPage = () => {
