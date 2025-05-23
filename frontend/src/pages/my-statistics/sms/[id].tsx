@@ -26,7 +26,7 @@ export default function MyStatisticsDetails() {
     (r) => r.status === 'SENT'
   );
 
-  return !loaded ? <Spinner /> : (
+  return (
     <DefaultLayout
       title={`Postportalen`}
       pageheader={
@@ -43,6 +43,9 @@ export default function MyStatisticsDetails() {
         </PageHeader>
       }
     >
+    {!loaded ?
+      <Spinner />
+      :
       <div className="w-full max-w-screen-small-device-max mx-auto p-32 bg-white shadow-50 rounded-14">
         <h1 className="text-h4-lg mb-8">Sms</h1>
         <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
@@ -63,7 +66,7 @@ export default function MyStatisticsDetails() {
         {/* <div className="flex flex-col gap-32 justify-start max-w-[120rem]">
           {id ? <p>Details for ID: {id}</p> : <p>Loading...</p>}
         </div> */}
-      </div>
+      </div>}
     </DefaultLayout>
   );
 }

@@ -78,9 +78,7 @@ const headers: Array<AutoTableHeader | string> = [
 export const StatisticsPage = () => {
   const { messages, loaded } = useMyStatistics();
 
-  return !loaded ? (
-    <Spinner />
-  ) : (
+  return (
     <DefaultLayout title={`Postportal`}>
       <div className="text-lg mb-56 pt-32">
         <h1 className="text-h1-lg mb-8">Dina utskick</h1>
@@ -88,13 +86,17 @@ export const StatisticsPage = () => {
       </div>
 
       <div className="max-w-full mb-80">
-        <AutoTable
-          sortedOrder={SortMode.DESC}
-          footer={messages.length >= 12}
-          pageSize={11}
-          autodata={messages}
-          autoheaders={headers}
-        />
+        {!loaded ?
+          <Spinner />
+            :
+          <AutoTable
+            sortedOrder={SortMode.DESC}
+            footer={messages.length >= 12}
+            pageSize={11}
+            autodata={messages}
+            autoheaders={headers}
+          />
+        }
       </div>
     </DefaultLayout>
   );

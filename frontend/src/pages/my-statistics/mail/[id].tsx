@@ -100,7 +100,7 @@ export default function MyStatisticsDetails() {
       }).finally(() => setoadingAttachmentIndex(-1));
   };
 
-  return !loaded ? <Spinner /> : (
+  return (
     <DefaultLayout
       title={`Postportalen`}
       pageheader={
@@ -117,6 +117,9 @@ export default function MyStatisticsDetails() {
         </PageHeader>
       }
     >
+    {!loaded ?
+      <Spinner />
+      :
       <div className="w-full max-w-screen-small-device-max mx-auto p-32 bg-white shadow-50 rounded-14">
         <h1 className="text-h4-lg mb-8">Brev ({subject})</h1>
         <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
@@ -158,7 +161,7 @@ export default function MyStatisticsDetails() {
             </Tabs.Content>
           </Tabs.Item>
         </Tabs>
-      </div>
+      </div>}
     </DefaultLayout>
   );
 }
