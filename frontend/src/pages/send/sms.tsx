@@ -23,8 +23,7 @@ import { ApiResponse, apiService } from '@services/api-service';
 import { BadgeCheck } from 'lucide-react';
 import { HelpComposer } from '@components/help/help-composer';
 
-const phoneNumberRegex =
-  /^\+((?:9[679]|8[035789]|6[789]|5[90]|42|3[578]|2[1-689])|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[70]|7|1)(?:\W*\d){0,13}\d$/;
+const phoneNumberRegex = /^\+46[0-9]{7,13}$/;
 
 const formSchema = yup
   .object({
@@ -38,7 +37,7 @@ const formSchema = yup
 const initialValues = {
   country: '0',
   message: '',
-  singleRecipient: '+46',
+  singleRecipient: '',
   recipientList: [],
 };
 
@@ -90,10 +89,18 @@ export default function SendEmailPage() {
   const addRecipient = () => {
     setError('');
     const recipients = getValues('recipientList') ?? [];
-    const recipient = getValues('singleRecipient');
-    if (!recipient) {
+    const recipientValue = getValues('singleRecipient');
+    if (!recipientValue) {
       return;
     }
+
+    const recipient = recipientValue
+      .replace(/^0/, '+46')
+      .replaceAll('-', '')
+      .replaceAll(' ', '');
+
+    setValue('singleRecipient', recipient);
+
     const alreadyExists = recipients ? recipients?.indexOf(recipient) : 0;
 
     if (alreadyExists >= 0) {
@@ -193,7 +200,7 @@ export default function SendEmailPage() {
                           <div className="flex gap-16 max-w-sm">
                             <FormControl invalid={!!error} id="recipient" className="flex-grow" size="md">
                               <FormLabel className="text-label-medium">Mottagarens mobilnummer</FormLabel>
-                              <Input {...register('singleRecipient')} />
+                              <Input {...register('singleRecipient')} placeholder='+46' />
                             </FormControl>
 
                             <Button
