@@ -31,7 +31,7 @@ const headers: Array<AutoTableHeader | string> = [
     property: 'messageType',
     renderColumn: (value, item) => (
       <div className="text-right">
-        {item.messageType === 'mail' ? (
+        {item.messageType === 'SNAIL_MAIL' ? (
           <div className="py-4 px-10 bg-tertiary-surface text-label-small rounded-button">Fysisk post</div>
         ) : (
           <div className="py-4 px-10 text-gronsta-text-primary bg-gronsta-surface-accent text-label-small rounded-button">
