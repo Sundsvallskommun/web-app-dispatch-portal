@@ -101,7 +101,7 @@ export default function SendMailPage() {
               <div className="text-center max-w-[63rem] mx-auto">
               <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
               <h2 className="mt-24">Ditt brev har skickats</h2>
-              <p className="my-md text-base">De som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan.</p>
+              <p className="my-md text-base">Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan.</p>
               <div className="flex gap-16 justify-center mt-40">
                 <Button
                   className="mt-lg"
