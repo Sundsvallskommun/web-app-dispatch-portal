@@ -51,6 +51,7 @@ export const StatisticsPage = () => {
   }, [fromDate, loaded, toDate]);
 
   const handleDateChange = (date: string) => {
+    setLoaded(false);
     if (!date) {
       setFromDate(undefined);
       setToDate(undefined);
@@ -107,7 +108,7 @@ export const StatisticsPage = () => {
               </p>
             </div>
           )}
-          {departmentStatistics.length > 0 && (
+          {loaded && departmentStatistics.length > 0 && (
             <AutoTable
               footer={departmentStatistics.length >= 12}
               pageSize={11}
