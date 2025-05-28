@@ -57,7 +57,7 @@ export const RecipientList: React.FC = () => {
           </>)
         }
 
-        const adress = item?.address?.addresses[0];
+        const adress = item?.address?.addresses ? item?.address?.addresses[0] : undefined;
         if (!adress) return <></>;
 
         const { address, postalCode, city } = adress;

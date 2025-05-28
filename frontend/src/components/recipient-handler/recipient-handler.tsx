@@ -294,7 +294,7 @@ const RecipientHandler: React.FC = () => {
                   {foundPerson?.address && <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
                     <p className="text-body text-base font-bold">{foundPerson.address.givenname} {foundPerson.address.lastname}</p>
                     <p className="text-small">{foundPerson.address?.personNumber}</p>
-                    <p className="text-small">{foundPerson.address.addresses[0].address}, {foundPerson.address.addresses[0].city}</p>
+                    <p className="text-small">{foundPerson.address?.addresses[0].address}, {foundPerson.address?.addresses[0].city}</p>
                     
                     <Button className="mt-16" onClick={() => handleSubmitSingleRecipient()}>Lägg till mottagare</Button>
                   </div>}
