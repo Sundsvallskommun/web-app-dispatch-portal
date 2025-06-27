@@ -233,14 +233,23 @@ const RecipientHandler: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center">
-      <Modal show={isWarningOpen} onClose={() => onCloseWarningModal(false)} label="Vill du lägga till mottagare med mottagarlista?" className="w-[40rem]">
+      <Modal
+        show={isWarningOpen}
+        onClose={() => onCloseWarningModal(false)}
+        label="Vill du lägga till mottagare med mottagarlista?"
+        className="w-[40rem]"
+      >
         <Modal.Content>
           <p>Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna.</p>
         </Modal.Content>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => onCloseWarningModal(false)}>Avbryt</Button>
-          <Button color="vattjom" onClick={() => onCloseWarningModal(true)}>Ja, fortsätt</Button>
+          <Button variant="secondary" onClick={() => onCloseWarningModal(false)}>
+            Avbryt
+          </Button>
+          <Button color="vattjom" onClick={() => onCloseWarningModal(true)}>
+            Ja, fortsätt
+          </Button>
         </Modal.Footer>
       </Modal>
       <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
@@ -250,18 +259,32 @@ const RecipientHandler: React.FC = () => {
             Lägg till mottagare med personnummer eller adress, eller ladda upp en mottagarlista i CSV-format. Använd
             gärna <Link href="/files/example.csv">exempelfilen (csv)</Link> när du skapar en mottagarlista.
           </p>
+          <p className="text-base pb-6">
+            Ska du skicka post till en mottagare som har särskild postadress? Då behöver du ange adressen manuellt.
+            Klicka på knappen ”Lägg till med adress”.
+          </p>
           <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
 
         <div className="w-full gap-32">
           <h3 className="text-label-medium">Hur vill du lägga till mottagare?</h3>
           <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
-            <div className={cx('flex-1 border rounded-groups p-16', current === 0 ? 'border-dark-primary' : 'border-divider')}>
+            <div
+              className={cx(
+                'flex-1 border rounded-groups p-16',
+                current === 0 ? 'border-dark-primary' : 'border-divider'
+              )}
+            >
               <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
                 Med personnummer eller adress
               </RadioButton>
             </div>
-            <div className={cx('flex-1 border rounded-groups p-16', current === 1 ? 'border-dark-primary' : 'border-divider')}>
+            <div
+              className={cx(
+                'flex-1 border rounded-groups p-16',
+                current === 1 ? 'border-dark-primary' : 'border-divider'
+              )}
+            >
               <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
                 Med mottagarlista
               </RadioButton>
@@ -288,27 +311,34 @@ const RecipientHandler: React.FC = () => {
                     minLength={12}
                     placeholder="Sök"
                     hideExtra
-                    onReset={() => { setValue('singleRecipient', ''); setFoundPerson(undefined); }}
+                    onReset={() => {
+                      setValue('singleRecipient', '');
+                      setFoundPerson(undefined);
+                    }}
                     onSearch={() => handleSubmitSingleRecipient()}
                   />
-                  {foundPerson?.address && <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
-                    <p className="text-body text-base font-bold">{foundPerson.address.givenname} {foundPerson.address.lastname}</p>
-                    <p className="text-small">{foundPerson.address?.personNumber}</p>
-                    <p className="text-small">{foundPerson.address?.addresses[0].address}, {foundPerson.address?.addresses[0].city}</p>
-                    
-                    <Button className="mt-16" onClick={() => handleSubmitSingleRecipient()}>Lägg till mottagare</Button>
-                  </div>}
+                  {foundPerson?.address && (
+                    <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
+                      <p className="text-body text-base font-bold">
+                        {foundPerson.address.givenname} {foundPerson.address.lastname}
+                      </p>
+                      <p className="text-small">{foundPerson.address?.personNumber}</p>
+                      <p className="text-small">
+                        {foundPerson.address?.addresses[0].address}, {foundPerson.address?.addresses[0].city}
+                      </p>
+
+                      <Button className="mt-16" onClick={() => handleSubmitSingleRecipient()}>
+                        Lägg till mottagare
+                      </Button>
+                    </div>
+                  )}
                 </div>
-                
+
                 {/* <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText> */}
                 {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-                <Button
-                  onClick={() => setIsAddWithAddressOpen(true)}
-                  color="vattjom"
-                  inverted
-                >
+                <Button onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
                   Lägg till med adress
                 </Button>
               </FormControl>
