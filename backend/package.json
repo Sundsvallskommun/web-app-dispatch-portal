@@ -22,6 +22,7 @@
     "routing-controllers/**/multer": "1.4.5-lts.1"
   },
   "dependencies": {
+    "@node-saml/passport-saml": "^5.1.0",
     "@prisma/client": "^4.14.0",
     "@types/multer": "^1.4.7",
     "axios": "^1.6.8",
@@ -45,7 +46,6 @@
     "memorystore": "^1.6.7",
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
-    "@node-saml/passport-saml": "^5.0.1",
     "qs": "^6.11.1",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.10.4",
