@@ -338,6 +338,11 @@ class App {
         title: 'API',
         version: '1.0.0',
       },
+      servers: [
+        {
+          url: BASE_URL_PREFIX,
+        },
+      ],
     });
 
     this.app.use(`${BASE_URL_PREFIX}/api-docs`, swaggerUi.serve, swaggerUi.setup(spec));
