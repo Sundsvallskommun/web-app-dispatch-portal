@@ -1,157 +1,64 @@
-import AttachmentHandler, { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
-import { FormStepper } from '@components/form-stepper/form-stepper.component';
-import RecipientHandler, { RecipientListFormModel } from '@components/recipient-handler/recipient-handler';
-import { SenderFormModel, SenderHandler } from '@components/sender-handler/sender-handler.component';
-import SubmitHandler from '@components/submit-handler/submit-handler';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { Card } from '@sk-web-gui/react';
+import NextLink from 'next/link';
+
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { useMessageStore } from '@services/recipient-service';
 import { useUserStore } from '@services/user-service/user-service';
-import { Button } from '@sk-web-gui/react';
-import { GetServerSideProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import * as yup from 'yup';
-const formSchema = yup
-  .object({
-    message: yup.string().nullable(),
-    department: yup.string().required(),
-    subject: yup.string().required(),
-    body: yup.string().nullable(),
-    attachmentList: yup.array().test('HAS_MIN_ONE', 'Du måste bifoga ett dokument', (value) => {
-      return value && value.length > 0;
-    }),
-    recipientList: yup.array(),
-  })
-  .required();
+import { useEffect, useState } from 'react';
 
-const initialValues = {
-  attachmentList: [],
-  message: '',
-  recipientList: [],
-  singleRecipient: '',
-  subject: '',
-  body: '',
-  department: '',
-};
-
-export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
-
-const Index = () => {
-  const [step, setStep] = useState<number>(0);
-  const recipients = useMessageStore((state) => state.recipients);
-  const setRecipients = useMessageStore((state) => state.setRecipients);
-  const response = useMessageStore((state) => state.response);
-  const setResponse = useMessageStore((state) => state.setResponse);
-  const [success, setSuccess] = useState(false);
+export default function Index() {
+  const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
-  const { t } = useTranslation(['common']);
-
-  const myDepartment = user?.orgTree
-    ? user.orgTree
-        .split('¤')
-        ?.find((dep) => dep.charAt(0) === '2')
-        ?.split('|')[2]
-    : '';
-
-  const controls = useForm<Partial<FormModel>>({
-    resolver: yupResolver(formSchema),
-    values: initialValues,
-    mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
-    reValidateMode: 'onChange',
-  });
-
-  const { watch, reset, setValue } = controls;
 
   useEffect(() => {
-    if (myDepartment) {
-      setValue('department', myDepartment, { shouldDirty: false, shouldValidate: false });
-    }
-  }, [myDepartment, setValue]);
-
-  const resetAll = useCallback(() => {
-    setRecipients([]);
-    reset({ ...initialValues, department: myDepartment, subject: `Utskick från ${myDepartment}` });
-    setResponse(undefined);
-  }, [myDepartment, reset, setRecipients, setResponse]);
-
-  const hasAtLeastOneAttachment = watch('attachmentList').length > 0;
-
-  useEffect(() => {
-    if (response) {
-      // router.push(`/status/${response.response.batchId}`);
-      setSuccess(true);
-      resetAll();
-    }
-  }, [resetAll, response, router]);
-
-  const hasValidRecipients = recipients?.some(
-    (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
-  );
+    setIsCheckingPermissions(false);
+  }, [user.permissions.canSendSMS, router]);
 
   return (
     <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">
-        Skicka post.{' '}
-        {step === 0
-          ? 'Steg 1: Lägg till textdokument'
-          : step === 1
-            ? 'Steg 2: Lägg till mottagare'
-            : step === 2
-              ? 'Steg 3: Ange avsändare'
-              : undefined}
-      </h1>
-      <div className="text-lg mb-11 pt-48">
-        <div className="flex flex-row gap-32 lg:gap-48 xl:gap-80 flex-wrap lg:flex-nowrap justify-between">
-          <div className="w-full lg:w-7/12">
-            {success ? (
-              <>
-                <h2>{`${t('done')}!`}</h2>
-                <p className="my-md text-base">{`${t('dispactDone')}.`}.</p>
-                <Button
-                  className="mt-lg"
-                  color="vattjom"
-                  onClick={() => {
-                    resetAll();
-                    setSuccess(false);
-                  }}
-                >
-                  {t('dispactNew')}
-                </Button>
-              </>
-            ) : (
-              <FormProvider {...controls}>
-                <FormStepper
-                  steps={[
-                    {
-                      label: t('stepper.stepOne'),
-                      component: <AttachmentHandler />,
-                      valid: hasAtLeastOneAttachment,
-                    },
-                    { label: t('stepper.stepTwo'), component: <RecipientHandler />, valid: hasValidRecipients },
-                    { label: t('stepper.stepThree'), component: <SenderHandler /> },
-                  ]}
-                  onChangeStep={setStep}
-                  submitButton={<SubmitHandler />}
-                ></FormStepper>
-              </FormProvider>
-            )}
+      {!isCheckingPermissions && (
+        <>
+          <h1 className="sr-only">Skicka post.</h1>
+          <div className="flex self-center flex-col text-lg mb-11 pt-48 max-w-max">
+            <div className="text-center">
+              <p className="text-base mb-16">Skicka meddelande till invånare med vår postportal</p>
+              <h1 className="text-display-3-lg mb-40">Vad vill du skicka idag?</h1>
+            </div>
+            <div className="md:flex flex-1 basis-0 gap-24">
+              <NextLink href="/send/mail" legacyBehavior passHref>
+                <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
+                  <Card.Body className="flex-1">
+                    <Card.Header>
+                      <h2 className="text-h3-md">Brev</h2>
+                    </Card.Header>
+                    <Card.Text>
+                      {/* <p className="text-small">Någon text som beskriver vad skicka digitalt brev innebär</p> */}
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </NextLink>
+              {user.permissions.canSendSMS && (
+                <NextLink href="/send/sms" legacyBehavior passHref>
+                  <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
+                    <Card.Body className="flex-1">
+                      <Card.Header>
+                        <h2 className="text-h3-md">Sms</h2>
+                      </Card.Header>
+                      <Card.Text>
+                        {/* <p className="text-small">Någon text som beskriver vad skicka sms innebär</p> */}
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </NextLink>
+              )}
+            </div>
           </div>
-          {/* Not 100% sure if this is needed later.. */}
-          {/* <div className="w-full lg:w-4/12">
-            <ContentCard>
-              <Help show={step === 0 ? 'documents' : step === 1 ? 'recipients' : step === 2 ? 'sender' : undefined} />
-            </ContentCard>
-          </div> */}
-        </div>
-      </div>
+        </>
+      )}
     </DefaultLayout>
   );
-};
+}
 
 export const getStaticProps: GetServerSideProps<{}> = async ({ locale }) => ({
   props: {

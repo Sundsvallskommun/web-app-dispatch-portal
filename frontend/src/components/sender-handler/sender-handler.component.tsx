@@ -9,35 +9,45 @@ export interface SenderFormModel {
 }
 
 export const SenderHandler: React.FC = () => {
-  const { register, getValues } = useFormContext<SenderFormModel>();
+  const { register } = useFormContext<SenderFormModel>();
   const { departments, loaded } = useDepartments();
 
   return !loaded ? (
     <Spinner />
   ) : (
     <div className="w-full flex justify-center">
-      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards">
-        <h4 className="px-32 py-16">Ange avsändare</h4>
-        <Divider className="w-full" orientation="horizontal" strong={false} />
+      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
+        <div className="w-full">
+          <h4 className="pb-20">Ange ämne och avsändare</h4>
+          <Divider className="w-full" orientation="horizontal" strong={false} />
+        </div>
 
-        <div className="p-32">
+        <div className="flex flex-col gap-56 max-w-screen-sm">
+          <FormControl className="w-full" size="md">
+            <FormLabel className="text-label-medium">Ämne</FormLabel>
+            <p className="text-small text-secondary">Ange ett ämne som beskriver utskickets innehåll.</p>
+            <Input {...register('subject')} />
+          </FormControl>
+
           <FormControl className="w-full">
-            <FormLabel>Förvaltning</FormLabel>
-            <Select {...register('department')} defaultValue={getValues('department')}>
-              {departments?.map((dep) => (
-                <Select.Option key={dep.organizationId} value={dep.orgName}>
+            <FormLabel className="text-label-medium">
+              Avsändare <span className="font-normal">(Din förvaltning)</span>
+            </FormLabel>
+            <p className="text-small text-secondary">
+              Förvaltningen visas inte i utskicket. Uppgiften behövs för att Kontorsservice ska kunna fakturera din
+              förvaltning för utskicket.
+            </p>
+            <Select className="w-full" {...register('department')} defaultValue={''}>
+              <Select.Option value="" disabled>
+                Välj avsändare
+              </Select.Option>
+              {departments?.map((dep, index) => (
+                <Select.Option key={`${index}-${dep.orgName}`} value={dep.orgName}>
                   {dep.orgName}
                 </Select.Option>
               ))}
             </Select>
           </FormControl>
-          <p className="text-small pb-32 pt-8">Välj vilken förvaltning som är avsändare.</p>
-
-          <FormControl className="w-full" size="md">
-            <FormLabel>Ämne</FormLabel>
-            <Input {...register('subject')} />
-          </FormControl>
-          <p className="text-small pt-8">Ange ett ämne som beskriver utskickets innehåll.</p>
         </div>
       </div>
     </div>

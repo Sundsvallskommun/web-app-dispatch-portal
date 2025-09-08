@@ -15,6 +15,7 @@ type RecipientError = 'MISSING' | 'INVALID_SSN' | 'MINOR' | 'UNKNOWN';
 
 export interface Citizenaddress {
   personId: string;
+  personNumber?: string;
   givenname: string;
   lastname: string;
   addresses: [
@@ -39,6 +40,15 @@ export interface RecipientWithAddress {
   address?: Citizenaddress;
   error?: RecipientError;
 }
+
+export interface AddWithAddress {
+  firstName: string;
+  lastName: string;
+  address: string;
+  careOf?: string;
+  zipCode: string;
+  city: string;
+};
 
 export const ssnPattern = /^$|^((19|20)[0-9]{6}-?[0-9]{4})$/gi;
 
@@ -123,16 +133,19 @@ export const getRecipient = async (personnumber: string): Promise<RecipientWithA
 
 interface State {
   recipients: RecipientWithAddress[];
+  addresses: AddWithAddress[];
   response?: { recipients: RecipientWithAddress[]; response: LetterResponse };
 }
 interface Actions {
   setRecipients: (rs: RecipientWithAddress[]) => void;
+  setAddresses: (addresses: AddWithAddress[]) => void;
   setResponse: (r: { recipients: RecipientWithAddress[]; response: LetterResponse } | undefined) => void;
   reset: () => void;
 }
 
 const initialState: State = {
   recipients: [],
+  addresses: [],
   response: undefined,
 };
 
@@ -141,6 +154,7 @@ export const useMessageStore = create<State & Actions>()(
     (set) => ({
       ...initialState,
       setRecipients: (recipients) => set(() => ({ recipients })),
+      setAddresses: (addresses) => set(() => ({ addresses })),
       setResponse: (response) => set(() => ({ response })),
       reset: () => {
         set(initialState);

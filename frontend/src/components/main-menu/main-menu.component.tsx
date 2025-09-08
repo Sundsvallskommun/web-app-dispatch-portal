@@ -1,19 +1,17 @@
-import { MenuBar, Button } from '@sk-web-gui/react';
+import { MenuBar } from '@sk-web-gui/react';
 import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { mainMenuItems } from './main-menu-items';
-import { HelpComposer } from '../help/help-composer';
 
 export const MainMenu: React.FC = () => {
   const [active, setActive] = useState<number>(0);
-  const [showHelpComposer, setShowHelpComposer] = useState(false);
 
-  const openHelpComposer = () => setShowHelpComposer(true);
-  const closeHelpComposer = () => setShowHelpComposer(false);
   useEffect(() => {
-    if (window.location.pathname === '/statistics') {
+    if (window.location.pathname.startsWith('/send')) {
+      setActive(0);
+    } else if (window.location.pathname.startsWith('/my-statistics')) {
       setActive(1);
-    } else if (window.location.pathname === '/help') {
+    } else if(window.location.pathname === '/statistics') {
       setActive(2);
     } else {
       setActive(0);
@@ -28,12 +26,6 @@ export const MainMenu: React.FC = () => {
             <a>{item.label}</a>
           </MenuBar.Item>
         ))}
-        <div>
-          <Button inverted="true" onClick={openHelpComposer}>
-            Hjälp
-          </Button>
-          <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
-        </div>
       </MenuBar>
     </div>
   );

@@ -1,5 +1,5 @@
 export interface DepartmentStatistics {
-  DEPARTMENT_STATISTICS: Statistics;
+  DEPARTMENT_STATISTICS: Statistics[];
 }
 
 export interface Statistics {
@@ -9,6 +9,6 @@ export interface Statistics {
 }
 
 export interface Mail {
-  SENT: number;
-  FAILED: number;
+  sent: number;
+  failed: number;
 }
