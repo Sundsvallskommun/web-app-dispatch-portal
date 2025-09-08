@@ -127,5 +127,9 @@ export const fetchAddressesForSsn = async (user: User, api: ApiService, identifi
   const addresses = await api
     .post<Citizenaddress[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/batch`, data: validCitizens.map(citizen => citizen.personId) }, user)
     .then(res => res.data);
+
+  if (!addresses || addresses.length === 0) {
+    throw new Error('NO_VALID_ADDRESSES');
+  }
   return citizens.map(citizen => ({ ...citizen, ...addresses.find(address => address.personId === citizen.personId) }));
 };

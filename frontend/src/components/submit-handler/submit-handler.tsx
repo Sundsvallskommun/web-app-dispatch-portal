@@ -1,15 +1,16 @@
 import { ConfirmDialog } from '@components/confirm-dialog/confirm-dialog.component';
-import { FormModel } from '@pages/index';
+import { FormModel } from '@pages/send/mail';
 import { sendMessage } from '@services/message-service';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, useSnackbar } from '@sk-web-gui/react';
-import { SendHorizonal } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 const SubmitHandler: React.FC = () => {
   const [isSending, setIsSending] = useState(false);
   const recipients = useMessageStore((state) => state.recipients);
+  const addresses = useMessageStore((state) => state.addresses);
   const setResponse = useMessageStore((state) => state.setResponse);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const message = useSnackbar();
@@ -22,7 +23,8 @@ const SubmitHandler: React.FC = () => {
     setIsSending(true);
     sendMessage(
       getValues(),
-      recipients.filter((r) => !r.error)
+      recipients.filter((r) => !r.error),
+      addresses
     )
       .then((res) => {
         setIsSending(false);
@@ -48,13 +50,13 @@ const SubmitHandler: React.FC = () => {
       <Button
         variant="primary"
         color="vattjom"
-        disabled={recipients.filter((r) => !r.error).length === 0 || !isValid}
-        rightIcon={<SendHorizonal />}
+        disabled={(recipients.filter((r) => !r.error).length === 0 && addresses.length === 0) || !isValid}
+        rightIcon={<ArrowRight />}
         loading={isSending}
         loadingText="Skickar..."
         onClick={() => setShowConfirm(true)}
       >
-        Skicka
+        Granska utskick
       </Button>
       <ConfirmDialog open={showConfirm} onClose={handleConfirm} />
     </>

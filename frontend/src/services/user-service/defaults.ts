@@ -2,14 +2,7 @@ import { User, Permissions } from '@interfaces/user';
 import { ApiResponse } from '@services/api-service';
 
 export const defaultPermissions: Permissions = {
-  canEditMaster: false,
-  canEditHR: false,
-  canEditEconomy: false,
-  canEditEmployee: false,
-  canEditResponsibility: false,
-  canEditOrganization: false,
-  canEditOrganizationStructure: false,
-  canView: false,
+  canSendSMS: false,
 };
 
 export const emptyUser: User = {

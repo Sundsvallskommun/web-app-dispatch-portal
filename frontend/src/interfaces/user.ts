@@ -1,12 +1,5 @@
 export interface Permissions {
-  canEditMaster: boolean;
-  canEditHR: boolean;
-  canEditEconomy: boolean;
-  canEditEmployee: boolean;
-  canEditResponsibility: boolean;
-  canEditOrganization: boolean;
-  canEditOrganizationStructure: boolean;
-  canView: boolean;
+  canSendSMS: boolean;
 }
 export interface User {
   id: number;

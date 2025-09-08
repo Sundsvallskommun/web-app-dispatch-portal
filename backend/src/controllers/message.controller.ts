@@ -1,22 +1,52 @@
-import { MUNICIPALITY_ID } from '@/config';
+import { MUNICIPALITY_ID, SMS_SENDER } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
+import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
 import { LetterResponse, sendLetter } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
-import { IsString } from 'class-validator';
+import { ArrayMinSize, IsArray, IsString } from 'class-validator';
+import { Response } from 'express';
 import { Body, Controller, Get, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
-class RequestBody {
+class RequestBodyMail {
   @IsString()
   recipients: string;
+  @IsString()
+  addresses: string;
   subject: string;
   body: string;
   department: string;
+}
+
+class RequestBodySMS {
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMinSize(1)
+  recipients: string[];
+  @IsString()
+  message: string;
+}
+
+interface SMSDTO {
+  sender: string;
+  message: string;
+  parties: { mobileNumber: string }[];
+}
+
+interface SMSReponse {
+  batchId: string;
+  messages: {
+    messageId: string;
+    deliveries: {
+      deliveryId: string;
+      messageType: string;
+    }[];
+  }[];
 }
 
 @Controller()
@@ -24,12 +54,31 @@ export class MessageController {
   private apiService = new ApiService();
   SERVICE = `messaging/7.3`;
 
+  @Post('/sms')
+  @OpenAPI({ summary: 'Send SMS to recipients' })
+  @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
+  async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
+    const { message, recipients } = body;
+    const data = {
+      message,
+      parties: recipients.map(rec => ({ mobileNumber: rec })),
+      sender: SMS_SENDER,
+    };
+    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
+    const res = await this.apiService.post<SMSReponse, SMSDTO>({ url, data }, req.user).catch(e => {
+      console.log('Error when sending sms:', e);
+      throw new Error('Error when sending sms');
+    });
+
+    return response.send({ data: res.data, message: 'success' }).status(200);
+  }
+
   @Post('/message/')
   @OpenAPI({ summary: 'Send attachment to recipients' })
   @UseBefore(authMiddleware)
   async recipients(
     @Req() req: RequestWithUser,
-    @Body() body: RequestBody,
+    @Body() body: RequestBodyMail,
     @Res() response: any,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
   ): Promise<{
@@ -37,13 +86,15 @@ export class MessageController {
     message: string;
   }> {
     let recipients: RecipientWithAddress[];
+    let addresses;
     try {
       recipients = JSON.parse(body.recipients);
+      addresses = JSON.parse(body.addresses);
     } catch (error) {
       throw new Error('Could not parse recipient list');
     }
 
-    const res = await sendLetter(req.user, this.apiService, recipients, body.subject, body.body, body.department, files)
+    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, body.department, addresses)
       .then(async res => {
         // TODO do not send status email for now
         // const emailAddress = DEV ? TEST_EMAIL : req.user.email;
@@ -105,7 +156,7 @@ export class MessageController {
                 if (Object.keys(delivery.content).includes('party')) {
                   const partyId = delivery.content['party']['partyIds'] || delivery.content['party']['partyId'];
                   if (partyId) {
-                    const citizenUrl = `citizen/2.0/${partyId}`;
+                    const citizenUrl = `citizen/3.0/${partyId}`;
                     const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }, req.user).catch(e => {
                       logger.error('Error when fetching recipient adress:', e);
                       console.log('Error when fetching recipient adress:', e);

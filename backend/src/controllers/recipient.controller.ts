@@ -33,6 +33,9 @@ export class RecipientController {
       if (e.message === 'MAX_RECIPIENT_ROW_SIZE') {
         throw new HttpException(400, 'MAX_RECIPIENT_ROW_SIZE');
       }
+      if (e.message === 'NO_VALID_ADDRESSES') {
+        throw new HttpException(400, 'NO_VALID_ADDRESSES');
+      }
     });
     return response
       .send({ data: recipientsWithAddresses, message: 'success' } as {
