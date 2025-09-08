@@ -37,3 +37,15 @@ yarn-error.log*
 .vercel
 .npmrc
 .yarnrc
+
+
+# Yarn (Berry)
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.yarn/install-state.gz
+.pnp.*
+.pnp.loader.mjs
