@@ -1,57 +1,14 @@
 import { FormModel } from '@pages/send/mail';
 import { useMessageStore } from '@services/recipient-service';
-import { Button, Dialog, AutoTable, AutoTableHeader, Icon } from '@sk-web-gui/react';
-import { SendHorizonal } from 'lucide-react';
+import { Button, Dialog, Icon } from '@sk-web-gui/react';
+import { File, SendHorizonal } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
-import { File } from 'lucide-react';
+import { RecipientTable } from 'src/recipient-table/recipient-table.component';
 
 interface ConfirmDialogProps {
   open: boolean;
   onClose: (confirm: boolean) => void;
 }
-
-const headers: Array<AutoTableHeader | string> = [
-  {
-    label: 'Mottagare',
-    renderColumn: (value, item) => {
-      // Added with address
-      if (item?.firstName) {
-        return (<>
-          {item?.firstName} {item?.lastName}
-        </>)
-      }
-
-      // Added with file or SSN
-      return (<>
-        {item?.address?.givenname} {item?.address?.lastname}, {item?.address?.personNumber}
-      </>)
-  }
-  },
-  {
-    label: 'Adress',
-    renderColumn: (value, item) => {
-      // Added with address
-      if (item?.firstName) {
-        const { address, zipCode, city } = item;
-
-        return (<>
-          {address}, {zipCode} {city}
-        </>)
-      }
-
-      const adress = item?.address?.addresses ? item?.address?.addresses[0] : undefined;
-      if (!adress) return <></>;
-
-      const { address, postalCode, city } = adress;
-
-      return (
-        <>
-          {address}, {postalCode} {city}
-        </>
-      )
-    }
-  },
-];
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose }) => {
   const { watch } = useFormContext<FormModel>();
@@ -83,24 +40,16 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose }) =
         )}
 
         <h2 className="text-body text-base font-bold">Mottagare ({combinedLength})</h2>
-        <AutoTable
-          footer={combinedLength >= 12}
-          pageSize={11}
-          autodata={[...validRecipients, ...addresses]}
-          autoheaders={headers}
-        />
+        <RecipientTable />
 
-      <ul className="flex flex-col gap-8 mt-40">
-        {/*<li>
-          Antal mottagare: <strong>{recipients.filter((rec) => !rec.error).length}</strong>
-        </li>*/}
-        <li>
-          Ämne: <strong>{subject}</strong>
-        </li>
-        <li>
-          Avsändare: <strong>{department}</strong>
-        </li>
-      </ul>
+        <ul className="flex flex-col gap-8 mt-40">
+          <li>
+            Ämne: <strong>{subject}</strong>
+          </li>
+          <li>
+            Avsändare: <strong>{department}</strong>
+          </li>
+        </ul>
       </Dialog.Content>
       <Dialog.Buttons className="justify-end">
         <Button variant="secondary" onClick={() => onClose(false)}>
