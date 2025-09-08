@@ -24,7 +24,7 @@ export class StatisticsController {
       const statistics = [];
 
       result.data?.forEach(dep => {
-        dep.DEPARTMENT_STATISTICS.map(stats => {
+        dep.DEPARTMENT_STATISTICS.forEach(stats => {
           statistics.push({
             department: stats.DEPARTMENT,
             snailMail: {
