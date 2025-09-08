@@ -1,0 +1,23 @@
+{
+  "appTitle": "Postportalen",
+  "personalNumber": "Personnummer",
+  "example": "Exempel",
+  "receiver": "Mottagare",
+  "stepper": {
+    "stepOne": "Lägg till textdokument",
+    "stepTwo": "Lägg till mottagare",
+    "stepThree": "Ange avsändare"
+  },
+  "done": "Klart",
+  "dispatchDone": "Ditt utskick har gjorts",
+  "dispatchNew": "Gör ett nytt utskick",
+  "recipientHandler": {
+    "addReceiver": "Lägg till mottagare",
+    "IndividualReceivers": "Enskilda mottagare",
+    "ImportReceivers": "Importera mottagare",
+    "fetchingReceiver": "Hämtar mottagare",
+    "errorHandler": {
+      "noFile": "Ingen fil vald"
+    }
+  }
+}

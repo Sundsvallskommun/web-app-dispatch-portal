@@ -4,7 +4,12 @@ import { Spinner, Table, SortMode, Select, Input, Pagination } from '@sk-web-gui
 import { useStatistics } from '@services/statistics-service';
 import React from 'react';
 import { Statistics } from '@interfaces/statistics.interface';
-export const StatisticsPage = () => {
+import { useTranslation } from 'next-i18next';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { getServerSideProps } from 'next/dist/build/templates/pages';
+
+export const StatisticsPage = (_props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { departmentStatistics, loaded } = useStatistics();
   const [sortColumn, setSortColumn] = React.useState<string>('department');
   const [sortOrder, setSortOrder] = React.useState(SortMode.ASC);
@@ -17,6 +22,7 @@ export const StatisticsPage = () => {
       setSortOrder(sortOrder === SortMode.ASC ? SortMode.DESC : SortMode.ASC);
     }
   };
+  const { t } = useTranslation(['common', 'statistics']);
 
   const getDeepColumn = (column: string, object: Statistics) => {
     const columns = column.split('.');
@@ -38,8 +44,8 @@ export const StatisticsPage = () => {
       return getDeepColumn(sortColumn, a) < getDeepColumn(sortColumn, b)
         ? order
         : getDeepColumn(sortColumn, a) > getDeepColumn(sortColumn, b)
-        ? order * -1
-        : 0;
+          ? order * -1
+          : 0;
     })
     .slice((currentPage - 1) * _pageSize, currentPage * _pageSize)
     .map((statistics, idx: number) => {
@@ -59,7 +65,7 @@ export const StatisticsPage = () => {
       title={`Postportal`}
       pageheader={
         <PageHeader color="vattjom">
-          <h2 className="pb-8">Statistik</h2>
+          <h2 className="pb-8">{t('statistics:title')}</h2>
           <p className="text-h4-medium md:text-lead leading-lead text-primary font-bold m-0 header-font">
             Här hittar du statistik över skickad post.
           </p>
@@ -171,5 +177,11 @@ export const StatisticsPage = () => {
     </DefaultLayout>
   );
 };
+
+export const getStaticProps: GetServerSideProps<{}> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'statistics'])),
+  },
+});
 
 export default StatisticsPage;

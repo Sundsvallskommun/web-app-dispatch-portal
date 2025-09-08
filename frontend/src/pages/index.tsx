@@ -8,9 +8,12 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useMessageStore } from '@services/recipient-service';
 import { useUserStore } from '@services/user-service/user-service';
 import { Button } from '@sk-web-gui/react';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 const formSchema = yup
   .object({
@@ -37,7 +40,7 @@ const initialValues = {
 
 export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
 
-export default function Index() {
+const Index = () => {
   const [step, setStep] = useState<number>(0);
   const recipients = useMessageStore((state) => state.recipients);
   const setRecipients = useMessageStore((state) => state.setRecipients);
@@ -46,6 +49,7 @@ export default function Index() {
   const [success, setSuccess] = useState(false);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
+  const { t } = useTranslation(['common']);
 
   const myDepartment = user?.orgTree
     ? user.orgTree
@@ -106,8 +110,8 @@ export default function Index() {
           <div className="w-full lg:w-7/12">
             {success ? (
               <>
-                <h2>Klart!</h2>
-                <p className="my-md text-base">Ditt utskick har gjorts.</p>
+                <h2>{`${t('done')}!`}</h2>
+                <p className="my-md text-base">{`${t('dispactDone')}.`}.</p>
                 <Button
                   className="mt-lg"
                   color="vattjom"
@@ -116,7 +120,7 @@ export default function Index() {
                     setSuccess(false);
                   }}
                 >
-                  Gör ett nytt utskick
+                  {t('dispactNew')}
                 </Button>
               </>
             ) : (
@@ -124,12 +128,12 @@ export default function Index() {
                 <FormStepper
                   steps={[
                     {
-                      label: 'Lägg till textdokument',
+                      label: t('stepper.stepOne'),
                       component: <AttachmentHandler />,
                       valid: hasAtLeastOneAttachment,
                     },
-                    { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
-                    { label: 'Ange avsändare', component: <SenderHandler /> },
+                    { label: t('stepper.stepTwo'), component: <RecipientHandler />, valid: hasValidRecipients },
+                    { label: t('stepper.stepThree'), component: <SenderHandler /> },
                   ]}
                   onChangeStep={setStep}
                   submitButton={<SubmitHandler />}
@@ -147,4 +151,12 @@ export default function Index() {
       </div>
     </DefaultLayout>
   );
-}
+};
+
+export const getStaticProps: GetServerSideProps<{}> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['common'])),
+  },
+});
+
+export default Index;

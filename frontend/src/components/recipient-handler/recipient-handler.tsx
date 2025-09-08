@@ -22,6 +22,7 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -33,9 +34,9 @@ const RecipientHandler: React.FC = () => {
   const [error, setError] = useState<string>();
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const recipients = useMessageStore((state) => state.recipients);
-
   const [current, setCurrent] = React.useState<number | undefined>(0);
   const allowReplace = true;
+  const { t } = useTranslation(['common']);
 
   const {
     watch,
@@ -61,7 +62,7 @@ const RecipientHandler: React.FC = () => {
         let errorMessage: string;
         switch (e.message) {
           case 'NO_FILE':
-            errorMessage = 'Ingen fil vald';
+            errorMessage = t('recipientHandler.errorHandler.noFile');
             break;
           case 'MAX_SIZE':
             errorMessage = `Filen får ej överstiga ${MAX_RECIPIENT_FILE_SIZE_MB}MB`;
@@ -133,7 +134,7 @@ const RecipientHandler: React.FC = () => {
   return (
     <div className="w-full flex justify-center">
       <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards pb-32">
-        <h4 className="px-32 py-16">Lägg till mottagare</h4>
+        <h4 className="px-32 py-16">{t('recipientHandler.addReceiver')}</h4>
         <Divider className="w-full" orientation="horizontal" strong={false} />
 
         <div className="w-full px-32 pt-32 gap-32">
@@ -145,7 +146,7 @@ const RecipientHandler: React.FC = () => {
                   handleRemove();
                 }}
               >
-                Enskilda mottagare
+                {t('recipientHandler.IndividualReceivers')}
               </Button>
             </MenuBar.Item>
             <MenuBar.Item>
@@ -155,7 +156,7 @@ const RecipientHandler: React.FC = () => {
                   handleRemove();
                 }}
               >
-                Importera mottagare
+                {t('recipientHandler.ImportReceivers')}
               </Button>
             </MenuBar.Item>
           </MenuBar>
@@ -163,7 +164,7 @@ const RecipientHandler: React.FC = () => {
           {current === 0 ? (
             <div className="flex flex-col gap-12 pt-32">
               <FormControl invalid={!!errors.singleRecipient}>
-                <FormLabel>Personnummer</FormLabel>
+                <FormLabel>{t('personalNumber')}</FormLabel>
                 <SearchField
                   {...register('singleRecipient')}
                   value={recipient}
@@ -180,7 +181,7 @@ const RecipientHandler: React.FC = () => {
                   onSearch={() => handleSubmitSingleRecipient()}
                 />
 
-                <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText>
+                <FormHelperText className="w-full">{`${t('example')}: 199001012385`}</FormHelperText>
                 {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
               </FormControl>
             </div>
@@ -217,14 +218,14 @@ const RecipientHandler: React.FC = () => {
                 <div>
                   <Spinner className="h-32 w-32"></Spinner>
                 </div>
-                <div>Hämtar mottagare</div>
+                <div>{t('recipientHandler.fetchingReceiver')}</div>
               </>
             </div>
           )}
           <div>{error && <FormErrorMessage className="my-8">{error}</FormErrorMessage>}</div>
           {recipients?.length > 0 && !isLoadingRecipients && (
             <div className="w-full mt-40">
-              <h4 className="mb-16 text-h4-sm">Mottagare</h4>
+              <h4 className="mb-16 text-h4-sm">{t('receiver')}</h4>
               <RecipientList />
             </div>
           )}

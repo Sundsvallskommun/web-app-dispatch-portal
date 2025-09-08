@@ -9,6 +9,7 @@ import NextLink from 'next/link';
 import { ReactNode, useRef } from 'react';
 import { shallow } from 'zustand/shallow';
 import { userMenuGroups } from './userMenuGroups';
+import { useTranslation } from 'next-i18next';
 
 interface DefaultLayoutProps {
   title: string;
@@ -16,11 +17,12 @@ interface DefaultLayoutProps {
   children: ReactNode;
 }
 
-export default function DefaultLayout({ title, pageheader, children }: DefaultLayoutProps) {
+const DefaultLayout = ({ title, pageheader, children }: DefaultLayoutProps) => {
   const initialFocus = useRef<HTMLElement>(null);
   const gui = useGui();
   const isMedium = useMediaQuery(`screen and (min-width:${gui.theme?.screens?.md})`);
   const user = useUserStore((s) => s.user, shallow);
+  const { t } = useTranslation(['common']);
 
   const setInitialFocus = () => {
     setTimeout(() => {
@@ -42,7 +44,7 @@ export default function DefaultLayout({ title, pageheader, children }: DefaultLa
       </NextLink>
       <div className="z-10">
         <Header
-          title={`Postportalen`}
+          title={t('appTitle')}
           LogoLinkWrapperComponent={<NextLink legacyBehavior={true} href={'/'} passHref />}
           userMenu={
             <span data-cy="usermenu">
@@ -96,4 +98,6 @@ export default function DefaultLayout({ title, pageheader, children }: DefaultLa
       </main>
     </div>
   );
-}
+};
+
+export default DefaultLayout;
