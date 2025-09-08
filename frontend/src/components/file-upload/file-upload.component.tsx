@@ -1,6 +1,6 @@
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
 import { FormErrorMessage, FormHelperText, FormLabel, Input, cx } from '@sk-web-gui/react';
-import { UploadCloud } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useFileUpload } from './file-upload.context';
@@ -145,17 +145,17 @@ const FileUpload: React.FC<{
               'focus-within:ring',
               'focus-within:ring-ring',
               'focus-within:ring-offset',
-              'text-base gap-16 box-border flex justify-center items-center',
+              'text-base gap-16 box-border flex flex-col justify-center items-center',
               'p-12 md:p-24 xl:p-32',
-              'border border-divider',
-              'hover:bg-vattjom-background-100 hover:border-2 border-dashed cursor-pointer'
+              'bg-vattjom-background-100',
+              'border border-vattjom-surface-primary',
+              'hover:bg-vattjom-background-200 hover:border-solid border-dashed cursor-pointer'
             )}
           >
-            <UploadCloud className={cx('!h-[4rem] !w-[4rem] text-primary')} />
+            <Upload className={cx('!h-[4rem] !w-[4rem] text-primary')} />
             <div className="flex flex-col gap-8 justify-center">
               <div className="text-base font-normal">
-                Dra {allowMultiple ? 'filer' : 'en fil'} hit eller{' '}
-                <span className="underline text-vattjom-text-primary">klicka för att bläddra på din enhet</span>
+                <span className="underline text-vattjom-text-primary">Välj {allowMultiple ? 'filer' : 'fil'}</span> eller dra och släpp {allowMultiple ? 'dem' : 'den'} här
               </div>
               {helperText && (
                 <FormHelperText className="p-0 m-0 text-small text-dark-secondary">{helperText}</FormHelperText>
@@ -169,7 +169,7 @@ const FileUpload: React.FC<{
             multiple={allowMultiple}
             placeholder="Välja fil att lägga till"
             {...register(`${fieldName}-newItem`)}
-            allowReplace={false}
+            // allowReplace={false}
           />
         </FormLabel>
       </div>

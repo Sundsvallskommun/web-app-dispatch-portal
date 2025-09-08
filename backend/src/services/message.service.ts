@@ -63,9 +63,21 @@ export interface DigitalMailAttachment {
   filename: string;
 }
 
+interface Address {
+  firstName: string;
+  lastName: string;
+  address: string;
+  apartmentNumber: string;
+  careOf: string;
+  zipCode: string;
+  city: string;
+  country: string;
+}
+
 export interface LetterRequest {
   party?: {
     partyIds: string[];
+    addresses: Address[];
     externalReferences?: { [key: string]: string }[];
   };
   headers?: [
@@ -134,7 +146,7 @@ export interface EmailMessageRequest {
   attachments?: EmailMessageAttachment[];
 }
 
-const MESSAGING_SERVICE = `messaging/6.1`;
+const MESSAGING_SERVICE = `messaging/7.1`;
 
 export const sendEmail: (user: User, api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
   user,
@@ -177,15 +189,21 @@ export const sendEmail: (user: User, api: ApiService, senderPersonId: string, em
   return res;
 };
 
+interface Message {
+  subject: string;
+  body: string;
+  files: Express.Multer.File[];
+}
+
 export const sendLetter: (
   user: User,
   api: ApiService,
   recipients: RecipientWithAddress[],
-  subject: string,
-  body: string,
+  message: Message,
   department: string,
-  files: Express.Multer.File[],
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, subject, body, department, files) => {
+  addresses: Address[],
+) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, message, department, addresses) => {
+  const { subject, files } = message;
   const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/letter?async=true`;
   const attachments = [];
   files.forEach(f => {
@@ -206,6 +224,7 @@ export const sendLetter: (
   const request = {
     party: {
       partyIds: recipients.map(r => r.address.personId),
+      addresses,
     },
     subject: subject,
     contentType: 'text/plain',

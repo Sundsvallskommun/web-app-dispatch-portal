@@ -1,8 +1,20 @@
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
-import { Divider, FormControl } from '@sk-web-gui/react';
+import { Divider, FormControl, Icon } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Menu } from 'lucide-react';
 
 export interface Attachment {
   file: File | undefined;
@@ -26,53 +38,96 @@ const AttachmentHandler: React.FC = () => {
     setValue('attachmentList', allFiles);
   };
 
-  const handleMain = (index: number) => {
-    const allFiles = getValues('attachmentList');
-    const newFiles = allFiles.toSpliced(index, 1).toSpliced(0, 0, allFiles[index]);
-    setValue('attachmentList', newFiles);
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = attachmentList.findIndex((item) => item.index === active.id);
+      const newIndex = attachmentList.findIndex((item) => item.index === over.id);
+
+      const reorderedList = arrayMove(attachmentList, oldIndex, newIndex);
+      setValue(
+        'attachmentList',
+        reorderedList.map((item) => ({ ...item, index: item.index }))
+      );
+    }
   };
+
+  const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor));
 
   return (
     <div className="w-full flex justify-center">
-      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-32">
+      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
         <input type="hidden" {...register('message')} value="hiddenmessage" />
         <div className="w-full">
-          <h4 className="px-32 py-16">Lägg till textdokument</h4>
+          <h4 className="pb-6">Lägg till textfil</h4>
+          <p className="text-base pb-6">
+          Ladda upp filer som ska ingå i ditt digitala brev, till exempel textfiler, fakturor och andra bilagor. Filerna får tillsammans ha en storlek på maximalt 1.5 MB{' '}
+          </p>
           <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
-        <FormControl id="attachment" className="w-full px-32 gap-8">
+        <FormControl id="attachment" className="w-full gap-8">
           <FileUpload
             label="Dokument"
             fieldName={'attachmentList'}
             allowMultiple={maxMain + maxSecondary > 1}
             allowMax={maxMain + maxSecondary}
             accept={['.pdf', '.PDF']}
-            helperText="Maximal filstorlek: 2 MB. Tillåtna filtyper: pdf"
+            helperText="Tillåtna filtyper: PDF. Max storlek på utskick: 1.5 MB"
             maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
           />
         </FormControl>
 
         <div className="w-full">
+          {attachmentList.length === 0 && <div>
+            <h3 className="text-label-medium">Tillagda filer</h3>
+            <p className="text-base">Du har inte laddat upp några filer än.</p>
+          </div>}
           {attachmentList.length > 0 && (
-            <div className="w-full px-32 gap-40">
-              {attachmentList.length > 0 && (
-                <div className="gap-8 pb-32" data-cy="attachments">
-                  <h4 className="pb-8">Bifogade dokument</h4>
-                  {attachmentList.map((attach, index) => {
-                    return (
-                      <FileListItemComponent
-                        key={index}
-                        data={attach}
-                        handleRemove={handleRemove}
-                        handleMain={handleMain}
-                      />
-                    );
-                  })}
-                </div>
-              )}
+            <div className="w-full">
+              <h4 className="pb-8 text-label-medium">Tillagda filer ({attachmentList.length})</h4>
+              <p className="text-base">Sortera filerna i den ordning du vill att dom ska synas i utskicket.</p>
+              <div className="flex flex-col gap-12">
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext
+                    items={attachmentList.map((item) => item.index)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {attachmentList.map((attach) => (
+                      <SortableItem key={attach.index} id={attach.index} attach={attach} handleRemove={handleRemove} />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              </div>
             </div>
           )}
         </div>
+      </div>
+    </div>
+  );
+};
+
+const SortableItem: React.FC<{
+  id: number;
+  attach: Attachment;
+  handleRemove: (index: number) => void;
+}> = ({ id, attach, handleRemove }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div className="flex gap-16 items-center" ref={setNodeRef} style={style} {...attributes}>
+      <span className="text-base text-body drag-handler cursor-grab">{id + 1}</span>
+
+      <div className="flex flex-1 items-center rounded-groups border-1">
+        <div className="py-24 px-22 border-r-1 content-center" {...listeners}>
+          <Icon size="1.4rem" icon={<Menu />} />
+        </div>
+        <FileListItemComponent data={attach} handleRemove={() => handleRemove(id)} noBorder={true} />
       </div>
     </div>
   );

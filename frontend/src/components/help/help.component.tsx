@@ -3,7 +3,7 @@ import { Accordion, Link, List, useGui } from '@sk-web-gui/react';
 import NextLink from 'next/link';
 
 interface HelpProps {
-  show?: 'recipients' | 'documents' | 'sender';
+  show?: 'recipients' | 'documents' | 'sender' | 'sms';
   size?: 'sm' | 'md';
 }
 
@@ -15,24 +15,27 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
 
   const others = (
     <>
-      <Accordion.Item header="Vad är Postportalen? ">
+      <Accordion.Item header="Vad är Postportalen?">
         <p>
           I vår postportal skickar du post till digitala myndighetsbrevlådor i stället för till fysiska brevlådor. På så
           sätt sparar vi både tid, pengar och vår miljö, bra va?
         </p>
       </Accordion.Item>
-      <Accordion.Item header="Hur fungerar det?">
+      <Accordion.Item header="Hur skickar jag brev i Postportalen?">
         <p>
-          Om mottagaren har valt att få sin post digitalt skickar postportalen automatiskt till den valda tjänsten,
-          exempelvis Kivra. På det här sättet kommer din post fram på bara några sekunder! Om mottagaren inte har
-          anslutit sig till en digital myndighetsbrevlåda skickas i stället en beställning till kontorsservice som
-          skriver ut och skickar posten med vanlig, fysisk post.
+          Skriv in personnumret, använd tolv siffror. Om mottagaren har digital brevlåda skickas filen till den. Om
+          mottagaren saknar digital brevlåda skickas filen som brevpost till mottagarens folkbokföringsadress.
+        </p>
+        <p>
+          Om du inte har tillgång till personnumret går det bra att skriva in mottagarens adress. I det fallet kommer
+          filen att skickas direkt som brevpost till den adressen.
         </p>
       </Accordion.Item>
       <Accordion.Item header="Vilka rutiner gäller för dokument som skickas i Postportalen?">
         <p>
-          Varje verksamhet ansvarar för att arbetssätt gällande hantering av sekretess och säkerhetsklassning följs
-          enligt gällande informationshanteringsplan.
+          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera
+          dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med
+          säkerhetsklass 3.
         </p>
       </Accordion.Item>
 
@@ -154,7 +157,7 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
       </Accordion.Item>
       <Accordion.Item header="Kan jag skicka flera filer?">
         <p>
-          Du kan som mest skicka fyra filer, och storleken på det du skickar kan som mest vara 2 MB. Om du behöver
+          Du kan som mest skicka fyra filer, och storleken på det du skickar kan som mest vara 1.5 MB. Om du behöver
           skicka fler eller större filer måste du tyvärr skicka dem med fysisk post.
         </p>
       </Accordion.Item>
@@ -162,11 +165,6 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
   );
   const recipients = (
     <>
-      <Accordion.Item header="Hur skickar jag post till en person?">
-        <p>
-          Skriv in personnumret till personen du ska skicka till. Skriv personnumren med tolv siffror, utan bindestreck.
-        </p>
-      </Accordion.Item>
       <Accordion.Item header="Hur skapar jag en mottagarlista?">
         <p>
           Öppna ett nytt exceldokument och skriv in personnumren i den första kolumnen. Fyll i med tolv siffror, med
@@ -197,9 +195,6 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
           myndighetsbrevlåda skickas i stället en beställning till kontorsservice som skriver ut och skickar posten med
           vanlig, fysisk post. I dessa fall behövs uppgifter om din förvaltningstillhörighet.
         </p>
-      </Accordion.Item>
-      <Accordion.Item header="Vad händer när jag klickar på skicka?">
-        <p>Du får en sammanställning över ditt utskick och kan granska uppgifterna innan du skickar iväg det. </p>
       </Accordion.Item>
     </>
   );
@@ -237,37 +232,88 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
           </a>
         </p>
       </Accordion.Item>
-      <Accordion.Item header="Hur gör jag formatändring av dokument klass 3?">
+      <Accordion.Item header="Hur ska jag hantera dokumentet som har säkerhetsklass 3?">
         <p>
-          I Postportalen skickar du dokument i formatet PDF. Om du behöver ändra format på ett dokument som innehåller
-          klass 3-information är det viktigt att hanteringen sker lokalt på din dator. Det betyder att både platsen du
-          väljer att ladda ner dokumentet till och det program du använder behöver finnas på din dator och inte i en
-          molntjänst.
+          Det är viktigt att dokument som innehåller säkerhetsklass 3-information hanteras lokalt på din dator. Det
+          betyder att både platsen du väljer att ladda ner dokumentet till och det program du använder behöver finnas på
+          din dator och inte i en molntjänst. Det här gäller även om du behöver ändra formatet på dokumentet.
         </p>
         <p>
           När dokumentet är färdigt raderar du det permanent från din dator. Det går att göra via kortkommandot: Shift +
           Delete. Raderas det utan kortkommandot måste du gå in i papperskorgen och även radera det där.
         </p>
       </Accordion.Item>
+      <Accordion.Item header="Vilka säkerhetsrutiner gäller för dokument som skickas i Postportalen?">
+        <p>
+          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera
+          dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med
+          säkerhetsklass 3.
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Hur skickas filer från Public 360?">
+        <p>
+          I diariesystemet Public 360 är det möjligt att dra de pdf-filer du önskar skicka direkt från sidopanelen till
+          Postportalen.
+        </p>
+      </Accordion.Item>
+    </>
+  );
+  const sms = (
+    <>
+      <Accordion.Item header="Tänk på det här innan du skickar ditt sms">
+        <p>Tänk en extra gång tonen och på mängden text i ditt meddelande. Skriv begripligt, tydligt och vänligt.</p>
+        <p>
+          Inled alltid med Hej och beskriv tydligt vad du vill säga. Organisationens namn kommer stå som avsändare så
+          vid behov behöver du skriva vilken enhet/förvaltning/avdelning du skickar från.
+        </p>
+
+        <p>Exempel:</p>
+
+        <p>Hej!</p>
+        <p>
+          Du har fått ett nytt meddelande kopplat till ditt Sundsvallsförslag. Läs mer på Mina sidor på Sundsvall.se.
+        </p>
+
+        <p>Hej!</p>
+        <p>
+          Din dator har nu ominstallerats och du kan hämta den hos Digitalisering och IT på Tivolivägen 10. Ring på
+          klockan när du kommer. Välkommen!
+        </p>
+      </Accordion.Item>
+      <Accordion.Item header="Hur lägger jag till flera mottagare i sms-tjänsten?">
+        <p>
+          När du skrivit ditt meddelande kan du lägga till ett eller flera telefonnummer innan du klickar på skicka.
+        </p>
+      </Accordion.Item>
     </>
   );
 
+  const getContent = () => {
+    switch (show) {
+      case 'recipients':
+        return recipients;
+      case 'documents':
+        return documents;
+      case 'sms':
+        return sms;
+      case 'sender':
+        return sender;
+      default:
+        return (
+          <>
+            {others}
+            {documents}
+            {recipients}
+            {sender}
+            {sms}
+          </>
+        );
+    }
+  };
+
   return (
     <Accordion className="w-full" size={size} allowMultipleOpen>
-      {show === 'recipients' ? (
-        recipients
-      ) : show === 'documents' ? (
-        documents
-      ) : show === 'sender' ? (
-        sender
-      ) : (
-        <>
-          {others}
-          {documents}
-          {recipients}
-          {sender}
-        </>
-      )}
+      {getContent()}
     </Accordion>
   );
 };
