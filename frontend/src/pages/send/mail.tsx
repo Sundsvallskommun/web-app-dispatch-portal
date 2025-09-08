@@ -50,7 +50,6 @@ export default function SendMailPage() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-
   const controls = useForm({
     resolver: yupResolver(formSchema),
     values: initialValues,
@@ -72,71 +71,79 @@ export default function SendMailPage() {
 
   useEffect(() => {
     if (response) {
-      // router.push(`/status/${response.response.batchId}`);
       setSuccess(true);
       resetAll();
     }
   }, [resetAll, response, router]);
 
-  const hasValidRecipients = recipients?.some(
-    (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
-  ) || addresses.length > 0;
+  const hasValidRecipients =
+    recipients?.some(
+      (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
+    ) || addresses.length > 0;
 
+  const getText = () => {
+    switch (step) {
+      case 0:
+        return 'Steg 1: Lägg till textdokument';
+      case 1:
+        return 'Steg 2: Lägg till mottagare';
+      case 2:
+        return 'Steg 3: Ange avsändare';
+      default:
+        return undefined;
+    }
+  };
   return (
     <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">
-        Skicka post.{' '}
-        {step === 0
-          ? 'Steg 1: Lägg till textdokument'
-          : step === 1
-            ? 'Steg 2: Lägg till mottagare'
-            : step === 2
-              ? 'Steg 3: Ange avsändare'
-              : undefined}
-      </h1>
+      <h1 className="sr-only">Skicka post. {getText()}</h1>
       <div className="text-lg mb-11 pt-48">
         <div className="">
           <div className="">
             {success ? (
               <div className="text-center max-w-[63rem] mx-auto">
-              <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-              <h2 className="mt-24">Ditt brev har skickats</h2>
-              <p className="my-md text-base">Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan.</p>
-              <div className="flex gap-16 justify-center mt-40">
-                <Button
-                  className="mt-lg"
-                  color="primary"
-                  variant="secondary"
-                  onClick={() => {
-                    resetAll();
-                    setSuccess(false);
-                  }}
-                >
-                  Skicka nytt brev
-                </Button>
-                <NextLink href="/" passHref legacyBehavior>
-                  <Button className="mt-lg" color="vattjom">Till startsidan</Button>
-                </NextLink>
+                <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
+                <h2 className="mt-24">Ditt brev har skickats</h2>
+                <p className="my-md text-base">
+                  Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status
+                  för utskicket under <strong>Dina utskick</strong> på startsidan.
+                </p>
+                <div className="flex gap-16 justify-center mt-40">
+                  <Button
+                    className="mt-lg"
+                    color="primary"
+                    variant="secondary"
+                    onClick={() => {
+                      resetAll();
+                      setSuccess(false);
+                    }}
+                  >
+                    Skicka nytt brev
+                  </Button>
+                  <NextLink href="/" passHref legacyBehavior>
+                    <Button className="mt-lg" color="vattjom">
+                      Till startsidan
+                    </Button>
+                  </NextLink>
+                </div>
               </div>
-            </div>
             ) : (
               <div className="w-full max-w-[82rem] mx-auto">
-              <h2 className="text-h4-lg">Skicka brev</h2>
-              <FormProvider {...controls}>
-                <FormStepper
-                  steps={[
-                    {
-                      label: 'Lägg till textdokument',
-                      component: <AttachmentHandler />,
-                      valid: hasAtLeastOneAttachment,
-                    },
-                    { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
-                    { label: 'Ange avsändare', component: <SenderHandler /> },
-                  ]}
-                  onChangeStep={setStep}
-                  submitButton={<SubmitHandler />}
-                ></FormStepper>
-              </FormProvider>
+                <h2 className="text-h4-lg">Skicka brev</h2>
+                <FormProvider {...controls}>
+                  <FormStepper
+                    steps={[
+                      {
+                        label: 'Lägg till textdokument',
+                        component: <AttachmentHandler />,
+                        valid: hasAtLeastOneAttachment,
+                      },
+                      { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
+                      { label: 'Ange avsändare', component: <SenderHandler /> },
+                    ]}
+                    onChangeStep={setStep}
+                    submitButton={<SubmitHandler />}
+                  ></FormStepper>
+                </FormProvider>
               </div>
             )}
           </div>

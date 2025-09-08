@@ -9,7 +9,7 @@ import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
 import { ArrayMinSize, IsArray, IsString } from 'class-validator';
-import  { Response } from 'express';
+import { Response } from 'express';
 import { Body, Controller, Get, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
@@ -23,7 +23,7 @@ class RequestBodyMail {
   department: string;
 }
 
-class RequestBodySMS  {
+class RequestBodySMS {
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)
@@ -32,7 +32,7 @@ class RequestBodySMS  {
   message: string;
 }
 
-interface smsDTO {
+interface SMSDTO {
   sender: string;
   message: string;
   parties: { mobileNumber: string }[];
@@ -61,18 +61,16 @@ export class MessageController {
     const { message, recipients } = body;
     const data = {
       message,
-      parties: recipients.map(rec => ({ 'mobileNumber': rec })),
+      parties: recipients.map(rec => ({ mobileNumber: rec })),
       sender: SMS_SENDER,
-    }
+    };
     const url = `${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
-    const res = await this.apiService.post<SMSReponse, smsDTO>({ url, data }, req.user).catch(e => {
+    const res = await this.apiService.post<SMSReponse, SMSDTO>({ url, data }, req.user).catch(e => {
       console.log('Error when sending sms:', e);
       throw new Error('Error when sending sms');
     });
 
-    return response
-      .send({ data: res.data, message: 'success' })
-      .status(200);
+    return response.send({ data: res.data, message: 'success' }).status(200);
   }
 
   @Post('/message/')
@@ -96,7 +94,7 @@ export class MessageController {
       throw new Error('Could not parse recipient list');
     }
 
-    const res = await sendLetter(req.user, this.apiService, recipients, body.subject, body.body, body.department, files, addresses)
+    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, body.department, addresses)
       .then(async res => {
         // TODO do not send status email for now
         // const emailAddress = DEV ? TEST_EMAIL : req.user.email;

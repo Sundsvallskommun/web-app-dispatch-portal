@@ -4,15 +4,15 @@ import { Attachment } from '@components/attachment-handler/attachment-handler';
 import { File, Trash } from 'lucide-react';
 
 function formatBytes(bytes: number, decimals = 2) {
-  if (!+bytes) return '0 Bytes'
+  if (!+bytes) return '0 Bytes';
 
-  const k = 1024
-  const dm = decimals < 0 ? 0 : decimals
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
 interface FileListItemComponentProps {
@@ -35,41 +35,35 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
     setFocus(true);
   };
 
-
   return (
-    <div className={cx("w-full flex flex-wrap rounded-button p-12 justify-between gap-16", noBorder ? '' : 'border border-1')}>
+    <div
+      className={cx(
+        'w-full flex flex-wrap rounded-button p-12 justify-between gap-16',
+        noBorder ? '' : 'border border-1'
+      )}
+    >
       <div className="flex gap-16">
         <div className="bg-vattjom-surface-accent p-10 gap-8 rounded-utility max-w-[44px] max-h-[44px]">
           <Icon icon={<File />} />
         </div>
 
         <div className="flex flex-col w-full gap-2">
-          <span className="text-base"><strong className="text-secondary">{data?.file?.name}</strong></span>
+          <span className="text-base">
+            <strong className="text-secondary">{data?.file?.name}</strong>
+          </span>
           <span className="text-small text-secondary">{data?.file?.size && formatBytes(data.file.size, 0)}</span>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-16 break-words">
-        {/* {data.index !== 0 && (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => handleMain(data.index)}
-            aria-label="Ta bort fil"
-            className="px-14 py-16"
-          >
-            Lägg först i listan
-          </Button>
-        )} */}
-
         <div className="relative">
           <Button
             aria-label="Ta bort fil"
             iconButton
             variant="secondary"
             onClick={() => {
-              if(typeof data?.index === 'number')  {
-                handleRemove(data.index)
+              if (typeof data?.index === 'number') {
+                handleRemove(data.index);
               }
             }}
             onMouseEnter={handleHover}

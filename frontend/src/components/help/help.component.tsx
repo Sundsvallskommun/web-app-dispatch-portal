@@ -23,15 +23,19 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
       </Accordion.Item>
       <Accordion.Item header="Hur skickar jag brev i Postportalen?">
         <p>
-          Skriv in personnumret, använd tolv siffror. Om mottagaren har digital brevlåda skickas filen till den. Om mottagaren saknar digital brevlåda skickas filen som brevpost till mottagarens folkbokföringsadress.
+          Skriv in personnumret, använd tolv siffror. Om mottagaren har digital brevlåda skickas filen till den. Om
+          mottagaren saknar digital brevlåda skickas filen som brevpost till mottagarens folkbokföringsadress.
         </p>
         <p>
-          Om du inte har tillgång till personnumret går det bra att skriva in mottagarens adress. I det fallet kommer filen att skickas direkt som brevpost till den adressen.
+          Om du inte har tillgång till personnumret går det bra att skriva in mottagarens adress. I det fallet kommer
+          filen att skickas direkt som brevpost till den adressen.
         </p>
       </Accordion.Item>
       <Accordion.Item header="Vilka rutiner gäller för dokument som skickas i Postportalen?">
         <p>
-          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med säkerhetsklass 3.
+          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera
+          dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med
+          säkerhetsklass 3.
         </p>
       </Accordion.Item>
 
@@ -230,20 +234,26 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
       </Accordion.Item>
       <Accordion.Item header="Hur ska jag hantera dokumentet som har säkerhetsklass 3?">
         <p>
-          Det är viktigt att dokument som  innehåller säkerhetsklass 3-information hanteras lokalt på din dator. Det betyder att både platsen du väljer att ladda ner dokumentet till och det program du använder behöver finnas på din dator och inte i en molntjänst. Det här gäller även om du behöver ändra formatet på dokumentet.
+          Det är viktigt att dokument som innehåller säkerhetsklass 3-information hanteras lokalt på din dator. Det
+          betyder att både platsen du väljer att ladda ner dokumentet till och det program du använder behöver finnas på
+          din dator och inte i en molntjänst. Det här gäller även om du behöver ändra formatet på dokumentet.
         </p>
         <p>
-          När dokumentet är färdigt raderar du det permanent från din dator. Det går att göra via kortkommandot: Shift + Delete. Raderas det utan kortkommandot måste du gå in i papperskorgen och även radera det där.
+          När dokumentet är färdigt raderar du det permanent från din dator. Det går att göra via kortkommandot: Shift +
+          Delete. Raderas det utan kortkommandot måste du gå in i papperskorgen och även radera det där.
         </p>
       </Accordion.Item>
       <Accordion.Item header="Vilka säkerhetsrutiner gäller för dokument som skickas i Postportalen?">
         <p>
-          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med säkerhetsklass 3.
+          Du måste följa din verksamhets informationshanteringsplan. I den beskriver varje verksamhet hur du ska hantera
+          dokument som är av olika säkerhetsklassningar. Postportalen är godkänd för hantering av dokument med
+          säkerhetsklass 3.
         </p>
       </Accordion.Item>
       <Accordion.Item header="Hur skickas filer från Public 360?">
         <p>
-          I diariesystemet Public 360 är det möjligt att dra de pdf-filer du önskar skicka direkt från sidopanelen till Postportalen.
+          I diariesystemet Public 360 är det möjligt att dra de pdf-filer du önskar skicka direkt från sidopanelen till
+          Postportalen.
         </p>
       </Accordion.Item>
     </>
@@ -252,41 +262,58 @@ export const Help: React.FC<HelpProps> = ({ show, size: _size }) => {
     <>
       <Accordion.Item header="Tänk på det här innan du skickar ditt sms">
         <p>Tänk en extra gång tonen och på mängden text i ditt meddelande. Skriv begripligt, tydligt och vänligt.</p>
-        <p>Inled alltid med Hej och beskriv tydligt vad du vill säga. Organisationens namn kommer stå som avsändare så vid behov behöver du skriva vilken enhet/förvaltning/avdelning du skickar från.</p>
+        <p>
+          Inled alltid med Hej och beskriv tydligt vad du vill säga. Organisationens namn kommer stå som avsändare så
+          vid behov behöver du skriva vilken enhet/förvaltning/avdelning du skickar från.
+        </p>
 
         <p>Exempel:</p>
 
-        <p>Hej!</p> 
-        <p>Du har fått ett nytt meddelande kopplat till ditt Sundsvallsförslag. Läs mer på Mina sidor på Sundsvall.se.</p>
+        <p>Hej!</p>
+        <p>
+          Du har fått ett nytt meddelande kopplat till ditt Sundsvallsförslag. Läs mer på Mina sidor på Sundsvall.se.
+        </p>
 
         <p>Hej!</p>
-        <p>Din dator har nu ominstallerats och du kan hämta den hos Digitalisering och IT på Tivolivägen 10. Ring på klockan när du kommer. Välkommen!</p>
+        <p>
+          Din dator har nu ominstallerats och du kan hämta den hos Digitalisering och IT på Tivolivägen 10. Ring på
+          klockan när du kommer. Välkommen!
+        </p>
       </Accordion.Item>
       <Accordion.Item header="Hur lägger jag till flera mottagare i sms-tjänsten?">
-        <p>När du skrivit ditt meddelande kan du lägga till ett eller flera telefonnummer innan du klickar på skicka.</p>
+        <p>
+          När du skrivit ditt meddelande kan du lägga till ett eller flera telefonnummer innan du klickar på skicka.
+        </p>
       </Accordion.Item>
     </>
   );
 
+  const getContent = () => {
+    switch (show) {
+      case 'recipients':
+        return recipients;
+      case 'documents':
+        return documents;
+      case 'sms':
+        return sms;
+      case 'sender':
+        return sender;
+      default:
+        return (
+          <>
+            {others}
+            {documents}
+            {recipients}
+            {sender}
+            {sms}
+          </>
+        );
+    }
+  };
+
   return (
     <Accordion className="w-full" size={size} allowMultipleOpen>
-      {show === 'recipients' ? (
-        recipients
-      ) : show === 'documents' ? (
-        documents
-      ) : show === 'sms' ? (
-        sms
-      ) : show === 'sender' ? (
-        sender
-      ) : (
-        <>
-          {others}
-          {documents}
-          {recipients}
-          {sender}
-          {sms}
-        </>
-      )}
+      {getContent()}
     </Accordion>
   );
 };

@@ -189,16 +189,21 @@ export const sendEmail: (user: User, api: ApiService, senderPersonId: string, em
   return res;
 };
 
+interface Message {
+  subject: string;
+  body: string;
+  files: Express.Multer.File[];
+}
+
 export const sendLetter: (
   user: User,
   api: ApiService,
   recipients: RecipientWithAddress[],
-  subject: string,
-  body: string,
+  message: Message,
   department: string,
-  files: Express.Multer.File[],
   addresses: Address[],
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, subject, body, department, files, addresses) => {
+) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, message, department, addresses) => {
+  const { subject, files } = message;
   const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/letter?async=true`;
   const attachments = [];
   files.forEach(f => {

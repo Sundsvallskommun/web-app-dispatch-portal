@@ -33,14 +33,12 @@ export interface RecipientListFormModel {
 }
 
 const RecipientHandler: React.FC = () => {
-  // const masked = (s: string) => s.slice(0, s.length - 4) + 'xxxx';
-
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const [error, setError] = useState<string>();
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const recipients = useMessageStore((state) => state.recipients);
-  const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>()
+  const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>();
 
   const setAddresses = useMessageStore((state) => state.setAddresses);
   const addresses = useMessageStore((state) => state.addresses);
@@ -101,7 +99,9 @@ const RecipientHandler: React.FC = () => {
     getRecipient(recipient.replace('-', '').replace(' ', ''))
       .then((res) => {
         // check for duplicates
-        const alreadyExists = recipients.find((rec) => rec?.recipient?.personnumber === res[0]?.recipient?.personnumber);
+        const alreadyExists = recipients.find(
+          (rec) => rec?.recipient?.personnumber === res[0]?.recipient?.personnumber
+        );
         if (alreadyExists) {
           setFormError('singleRecipient', { message: 'Personen är readan tillagd.' });
           setIsLoadingRecipients(false);
@@ -157,7 +157,7 @@ const RecipientHandler: React.FC = () => {
 
   useEffect(() => {
     setFormError('singleRecipient', { message: undefined });
-    const length = recipient.length
+    const length = recipient.length;
     if (length >= 12) {
       findPerson(recipient);
       return;
@@ -171,7 +171,7 @@ const RecipientHandler: React.FC = () => {
       return;
     }
     setCurrent(navigateTo);
-  }
+  };
 
   const handleSubmitSingleRecipient = () => {
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
@@ -205,12 +205,14 @@ const RecipientHandler: React.FC = () => {
         city,
       };
       // find duplicates
-      const alreadyExists = addresses.find((rec) => rec?.address === addWithAdress?.address
-        && rec?.firstName === addWithAdress?.firstName
-        && rec?.lastName === addWithAdress?.lastName
-        && rec?.zipCode === addWithAdress?.zipCode
-        && rec?.city === addWithAdress?.city
-        && rec?.careOf === addWithAdress?.careOf
+      const alreadyExists = addresses.find(
+        (rec) =>
+          rec?.address === addWithAdress?.address &&
+          rec?.firstName === addWithAdress?.firstName &&
+          rec?.lastName === addWithAdress?.lastName &&
+          rec?.zipCode === addWithAdress?.zipCode &&
+          rec?.city === addWithAdress?.city &&
+          rec?.careOf === addWithAdress?.careOf
       );
 
       if (alreadyExists) {
@@ -229,7 +231,7 @@ const RecipientHandler: React.FC = () => {
       setCurrent(1);
     }
     setIsWarningOpen(false);
-  }
+  };
 
   return (
     <div className="w-full flex justify-center">
@@ -393,7 +395,10 @@ const RecipientHandler: React.FC = () => {
 
               <div className="mt-12 border-1 rounded-groups border-error-surface-primary">
                 {invalidRecipient.map((rec, index) => (
-                  <div key={index} className="py-16 px-18 border-b-1 border-divider last:border-0">
+                  <div
+                    key={`inv-rec-${index}-${rec?.recipient?.personnumber}`}
+                    className="py-16 px-18 border-b-1 border-divider last:border-0"
+                  >
                     <p className="text-small text-secondary">{rec?.recipient?.personnumber}</p>
                   </div>
                 ))}

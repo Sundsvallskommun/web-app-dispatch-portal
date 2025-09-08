@@ -7,6 +7,7 @@ import { DepartmentStatistics } from '@interfaces/statistics.interface';
 import { MUNICIPALITY_ID } from '@/config';
 import { UserMessage, UserMessages } from '@/interfaces/my-statistics.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
+import { logger } from '@/utils/logger';
 
 @Controller()
 export class StatisticsController {
@@ -39,10 +40,9 @@ export class StatisticsController {
         });
       });
 
-
-
       return response.send(statistics);
     } catch (error) {
+      logger.error('Error getting statistics: ', error);
       throw new HttpException(500, 'Error getting statistics');
     }
   }
@@ -67,17 +67,17 @@ export class StatisticsController {
         result.data.messages = filteredMessages;
       } */
 
-      const filteredMessages = result.data?.messages?.filter((message) => {
-        return message.recipients[0]?.messageType !== 'SMS'
+      const filteredMessages = result.data?.messages?.filter(message => {
+        return message.recipients[0]?.messageType !== 'SMS';
       });
 
       if (filteredMessages?.length) {
         result.data.messages = filteredMessages;
       }
 
-
       return response.send(result.data);
     } catch (error) {
+      logger.error('Error getting statistics: ', error);
       throw new HttpException(500, 'Error getting statistics');
     }
   }
@@ -99,6 +99,7 @@ export class StatisticsController {
 
       return response.send(result.data);
     } catch (error) {
+      logger.error('Error getting statistics: ', error);
       throw new HttpException(500, 'Error getting statistics');
     }
   }
@@ -109,13 +110,19 @@ export class StatisticsController {
   @Header('Content-Type', 'application/pdf')
   @OpenAPI({ summary: 'Return the attachment' })
   @UseBefore(authMiddleware)
-  async getAttachment(@Req() req: RequestWithUser, @Param('messageId') messageId: string, @Param('fileName') fileName: string, @Res() response: any): Promise<any> {
+  async getAttachment(
+    @Req() req: RequestWithUser,
+    @Param('messageId') messageId: string,
+    @Param('fileName') fileName: string,
+    @Res() response: any,
+  ): Promise<any> {
     try {
       const url = `${this.SERVICE}/${MUNICIPALITY_ID}/messages/${messageId}/attachments/${fileName}`;
       const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);
       // NOTE: send the raw file
       return result.data;
     } catch (error) {
+      logger.error('Error getting statistics: ', error);
       throw new HttpException(500, 'Error getting statistics');
     }
   }

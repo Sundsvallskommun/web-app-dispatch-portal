@@ -29,7 +29,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose }) =
         {documents.length > 0 && (
           <ul className="flex flex-col gap-8 mb-40">
             {documents.map((doc, docIdx) => (
-              <li key={`doc-${docIdx}`} className="flex items-center gap-12 border-1 p-12 mb-8 rounded">
+              <li
+                key={`doc-${docIdx}-${doc?.file?.name}`}
+                className="flex items-center gap-12 border-1 p-12 mb-8 rounded"
+              >
                 <div className="text-vattjom-text-primary bg-vattjom-surface-accent p-6 rounded-utility max-w-[32px] max-h-[32px]">
                   <Icon size="1.8rem" icon={<File />} />
                 </div>
