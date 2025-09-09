@@ -1,8 +1,14 @@
 {
   "appTitle": "Postportalen",
+  "appSubTitle": "Sundsvalls kommun",
   "personalNumber": "Personnummer",
+  "goToContent": "Hoppa till innehåll",
   "example": "Exempel",
   "receiver": "Mottagare",
+  "letter": "Brev",
+  "textMessage": "Sms",
+  "indexSubtitle": "Skicka meddelande till invånare med vår postportal",
+  "indexSubHeader": "Vad vill du skicka idag",
   "stepper": {
     "stepOne": "Lägg till textdokument",
     "stepTwo": "Lägg till mottagare",
@@ -11,13 +17,12 @@
   "done": "Klart",
   "dispatchDone": "Ditt utskick har gjorts",
   "dispatchNew": "Gör ett nytt utskick",
-  "recipientHandler": {
-    "addReceiver": "Lägg till mottagare",
-    "IndividualReceivers": "Enskilda mottagare",
-    "ImportReceivers": "Importera mottagare",
-    "fetchingReceiver": "Hämtar mottagare",
-    "errorHandler": {
-      "noFile": "Ingen fil vald"
+  "screenReader": {
+    "sendPost": "Skicka post",
+    "postStepper": {
+      "stepOne": "Steg 1: Lägg till textdokument",
+      "stepTwo": "Steg 2: Lägg till mottagare",
+      "stepThree": "Steg 3: Ange avsändare"
     }
   }
 }

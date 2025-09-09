@@ -1,0 +1,10 @@
+{
+  "success": "Ditt brev har skickats",
+  "successInfo": "Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan",
+  "sendNew": "Skicka nytt brev",
+  "goBack": "Till startsidan",
+  "sendletter": "Skicka brev",
+  "addTextDocument": "Lägg till textdokument",
+  "addReceiver": "Lägg till mottagare",
+  "addSender": "Ange avsändare"
+}

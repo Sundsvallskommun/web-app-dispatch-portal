@@ -10,6 +10,7 @@ import { ReactNode, useRef } from 'react';
 import { shallow } from 'zustand/shallow';
 import { userMenuGroups } from './userMenuGroups';
 import { Menu } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 interface DefaultLayoutProps {
   title: string;
@@ -34,18 +35,18 @@ const DefaultLayout = ({ title, pageheader, children }: DefaultLayoutProps) => {
     <div className="DefaultLayout full-page-layout">
       <Head>
         <title>{title}</title>
-        <meta name="description" content="Postportalen" />
+        <meta name="description" content={title} />
       </Head>
 
       <NextLink legacyBehavior={true} href="#content" passHref>
         <a onClick={setInitialFocus} accessKey="s" className="next-link-a">
-          Hoppa till innehåll
+          {t('goToContent')}
         </a>
       </NextLink>
       <div className="z-10">
         <Header
-          title={`Postportal`}
-          subtitle={'Sundsvalls kommun'}
+          title={t('appTitle')}
+          subtitle={t('appSubTitle')}
           LogoLinkWrapperComponent={<NextLink legacyBehavior={true} href={'/'} passHref />}
           userMenu={
             <span data-cy="usermenu">

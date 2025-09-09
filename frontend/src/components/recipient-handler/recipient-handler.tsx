@@ -26,7 +26,7 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -37,22 +37,18 @@ const RecipientHandler: React.FC = () => {
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const [error, setError] = useState<string>();
-  const setRecipients = useMessageStore((state) => state.setRecipients);
-  const recipients = useMessageStore((state) => state.recipients);
   const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>();
-
-  const setAddresses = useMessageStore((state) => state.setAddresses);
-  const addresses = useMessageStore((state) => state.addresses);
-
   const [current, setCurrent] = React.useState<number | undefined>(0);
-  const allowReplace = true;
-
   const [isAddWithAddressOpen, setIsAddWithAddressOpen] = useState(false);
-
+  const setRecipients = useMessageStore((state) => state.setRecipients);
+  const setAddresses = useMessageStore((state) => state.setAddresses);
+  const recipients = useMessageStore((state) => state.recipients);
+  const addresses = useMessageStore((state) => state.addresses);
+  const allowReplace = true;
   const validRecipientLength = recipients.filter((rec) => !rec?.error).length;
   const invalidRecipient = recipients.filter((rec) => rec?.error);
-
   const combinedLength = validRecipientLength + addresses.length;
+  const { t } = useTranslation(['common']);
 
   const {
     watch,
