@@ -61,7 +61,10 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
       <div className="flex flex-row justify-end gap-16">
         <div>
           {currentStep !== 0 && (
-            <Button variant="secondary" onClick={() => setCurrentStep(currentStep - 1)} /* leftIcon={<ArrowLeft />} */>
+            <Button
+              variant="secondary"
+              onClick={() => handleChangeStep(currentStep - 1)} /* leftIcon={<ArrowLeft />} */
+            >
               Tillbaka
             </Button>
           )}
