@@ -26,6 +26,7 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import Image from 'next/image';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -38,6 +39,8 @@ const RecipientHandler: React.FC = () => {
   const [error, setError] = useState<string>();
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const recipients = useMessageStore((state) => state.recipients);
+  const errorMessagesObj = useMessageStore((state) => state.errorMessagesObj);
+  const setErrorMessagesObj = useMessageStore((state) => state.setErrorMessagesObj);
   const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>();
 
   const setAddresses = useMessageStore((state) => state.setAddresses);
@@ -157,6 +160,7 @@ const RecipientHandler: React.FC = () => {
 
   useEffect(() => {
     setFormError('singleRecipient', { message: undefined });
+    setErrorMessagesObj({ ...errorMessagesObj, searchPersonnummerBox: '' });
     const length = recipient.length;
     if (length >= 12) {
       findPerson(recipient);
@@ -296,14 +300,14 @@ const RecipientHandler: React.FC = () => {
           {current === 0 ? (
             <div className="flex flex-col gap-12 pt-32">
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
-                <div className="relative w-full">
+                <div className="relative w-full gap-2">
                   <FormLabel className="text-label-medium">
                     Sök på personnummer <span className="font-normal">(ååååmmddxxxx)</span>
                   </FormLabel>
                   <SearchField
                     {...register('singleRecipient')}
                     value={recipient}
-                    className="w-full"
+                    className="w-full mt-12"
                     showSearchButton={false}
                     // showSearchButton={dirtyFields.singleRecipient && ssnPattern.test(recipient)}
                     showResetButton={recipient.length > 0}
@@ -317,8 +321,26 @@ const RecipientHandler: React.FC = () => {
                       setValue('singleRecipient', '');
                       setFoundPerson(undefined);
                     }}
-                    onSearch={() => handleSubmitSingleRecipient()}
+                    onSearch={() => {
+                      setErrorMessagesObj({ ...errorMessagesObj, searchPersonnummerBox: '' });
+                      handleSubmitSingleRecipient();
+                    }}
                   />
+                  {/* ErrorMessagesObj.searchbox here */}
+                  {errorMessagesObj?.searchPersonnummerBox ? (
+                    <div className="self-stretch inline-flex justify-start items-center mt-6 gap-4">
+                      <div className="w-20 h-20 relative overflow-hidden">
+                        <div className="h-full flex flex-col absolute bg-Colors-Error-Text-Primary-text mr-4">
+                          <Image src="/svg/info.svg" alt="Home" width={60} height={60} />
+                        </div>
+                      </div>
+                      <div className="justify-start text-[#971A1A] text-[14px] font-normal font-['Arial'] leading-none">
+                        {errorMessagesObj?.searchPersonnummerBox}
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                   {foundPerson?.address && (
                     <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
                       <p className="text-body text-base font-bold">
