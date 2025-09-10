@@ -31,5 +31,7 @@
       "stepTwo": "Steg 2: Lägg till mottagare",
       "stepThree": "Steg 3: Ange avsändare"
     }
-  }
+  },
+  "month": "Månad",
+  "chooseMonth": "Välj månad"
 }
