@@ -58,6 +58,8 @@ const SendMailPage = () => {
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const response = useMessageStore((state) => state.response);
   const setResponse = useMessageStore((state) => state.setResponse);
+  const errorMessagesObj = useMessageStore((state) => state.errorMessagesObj);
+  const setErrorMessagesObj = useMessageStore((state) => state.setErrorMessagesObj);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { t } = useTranslation(['common', 'send-mail']);
