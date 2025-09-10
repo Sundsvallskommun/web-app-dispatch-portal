@@ -137,7 +137,12 @@ export default function SendMailPage() {
                         component: <AttachmentHandler />,
                         valid: hasAtLeastOneAttachment,
                       },
-                      { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
+                      {
+                        label: 'Lägg till mottagare',
+                        component: <RecipientHandler />,
+                        valid: hasValidRecipients,
+                        onNextClick: () => {},
+                      },
                       { label: 'Ange avsändare', component: <SenderHandler /> },
                     ]}
                     onChangeStep={setStep}

@@ -8,6 +8,7 @@ export interface FormStep {
   label: string;
   component: ReactNode;
   valid?: boolean;
+  onNextClick?: (currentStep: number) => void;
 }
 
 interface FormStepperProps {
@@ -24,13 +25,12 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
   const openHelpComposer = () => setShowHelpComposer(true);
   const closeHelpComposer = () => setShowHelpComposer(false);
 
-  const handleChangeStep = (step: number) => {
-    setCurrentStep(step);
-  };
-
   const handleNextClicked = () => {
+    let onNextClick = steps[currentStep].onNextClick;
+    onNextClick && onNextClick(currentStep);
+
     if (steps[currentStep].valid) {
-      handleChangeStep(currentStep + 1);
+      setCurrentStep(currentStep + 1);
     }
   };
 
@@ -62,10 +62,7 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
       <div className="flex flex-row justify-end gap-16">
         <div>
           {currentStep !== 0 && (
-            <Button
-              variant="secondary"
-              onClick={() => handleChangeStep(currentStep - 1)} /* leftIcon={<ArrowLeft />} */
-            >
+            <Button variant="secondary" onClick={() => setCurrentStep(currentStep - 1)} /* leftIcon={<ArrowLeft />} */>
               Tillbaka
             </Button>
           )}
