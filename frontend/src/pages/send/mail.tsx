@@ -47,6 +47,8 @@ export default function SendMailPage() {
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const response = useMessageStore((state) => state.response);
   const setResponse = useMessageStore((state) => state.setResponse);
+  const errorMessagesObj = useMessageStore((state) => state.errorMessagesObj);
+  const setErrorMessagesObj = useMessageStore((state) => state.setErrorMessagesObj);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
@@ -141,7 +143,19 @@ export default function SendMailPage() {
                         label: 'Lägg till mottagare',
                         component: <RecipientHandler />,
                         valid: hasValidRecipients,
-                        onNextClick: () => {},
+                        onNextClick: () => {
+                          if (recipients.length === 0) {
+                            setErrorMessagesObj({
+                              ...errorMessagesObj,
+                              searchPersonnummerBox: 'Lägg till minst en mottagare för att fortsätta.',
+                            });
+                          } else {
+                            setErrorMessagesObj({
+                              ...errorMessagesObj,
+                              searchPersonnummerBox: '',
+                            });
+                          }
+                        },
                       },
                       { label: 'Ange avsändare', component: <SenderHandler /> },
                     ]}

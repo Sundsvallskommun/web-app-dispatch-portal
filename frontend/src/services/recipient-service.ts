@@ -48,7 +48,11 @@ export interface AddWithAddress {
   careOf?: string;
   zipCode: string;
   city: string;
-};
+}
+
+export interface ErrorMessageObj {
+  searchPersonnummerBox: string;
+}
 
 export const ssnPattern = /^$|^((19|20)[0-9]{6}-?[0-9]{4})$/gi;
 
@@ -135,18 +139,21 @@ interface State {
   recipients: RecipientWithAddress[];
   addresses: AddWithAddress[];
   response?: { recipients: RecipientWithAddress[]; response: LetterResponse };
+  errorMessagesObj?: ErrorMessageObj;
 }
 interface Actions {
   setRecipients: (rs: RecipientWithAddress[]) => void;
   setAddresses: (addresses: AddWithAddress[]) => void;
   setResponse: (r: { recipients: RecipientWithAddress[]; response: LetterResponse } | undefined) => void;
   reset: () => void;
+  setErrorMessagesObj: (errorMessagesObj: ErrorMessageObj) => void;
 }
 
 const initialState: State = {
   recipients: [],
   addresses: [],
   response: undefined,
+  errorMessagesObj: undefined,
 };
 
 export const useMessageStore = create<State & Actions>()(
@@ -159,6 +166,7 @@ export const useMessageStore = create<State & Actions>()(
       reset: () => {
         set(initialState);
       },
+      setErrorMessagesObj: (errorMessagesObj) => set(() => ({ errorMessagesObj })),
     }),
     { enabled: __DEV__ }
   )
