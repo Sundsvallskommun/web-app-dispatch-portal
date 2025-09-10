@@ -23,7 +23,6 @@ interface FileListItemComponentProps {
 
 export const FileListItemComponent: React.FC<FileListItemComponentProps> = (props) => {
   const { data, handleRemove, noBorder } = props;
-
   const [hover, setHover] = React.useState<boolean>(false);
   const [focus, setFocus] = React.useState<boolean>(false);
 
@@ -42,14 +41,14 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
         noBorder ? '' : 'border border-1'
       )}
     >
-      <div className="flex gap-16">
+      <div className="flex gap-16 items-center">
         <div className="bg-vattjom-surface-accent p-10 gap-8 rounded-utility max-w-[44px] max-h-[44px]">
           <Icon icon={<File />} />
         </div>
 
         <div className="flex flex-col w-full gap-2">
           <span className="text-base">
-            <strong className="text-secondary">{data?.file?.name}</strong>
+            <strong className="text-secondary break-all">{data?.file?.name}</strong>
           </span>
           <span className="text-small text-secondary">{data?.file?.size && formatBytes(data.file.size, 0)}</span>
         </div>
@@ -74,8 +73,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
           >
             <Icon icon={<Trash />} />
             <Tooltip position="below" className={`${hover || focus ? 'absolute mt-[8rem]' : 'hidden'}`}>
-              {' '}
-              Radera{' '}
+              Radera
             </Tooltip>
           </Button>
         </div>
