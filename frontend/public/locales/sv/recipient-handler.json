@@ -1,9 +1,0 @@
-{
-  "addReceiver": "Lägg till mottagare",
-  "IndividualReceivers": "Enskilda mottagare",
-  "ImportReceivers": "Importera mottagare",
-  "fetchingReceiver": "Hämtar mottagare",
-  "errorHandler": {
-    "noFile": "Ingen fil vald"
-  }
-}

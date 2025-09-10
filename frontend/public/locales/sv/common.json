@@ -1,6 +1,11 @@
 {
   "appTitle": "Postportalen",
   "appSubTitle": "Sundsvalls kommun",
+  "mainMenu": {
+    "sendMessage": "Skicka meddelande",
+    "myStatistics": "Dina utskick",
+    "statistics": "Statistik"
+  },
   "personalNumber": "Personnummer",
   "goToContent": "Hoppa till innehåll",
   "example": "Exempel",
@@ -15,6 +20,8 @@
     "stepThree": "Ange avsändare"
   },
   "done": "Klart",
+  "cancel": "Avbryt",
+  "yesContinue": "Ja, fortsätt",
   "dispatchDone": "Ditt utskick har gjorts",
   "dispatchNew": "Gör ett nytt utskick",
   "screenReader": {

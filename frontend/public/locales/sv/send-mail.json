@@ -3,8 +3,56 @@
   "successInfo": "Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan",
   "sendNew": "Skicka nytt brev",
   "goBack": "Till startsidan",
-  "sendletter": "Skicka brev",
+  "sendLetter": "Skicka brev",
   "addTextDocument": "Lägg till textdokument",
-  "addReceiver": "Lägg till mottagare",
-  "addSender": "Ange avsändare"
+  "addSender": "Ange avsändare",
+  "attachmentHandler": {
+    "header": "Lägg till textfil",
+    "description": "Ladda upp filer som ska ingå i ditt digitala brev, till exempel textfiler, fakturor och andra bilagor. Filerna får tillsammans ha en storlek på maximalt 1.5 MB",
+    "helperText": "Tillåtna filtyper: PDF. Max storlek på utskick: 1.5 MB",
+    "addedFilesHeader": "Tillagda filer",
+    "noFiles": "Du har inte laddat upp några filer än",
+    "addedFiles": "Tillagda filer ({num})",
+    "sort": "Sortera filerna i den ordning du vill att dom ska synas i utskicket"
+  },
+  "recipientHandler": {
+    "title": "Lägg till mottagare",
+    "contentFirstRow": "Lägg till mottagare med personnummer eller adress, eller ladda upp en mottagarlista i CSV-format. Använd gärna <Link href=\"/files/example.csv/files/example.csv\">exempelfilen (csv)</Link> när du skapar en mottagarlista.",
+    "contentSecondRow": "Ska du skicka post till en mottagare som har särskild postadress? Då behöver du ange adressen manuellt. Klicka på knappen ”Lägg till med adress”",
+    "howAddRecipient": "Hur vill du lägga till mottagare?",
+    "optionPersonalNumberOrAddress": "Med personnummer eller adress",
+    "optionRecipientList": "Med mottagarlista",
+    "addRecipient": "Lägg till mottagare",
+    "addRecipientWithAddress": "Lägg till med adress",
+    "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
+    "csvAddedFile": "Tillagd fil",
+    "IndividualRecipients": "Enskilda mottagare",
+    "ImportRecipients": "Importera mottagare",
+    "fetchingRecipient": "Hämtar mottagare",
+    "errorHandler": {
+      "noFile": "Ingen fil vald",
+      "maxSize": "Filen får ej överstiga {size}MB",
+      "maxRow": "Filen får inte innehålla fler än {rows} rader",
+      "default": "Något gick fel när mottagarlistan hanterades",
+      "invalidRecipient": "Ogiltiga mottagare ({num})",
+      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen"
+    },
+    "fetchRecipientError": {
+      "alreadyExists": "Personen är readan tillagd",
+      "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?"
+    },
+    "personalNumberError": {
+      "fewNumber": "För få siffror i personnumret",
+      "tooManyNumbers": "För många siffror i personnumret"
+    },
+    "modalLabel": "Vill du lägga till mottagare med mottagarlista?",
+    "modalWarning": "Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna",
+    "searchPersonalNumber": "Sök på personnummer <span className=\"font-normal\">(ååååmmddxxxx)</span>",
+    "addedRecipientsTitle": "Tillagda mottagare",
+    "noRecipientAdded": "Du har inte lagt till några mottagare än",
+    "addedFileTitle": "Tillagd fil",
+    "noFileAdded": "Du har inte lagt till någon fil än",
+    "addedRecipientNum": "Tillagda mottagare ({num})",
+    "addedFromFileNum": "Tillagda mottagare från fil ({num})"
+  }
 }

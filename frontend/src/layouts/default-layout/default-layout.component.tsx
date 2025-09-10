@@ -68,7 +68,7 @@ const DefaultLayout = ({ title, pageheader, children }: DefaultLayoutProps) => {
                   <PopupMenu.Group>
                     {mainMenuItems.map((item, index) => (
                       <PopupMenu.Item key={`mainmenu-${index}`}>
-                        <NextLink href={item.href}>{item.label}</NextLink>
+                        <NextLink href={item.href}>{t(`mainMenu.${item.label}`)}</NextLink>
                       </PopupMenu.Item>
                     ))}
                   </PopupMenu.Group>

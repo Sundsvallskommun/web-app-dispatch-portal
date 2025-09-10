@@ -99,7 +99,7 @@ const SendMailPage = () => {
   };
   return (
     <DefaultLayout title={`Postportalen`}>
-      <h1 className="">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
+      <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className="text-lg mb-11 pt-48">
         <div className="">
           <div className="">
@@ -138,7 +138,11 @@ const SendMailPage = () => {
                         component: <AttachmentHandler />,
                         valid: hasAtLeastOneAttachment,
                       },
-                      { label: t('send-mail:addReceiver'), component: <RecipientHandler />, valid: hasValidRecipients },
+                      {
+                        label: t('send-mail:recipientHandler.addRecipient'),
+                        component: <RecipientHandler />,
+                        valid: hasValidRecipients,
+                      },
                       { label: t('send-mail:addSender'), component: <SenderHandler /> },
                     ]}
                     onChangeStep={setStep}

@@ -4,6 +4,8 @@ import { getStatisticsByDate } from '@services/statistics-service';
 import React, { useEffect } from 'react';
 import { Statistics } from '@interfaces/statistics.interface';
 import dayjs from 'dayjs';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const headers: Array<AutoTableHeader | string> = [
   {
