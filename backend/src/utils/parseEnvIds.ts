@@ -1,10 +1,10 @@
-export const parseEnvIds = (envVar: string | undefined): number[] => {
-  if (!envVar) return [];
+export const parseEnvIds = (envDepartments: string | undefined): number[] => {
+  if (!envDepartments) return [];
 
-  const parsed = envVar.split(',').map(id => {
+  const parsed = envDepartments.split(',').map(id => {
     const num = Number(id.trim());
     if (isNaN(num)) {
-      throw new Error(`IFelaktigt ID i DEPARTMENT_IDS: "${id}" är inte ett nummer.`);
+      throw new Error(`Felaktigt ID i DEPARTMENT_IDS: "${id}" är inte ett nummer.`);
     }
     return num;
   });
