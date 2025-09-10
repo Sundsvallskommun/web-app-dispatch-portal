@@ -26,8 +26,7 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
   const closeHelpComposer = () => setShowHelpComposer(false);
 
   const handleNextClicked = () => {
-    let onNextClick = steps[currentStep].onNextClick;
-    onNextClick && onNextClick(currentStep);
+    steps[currentStep].onNextClick?.(currentStep);
 
     if (steps[currentStep].valid) {
       setCurrentStep(currentStep + 1);
