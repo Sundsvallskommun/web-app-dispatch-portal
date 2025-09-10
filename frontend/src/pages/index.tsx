@@ -41,8 +41,7 @@ const Index = () => {
                   </Card.Body>
                 </Card>
               </NextLink>
-              {!user.permissions.canSendSMS && (
-                /* Återställ bool!!!! */
+              {user.permissions.canSendSMS && (
                 <NextLink href="/send/sms" legacyBehavior passHref>
                   <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
                     <Card.Body className="flex-1">
