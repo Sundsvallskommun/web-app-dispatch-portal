@@ -1,0 +1,37 @@
+{
+  "appTitle": "Postportalen",
+  "appSubTitle": "Sundsvalls kommun",
+  "mainMenu": {
+    "sendMessage": "Skicka meddelande",
+    "myStatistics": "Dina utskick",
+    "statistics": "Statistik"
+  },
+  "personalNumber": "Personnummer",
+  "goToContent": "Hoppa till innehåll",
+  "example": "Exempel",
+  "receiver": "Mottagare",
+  "letter": "Brev",
+  "textMessage": "Sms",
+  "indexSubtitle": "Skicka meddelande till invånare med vår postportal",
+  "indexSubHeader": "Vad vill du skicka idag",
+  "stepper": {
+    "stepOne": "Lägg till textdokument",
+    "stepTwo": "Lägg till mottagare",
+    "stepThree": "Ange avsändare"
+  },
+  "done": "Klart",
+  "cancel": "Avbryt",
+  "yesContinue": "Ja, fortsätt",
+  "dispatchDone": "Ditt utskick har gjorts",
+  "dispatchNew": "Gör ett nytt utskick",
+  "screenReader": {
+    "sendPost": "Skicka post",
+    "postStepper": {
+      "stepOne": "Steg 1: Lägg till textdokument",
+      "stepTwo": "Steg 2: Lägg till mottagare",
+      "stepThree": "Steg 3: Ange avsändare"
+    }
+  },
+  "month": "Månad",
+  "chooseMonth": "Välj månad"
+}

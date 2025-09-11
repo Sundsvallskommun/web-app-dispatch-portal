@@ -26,6 +26,7 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { Trans, useTranslation } from 'next-i18next';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -36,22 +37,18 @@ const RecipientHandler: React.FC = () => {
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const [error, setError] = useState<string>();
-  const setRecipients = useMessageStore((state) => state.setRecipients);
-  const recipients = useMessageStore((state) => state.recipients);
   const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>();
-
-  const setAddresses = useMessageStore((state) => state.setAddresses);
-  const addresses = useMessageStore((state) => state.addresses);
-
   const [current, setCurrent] = React.useState<number | undefined>(0);
-  const allowReplace = true;
-
   const [isAddWithAddressOpen, setIsAddWithAddressOpen] = useState(false);
-
+  const setRecipients = useMessageStore((state) => state.setRecipients);
+  const setAddresses = useMessageStore((state) => state.setAddresses);
+  const recipients = useMessageStore((state) => state.recipients);
+  const addresses = useMessageStore((state) => state.addresses);
+  const allowReplace = true;
   const validRecipientLength = recipients.filter((rec) => !rec?.error).length;
   const invalidRecipient = recipients.filter((rec) => rec?.error);
-
   const combinedLength = validRecipientLength + addresses.length;
+  const { t } = useTranslation(['send-mail', 'common']);
 
   const {
     watch,
@@ -77,16 +74,16 @@ const RecipientHandler: React.FC = () => {
         let errorMessage: string;
         switch (e.message) {
           case 'NO_FILE':
-            errorMessage = 'Ingen fil vald';
+            errorMessage = t('recipientHandler.errorHandler.noFile');
             break;
           case 'MAX_SIZE':
-            errorMessage = `Filen får ej överstiga ${MAX_RECIPIENT_FILE_SIZE_MB}MB`;
+            errorMessage = t('recipientHandler.errorHandler.maxSize', { size: MAX_RECIPIENT_FILE_SIZE_MB });
             break;
           case 'MAX_RECIPIENT_ROW_SIZE':
-            errorMessage = `Filen får inte innehålla fler än ${MAX_RECIPIENT_ROW_SIZE} rader`;
+            errorMessage = t('recipientHandler.errorHandler.maxRow', { rows: MAX_RECIPIENT_ROW_SIZE });
             break;
           default:
-            errorMessage = 'Något gick fel när mottagarlistan hanterades';
+            errorMessage = t('recipientHandler.errorHandler.default');
         }
         setIsLoadingRecipients(false);
         setError(errorMessage);
@@ -103,7 +100,7 @@ const RecipientHandler: React.FC = () => {
           (rec) => rec?.recipient?.personnumber === res[0]?.recipient?.personnumber
         );
         if (alreadyExists) {
-          setFormError('singleRecipient', { message: 'Personen är readan tillagd.' });
+          setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.alreadyExists') });
           setIsLoadingRecipients(false);
           return;
         }
@@ -116,7 +113,7 @@ const RecipientHandler: React.FC = () => {
       .catch((e) => {
         console.error(e);
         setIsLoadingRecipients(false);
-        setFormError('singleRecipient', { message: 'Kunde inte hämta person. Har du angivit personnumret korrekt?' });
+        setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.singleRecipient') });
       });
   };
 
@@ -179,9 +176,9 @@ const RecipientHandler: React.FC = () => {
       setValue('singleRecipient', '');
       setFoundPerson(undefined);
     } else if (recipient.length < 12) {
-      setFormError('singleRecipient', { message: 'För få siffror i personnumret' });
+      setFormError('singleRecipient', { message: t('recipientHandler.personalNumberError.fewNumber') });
     } else if (recipient.length > 13) {
-      setFormError('singleRecipient', { message: 'För många siffror i personnumret' });
+      setFormError('singleRecipient', { message: t('recipientHandler.personalNumberError.tooManyNumbers') });
     }
   };
 
@@ -238,38 +235,39 @@ const RecipientHandler: React.FC = () => {
       <Modal
         show={isWarningOpen}
         onClose={() => onCloseWarningModal(false)}
-        label="Vill du lägga till mottagare med mottagarlista?"
+        label={t('recipientHandler:modalLabel')}
         className="w-[40rem]"
       >
         <Modal.Content>
-          <p>Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna.</p>
+          <p>{t('recipientHandler:modalWarning')}</p>
         </Modal.Content>
 
         <Modal.Footer>
           <Button variant="secondary" onClick={() => onCloseWarningModal(false)}>
-            Avbryt
+            {t('common:cancel')}
           </Button>
           <Button color="vattjom" onClick={() => onCloseWarningModal(true)}>
-            Ja, fortsätt
+            {t('common:yesContinue')}
           </Button>
         </Modal.Footer>
       </Modal>
       <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
         <div className="w-full">
-          <h4 className="pb-6">Lägg till mottagare</h4>
+          <h4 className="pb-6">{t('recipientHandler.title')}</h4>
           <p className="text-base pb-6">
-            Lägg till mottagare med personnummer eller adress, eller ladda upp en mottagarlista i CSV-format. Använd
-            gärna <Link href="/files/example.csv">exempelfilen (csv)</Link> när du skapar en mottagarlista.
+            <Trans
+              i18nKey="send-mail:recipientHandler:contentFirstRow"
+              components={{
+                Link: <Link href="/files/example.csv" />,
+              }}
+            />
           </p>
-          <p className="text-base pb-6">
-            Ska du skicka post till en mottagare som har särskild postadress? Då behöver du ange adressen manuellt.
-            Klicka på knappen ”Lägg till med adress”.
-          </p>
+          <p className="text-base pb-6">{`${t('recipientHandler.contentSecondRow')}.`}</p>
           <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
 
         <div className="w-full gap-32">
-          <h3 className="text-label-medium">Hur vill du lägga till mottagare?</h3>
+          <h3 className="text-label-medium">{t('recipientHandler.howAddRecipient')}</h3>
           <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
             <div
               className={cx(
@@ -278,7 +276,7 @@ const RecipientHandler: React.FC = () => {
               )}
             >
               <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
-                Med personnummer eller adress
+                {t('recipientHandler.optionPersonalNumberOrAddress')}
               </RadioButton>
             </div>
             <div
@@ -288,7 +286,7 @@ const RecipientHandler: React.FC = () => {
               )}
             >
               <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
-                Med mottagarlista
+                {t('recipientHandler.optionRecipientList')}
               </RadioButton>
             </div>
           </div>
@@ -298,7 +296,12 @@ const RecipientHandler: React.FC = () => {
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
                 <div className="relative w-full">
                   <FormLabel className="text-label-medium">
-                    Sök på personnummer <span className="font-normal">(ååååmmddxxxx)</span>
+                    <Trans
+                      i18nKey="send-mail:recipientHandler.searchPersonalNumber"
+                      components={{
+                        span: <span className="font-normal" />,
+                      }}
+                    />
                   </FormLabel>
                   <SearchField
                     {...register('singleRecipient')}
@@ -330,7 +333,7 @@ const RecipientHandler: React.FC = () => {
                       </p>
 
                       <Button className="mt-16" onClick={() => handleSubmitSingleRecipient()}>
-                        Lägg till mottagare
+                        {t('recipientHandler.addRecipient')}
                       </Button>
                     </div>
                   )}
@@ -341,7 +344,7 @@ const RecipientHandler: React.FC = () => {
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
                 <Button onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
-                  Lägg till med adress
+                  {t('recipientHandler.addRecipientWithAddress')}
                 </Button>
               </FormControl>
             </div>
@@ -352,7 +355,7 @@ const RecipientHandler: React.FC = () => {
                   showLabel
                   fieldName="recipientList"
                   accept={['.csv', '.CSV']}
-                  helperText="Tillåtna filtyper: csv. Maximalt antal rader: 250"
+                  helperText={t('recipientHandler.csvHelperText')}
                   allowMax={1}
                   allowReplace={allowReplace}
                   maxFileSizeMB={MAX_RECIPIENT_FILE_SIZE_MB}
@@ -367,7 +370,7 @@ const RecipientHandler: React.FC = () => {
 
           {recipientList?.length && recipients?.length && current === 1 ? (
             <div className="mt-56">
-              <h4 className="text-label-medium mb-12">Tillagd fil</h4>
+              <h4 className="text-label-medium mb-12">{t('recipientHandler.csvAddedFile')}</h4>
               <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
             </div>
           ) : (
@@ -379,7 +382,7 @@ const RecipientHandler: React.FC = () => {
                 <div>
                   <Spinner className="h-32 w-32"></Spinner>
                 </div>
-                <div>Hämtar mottagare</div>
+                <div>{t('recipientHandler:fetchingRecipient')}</div>
               </>
             </div>
           )}
@@ -387,12 +390,10 @@ const RecipientHandler: React.FC = () => {
 
           {invalidRecipient?.length > 0 && !isLoadingRecipients && (
             <div className="mt-56">
-              <h4 className="text-label-medium">Ogiltiga mottagare ({invalidRecipient.length})</h4>
-              <p className="text-small text-secondary">
-                Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna,
-                ååååmmddxxxx. Ladda sedan upp filen igen.
-              </p>
-
+              <h4 className="text-label-medium">
+                {t('recipientHandler.errorHandler.invalidRecipient', { num: invalidRecipient.length })}
+              </h4>
+              <p className="text-small text-secondary">{`${t('recipientHandler.errorHandler.invalidRecipient')}.`}</p>
               <div className="mt-12 border-1 rounded-groups border-error-surface-primary">
                 {invalidRecipient.map((rec, index) => (
                   <div
@@ -408,9 +409,13 @@ const RecipientHandler: React.FC = () => {
 
           {combinedLength > 0 && !isLoadingRecipients && (
             <div className="w-full mt-40">
-              {current === 0 && <h4 className="mb-16 text-h4-sm">Tillagda mottagare ({combinedLength})</h4>}
+              {current === 0 && (
+                <h4 className="mb-16 text-h4-sm">{t('recipientHandler.addedRecipientNum', { num: combinedLength })}</h4>
+              )}
               {current === 1 && (
-                <h4 className="mb-16 text-h4-sm">Tillagda mottagare från fil ({validRecipientLength})</h4>
+                <h4 className="mb-16 text-h4-sm">
+                  {t('recipientHandler.addedFromFileNum', { num: validRecipientLength })}
+                </h4>
               )}
               <RecipientList />
             </div>
@@ -418,14 +423,14 @@ const RecipientHandler: React.FC = () => {
         </div>
         {combinedLength < 1 && current === 0 && (
           <div>
-            <h3 className="text-label-medium">Tillagda mottagare</h3>
-            <p className="text-base">Du har inte lagt till några mottagare än.</p>
+            <h3 className="text-label-medium">{t('recipientHandler.addedRecipientsTitle')}</h3>
+            <p className="text-base">{`${t('recipientHandler.noRecipientAdded')}.`}</p>
           </div>
         )}
         {recipients?.length < 1 && current === 1 && (
           <div>
-            <h3 className="text-label-medium">Tillagd fil</h3>
-            <p className="text-base">Du har inte lagt till någon fil än.</p>
+            <h3 className="text-label-medium">{t('recipientHandler.addedFileTitle')}</h3>
+            <p className="text-base">{`${t('recipientHandler.noFileAdded')}.`}</p>
           </div>
         )}
       </div>

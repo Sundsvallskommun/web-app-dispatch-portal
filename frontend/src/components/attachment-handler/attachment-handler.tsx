@@ -15,6 +15,7 @@ import {
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Menu } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface Attachment {
   file: File | undefined;
@@ -27,10 +28,9 @@ export interface AttachmentFormModel {
 const AttachmentHandler: React.FC = () => {
   const maxMain = 1;
   const maxSecondary = 3;
-
   const { register, watch, setValue, getValues } = useFormContext<AttachmentFormModel>();
-
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
+  const { t } = useTranslation(['send-mail']);
 
   const handleRemove = (index: number) => {
     const allFiles = getValues('attachmentList');
@@ -60,10 +60,8 @@ const AttachmentHandler: React.FC = () => {
       <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
         <input type="hidden" {...register('message')} value="hiddenmessage" />
         <div className="w-full">
-          <h4 className="pb-6">Lägg till textfil</h4>
-          <p className="text-base pb-6">
-          Ladda upp filer som ska ingå i ditt digitala brev, till exempel textfiler, fakturor och andra bilagor. Filerna får tillsammans ha en storlek på maximalt 1.5 MB{' '}
-          </p>
+          <h4 className="pb-6">{t('send-mail:attachmentHandler:header')}</h4>
+          <p className="text-base pb-6">{t('send-mail:attachmentHandler:description')}</p>
           <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
         <FormControl id="attachment" className="w-full gap-8">
@@ -73,20 +71,24 @@ const AttachmentHandler: React.FC = () => {
             allowMultiple={maxMain + maxSecondary > 1}
             allowMax={maxMain + maxSecondary}
             accept={['.pdf', '.PDF']}
-            helperText="Tillåtna filtyper: PDF. Max storlek på utskick: 1.5 MB"
+            helperText={t('send-mail:attachmentHandler:helperText')}
             maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
           />
         </FormControl>
 
         <div className="w-full">
-          {attachmentList.length === 0 && <div>
-            <h3 className="text-label-medium">Tillagda filer</h3>
-            <p className="text-base">Du har inte laddat upp några filer än.</p>
-          </div>}
+          {attachmentList.length === 0 && (
+            <div>
+              <h3 className="text-label-medium">{t('send-mail:attachmentHandler:addedFilesHeader')}</h3>
+              <p className="text-base">{`${t('send-mail:attachmentHandler:noFiles')}.`}</p>
+            </div>
+          )}
           {attachmentList.length > 0 && (
             <div className="w-full">
-              <h4 className="pb-8 text-label-medium">Tillagda filer ({attachmentList.length})</h4>
-              <p className="text-base">Sortera filerna i den ordning du vill att dom ska synas i utskicket.</p>
+              <h4 className="pb-8 text-label-medium">
+                {t('send-mail:attachmentHandler:addedFiles', { num: attachmentList.length })}
+              </h4>
+              <p className="text-base">{`${t('send-mail:attachmentHandler:sort')}.`}</p>
               <div className="flex flex-col gap-12">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                   <SortableContext
