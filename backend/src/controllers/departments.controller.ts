@@ -29,13 +29,14 @@ const findDepartments = (org: Organization) => {
 @Controller()
 export class DepartmentsController {
   apiService = new ApiService();
+  SERVICE = 'company/1.0';
 
   @Get('/departments')
   @OpenAPI({ summary: 'Return all available departments' })
   @UseBefore(authMiddleware)
   async getDepartments(@Req() req: RequestWithUser, @Res() response: any): Promise<any> {
     try {
-      const orgtree = await this.apiService.get<Organization>({ url: `company/1.0/${MUNICIPALITY_ID}/13/orgtree` }, req.user);
+      const orgtree = await this.apiService.get<Organization>({ url: `${this.SERVICE}/${MUNICIPALITY_ID}/13/orgtree` }, req.user);
       const departments = findDepartments(orgtree.data);
 
       return response.send(departments);
