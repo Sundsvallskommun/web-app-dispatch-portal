@@ -139,21 +139,18 @@ interface State {
   recipients: RecipientWithAddress[];
   addresses: AddWithAddress[];
   response?: { recipients: RecipientWithAddress[]; response: LetterResponse };
-  errorMessagesObj?: ErrorMessageObj;
 }
 interface Actions {
   setRecipients: (rs: RecipientWithAddress[]) => void;
   setAddresses: (addresses: AddWithAddress[]) => void;
   setResponse: (r: { recipients: RecipientWithAddress[]; response: LetterResponse } | undefined) => void;
   reset: () => void;
-  setErrorMessagesObj: (errorMessagesObj: ErrorMessageObj) => void;
 }
 
 const initialState: State = {
   recipients: [],
   addresses: [],
   response: undefined,
-  errorMessagesObj: undefined,
 };
 
 export const useMessageStore = create<State & Actions>()(
@@ -166,7 +163,6 @@ export const useMessageStore = create<State & Actions>()(
       reset: () => {
         set(initialState);
       },
-      setErrorMessagesObj: (errorMessagesObj) => set(() => ({ errorMessagesObj })),
     }),
     { enabled: __DEV__ }
   )
