@@ -23,10 +23,12 @@ import {
   RadioButton,
   cx,
   Modal,
+  Icon,
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import Image from 'next/image';
+import { Info } from 'lucide-react';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -329,9 +331,9 @@ const RecipientHandler: React.FC = () => {
                   {/* ErrorMessagesObj.searchbox here */}
                   {errorMessagesObj?.searchPersonnummerBox ? (
                     <div className="self-stretch inline-flex justify-start items-center mt-6 gap-4">
-                      <div className="w-20 h-20 relative overflow-hidden">
-                        <div className="h-full flex flex-col absolute bg-Colors-Error-Text-Primary-text mr-4">
-                          <Image src="/svg/info.svg" alt="Home" width={60} height={60} />
+                      <div className="w-18 h-20 relative overflow-hidden">
+                        <div className="h-full flex flex-col justify-center absolute bg-Colors-Error-Text-Primary-text text-[#971A1A]">
+                          <Icon size="1.4rem" icon={<Info />} />
                         </div>
                       </div>
                       <div className="justify-start text-[#971A1A] text-[14px] font-normal font-['Arial'] leading-none">

@@ -70,13 +70,7 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
           {currentStep === steps.length - 1 ? (
             <>{submitButton}</>
           ) : (
-            <Button
-              variant="primary"
-              onClick={() => handleNextClicked()}
-              // disabled={!steps[currentStep].valid}
-              color="vattjom"
-              rightIcon={<ArrowRight />}
-            >
+            <Button variant="primary" onClick={() => handleNextClicked()} color="vattjom" rightIcon={<ArrowRight />}>
               Nästa
             </Button>
           )}
