@@ -27,7 +27,6 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import Image from 'next/image';
 import { Info } from 'lucide-react';
 
 export interface RecipientListFormModel {
@@ -41,8 +40,6 @@ const RecipientHandler: React.FC = () => {
   const [error, setError] = useState<string>();
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const recipients = useMessageStore((state) => state.recipients);
-  const errorMessagesObj = useMessageStore((state) => state.errorMessagesObj);
-  const setErrorMessagesObj = useMessageStore((state) => state.setErrorMessagesObj);
   const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>();
 
   const setAddresses = useMessageStore((state) => state.setAddresses);
@@ -162,7 +159,6 @@ const RecipientHandler: React.FC = () => {
 
   useEffect(() => {
     setFormError('singleRecipient', { message: undefined });
-    setErrorMessagesObj({ ...errorMessagesObj, searchPersonnummerBox: '' });
     const length = recipient.length;
     if (length >= 12) {
       findPerson(recipient);
@@ -324,25 +320,11 @@ const RecipientHandler: React.FC = () => {
                       setFoundPerson(undefined);
                     }}
                     onSearch={() => {
-                      setErrorMessagesObj({ ...errorMessagesObj, searchPersonnummerBox: '' });
+                      setFormError('singleRecipient', { message: undefined });
                       handleSubmitSingleRecipient();
                     }}
                   />
-                  {/* ErrorMessagesObj.searchbox here */}
-                  {errorMessagesObj?.searchPersonnummerBox ? (
-                    <div className="self-stretch inline-flex justify-start items-center mt-6 gap-4">
-                      <div className="w-18 h-20 relative overflow-hidden">
-                        <div className="h-full flex flex-col justify-center absolute bg-Colors-Error-Text-Primary-text text-[#971A1A]">
-                          <Icon size="1.4rem" icon={<Info />} />
-                        </div>
-                      </div>
-                      <div className="justify-start text-[#971A1A] text-[14px] font-normal font-['Arial'] leading-none">
-                        {errorMessagesObj?.searchPersonnummerBox}
-                      </div>
-                    </div>
-                  ) : (
-                    <></>
-                  )}
+
                   {foundPerson?.address && (
                     <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
                       <p className="text-body text-base font-bold">
@@ -360,11 +342,23 @@ const RecipientHandler: React.FC = () => {
                   )}
                 </div>
 
-                {/* <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText> */}
-                {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
+                {errors.singleRecipient?.message ? (
+                  <div className="self-stretch inline-flex justify-start items-center mt-6 gap-4">
+                    <div className="w-18 h-20 relative overflow-hidden">
+                      <div className="h-full flex flex-col justify-center absolute bg-Colors-Error-Text-Primary-text text-[#971A1A]">
+                        <Icon size="1.4rem" icon={<Info />} />
+                      </div>
+                    </div>
+                    <div className="justify-start text-[#971A1A] text-[14px] font-normal font-['Arial'] leading-none">
+                      <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-                <Button onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
+                <Button className="mt-20" onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
                   Lägg till med adress
                 </Button>
               </FormControl>

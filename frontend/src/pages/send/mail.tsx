@@ -24,6 +24,7 @@ const formSchema = yup
       return value && value.length > 0;
     }),
     recipientList: yup.array(),
+    singleRecipient: yup.string().nullable(), // ✅ add this
   })
   .required();
 
@@ -47,8 +48,6 @@ export default function SendMailPage() {
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const response = useMessageStore((state) => state.response);
   const setResponse = useMessageStore((state) => state.setResponse);
-  const errorMessagesObj = useMessageStore((state) => state.errorMessagesObj);
-  const setErrorMessagesObj = useMessageStore((state) => state.setErrorMessagesObj);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
@@ -59,7 +58,7 @@ export default function SendMailPage() {
     reValidateMode: 'onChange',
   });
 
-  const { watch, reset } = controls;
+  const { watch, reset, setError: setFormError, clearErrors } = controls;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
@@ -145,15 +144,11 @@ export default function SendMailPage() {
                         valid: hasValidRecipients,
                         onNextClick: () => {
                           if (recipients.length === 0) {
-                            setErrorMessagesObj({
-                              ...errorMessagesObj,
-                              searchPersonnummerBox: 'Lägg till minst en mottagare för att fortsätta.',
+                            setFormError('singleRecipient', {
+                              message: 'Lägg till minst en mottagare för att fortsätta.',
                             });
                           } else {
-                            setErrorMessagesObj({
-                              ...errorMessagesObj,
-                              searchPersonnummerBox: '',
-                            });
+                            clearErrors('singleRecipient');
                           }
                         },
                       },
