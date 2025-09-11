@@ -33,5 +33,5 @@ export const {
   DEV,
   AUTHORIZED_GROUPS,
   SMS_SENDER,
-  DEPARTMENT_IDS,
+  COMPANY_IDS,
 } = process.env;
