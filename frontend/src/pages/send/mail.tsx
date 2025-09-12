@@ -84,7 +84,7 @@ const SendMailPage = () => {
     reValidateMode: 'onSubmit',
   });
 
-  const { watch, reset, setError: setFormError, clearErrors, trigger, setValue } = controls;
+  const { watch, reset, trigger, setValue } = controls;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
