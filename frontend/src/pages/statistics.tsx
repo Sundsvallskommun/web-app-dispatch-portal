@@ -125,7 +125,7 @@ export const StatisticsPage = () => {
   );
 };
 
-export const getStaticProps: GetServerSideProps<{}> = async ({ locale }) => ({
+export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale ?? 'sv', ['common', 'statistics'])),
   },
