@@ -345,19 +345,10 @@ const RecipientHandler: React.FC = () => {
                   )}
                 </div>
 
-                {errors.singleRecipient?.message ? (
-                  <div className="self-stretch inline-flex justify-start items-center mt-6 gap-4">
-                    <div className="w-18 h-20 relative overflow-hidden">
-                      <div className="h-full flex flex-col justify-center absolute bg-Colors-Error-Text-Primary-text text-[#971A1A]">
-                        <Icon size="1.4rem" icon={<Info />} />
-                      </div>
-                    </div>
-                    <div className="justify-start text-[#971A1A] text-[14px] font-normal font-['Arial'] leading-none">
-                      <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>
-                    </div>
-                  </div>
-                ) : (
-                  <></>
+                {errors.singleRecipient?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}
+                  </FormErrorMessage>
                 )}
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
