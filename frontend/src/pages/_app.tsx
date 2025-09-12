@@ -9,6 +9,7 @@ import utc from 'dayjs/plugin/utc';
 import type { AppProps } from 'next/app';
 import { useMemo, useState } from 'react';
 import { AppWrapper } from '../contexts/app.context';
+import { appWithTranslation } from 'next-i18next';
 
 dayjs.extend(utc);
 dayjs.locale('sv');
@@ -48,7 +49,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       <AppWrapper>
         <LoginGuard>
           <FileUploadWrapper>
-            {/* @ts-expect-error Server Component */}
             <Component {...pageProps} />
           </FileUploadWrapper>
         </LoginGuard>
@@ -57,4 +57,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp);

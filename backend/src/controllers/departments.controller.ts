@@ -20,6 +20,7 @@ const findDepartments = (org: Organization): Organization[] => {
 @Controller()
 export class DepartmentsController {
   apiService = new ApiService();
+  SERVICE = 'company/1.0';
 
   @Get('/departments')
   @OpenAPI({ summary: 'Return all available departments (and companies)' })

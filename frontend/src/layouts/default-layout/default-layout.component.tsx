@@ -10,6 +10,7 @@ import { ReactNode, useRef } from 'react';
 import { shallow } from 'zustand/shallow';
 import { userMenuGroups } from './userMenuGroups';
 import { Menu } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 interface DefaultLayoutProps {
   title: string;
@@ -17,11 +18,12 @@ interface DefaultLayoutProps {
   children: ReactNode;
 }
 
-export default function DefaultLayout({ title, pageheader, children }: DefaultLayoutProps) {
+const DefaultLayout = ({ title, pageheader, children }: DefaultLayoutProps) => {
   const initialFocus = useRef<HTMLElement>(null);
   const gui = useGui();
   const isMedium = useMediaQuery(`screen and (min-width:${gui.theme?.screens?.md})`);
   const user = useUserStore((s) => s.user, shallow);
+  const { t } = useTranslation(['common']);
 
   const setInitialFocus = () => {
     setTimeout(() => {
@@ -33,18 +35,18 @@ export default function DefaultLayout({ title, pageheader, children }: DefaultLa
     <div className="DefaultLayout full-page-layout">
       <Head>
         <title>{title}</title>
-        <meta name="description" content="Postportalen" />
+        <meta name="description" content={title} />
       </Head>
 
       <NextLink legacyBehavior={true} href="#content" passHref>
         <a onClick={setInitialFocus} accessKey="s" className="next-link-a">
-          Hoppa till innehåll
+          {t('goToContent')}
         </a>
       </NextLink>
       <div className="z-10">
         <Header
-          title={`Postportal`}
-          subtitle={'Sundsvalls kommun'}
+          title={t('appTitle')}
+          subtitle={t('appSubTitle')}
           LogoLinkWrapperComponent={<NextLink legacyBehavior={true} href={'/'} passHref />}
           userMenu={
             <span data-cy="usermenu">
@@ -66,9 +68,7 @@ export default function DefaultLayout({ title, pageheader, children }: DefaultLa
                   <PopupMenu.Group>
                     {mainMenuItems.map((item, index) => (
                       <PopupMenu.Item key={`mainmenu-${index}`}>
-                        <NextLink href={item.href}>
-                          {item.label}
-                        </NextLink>
+                        <NextLink href={item.href}>{t(`mainMenu.${item.label}`)}</NextLink>
                       </PopupMenu.Item>
                     ))}
                   </PopupMenu.Group>
@@ -98,4 +98,6 @@ export default function DefaultLayout({ title, pageheader, children }: DefaultLa
       </main>
     </div>
   );
-}
+};
+
+export default DefaultLayout;
