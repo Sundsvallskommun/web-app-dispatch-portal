@@ -160,7 +160,7 @@ const SendMailPage = () => {
 
 export const getStaticProps: GetServerSideProps<{}> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility'])),
   },
 });
 
