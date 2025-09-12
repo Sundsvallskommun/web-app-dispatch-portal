@@ -17,6 +17,8 @@ import { useTranslation } from 'next-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
+const RECIPIENT_ERROR = 'Lägg till minst en mottagare för att fortsätta.';
+
 const formSchema = yup
   .object({
     message: yup.string().nullable(),
@@ -27,9 +29,28 @@ const formSchema = yup
       return value && value.length > 0;
     }),
     recipientList: yup.array(),
-    singleRecipient: yup.string().nullable(), // ✅ add this
+    singleRecipient: yup.string().nullable(),
+    // hidden field mirrored from store
+    storeRecipients: yup.array().default([]),
   })
-  .required();
+  .required()
+  .test('HAS_MIN_ONE_RECIPIENT', RECIPIENT_ERROR, function (obj) {
+    const single = obj?.singleRecipient?.trim?.() ?? '';
+    const hasSingle = single.length > 0;
+    const hasList = (obj?.recipientList?.length ?? 0) > 0;
+
+    const storeHasValid =
+      Array.isArray(obj?.storeRecipients) &&
+      obj.storeRecipients.some((r) => r?.address?.addresses?.length > 0 && !r?.error);
+
+    if (hasSingle || hasList || storeHasValid) return true;
+
+    // 👇 force Yup to attach the error to singleRecipient
+    return this.createError({
+      path: 'singleRecipient',
+      message: RECIPIENT_ERROR,
+    });
+  });
 
 const initialValues = {
   attachmentList: [],
@@ -39,6 +60,7 @@ const initialValues = {
   subject: '',
   body: '',
   department: '',
+  storeRecipients: [],
 };
 
 export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
@@ -58,11 +80,11 @@ const SendMailPage = () => {
   const controls = useForm({
     resolver: yupResolver(formSchema),
     values: initialValues,
-    mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
   });
 
-  const { watch, reset, setError: setFormError, clearErrors } = controls;
+  const { watch, reset, setError: setFormError, clearErrors, trigger, setValue } = controls;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
@@ -80,6 +102,11 @@ const SendMailPage = () => {
       resetAll();
     }
   }, [resetAll, response, router]);
+
+  // keep hidden field in sync with store
+  useEffect(() => {
+    setValue('storeRecipients', recipients ?? [], { shouldValidate: false, shouldDirty: false });
+  }, [recipients, setValue]);
 
   const hasValidRecipients =
     recipients?.some(
@@ -144,13 +171,7 @@ const SendMailPage = () => {
                         component: <RecipientHandler />,
                         valid: hasValidRecipients,
                         onNextClick: () => {
-                          if (recipients.length === 0) {
-                            setFormError('singleRecipient', {
-                              message: 'Lägg till minst en mottagare för att fortsätta.',
-                            });
-                          } else {
-                            clearErrors('singleRecipient');
-                          }
+                          trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
                         },
                       },
                       { label: t('send-mail:addSender'), component: <SenderHandler /> },
