@@ -50,7 +50,7 @@ const RecipientHandler: React.FC = () => {
   const validRecipientLength = recipients.filter((rec) => !rec?.error).length;
   const invalidRecipient = recipients.filter((rec) => rec?.error);
   const combinedLength = validRecipientLength + addresses.length;
-  const { t } = useTranslation(['send-mail', 'common']);
+  const { t } = useTranslation(['send-mail', 'common', 'accessibility']);
 
   const {
     watch,
