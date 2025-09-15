@@ -5,9 +5,9 @@ import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useUserStore } from '@services/user-service/user-service';
-import { Card, Icon } from '@sk-web-gui/react';
 import { useTranslation } from 'next-i18next';
-import { Mail } from 'lucide-react';
+import { Mail, MailCheck, Smartphone } from 'lucide-react';
+import MainCard from '@components/main-card/main-card';
 
 const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
@@ -24,67 +24,36 @@ const Index = () => {
       {!isCheckingPermissions && (
         <>
           <h1 className="sr-only">{`${t('screenReader.sendPost')}.`}</h1>
-          <div className="flex self-center flex-col text-lg mb-11 pt-48 max-w-max">
-            <div className="text-center">
-              <p className="text-base mb-16">{t('indexSubtitle')}</p>
-              <h1 className="text-display-3-lg mb-40">{`${t('indexSubHeader')}`}</h1>
+          <div className="flex self-center flex-col text-lg mb-11 max-w-max mt-[128px] gap-56">
+            <div className="text-center flex flex-col gap-16">
+              <p className="text-base">{t('indexSubtitle')}</p>
+              <h1 className="text-display-3-lg mb-0">{`${t('indexSubHeader')}`}</h1>
             </div>
-            <div className="md:flex flex-1 basis-0 gap-24">
-              <NextLink href="/send/mail" legacyBehavior passHref className="flex-1">
-                <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
-                  <Card.Body className="flex-1 !p-24">
-                    <Card.Header className="self-stretch inline-flex justify-center items-center gap-12">
-                      <Icon className="!pl-0 h-5 bg-Dark-Secondary text-dark-secondary" size={'28px'} icon={<Mail />} />
-                      <div className="justify-center items-center text-[#1F1F25] text-[20px] font-bold font-['Raleway'] leading-7 h-full">
-                        {t('letter')}
-                      </div>
-                    </Card.Header>
-                    <Card.Text>
-                      <p className="self-stretch justify-center text-[#444450] text-base font-normal font-['Arial'] leading-normal">
-                        Skicka brev digitalt, eller som vanlig post om mottagaren saknar digital brevlåda.
-                      </p>
-                      <p className="self-stretch justify-center text-[#444450] text-base font-normal font-['Arial'] leading-normal">
-                        Pris: 0,5 kr/mottagare
-                      </p>
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              </NextLink>
-
-              {/* Test */}
+            <div className="flex items-start self-stretch md:flex flex-1 basis-0 gap-32">
               <NextLink href={'/send/mail'} passHref className="flex-1">
-                <Card
-                  className="flex-1  [&_.sk-card-body-wrapper]:!flex [&_.sk-card-body-wrapper]:!flex-col !min-w-[34rem] [&_.sk-btn.sk-btn-md.sk-btn-primary.sk-card-body-icon]:!self-end"
-                  color="vattjom"
-                  invert={true}
-                  useHoverEffect
-                >
-                  <Card.Body className="flex flex-col !p-[24px]">
-                    <Card.Header className="self-stretch inline-flex justify-start items-center gap-12 ">
-                      <Icon className="!pl-0 h-5 bg-Dark-Secondary text-[#444450]" size={'28px'} icon={<Mail />} />
-                      <div className="font-bold text-[2rem]">Brev</div>
-                    </Card.Header>
-                    <Card.Text className="">
-                      <p className="max-h-">
-                        Amet enim adipiscing congue justo adipiscing sagittis volutpat nibh ac. Integer viverra lectus
-                        in quisque. In nisl mauris faucibus egestas quis mi nam.
-                      </p>
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
+                <MainCard
+                  icon={<Mail />}
+                  title="Brev"
+                  contentText="Skicka brev digitalt, eller som vanlig post om mottagaren saknar digital brevlåda."
+                  subContentText="Pris: 0,5 kr/mottagare"
+                />
+              </NextLink>
+              <NextLink href={''} passHref className="flex-1">
+                <MainCard
+                  icon={<MailCheck />}
+                  title="Rekomenderat brev"
+                  contentText="Skicka viktiga dokument tryggt via Kivra när en kvittens från mottagaren behövs."
+                  subContentText="Pris: 20 kr/mottagare"
+                />
               </NextLink>
               {user.permissions.canSendSMS && (
                 <NextLink href="/send/sms" legacyBehavior passHref>
-                  <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
-                    <Card.Body className="flex-1">
-                      <Card.Header>
-                        <h2 className="text-h3-md">{t('textMessage')}</h2>
-                      </Card.Header>
-                      <Card.Text>
-                        <p className="text-small">Någon text som beskriver vad skicka sms innebär</p>
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
+                  <MainCard
+                    icon={<Smartphone />}
+                    title={t('textMessage')}
+                    contentText="Ett snabbt sätt att nå mottagaren när viktig information behöver delas."
+                    subContentText="Pris: 0,5 kr/mottagare"
+                  />
                 </NextLink>
               )}
             </div>

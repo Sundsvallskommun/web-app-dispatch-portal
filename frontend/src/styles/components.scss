@@ -16,4 +16,17 @@
   .container {
     @apply max-w-content;
   }
+
+  .card-fix :is(.sk-card-body-wrapper) {
+    @apply flex flex-col gap-16 p-24 border-1 border-divider rounded-cards-lg shadow-50;
+  }
+
+  .card-button-icon-fix :is(.sk-btn.sk-btn-md.sk-btn-primary.sk-card-body-icon) {
+    @apply self-end mr-0;
+  }
+
+  .card-icon-fix {
+    padding-left: 0px !important;
+    height: 1.25rem;
+  }
 }
