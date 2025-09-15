@@ -1,5 +1,20 @@
 {
   "title": "Statistik",
   "description": "Här hittar du statistik över skickade brev från varje förvaltning. Statistiken sparas ett år bakåt",
-  "noStatisticsFound": "Ingen statistik hittades"
+  "noStatisticsFound": "Ingen statistik hittades",
+  "myStatistics": {
+    "recipient": "mottagare",
+    "unknown": "Okänd",
+    "message": "Meddelande",
+    "description": "Här hittar du dina skickade brev. Utskicken sparas i 30 dagar.",
+    "attachments": "textfiler",
+    "showAttachment": "Öppna fil",
+    "all": "Alla",
+    "digitalMail_one": "Digitalt brev",
+    "digitalMail": "Digitala brev",
+    "snailMail_one": "Fysiskt brev",
+    "snailMail": "Fysiska brev",
+    "SMSMessagePrefixUrl" : "/my-statistics/sms",
+    "emailMessagePrefixUrl" : "/my-statistics/mail"
+  }
 }

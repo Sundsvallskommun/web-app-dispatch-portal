@@ -32,3 +32,23 @@ export interface MessageAttachment {
   contentType: string;
   fileName: string;
 }
+
+export interface UserBatches {
+  _meta: PagingMetaData;
+  batches: Batch[];
+}
+
+export interface Batch {
+  batchId: string;
+  messageType: string;
+  subject: string;
+  sent: string;
+  attachmentCount: number;
+  recipientCount: number;
+  status: Status;
+}
+
+export interface Status {
+  successful: number;
+  unsuccessful: number;
+}
