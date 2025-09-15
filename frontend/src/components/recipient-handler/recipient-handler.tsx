@@ -56,6 +56,7 @@ const RecipientHandler: React.FC = () => {
     watch,
     setValue,
     setError: setFormError,
+    clearErrors,
     register,
     formState: { errors },
   } = useFormContext<RecipientListFormModel>();
@@ -173,6 +174,8 @@ const RecipientHandler: React.FC = () => {
   };
 
   const handleSubmitSingleRecipient = () => {
+    clearErrors('singleRecipient');
+
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
       setValue('singleRecipient', '');
@@ -323,7 +326,6 @@ const RecipientHandler: React.FC = () => {
                       setFoundPerson(undefined);
                     }}
                     onSearch={() => {
-                      setFormError('singleRecipient', { message: undefined });
                       handleSubmitSingleRecipient();
                     }}
                   />
