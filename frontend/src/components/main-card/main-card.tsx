@@ -1,6 +1,5 @@
 import { Card, Icon } from '@sk-web-gui/react';
-import { Mail } from 'lucide-react';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 
 const MainCard = ({
   icon,
