@@ -22,12 +22,12 @@ const Index = () => {
   return (
     <DefaultLayout title={t('appTitle')}>
       {!isCheckingPermissions && (
-        <>
+        <div className="pt-128 px-249 flex flex-col items-center gap-32 flex-1 self-stretch">
           <h1 className="sr-only">{`${t('screenReader.sendPost')}.`}</h1>
-          <div className="flex self-center flex-col text-lg mb-11 max-w-max mt-[128px] gap-56">
-            <div className="text-center flex flex-col gap-16">
-              <p className="text-base">{t('indexSubtitle')}</p>
-              <h1 className="text-display-3-lg mb-0">{`${t('indexSubHeader')}`}</h1>
+          <div className="flex self-center flex-col text-lg mb-11 max-w-max gap-56">
+            <div className="text-center flex flex-col gap-16 lining-nums proportional-nums">
+              <div className="text-large text-dark-secondary">{t('indexSubtitle')}</div>
+              <div className="header-font text-display-3-lg text-dark-primary ">{`${t('indexSubHeader')}`}</div>
             </div>
             <div className="flex items-start self-stretch md:flex flex-1 basis-0 gap-32">
               <NextLink href={'/send/mail'} passHref className="flex-1">
@@ -58,7 +58,7 @@ const Index = () => {
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
     </DefaultLayout>
   );

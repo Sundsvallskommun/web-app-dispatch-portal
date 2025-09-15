@@ -1,10 +1,19 @@
 import Core from '@sk-web-gui/core';
 import Forms from '@tailwindcss/forms';
-import ContainerQueries from "@tailwindcss/container-queries";
+import ContainerQueries from '@tailwindcss/container-queries';
 
 import type { Config } from 'tailwindcss';
 
 export default {
+  theme: {
+    extend: {
+      spacing: {
+        // Add your custom spacing scale
+        '128': '128px',
+        '249': '249px',
+      },
+    },
+  },
   mode: 'jit',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
