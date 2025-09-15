@@ -2,6 +2,7 @@ import { Button, cx, Icon, Tooltip } from '@sk-web-gui/react';
 import React from 'react';
 import { Attachment } from '@components/attachment-handler/attachment-handler';
 import { File, Trash } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -23,9 +24,9 @@ interface FileListItemComponentProps {
 
 export const FileListItemComponent: React.FC<FileListItemComponentProps> = (props) => {
   const { data, handleRemove, noBorder } = props;
-
   const [hover, setHover] = React.useState<boolean>(false);
   const [focus, setFocus] = React.useState<boolean>(false);
+  const { t } = useTranslation(['common', 'accessibility']);
 
   const handleHover = () => {
     setHover(true);
@@ -42,14 +43,14 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
         noBorder ? '' : 'border border-1'
       )}
     >
-      <div className="flex gap-16">
+      <div className="flex gap-16 items-center">
         <div className="bg-vattjom-surface-accent p-10 gap-8 rounded-utility max-w-[44px] max-h-[44px]">
           <Icon icon={<File />} />
         </div>
 
         <div className="flex flex-col w-full gap-2">
           <span className="text-base">
-            <strong className="text-secondary">{data?.file?.name}</strong>
+            <strong className="text-secondary break-all">{data?.file?.name}</strong>
           </span>
           <span className="text-small text-secondary">{data?.file?.size && formatBytes(data.file.size, 0)}</span>
         </div>
@@ -58,7 +59,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
       <div className="flex flex-wrap gap-16 break-words">
         <div className="relative">
           <Button
-            aria-label="Ta bort fil"
+            aria-label={t('accessibility:ariaLabel.removeFile')}
             iconButton
             variant="secondary"
             onClick={() => {
@@ -74,8 +75,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
           >
             <Icon icon={<Trash />} />
             <Tooltip position="below" className={`${hover || focus ? 'absolute mt-[8rem]' : 'hidden'}`}>
-              {' '}
-              Radera{' '}
+              {t('delete')}
             </Tooltip>
           </Button>
         </div>

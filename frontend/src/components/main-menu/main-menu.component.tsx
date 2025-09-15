@@ -20,7 +20,7 @@ export const MainMenu: React.FC = () => {
     } else {
       setActive(0);
     }
-  }, []);
+  }, [pathname]);
 
   return (
     <div className="w-full shrink flex justify-end">
