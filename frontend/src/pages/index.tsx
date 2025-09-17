@@ -13,7 +13,7 @@ const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['common', 'start-page']);
 
   useEffect(() => {
     setIsCheckingPermissions(false);
@@ -64,9 +64,9 @@ const Index = () => {
   );
 };
 
-export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'start-page'])),
   },
 });
 
