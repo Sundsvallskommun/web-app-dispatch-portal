@@ -91,10 +91,10 @@ export const StatisticsPage = () => {
 
         <div className="lg:flex flex-row mb-16 mt-56 gap-12 items-center">
           <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
-            {t('month')}
+            {t('common:month')}
           </label>
           <Select id="month" size="sm" onSelectValue={handleDateChange}>
-            <Select.Option value="">{t('chooseMonth')}</Select.Option>
+            <Select.Option value="">{t('common:chooseMonth')}</Select.Option>
             {generateMonthOptions().map((option) => (
               <Select.Option key={option.value} value={option.value}>
                 {option.label}
