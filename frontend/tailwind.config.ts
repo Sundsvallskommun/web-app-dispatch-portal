@@ -8,9 +8,10 @@ export default {
   theme: {
     extend: {
       spacing: {
-        // Add your custom spacing scale
         '128': '128px',
+        '220': '220px',
         '249': '249px',
+        '340': '340px',
       },
     },
   },
