@@ -15,6 +15,7 @@
     "snailMail_one": "Fysiskt brev",
     "snailMail": "Fysiska brev",
     "SMSMessagePrefixUrl" : "/my-statistics/sms",
-    "emailMessagePrefixUrl" : "/my-statistics/mail"
+    "emailMessagePrefixUrl" : "/my-statistics/mail",
+    "letterSubject": "Brev ({subject})"
   }
 }

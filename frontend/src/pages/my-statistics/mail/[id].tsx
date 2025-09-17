@@ -31,34 +31,6 @@ const defaultMessageInfo: Message = {
   recipients: [],
 };
 
-const headers: Array<AutoTableHeader | string> = [
-  {
-    label: 'Mottagare',
-    property: 'recipient',
-  },
-  {
-    label: 'Adress',
-    property: 'address',
-  },
-  {
-    label: 'Skickat via',
-    property: 'messageType',
-    renderColumn: (value, item) => (
-      <div className="text-right">
-        {item.messageType === 'SNAIL_MAIL' ? (
-          <Label rounded inverted>
-            Fysiskt brev
-          </Label>
-        ) : (
-          <Label color="vattjom" rounded inverted>
-            Digitalt brev
-          </Label>
-        )}
-      </div>
-    ),
-  },
-];
-
 const MyStatisticsDetails = () => {
   const router = useRouter();
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
@@ -68,6 +40,35 @@ const MyStatisticsDetails = () => {
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
   const { message, loaded } = useMessage(id ?? '');
   const { recipients, attachments, sent, subject } = message ?? defaultMessageInfo;
+
+  const headers: Array<AutoTableHeader | string> = [
+    {
+      label: 'Mottagare',
+      property: 'recipient',
+    },
+    {
+      label: 'Adress',
+      property: 'address',
+    },
+    {
+      label: 'Skickat via',
+      property: 'messageType',
+      columnPosition: 'right',
+      renderColumn: (value, item) => (
+        <div className="min-w-[120px]">
+          {item.messageType === 'SNAIL_MAIL' ? (
+            <Label rounded inverted>
+              {t('statistics:myStatistics.snailMail_one')}
+            </Label>
+          ) : (
+            <Label color="vattjom" rounded inverted>
+              {t('statistics:myStatistics.digitalMail_one')}
+            </Label>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   const recipientList = recipients
     ?.filter((r) => r.status === 'SENT')
@@ -128,9 +129,7 @@ const MyStatisticsDetails = () => {
             </Breadcrumb.Item>
 
             <Breadcrumb.Item currentPage>
-              <Breadcrumb.Link>
-                {t('common:letter')} ({subject})
-              </Breadcrumb.Link>
+              <Breadcrumb.Link>{t('statistics:myStatistics.letterSubject', { subject: subject })}</Breadcrumb.Link>
             </Breadcrumb.Item>
           </Breadcrumb>
         </PageHeader>
@@ -139,10 +138,8 @@ const MyStatisticsDetails = () => {
       {!loaded ? (
         <Spinner />
       ) : (
-        <div className="w-full mx-auto p-32 bg-white shadow-50 rounded-14">
-          <h1 className="text-h4-lg mb-8">
-            {t('common:letter')} ({subject})
-          </h1>
+        <div className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
+          <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.letterSubject', { subject: subject })}</h1>
           <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <p className="pb-16 font-bold">
