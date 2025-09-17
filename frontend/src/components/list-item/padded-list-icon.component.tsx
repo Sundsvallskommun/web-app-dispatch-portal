@@ -9,18 +9,13 @@ interface PaddedListItemComponentProps {
 export const PaddedListIcon: React.FC<PaddedListItemComponentProps> = (props) => {
   const { messageType } = props;
 
-  const translateType = (messageType: string) => {
-    switch (messageType) {
-      case 'letter':
-        return <Mail />;
-      case 'SMS':
-        return <Smartphone />;
-      case 'rek':
-        return <MailCheck />;
-      default:
-        return <Mail />;
-    }
+  const icons: Record<string, React.ReactElement> = {
+    letter: <Mail />,
+    SMS: <Smartphone />,
+    rek: <MailCheck />,
   };
+
+  const translateType = (messageType: string) => icons[messageType] ?? <Mail />;
 
   return (
     <div className="bg-vattjom-surface-accent flex justify-center items-center lg:w-52 lg:h-52 md:h-48 md:w-48 h-32 w-32 md:p-0 p-4 rounded-button mr-16">
