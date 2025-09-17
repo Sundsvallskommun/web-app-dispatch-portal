@@ -27,7 +27,7 @@ const formSchema = yup
       return value && value.length > 0;
     }),
     recipientList: yup.array(),
-    singleRecipient: yup.string().nullable(), // ✅ add this
+    singleRecipient: yup.string().nullable(),
   })
   .required();
 
