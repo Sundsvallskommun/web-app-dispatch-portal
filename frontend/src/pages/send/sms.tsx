@@ -16,7 +16,7 @@ import {
   Textarea,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { BadgeCheck, HelpCircle, SendHorizontal } from 'lucide-react';
+import { BadgeCheck, HelpCircle, SendHorizontal, Smartphone } from 'lucide-react';
 import NextLink from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -153,11 +153,15 @@ export default function SendEmailPage() {
   return (
     <DefaultLayout title={`Postportalen`}>
       <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
-      <div className="flex flex-1 items-center justify-between bg-background-content p-40 absolute z-10 left-0 top-0 right-0">
+      <div className="flex flex-1 items-center justify-between bg-background-content px-80 py-16 absolute z-10 left-0 top-0 right-0">
         <NextLink href="/" passHref legacyBehavior>
           <Link strong={true} variant="tertiary" className="text-base">
             Avbryt
           </Link>
+        </NextLink>
+        <NextLink href="/" passHref className="lg:w-818 flex flex-row items-center justify-start">
+          <Icon icon={<Smartphone />} className="w-28 h-28 mr-12" />
+          <div className="text-h4-lg">Skicka sms</div>
         </NextLink>
         <Button variant="secondary" onClick={openHelpComposer}>
           <Icon icon={<HelpCircle />} /> Hjälp
