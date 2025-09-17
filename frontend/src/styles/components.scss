@@ -17,6 +17,10 @@
     @apply max-w-content;
   }
 
+  .header-container .sk-header {
+    padding: 2px 80px;
+  }
+
   .main-card {
     @apply w-full lg:max-w-340 lg:min-h-220;
   }

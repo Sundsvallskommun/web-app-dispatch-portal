@@ -43,7 +43,7 @@ const DefaultLayout = ({ title, pageheader, children }: DefaultLayoutProps) => {
           {t('common:goToContent')}
         </a>
       </NextLink>
-      <div className="z-10">
+      <div className="z-10 header-container">
         <Header
           title={t('common:appTitle')}
           subtitle={t('common:appSubTitle')}
