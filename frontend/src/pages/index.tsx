@@ -7,7 +7,7 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useUserStore } from '@services/user-service/user-service';
 import { useTranslation } from 'next-i18next';
 import { Mail, MailCheck, Smartphone } from 'lucide-react';
-import MainCard from '@components/main-card/main-card';
+import MainCard from '@components/main-card/main-card.component';
 
 const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
