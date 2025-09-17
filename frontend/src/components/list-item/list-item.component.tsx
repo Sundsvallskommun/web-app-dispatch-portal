@@ -34,6 +34,8 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
         return t('common:letter');
       case 'EMAIL':
         return t('common:letter');
+      case 'LETTER':
+        return t('common:letter');
       default:
         return type;
     }
@@ -49,22 +51,20 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
       key={data?.batchId}
       className="flex w-full mb-16 bg-background-content shadow-50 py-16 px-20 rounded-cards justify-between hover:bg-background-color-mixin-1 hover:cursor-pointer focus:ring-2 focus:outline-none"
     >
-      <div className="flex w-full lg:items-center justify-between">
+      <div className="flex w-full sm:items-center justify-between">
         <PaddedListIcon messageType={data.messageType} />
-
         <div>
-          <p>
-            <strong>{messageTypeToHumanReadable(data.messageType)}</strong>{' '}
-            {isSMS(data.messageType) ? null : `(${data?.subject})`}
-          </p>
-
-          <div className="lg:flex items-center text-small gap-8">
-            <Icon icon={<Calendar />} size={20} /> {dayjs(data.sent).format('YYYY-MM-DD, HH:mm')}
-            <Icon icon={<Users2 />} className="ml-8" size={20} /> {data.recipientCount}{' '}
-            {t('statistics:myStatistics.recipient')}
+          <strong>{messageTypeToHumanReadable(data.messageType)}</strong>{' '}
+          <span>{isSMS(data.messageType) ? null : `(${data?.subject})`}</span>
+          <div className="sm:flex block items-center text-small gap-8">
+            <p className="flex items-center gap-8">
+              <Icon icon={<Calendar />} size={20} /> {dayjs(data.sent).format('YYYY-MM-DD, HH:mm')}
+            </p>
+            <p className="flex items-center sm:ml-8 gap-8">
+              <Icon icon={<Users2 />} size={20} /> {data.recipientCount} {t('statistics:myStatistics.recipient')}
+            </p>
           </div>
         </div>
-
         <div className="flex flex-1 justify-end ">
           <Icon icon={<ChevronRight />} />
         </div>
