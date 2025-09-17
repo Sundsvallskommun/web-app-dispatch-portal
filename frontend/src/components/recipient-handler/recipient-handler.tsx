@@ -33,6 +33,7 @@ import { Info } from 'lucide-react';
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
   singleRecipient: string;
+  storeRecipients: string;
 }
 
 const RecipientHandler: React.FC = () => {
@@ -103,7 +104,9 @@ const RecipientHandler: React.FC = () => {
           (rec) => rec?.recipient?.personnumber === res[0]?.recipient?.personnumber
         );
         if (alreadyExists) {
-          setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.alreadyExists') });
+          setFormError('singleRecipient', {
+            message: t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'),
+          });
           setIsLoadingRecipients(false);
           return;
         }
@@ -111,12 +114,14 @@ const RecipientHandler: React.FC = () => {
         setRecipients(recipients.concat(res));
         setIsLoadingRecipients(false);
         setFoundPerson(undefined);
-        setFormError('singleRecipient', { message: undefined });
+        clearErrors('singleRecipient');
       })
       .catch((e) => {
         console.error(e);
         setIsLoadingRecipients(false);
-        setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.singleRecipient') });
+        setFormError('singleRecipient', {
+          message: t('send-mail:recipientHandler.fetchRecipientError.singleRecipient'),
+        });
       });
   };
 
@@ -130,6 +135,10 @@ const RecipientHandler: React.FC = () => {
         console.error(e);
       });
   };
+
+  useEffect(() => {
+    clearErrors('singleRecipient');
+  }, [recipients, setFormError]);
 
   useEffect(() => {
     if (recipientList?.length === 1) {
@@ -149,14 +158,14 @@ const RecipientHandler: React.FC = () => {
   useEffect(() => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setAddresses([]);
     setValue('recipientList', []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
   useEffect(() => {
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors(['storeRecipients', 'singleRecipient']);
     const length = recipient.length;
     if (length >= 12) {
       findPerson(recipient);
@@ -174,8 +183,7 @@ const RecipientHandler: React.FC = () => {
   };
 
   const handleSubmitSingleRecipient = () => {
-    clearErrors('singleRecipient');
-
+    clearErrors(['singleRecipient', 'storeRecipients']);
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
       setValue('singleRecipient', '');
@@ -190,7 +198,7 @@ const RecipientHandler: React.FC = () => {
   const handleRemove = () => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setValue('singleRecipient', '');
     setValue('recipientList', []);
   };
@@ -347,6 +355,11 @@ const RecipientHandler: React.FC = () => {
                   )}
                 </div>
 
+                {errors.storeRecipients?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.storeRecipients.message}
+                  </FormErrorMessage>
+                )}
                 {errors.singleRecipient?.message && (
                   <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
                     <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}

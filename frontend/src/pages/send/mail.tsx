@@ -17,8 +17,6 @@ import { useTranslation } from 'next-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-const RECIPIENT_ERROR = 'Lägg till minst en mottagare för att fortsätta.';
-
 const formSchema = yup
   .object({
     message: yup.string().nullable(),
@@ -30,27 +28,14 @@ const formSchema = yup
     }),
     recipientList: yup.array(),
     singleRecipient: yup.string().nullable(),
-    // hidden field mirrored from store
-    storeRecipients: yup.array().default([]),
+    storeRecipients: yup
+      .array()
+      .default([])
+      .test('HAS_MIN_ONE_RECIPIENT', 'Lägg till minst en mottagare för att fortsätta.', (value) => {
+        return value && value.length > 0;
+      }),
   })
-  .required()
-  .test('HAS_MIN_ONE_RECIPIENT', RECIPIENT_ERROR, function (obj) {
-    const single = obj?.singleRecipient?.trim?.() ?? '';
-    const hasSingle = single.length > 0;
-    const hasList = (obj?.recipientList?.length ?? 0) > 0;
-
-    const storeHasValid =
-      Array.isArray(obj?.storeRecipients) &&
-      obj.storeRecipients.some((r) => r?.address?.addresses?.length > 0 && !r?.error);
-
-    if (hasSingle || hasList || storeHasValid) return true;
-
-    // 👇 force Yup to attach the error to singleRecipient
-    return this.createError({
-      path: 'singleRecipient',
-      message: RECIPIENT_ERROR,
-    });
-  });
+  .required();
 
 const initialValues = {
   attachmentList: [],
@@ -105,7 +90,7 @@ const SendMailPage = () => {
 
   // keep hidden field in sync with store
   useEffect(() => {
-    setValue('storeRecipients', recipients ?? [], { shouldValidate: false, shouldDirty: false });
+    setValue('storeRecipients', recipients ?? [], { shouldValidate: true, shouldDirty: false });
   }, [recipients, setValue]);
 
   const hasValidRecipients =
