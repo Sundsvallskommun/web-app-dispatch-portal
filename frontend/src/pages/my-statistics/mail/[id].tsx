@@ -2,11 +2,25 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Tabs, Button, Spinner, useSnackbar } from '@sk-web-gui/react';
+import {
+  Icon,
+  Breadcrumb,
+  AutoTable,
+  AutoTableHeader,
+  Tabs,
+  Button,
+  Spinner,
+  useSnackbar,
+  Divider,
+  Label,
+} from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
 import { getAttachmentFile, useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { Message } from '@interfaces/statistics.interface';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
+import { capitalize } from '@mui/material';
 
 const defaultMessageInfo: Message = {
   sent: '',
@@ -17,41 +31,44 @@ const defaultMessageInfo: Message = {
   recipients: [],
 };
 
-const headers: Array<AutoTableHeader | string> = [
-  {
-    label: 'Mottagare',
-    property: 'recipient',
-  },
-  {
-    label: 'Adress',
-    property: 'address',
-  },
-  {
-    label: 'Skickades via',
-    property: 'messageType',
-    renderColumn: (value, item) => (
-      <div className="text-right">
-        {item.messageType === 'SNAIL_MAIL' ? (
-          <div className="py-4 px-10 bg-tertiary-surface text-label-small rounded-button">Fysisk post</div>
-        ) : (
-          <div className="py-4 px-10 text-gronsta-text-primary bg-gronsta-surface-accent text-label-small rounded-button">
-            Digital post
-          </div>
-        )}
-      </div>
-    ),
-  },
-];
-
-export default function MyStatisticsDetails() {
+const MyStatisticsDetails = () => {
   const router = useRouter();
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
   const snackBar = useSnackbar();
+  const { t } = useTranslation();
 
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
-
   const { message, loaded } = useMessage(id ?? '');
   const { recipients, attachments, sent, subject } = message ?? defaultMessageInfo;
+
+  const headers: Array<AutoTableHeader | string> = [
+    {
+      label: 'Mottagare',
+      property: 'recipient',
+    },
+    {
+      label: 'Adress',
+      property: 'address',
+    },
+    {
+      label: 'Skickat via',
+      property: 'messageType',
+      columnPosition: 'right',
+      renderColumn: (value, item) => (
+        <div className="min-w-[120px]">
+          {item.messageType === 'SNAIL_MAIL' ? (
+            <Label rounded inverted>
+              {t('statistics:myStatistics.snailMail_one')}
+            </Label>
+          ) : (
+            <Label color="vattjom" rounded inverted>
+              {t('statistics:myStatistics.digitalMail_one')}
+            </Label>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   const recipientList = recipients
     ?.filter((r) => r.status === 'SENT')
@@ -64,7 +81,7 @@ export default function MyStatisticsDetails() {
         };
       }
       return {
-        recipient: `${r?.personId}`,
+        recipient: r?.personId ? `${r?.personId}` : 'Okänd',
         address: '',
         messageType: r.messageType,
       };
@@ -108,11 +125,11 @@ export default function MyStatisticsDetails() {
         <PageHeader color="transparent">
           <Breadcrumb>
             <Breadcrumb.Item>
-              <Breadcrumb.Link href="/my-statistics">Dina utskick</Breadcrumb.Link>
+              <Breadcrumb.Link href="/my-statistics">{t('common:mainMenu.myStatistics')}</Breadcrumb.Link>
             </Breadcrumb.Item>
 
             <Breadcrumb.Item currentPage>
-              <Breadcrumb.Link>Brev ({subject})</Breadcrumb.Link>
+              <Breadcrumb.Link>{t('statistics:myStatistics.letterSubject', { subject: subject })}</Breadcrumb.Link>
             </Breadcrumb.Item>
           </Breadcrumb>
         </PageHeader>
@@ -121,37 +138,46 @@ export default function MyStatisticsDetails() {
       {!loaded ? (
         <Spinner />
       ) : (
-        <div className="w-full max-w-screen-small-device-max mx-auto p-32 bg-white shadow-50 rounded-14">
-          <h1 className="text-h4-lg mb-8">Brev ({subject})</h1>
+        <div className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
+          <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.letterSubject', { subject: subject })}</h1>
           <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
-          <h3 className="pb-16 text-label-medium">Textfiler ({attachments?.length})</h3>
-          <div className="flex flex-col items-start gap-6 mb-40">
-            {attachments?.map((file, index) => (
-              <div
-                className="flex items-center p-12 gap-12 w-full border-1 border-divider rounded-button"
-                key={`${file.fileName}-${index}`}
-              >
-                <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
-                  <Icon className="text-vattjom-text-primary" icon={<File />} />
-                </div>
-                <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
-                <Button
-                  loading={loadingAttachmentIndex === index}
-                  onClick={() => getAttachment(file.fileName, index)}
-                  variant="tertiary"
-                  aria-label={`Visa Fil`}
-                >
-                  Visa fil <Icon icon={<Download />} />
-                </Button>
+          <p className="pb-16 font-bold">
+            {capitalize(t('statistics:myStatistics.attachments'))} ({attachments?.length})
+          </p>
+          {attachments?.length ? (
+            <>
+              <Divider className="mb-0" />
+              <div className="flex flex-col items-start">
+                {attachments?.map((file, index) => (
+                  <div className="w-full" key={`${file.fileName}-${index}`}>
+                    <div className="flex items-center p-12 gap-12 w-full">
+                      <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
+                        <Icon className="text-vattjom-text-primary" icon={<File />} />
+                      </div>
+                      <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
+                      <Button
+                        loading={loadingAttachmentIndex === index}
+                        onClick={() => getAttachment(file.fileName, index)}
+                        variant="tertiary"
+                        aria-label={capitalize(t('statistics:myStatistics.attachments'))}
+                      >
+                        {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
+                      </Button>
+                    </div>
+                    <Divider className="m-0" />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          ) : null}
 
-          <h3 className="pb-4 text-label-medium">Mottagare</h3>
+          <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
           <Tabs>
             <Tabs.Item>
-              <Tabs.Button>Alla ({recipientList?.length ?? '0'})</Tabs.Button>
+              <Tabs.Button>
+                {t('statistics:myStatistics.all')} ({recipientList?.length ?? '0'})
+              </Tabs.Button>
               <Tabs.Content>
                 {recipientList?.length > 0 && (
                   <AutoTable
@@ -164,7 +190,9 @@ export default function MyStatisticsDetails() {
               </Tabs.Content>
             </Tabs.Item>
             <Tabs.Item>
-              <Tabs.Button>Digital post ({recipientsDigitalMail?.length ?? '0'})</Tabs.Button>
+              <Tabs.Button>
+                {t('statistics:myStatistics.digitalMail')} ({recipientsDigitalMail?.length ?? '0'})
+              </Tabs.Button>
               <Tabs.Content>
                 {recipientsDigitalMail?.length > 0 && (
                   <AutoTable
@@ -177,7 +205,9 @@ export default function MyStatisticsDetails() {
               </Tabs.Content>
             </Tabs.Item>
             <Tabs.Item>
-              <Tabs.Button>Fysisk post ({recipientsSnailMail?.length ?? '0'})</Tabs.Button>
+              <Tabs.Button>
+                {t('statistics:myStatistics.snailMail')} ({recipientsSnailMail?.length ?? '0'})
+              </Tabs.Button>
               <Tabs.Content>
                 {recipientsSnailMail?.length > 0 && (
                   <AutoTable
@@ -194,4 +224,12 @@ export default function MyStatisticsDetails() {
       )}
     </DefaultLayout>
   );
-}
+};
+
+export const getServerSideProps = async ({ locale }: { locale: string }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common', 'statistics'])),
+  },
+});
+
+export default MyStatisticsDetails;
