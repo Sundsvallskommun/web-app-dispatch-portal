@@ -27,6 +27,13 @@ const formSchema = yup
       return value && value.length > 0;
     }),
     recipientList: yup.array(),
+    singleRecipient: yup.string().nullable(),
+    storeRecipients: yup
+      .array()
+      .default([])
+      .test('HAS_MIN_ONE_RECIPIENT', 'Lägg till minst en mottagare för att fortsätta.', (value) => {
+        return value && value.length > 0;
+      }),
   })
   .required();
 
@@ -38,6 +45,7 @@ const initialValues = {
   subject: '',
   body: '',
   department: '',
+  storeRecipients: [],
 };
 
 export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
@@ -57,11 +65,11 @@ const SendMailPage = () => {
   const controls = useForm({
     resolver: yupResolver(formSchema),
     values: initialValues,
-    mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
   });
 
-  const { watch, reset } = controls;
+  const { watch, reset, trigger, setValue } = controls;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
@@ -79,6 +87,11 @@ const SendMailPage = () => {
       resetAll();
     }
   }, [resetAll, response, router]);
+
+  // keep hidden field in sync with store
+  useEffect(() => {
+    setValue('storeRecipients', recipients ?? [], { shouldValidate: true, shouldDirty: false });
+  }, [recipients, setValue]);
 
   const hasValidRecipients =
     recipients?.some(
@@ -142,6 +155,9 @@ const SendMailPage = () => {
                         label: t('send-mail:recipientHandler.addRecipient'),
                         component: <RecipientHandler />,
                         valid: hasValidRecipients,
+                        onNextClick: () => {
+                          trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
+                        },
                       },
                       { label: t('send-mail:addSender'), component: <SenderHandler /> },
                     ]}

@@ -23,14 +23,17 @@ import {
   RadioButton,
   cx,
   Modal,
+  Icon,
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Trans, useTranslation } from 'next-i18next';
+import { Info } from 'lucide-react';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
   singleRecipient: string;
+  storeRecipients: string;
 }
 
 const RecipientHandler: React.FC = () => {
@@ -54,6 +57,7 @@ const RecipientHandler: React.FC = () => {
     watch,
     setValue,
     setError: setFormError,
+    clearErrors,
     register,
     formState: { errors },
   } = useFormContext<RecipientListFormModel>();
@@ -100,7 +104,9 @@ const RecipientHandler: React.FC = () => {
           (rec) => rec?.recipient?.personnumber === res[0]?.recipient?.personnumber
         );
         if (alreadyExists) {
-          setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.alreadyExists') });
+          setFormError('singleRecipient', {
+            message: t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'),
+          });
           setIsLoadingRecipients(false);
           return;
         }
@@ -108,12 +114,14 @@ const RecipientHandler: React.FC = () => {
         setRecipients(recipients.concat(res));
         setIsLoadingRecipients(false);
         setFoundPerson(undefined);
-        setFormError('singleRecipient', { message: undefined });
+        clearErrors('singleRecipient');
       })
       .catch((e) => {
         console.error(e);
         setIsLoadingRecipients(false);
-        setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.singleRecipient') });
+        setFormError('singleRecipient', {
+          message: t('send-mail:recipientHandler.fetchRecipientError.singleRecipient'),
+        });
       });
   };
 
@@ -127,6 +135,10 @@ const RecipientHandler: React.FC = () => {
         console.error(e);
       });
   };
+
+  useEffect(() => {
+    clearErrors('singleRecipient');
+  }, [recipients, setFormError]);
 
   useEffect(() => {
     if (recipientList?.length === 1) {
@@ -146,14 +158,14 @@ const RecipientHandler: React.FC = () => {
   useEffect(() => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setAddresses([]);
     setValue('recipientList', []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
   useEffect(() => {
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors(['storeRecipients', 'singleRecipient']);
     const length = recipient.length;
     if (length >= 12) {
       findPerson(recipient);
@@ -171,6 +183,7 @@ const RecipientHandler: React.FC = () => {
   };
 
   const handleSubmitSingleRecipient = () => {
+    clearErrors(['singleRecipient', 'storeRecipients']);
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
       setValue('singleRecipient', '');
@@ -185,7 +198,7 @@ const RecipientHandler: React.FC = () => {
   const handleRemove = () => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setValue('singleRecipient', '');
     setValue('recipientList', []);
   };
@@ -294,7 +307,7 @@ const RecipientHandler: React.FC = () => {
           {current === 0 ? (
             <div className="flex flex-col gap-12 pt-32">
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
-                <div className="relative w-full">
+                <div className="relative w-full gap-2">
                   <FormLabel className="text-label-medium">
                     <Trans
                       i18nKey="send-mail:recipientHandler.searchPersonalNumber"
@@ -306,7 +319,7 @@ const RecipientHandler: React.FC = () => {
                   <SearchField
                     {...register('singleRecipient')}
                     value={recipient}
-                    className="w-full"
+                    className="w-full mt-12"
                     showSearchButton={false}
                     // showSearchButton={dirtyFields.singleRecipient && ssnPattern.test(recipient)}
                     showResetButton={recipient.length > 0}
@@ -320,8 +333,11 @@ const RecipientHandler: React.FC = () => {
                       setValue('singleRecipient', '');
                       setFoundPerson(undefined);
                     }}
-                    onSearch={() => handleSubmitSingleRecipient()}
+                    onSearch={() => {
+                      handleSubmitSingleRecipient();
+                    }}
                   />
+
                   {foundPerson?.address && (
                     <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
                       <p className="text-body text-base font-bold">
@@ -339,11 +355,19 @@ const RecipientHandler: React.FC = () => {
                   )}
                 </div>
 
-                {/* <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText> */}
-                {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
+                {errors.storeRecipients?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.storeRecipients.message}
+                  </FormErrorMessage>
+                )}
+                {errors.singleRecipient?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}
+                  </FormErrorMessage>
+                )}
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-                <Button onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
+                <Button className="mt-20" onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
                   {t('recipientHandler.addRecipientWithAddress')}
                 </Button>
               </FormControl>
