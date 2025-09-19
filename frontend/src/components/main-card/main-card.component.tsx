@@ -1,5 +1,5 @@
 import { Card, Icon } from '@sk-web-gui/react';
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 const MainCard = ({
   icon,
@@ -7,7 +7,7 @@ const MainCard = ({
   contentText,
   subContentText,
 }: {
-  icon: ReactNode;
+  icon: ReactElement;
   title: string;
   contentText: string;
   subContentText: string;
