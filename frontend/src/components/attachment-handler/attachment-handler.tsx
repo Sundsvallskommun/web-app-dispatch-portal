@@ -16,6 +16,7 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
 export interface Attachment {
   file: File | undefined;
@@ -30,7 +31,12 @@ const AttachmentHandler: React.FC = () => {
   const maxSecondary = 3;
   const { register, watch, setValue, getValues } = useFormContext<AttachmentFormModel>();
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
+  const [resetErrorTrigger, setResetErrorTrigger] = useState(0);
   const { t } = useTranslation(['send-mail']);
+
+  const handleErrorTrigger = () => {
+    setResetErrorTrigger((prev) => prev + 1);
+  };
 
   const handleRemove = (index: number) => {
     const allFiles = getValues('attachmentList');
@@ -73,6 +79,7 @@ const AttachmentHandler: React.FC = () => {
             accept={['.pdf', '.PDF']}
             helperText={t('send-mail:attachmentHandler:helperText')}
             maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
+            resetErrorTrigger={resetErrorTrigger}
           />
         </FormControl>
 
@@ -96,7 +103,13 @@ const AttachmentHandler: React.FC = () => {
                     strategy={verticalListSortingStrategy}
                   >
                     {attachmentList.map((attach) => (
-                      <SortableItem key={attach.index} id={attach.index} attach={attach} handleRemove={handleRemove} />
+                      <SortableItem
+                        key={attach.index}
+                        id={attach.index}
+                        attach={attach}
+                        handleRemove={handleRemove}
+                        callback={handleErrorTrigger}
+                      />
                     ))}
                   </SortableContext>
                 </DndContext>
@@ -113,12 +126,17 @@ const SortableItem: React.FC<{
   id: number;
   attach: Attachment;
   handleRemove: (index: number) => void;
-}> = ({ id, attach, handleRemove }) => {
+  callback: () => void;
+}> = ({ id, attach, handleRemove, callback }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+
+  const handleErrorTriggerCallback = () => {
+    callback();
   };
 
   return (
@@ -129,7 +147,12 @@ const SortableItem: React.FC<{
         <div className="py-24 px-22 border-r-1 content-center" {...listeners}>
           <Icon size="1.4rem" icon={<Menu />} />
         </div>
-        <FileListItemComponent data={attach} handleRemove={() => handleRemove(id)} noBorder={true} />
+        <FileListItemComponent
+          data={attach}
+          callback={handleErrorTriggerCallback}
+          handleRemove={() => handleRemove(id)}
+          noBorder={true}
+        />
       </div>
     </div>
   );
