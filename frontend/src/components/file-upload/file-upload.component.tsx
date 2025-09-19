@@ -1,9 +1,10 @@
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
-import { FormErrorMessage, FormHelperText, FormLabel, Input, cx } from '@sk-web-gui/react';
+import { FormErrorMessage, FormLabel, Input, cx } from '@sk-web-gui/react';
 import { Upload } from 'lucide-react';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useFileUpload } from './file-upload.context';
+import { handleFiles, resetErrors } from './file-upload-utils';
 
 const FileUpload: React.FC<{
   fieldName: string;
@@ -16,30 +17,31 @@ const FileUpload: React.FC<{
   allowReplace?: boolean;
   maxFileSizeMB?: number;
   onErrorReset?: () => void;
-}> = (props) => {
-  const {
-    fieldName,
-    allowMultiple = true,
-    allowMax = 4,
-    accept = [],
-    label,
-    helperText,
-    showLabel,
-    allowReplace = false,
-    maxFileSizeMB = MAX_ATTACHMENT_FILE_SIZE_MB,
-    onErrorReset,
-  } = props;
+  resetErrorTrigger?: number;
+}> = ({
+  fieldName,
+  allowMultiple = true,
+  allowMax = 4,
+  accept = [],
+  label,
+  helperText,
+  showLabel,
+  allowReplace = false,
+  maxFileSizeMB = MAX_ATTACHMENT_FILE_SIZE_MB,
+  onErrorReset,
+  resetErrorTrigger,
+}) => {
   const [error, setError] = useState<string>();
   const [fileErrors, setFileErrors] = useState<string[]>([]);
   const [added, setAdded] = useState<number>(0);
   const ref = useRef<HTMLLabelElement>(null);
+
   const {
     register,
     control,
     watch,
     setValue,
     formState: { errors },
-    //eslint-disable-next-line
   } = useFormContext<{ newItem: FileList | undefined } & Record<string, any>>();
 
   const newItem: FileList = watch(`${fieldName}-newItem`);
@@ -49,84 +51,58 @@ const FileUpload: React.FC<{
     name: fieldName,
   });
 
-  useEffect(() => {
-    const length = fields.length;
-    if (added !== length) {
-      setAdded(length);
-    }
-    //eslint-disable-next-line
-  }, [fields]);
-
   const { drop, setDrop, setActive } = useFileUpload();
 
   useEffect(() => {
-    setActive && setActive(true);
-
-    return () => {
-      setActive && setActive(false);
-    };
-  }, [setActive]);
-
-  const fileHandler = () => {
-    setFileErrors([]);
-    setError(undefined);
-    onErrorReset && onErrorReset();
-    // e.preventDefault();
-    let N = added;
-    for (let i = 0; i < newItem.length; i += 1) {
-      if (newItem && newItem.item(i)) {
-        const original = newItem.item(i);
-        if (original) {
-          const file = new File([original], original.name, {
-            type: original.type,
-            lastModified: original.lastModified,
-          });
-          const ext = `.${file?.name?.split('.').pop()}`;
-          if (accept.length !== 0 && !accept.includes(ext.toLowerCase())) {
-            const t = `Fel filtyp - ${file.name}`;
-            // setError(t);
-            setFileErrors((fileErrors) => [...fileErrors, t]);
-          } else if (file.size / 1024 / 1024 > maxFileSizeMB) {
-            const s = `Filen är för stor (${(file.size / 1024 / 1024).toFixed(1)} MB) - ${file.name}`;
-            // setError(s);
-            setFileErrors((fileErrors) => [...fileErrors, s]);
-          } else if (N === allowMax) {
-            if (N === allowMax && allowReplace) {
-              replace({ file });
-            } else {
-              setError(`För många valda filer - max ${allowMax} st kan läggas till.`);
-            }
-          } else if (file.size === 0) {
-            setError('Filen du försöker bifoga är tom. Försök igen.');
-          } else {
-            append({ file });
-            N += 1;
-            setValue(`newItem`, undefined);
-            setError(undefined);
-          }
-        }
-      }
+    if (fields.length !== added) {
+      setAdded(fields.length);
     }
-    setAdded(N);
-    setValue(`${fieldName}-newItem`, undefined);
-  };
+  }, [fields.length, added]);
 
   useEffect(() => {
-    newItem?.[0] && fileHandler();
-    //eslint-disable-next-line
+    setActive?.(true);
+    return () => setActive?.(false);
+  }, [setActive]);
+
+  useEffect(() => {
+    if (!newItem?.[0]) return;
+
+    resetErrors(setFileErrors, setError, onErrorReset);
+    handleFiles({
+      newItem,
+      added,
+      allowMax,
+      allowReplace,
+      maxFileSizeMB,
+      accept,
+      fieldName,
+      append,
+      replace,
+      setAdded,
+      setValue,
+      setFileErrors,
+      setError,
+      onErrorReset,
+    });
   }, [newItem]);
 
   useEffect(() => {
-    if (drop && drop.length > 0) {
-      setValue(`${fieldName}-newItem`, drop);
+    if (resetErrorTrigger && resetErrorTrigger > 0) {
+      resetErrors(setFileErrors, setError, onErrorReset);
     }
-    setDrop && setDrop(null);
-  });
+  }, [resetErrorTrigger]);
+
+  useEffect(() => {
+    if (drop && drop?.length > 0) {
+      setValue(`${fieldName}-newItem`, drop);
+      setDrop?.(null);
+    }
+  }, [drop, fieldName, setDrop, setValue]);
 
   const handleKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      ref.current && ref.current.click();
+      ref.current?.click();
     }
   };
 
@@ -152,14 +128,13 @@ const FileUpload: React.FC<{
               'hover:bg-vattjom-background-200 hover:border-solid border-dashed cursor-pointer'
             )}
           >
-            <Upload className={cx('!h-[4rem] !w-[4rem] text-primary')} />
+            <Upload className="!h-[4rem] !w-[4rem] text-primary" />
             <div className="flex flex-col gap-8 justify-center">
               <div className="text-base font-normal">
-                <span className="underline text-vattjom-text-primary">Välj {allowMultiple ? 'filer' : 'fil'}</span> eller dra och släpp {allowMultiple ? 'dem' : 'den'} här
+                <span className="underline text-vattjom-text-primary">Välj {allowMultiple ? 'filer' : 'fil'}</span>{' '}
+                eller dra och släpp {allowMultiple ? 'dem' : 'den'} här
               </div>
-              {helperText && (
-                <FormHelperText className="p-0 m-0 text-small text-dark-secondary">{helperText}</FormHelperText>
-              )}
+              {helperText && <FormErrorMessage>{helperText}</FormErrorMessage>}
             </div>
           </div>
           <Input
@@ -169,7 +144,6 @@ const FileUpload: React.FC<{
             multiple={allowMultiple}
             placeholder="Välja fil att lägga till"
             {...register(`${fieldName}-newItem`)}
-            // allowReplace={false}
           />
         </FormLabel>
       </div>
@@ -177,12 +151,11 @@ const FileUpload: React.FC<{
       <div>
         {errors?.newItem && <FormErrorMessage className="my-sm">{errors?.newItem.message}</FormErrorMessage>}
         {error && <FormErrorMessage className="my-sm">{error}</FormErrorMessage>}
-        {fileErrors.length > 0 &&
-          fileErrors.map((e, idx) => (
-            <FormErrorMessage key={`fileError-${idx}`} className="my-sm">
-              {e}
-            </FormErrorMessage>
-          ))}
+        {fileErrors.map((e, idx) => (
+          <FormErrorMessage key={`fileError-${idx}`} className="my-sm">
+            {e}
+          </FormErrorMessage>
+        ))}
       </div>
     </div>
   );
