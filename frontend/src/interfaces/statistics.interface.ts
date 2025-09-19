@@ -20,7 +20,7 @@ export interface Recipient {
     firstName: string;
     lastName: string;
     zipCode: string;
-  }
+  };
 }
 
 export interface Attachment {
@@ -37,6 +37,30 @@ export interface Message {
   attachments: Attachment[];
 }
 
-export interface Messages {
-  messages: Message[];
+interface PagingMetaData {
+  page: number;
+  limit: number;
+  count: number;
+  totalRecords: number;
+  totalPages: number;
+}
+
+export interface UserBatches {
+  _meta: PagingMetaData;
+  batches: Batch[];
+}
+
+export interface Batch {
+  batchId: string;
+  messageType: string;
+  subject: string;
+  sent: string;
+  attachmentCount: number;
+  recipientCount: number;
+  status: Status;
+}
+
+export interface Status {
+  successful: number;
+  unsuccessful: number;
 }

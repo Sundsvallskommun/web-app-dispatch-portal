@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiService } from '@services/api-service';
-import { Message, Messages } from '@interfaces/statistics.interface';
+import { Batch, Message, UserBatches } from '@interfaces/statistics.interface';
 
 export interface AttachmentResponse {
   data: ArrayBuffer;
@@ -12,22 +12,22 @@ export interface AttachmentError {
   error: number | 'UNKNOWN ERROR';
 }
 
-export const useMyStatistics = (): { messages: Message[]; loaded: boolean } => {
-  const [messages, setMessages] = useState<Message[]>([]);
+export const useMyStatistics = (): { batches: Batch[]; loaded: boolean } => {
+  const [batches, setBatches] = useState<Batch[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    apiService.get<Messages>(`my-statistics`).then((res) => {
-      const messages = res?.data?.messages;
+    apiService.get<UserBatches>(`my-statistics`).then((res) => {
+      const batches = res?.data?.batches;
 
-      if (messages) {
-        setMessages(messages);
+      if (batches) {
+        setBatches(batches);
       }
       setLoaded(true);
     });
   }, []);
 
-  return { messages, loaded };
+  return { batches, loaded };
 };
 
 export const useMessage = (messageId: string): { message: Message; loaded: boolean } => {
@@ -46,8 +46,8 @@ export const useMessage = (messageId: string): { message: Message; loaded: boole
       setLoaded(true);
       return;
     }
-    apiService.get<Message>(`my-statistics/${messageId}`).then((res) => {
-      const message = res?.data;
+    apiService.get<Message[]>(`my-statistics/${messageId}`).then((res) => {
+      const message = res?.data[0];
 
       if (message) {
         setMessage(message);

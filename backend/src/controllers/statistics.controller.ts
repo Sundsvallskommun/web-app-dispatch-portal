@@ -5,7 +5,7 @@ import ApiService from '@services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { DepartmentStatistics } from '@interfaces/statistics.interface';
 import { MUNICIPALITY_ID } from '@/config';
-import { UserMessage, UserMessages } from '@/interfaces/my-statistics.interface';
+import { UserBatches, UserMessage, UserMessages } from '@/interfaces/my-statistics.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 
@@ -50,30 +50,12 @@ export class StatisticsController {
   @Get('/my-statistics')
   @OpenAPI({ summary: 'Return my statistics' })
   @UseBefore(authMiddleware)
-  async getMyStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<UserMessages> {
+  async getMyStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<UserBatches> {
     try {
       const { username } = req.user;
-      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/users/${username}/messages`;
+      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/users/${username}/batches`;
       const params = { limit: 9000 };
-      const result = await this.apiService.get<UserMessages>({ url, params }, req.user);
-
-      //  NOTE: Remove all failed recipients
-      /* const filteredMessages = result.data.messages.map(message => ({
-        ...message,
-        recipients: message.recipients.filter(recipient => recipient.status === 'SENT'),
-      }));
-
-      if (result?.data?.messages?.length && filteredMessages?.length) {
-        result.data.messages = filteredMessages;
-      } */
-
-      const filteredMessages = result.data?.messages?.filter(message => {
-        return message.recipients[0]?.messageType !== 'SMS';
-      });
-
-      if (filteredMessages?.length) {
-        result.data.messages = filteredMessages;
-      }
+      const result = await this.apiService.get<UserBatches>({ url, params }, req.user);
 
       return response.send(result.data);
     } catch (error) {
@@ -88,16 +70,11 @@ export class StatisticsController {
   async getMyStatisticsMessage(@Req() req: RequestWithUser, @Res() response: any, @Param('id') id: string): Promise<UserMessage> {
     try {
       const { username } = req.user;
-      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/users/${username}/messages/${id}`;
-      const params = { limit: 9000 };
-      const result = await this.apiService.get<UserMessage>({ url, params }, req.user);
+      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/users/${username}/messages`;
+      const params = { limit: 9000, batchId: id };
+      const result = await this.apiService.get<UserMessages>({ url, params }, req.user);
 
-      // NOTE: Remove all failed recipients
-      /* if (result?.data?.recipients?.length) {
-        result.data.recipients = result.data.recipients.filter(r => r.status === 'SENT');
-      } */
-
-      return response.send(result.data);
+      return response.send(result.data.messages);
     } catch (error) {
       logger.error('Error getting statistics: ', error);
       throw new HttpException(500, 'Error getting statistics');
