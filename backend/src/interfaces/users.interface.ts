@@ -13,6 +13,7 @@ export interface User {
 }
 export interface Permissions {
   canSendSMS: boolean;
+  canSendRekLetter: boolean;
 }
 
 /** Internal roles */

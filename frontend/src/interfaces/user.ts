@@ -1,5 +1,6 @@
 export interface Permissions {
   canSendSMS: boolean;
+  canSendRekLetter: boolean;
 }
 export interface User {
   id: number;
