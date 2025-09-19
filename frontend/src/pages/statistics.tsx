@@ -4,6 +4,9 @@ import { getStatisticsByDate } from '@services/statistics-service';
 import React, { useEffect } from 'react';
 import { Statistics } from '@interfaces/statistics.interface';
 import dayjs from 'dayjs';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const headers: Array<AutoTableHeader | string> = [
   {
@@ -27,10 +30,10 @@ const headers: Array<AutoTableHeader | string> = [
 
 export const StatisticsPage = () => {
   const [loaded, setLoaded] = React.useState<boolean>(false);
-
   const [departmentStatistics, setDepartmentStatistics] = React.useState<Statistics[]>([]);
   const [fromDate, setFromDate] = React.useState<string>();
   const [toDate, setToDate] = React.useState<string>();
+  const { t } = useTranslation(['common', 'statistics']);
 
   useEffect(() => {
     const from = fromDate ?? dayjs(0).format('YYYY-MM-DD');
@@ -83,15 +86,15 @@ export const StatisticsPage = () => {
   return (
     <DefaultLayout title={`Postportal`}>
       <div className="text-lg mb-11 pt-32">
-        <h1 className="text-h1-lg mb-8">Statistik</h1>
-        <p className="text-large text-dark-secondary mt-0">Här hittar du statistik över skickade brev från varje förvaltning. Statistiken sparas ett år bakåt.</p>
-        
+        <h1 className="text-h1-lg mb-8">{t('statistics:title')}</h1>
+        <p className="text-large text-dark-secondary mt-0">{`${t('statistics:description')}.`}</p>
+
         <div className="lg:flex flex-row mb-16 mt-56 gap-12 items-center">
           <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
-            Månad
+            {t('month')}
           </label>
           <Select id="month" size="sm" onSelectValue={handleDateChange}>
-            <Select.Option value="">Välj månad</Select.Option>
+            <Select.Option value="">{t('chooseMonth')}</Select.Option>
             {generateMonthOptions().map((option) => (
               <Select.Option key={option.value} value={option.value}>
                 {option.label}
@@ -104,7 +107,7 @@ export const StatisticsPage = () => {
           {loaded && departmentStatistics.length === 0 && (
             <div>
               <p className="text-h4-medium md:text-lead leading-lead text-primary font-bold m-0 header-font">
-                Ingen statistik hittades.
+                {t('statistics:noStatisticsFound')}
               </p>
             </div>
           )}
@@ -121,5 +124,11 @@ export const StatisticsPage = () => {
     </DefaultLayout>
   );
 };
+
+export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'statistics'])),
+  },
+});
 
 export default StatisticsPage;

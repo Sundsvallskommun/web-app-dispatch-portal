@@ -1,6 +1,7 @@
 const envalid = require('envalid');
+const { i18n } = require('./next-i18next.config');
 
-const authDependent = envalid.makeValidator(x => {
+const authDependent = envalid.makeValidator((x) => {
   const authEnabled = process.env.HEALTH_AUTH === 'true';
 
   if (authEnabled && !x.length) {
@@ -8,7 +9,7 @@ const authDependent = envalid.makeValidator(x => {
   }
 
   return x;
-})
+});
 
 envalid.cleanEnv(process.env, {
   NEXT_PUBLIC_API_URL: envalid.str(),
@@ -19,18 +20,15 @@ envalid.cleanEnv(process.env, {
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
-})
+});
 
 module.exports = withBundleAnalyzer({
   // basePath: process.env.NEXT_PUBLIC_APPLICATION === 'KC' ? '/kc' : process.env.NEXT_PUBLIC_APPLICATION === 'MEA' ? '' : '',
   basePath: process.env.NEXT_PUBLIC_BASEPATH || '',
   experimental: {},
-  output: "standalone",
-  i18n: {
-    locales: ["sv"],
-    defaultLocale: "sv",
-  },  
+  output: 'standalone',
+  i18n,
   async rewrites() {
-    return [{ source: '/napi/:path*', destination: '/api/:path*' }]
+    return [{ source: '/napi/:path*', destination: '/api/:path*' }];
   },
 });

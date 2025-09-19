@@ -13,6 +13,9 @@ import { FormProvider, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import NextLink from 'next/link';
 import { BadgeCheck } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const formSchema = yup
   .object({
@@ -39,7 +42,7 @@ const initialValues = {
 
 export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
 
-export default function SendMailPage() {
+const SendMailPage = () => {
   const [step, setStep] = useState<number>(0);
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
@@ -49,6 +52,7 @@ export default function SendMailPage() {
   const setResponse = useMessageStore((state) => state.setResponse);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation(['common', 'send-mail']);
 
   const controls = useForm({
     resolver: yupResolver(formSchema),
@@ -81,32 +85,29 @@ export default function SendMailPage() {
       (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
     ) || addresses.length > 0;
 
-  const getText = () => {
+  const getScreenReaderStepperText = () => {
     switch (step) {
       case 0:
-        return 'Steg 1: Lägg till textdokument';
+        return t('screenReader.postStepper.stepOne');
       case 1:
-        return 'Steg 2: Lägg till mottagare';
+        return t('screenReader.postStepper.stepTwo');
       case 2:
-        return 'Steg 3: Ange avsändare';
+        return t('screenReader.postStepper.stepThree');
       default:
         return undefined;
     }
   };
   return (
     <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">Skicka post. {getText()}</h1>
+      <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className="text-lg mb-11 pt-48">
         <div className="">
           <div className="">
             {success ? (
               <div className="text-center max-w-[63rem] mx-auto">
                 <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-                <h2 className="mt-24">Ditt brev har skickats</h2>
-                <p className="my-md text-base">
-                  Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status
-                  för utskicket under <strong>Dina utskick</strong> på startsidan.
-                </p>
+                <h2 className="mt-24">{t('send-mail:success')}</h2>
+                <p className="my-md text-base">{`${t('send-mail:successInfo')}`}</p>
                 <div className="flex gap-16 justify-center mt-40">
                   <Button
                     className="mt-lg"
@@ -117,28 +118,32 @@ export default function SendMailPage() {
                       setSuccess(false);
                     }}
                   >
-                    Skicka nytt brev
+                    {t('send-mail:sendNew')}
                   </Button>
                   <NextLink href="/" passHref legacyBehavior>
                     <Button className="mt-lg" color="vattjom">
-                      Till startsidan
+                      {t('send-mail:goBack')}
                     </Button>
                   </NextLink>
                 </div>
               </div>
             ) : (
               <div className="w-full max-w-[82rem] mx-auto">
-                <h2 className="text-h4-lg">Skicka brev</h2>
+                <h2 className="text-h4-lg">{t('send-mail:sendLetter')}</h2>
                 <FormProvider {...controls}>
                   <FormStepper
                     steps={[
                       {
-                        label: 'Lägg till textdokument',
+                        label: t('send-mail:addTextDocument'),
                         component: <AttachmentHandler />,
                         valid: hasAtLeastOneAttachment,
                       },
-                      { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
-                      { label: 'Ange avsändare', component: <SenderHandler /> },
+                      {
+                        label: t('send-mail:recipientHandler.addRecipient'),
+                        component: <RecipientHandler />,
+                        valid: hasValidRecipients,
+                      },
+                      { label: t('send-mail:addSender'), component: <SenderHandler /> },
                     ]}
                     onChangeStep={setStep}
                     submitButton={<SubmitHandler />}
@@ -151,4 +156,12 @@ export default function SendMailPage() {
       </div>
     </DefaultLayout>
   );
-}
+};
+
+export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility'])),
+  },
+});
+
+export default SendMailPage;
