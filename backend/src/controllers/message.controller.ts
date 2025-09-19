@@ -36,6 +36,7 @@ interface SMSDTO {
   sender: string;
   message: string;
   parties: { mobileNumber: string }[];
+  priority: 'NORMAL' | 'HIGH';
 }
 
 interface SMSReponse {
@@ -59,10 +60,11 @@ export class MessageController {
   @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
   async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
     const { message, recipients } = body;
-    const data = {
+    const data: SMSDTO = {
       message,
       parties: recipients.map(rec => ({ mobileNumber: rec })),
       sender: SMS_SENDER,
+      priority: 'HIGH',
     };
     const url = `${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
     const res = await this.apiService.post<SMSReponse, SMSDTO>({ url, data }, req.user).catch(e => {
