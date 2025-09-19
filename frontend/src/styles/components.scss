@@ -21,6 +21,10 @@
     padding: 2px 80px;
   }
 
+  .start-link {
+    @apply no-underline hover:no-underline;
+  }
+
   .main-card {
     @apply w-full lg:max-w-340 lg:min-h-220;
   }
