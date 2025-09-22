@@ -1,4 +1,3 @@
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
@@ -8,6 +7,7 @@ import { useUserStore } from '@services/user-service/user-service';
 import { useTranslation } from 'next-i18next';
 import { Mail, MailCheck, Smartphone } from 'lucide-react';
 import MainCard from '@components/main-card/main-card.component';
+import { Link } from '@sk-web-gui/react';
 
 const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
@@ -30,31 +30,31 @@ const Index = () => {
               <div className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</div>
             </div>
             <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
-              <NextLink href={'/send/mail'} passHref className="flex-1 w-full">
+              <Link href={'/send/mail'} passHref className="start-link flex-1 w-full">
                 <MainCard
                   icon={<Mail />}
                   title={t('start-page:letter')}
                   contentText={t('start-page:send-letter-digitally')}
                   subContentText={t('start-page:price-0.5-kr')}
                 />
-              </NextLink>
-              <NextLink href={''} passHref className="flex-1 w-full">
+              </Link>
+              <Link href={''} passHref className="start-link flex-1 w-full">
                 <MainCard
                   icon={<MailCheck />}
                   title={t('start-page:rec-letter')}
                   contentText={t('start-page:send-important-doc')}
                   subContentText={t('start-page:price-20-kr')}
                 />
-              </NextLink>
+              </Link>
               {user.permissions.canSendSMS && (
-                <NextLink href="/send/sms" passHref className="flex-1 w-full">
+                <Link href="/send/sms" passHref className="start-link flex-1 w-full">
                   <MainCard
                     icon={<Smartphone />}
                     title={t('start-page:sms')}
                     contentText={t('start-page:fast-method-to-share')}
                     subContentText={t('start-page:price-0.5-kr')}
                   />
-                </NextLink>
+                </Link>
               )}
             </div>
           </div>

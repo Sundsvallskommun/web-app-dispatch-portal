@@ -33,6 +33,7 @@ import { Info } from 'lucide-react';
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
   singleRecipient: string;
+  storeRecipients: string;
 }
 
 const RecipientHandler: React.FC = () => {
@@ -56,6 +57,7 @@ const RecipientHandler: React.FC = () => {
     watch,
     setValue,
     setError: setFormError,
+    clearErrors,
     register,
     formState: { errors },
   } = useFormContext<RecipientListFormModel>();
@@ -112,7 +114,7 @@ const RecipientHandler: React.FC = () => {
         setRecipients(recipients.concat(res));
         setIsLoadingRecipients(false);
         setFoundPerson(undefined);
-        setFormError('singleRecipient', { message: undefined });
+        clearErrors('singleRecipient');
       })
       .catch((e) => {
         console.error(e);
@@ -135,6 +137,10 @@ const RecipientHandler: React.FC = () => {
   };
 
   useEffect(() => {
+    clearErrors('singleRecipient');
+  }, [recipients, setFormError]);
+
+  useEffect(() => {
     if (recipientList?.length === 1) {
       if (recipients?.length < 1) {
         fetchRecipients();
@@ -152,14 +158,14 @@ const RecipientHandler: React.FC = () => {
   useEffect(() => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setAddresses([]);
     setValue('recipientList', []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
   useEffect(() => {
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors(['storeRecipients', 'singleRecipient']);
     const length = recipient.length;
     if (length >= 12) {
       findPerson(recipient);
@@ -177,6 +183,7 @@ const RecipientHandler: React.FC = () => {
   };
 
   const handleSubmitSingleRecipient = () => {
+    clearErrors(['singleRecipient', 'storeRecipients']);
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
       setValue('singleRecipient', '');
@@ -191,7 +198,7 @@ const RecipientHandler: React.FC = () => {
   const handleRemove = () => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setValue('singleRecipient', '');
     setValue('recipientList', []);
   };
@@ -327,7 +334,6 @@ const RecipientHandler: React.FC = () => {
                       setFoundPerson(undefined);
                     }}
                     onSearch={() => {
-                      setFormError('singleRecipient', { message: undefined });
                       handleSubmitSingleRecipient();
                     }}
                   />
@@ -349,19 +355,15 @@ const RecipientHandler: React.FC = () => {
                   )}
                 </div>
 
-                {errors.singleRecipient?.message ? (
-                  <div className="self-stretch inline-flex justify-start items-center mt-6 gap-4">
-                    <div className="w-18 h-20 relative overflow-hidden">
-                      <div className="h-full flex flex-col justify-center absolute bg-Colors-Error-Text-Primary-text text-[#971A1A]">
-                        <Icon size="1.4rem" icon={<Info />} />
-                      </div>
-                    </div>
-                    <div className="justify-start text-[#971A1A] text-[14px] font-normal font-['Arial'] leading-none">
-                      <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>
-                    </div>
-                  </div>
-                ) : (
-                  <></>
+                {errors.storeRecipients?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.storeRecipients.message}
+                  </FormErrorMessage>
+                )}
+                {errors.singleRecipient?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}
+                  </FormErrorMessage>
                 )}
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
