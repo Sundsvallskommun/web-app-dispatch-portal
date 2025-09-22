@@ -25,7 +25,6 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-// const phoneNumberRegex = /^\+46[0-9]{7,13}$/;
 const phoneNumberRegex = /^\+46[0-9]{9,13}$/;
 
 const createFormSchema = (t: TFunction) => {
