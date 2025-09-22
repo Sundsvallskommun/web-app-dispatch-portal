@@ -27,7 +27,7 @@ export const MainMenu: React.FC = () => {
       <MenuBar current={active} data-cy="mainmenu">
         {mainMenuItems.map((item, index) => (
           <MenuBar.Item key={`mainmenu-${index}`} wrapper={<NextLink href={item.href} legacyBehavior passHref />}>
-            <a>{t(`mainMenu.${item.label}`)}</a>
+            <a>{t(`common:mainMenu.${item.label}`)}</a>
           </MenuBar.Item>
         ))}
       </MenuBar>

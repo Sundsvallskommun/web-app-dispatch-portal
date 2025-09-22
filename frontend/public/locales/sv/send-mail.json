@@ -1,4 +1,10 @@
 {
+  "stepper": {
+    "next": "Nästa",
+    "back": "Tillbaka",
+    "cancel": "Avbryt",
+    "help": "Hjälp"
+  },
   "success": "Ditt brev har skickats",
   "successInfo": "Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan",
   "sendNew": "Skicka nytt brev",
@@ -35,7 +41,8 @@
       "maxRow": "Filen får inte innehålla fler än {rows} rader",
       "default": "Något gick fel när mottagarlistan hanterades",
       "invalidRecipient": "Ogiltiga mottagare ({num})",
-      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen"
+      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
+      "single-recipient-error": "Lägg till minst en mottagare för att fortsätta."
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är readan tillagd",

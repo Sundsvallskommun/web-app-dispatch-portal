@@ -2,7 +2,7 @@
 module.exports = {
   i18n: {
     defaultLocale: 'sv',
-    locales: ['sv'],
+    locales: ['sv', 'en'],
   },
   interpolation: {
     prefix: '{',
