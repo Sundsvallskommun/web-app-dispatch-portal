@@ -138,6 +138,7 @@ const RecipientHandler: React.FC = () => {
 
   useEffect(() => {
     clearErrors('singleRecipient');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipients, setFormError]);
 
   useEffect(() => {
@@ -172,6 +173,7 @@ const RecipientHandler: React.FC = () => {
       return;
     }
     setFoundPerson(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipient, setFormError]);
 
   const handleSwitchCurrent = (navigateTo: number) => {
