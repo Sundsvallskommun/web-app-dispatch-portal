@@ -27,7 +27,6 @@ export class HealthController {
       groups: '',
       permissions: {
         canSendSMS: false,
-        canSendRekLetter: false,
       },
     };
     const res = await this.apiService.post<{ status: string }, any>({ url, data }, dummyUser).catch(e => {
