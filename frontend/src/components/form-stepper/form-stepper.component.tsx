@@ -1,8 +1,6 @@
 import { Button, ProgressStepper, Icon, Link } from '@sk-web-gui/react';
-import { HelpCircle, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
-import NextLink from 'next/link';
-import { HelpComposer } from '@components/help/help-composer';
 
 export interface FormStep {
   label: string;
@@ -19,10 +17,6 @@ interface FormStepperProps {
 export const FormStepper: React.FC<FormStepperProps> = (props) => {
   const { steps, onChangeStep, submitButton } = props;
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [showHelpComposer, setShowHelpComposer] = useState(false);
-
-  const openHelpComposer = () => setShowHelpComposer(true);
-  const closeHelpComposer = () => setShowHelpComposer(false);
 
   const handleChangeStep = (step: number) => {
     setCurrentStep(step);
@@ -33,10 +27,8 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
   }, [currentStep, onChangeStep]);
 
   return (
-    <div className="flex flex-col">
-      <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
-      <div className="flex flex-1 justify-between items-center bg-background-content p-32 absolute z-10 left-0 top-0 right-0">
-        <NextLink href="/" passHref legacyBehavior><Link strong={true} variant="tertiary" className="text-base min-w-[10.4rem]">Avbryt</Link></NextLink>
+    <>
+      <div className="flex flex-1 justify-between items-center pt-64 z-10 left-0 top-0 right-0">
         <ProgressStepper
           className="w-full max-w-[82rem]"
           steps={steps.map((step) => step.label)}
@@ -44,13 +36,15 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
           // rounded={true}
           size={'sm'}
         ></ProgressStepper>
-        <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}><Icon icon={<HelpCircle />} /> Hjälp</Button>
       </div>
       <div className="py-32">{steps[currentStep].component}</div>
       <div className="flex flex-row justify-end gap-16">
         <div>
           {currentStep !== 0 && (
-            <Button variant="secondary" onClick={() => handleChangeStep(currentStep - 1)} /* leftIcon={<ArrowLeft />} */>
+            <Button
+              variant="secondary"
+              onClick={() => handleChangeStep(currentStep - 1)} /* leftIcon={<ArrowLeft />} */
+            >
               Tillbaka
             </Button>
           )}
@@ -71,6 +65,6 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
