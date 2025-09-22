@@ -41,15 +41,6 @@ const Index = () => {
                   </Card.Body>
                 </Card>
               </NextLink>
-              <NextLink href="/send/rek-mail" legacyBehavior passHref>
-                <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
-                  <Card.Body className="flex-1">
-                    <Card.Header>
-                      <h2 className="text-h3-md">{t('recLetter')}</h2>
-                    </Card.Header>
-                  </Card.Body>
-                </Card>
-              </NextLink>
               {user.permissions.canSendSMS && (
                 <NextLink href="/send/sms" legacyBehavior passHref>
                   <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
