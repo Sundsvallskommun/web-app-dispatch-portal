@@ -101,18 +101,18 @@ const SendMailPage = () => {
   const getScreenReaderStepperText = () => {
     switch (step) {
       case 0:
-        return t('screenReader.postStepper.stepOne');
+        return t('common:screenReader.postStepper.stepOne');
       case 1:
-        return t('screenReader.postStepper.stepTwo');
+        return t('common:screenReader.postStepper.stepTwo');
       case 2:
-        return t('screenReader.postStepper.stepThree');
+        return t('common:screenReader.postStepper.stepThree');
       default:
         return undefined;
     }
   };
   return (
     <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
+      <h1 className="sr-only">{`${t('common:screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className="text-lg mb-11 pt-48">
         <div className="">
           <div className="">
@@ -174,7 +174,7 @@ const SendMailPage = () => {
   );
 };
 
-export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility'])),
   },
