@@ -30,7 +30,7 @@ const Index = () => {
               <div className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</div>
             </div>
             <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
-              <Link href={'/send/mail'} passHref className="start-link flex-1 w-full">
+              <Link href={'/send/mail'} className="start-link flex-1 w-full">
                 <MainCard
                   icon={<Mail />}
                   title={t('start-page:letter')}
@@ -38,7 +38,7 @@ const Index = () => {
                   subContentText={t('start-page:price-0.5-kr')}
                 />
               </Link>
-              <Link href={''} passHref className="start-link flex-1 w-full">
+              <Link href={''} className="start-link flex-1 w-full">
                 <MainCard
                   icon={<MailCheck />}
                   title={t('start-page:rec-letter')}
@@ -47,7 +47,7 @@ const Index = () => {
                 />
               </Link>
               {user.permissions.canSendSMS && (
-                <Link href="/send/sms" passHref className="start-link flex-1 w-full">
+                <Link href="/send/sms" className="start-link flex-1 w-full">
                   <MainCard
                     icon={<Smartphone />}
                     title={t('start-page:sms')}

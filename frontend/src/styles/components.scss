@@ -45,7 +45,7 @@
     @apply flex flex-col grow;
   }
   .main-container {
-    @apply flex pt-64 bg-transparent grow;
+    @apply flex pt-64 px-20 bg-transparent grow;
 
     .container {
       @apply mx-auto flex flex-col lg:px-80 justify-center items-start gap-80 self-stretch;
