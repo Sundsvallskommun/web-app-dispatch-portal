@@ -209,8 +209,8 @@ export default function SendEmailPage() {
           <div className="text-dark-secondary text-label-medium lining-nums proportional-nums">Hjälp</div>
         </Button>
       </div>
-      <div className="main-container">
-        <div className="container">
+      <div className="sms-main-container">
+        <div className="sms-container">
           <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
           <div className="text-lg flex flex-col justify-start items-center gap-56 self-stretch">
             {success ? (
