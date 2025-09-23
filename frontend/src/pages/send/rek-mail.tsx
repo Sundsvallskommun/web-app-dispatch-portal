@@ -10,6 +10,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { FormStepper } from '@components/form-stepper/form-stepper.component';
 import SubmitHandler from '@components/submit-handler/submit-handler';
 import { HelpComposer } from '@components/help/help-composer';
+import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 
 const initialValues = {
   attachmentList: [],
@@ -24,7 +25,6 @@ const initialValues = {
 const SendRekMail = () => {
   const [success, setSuccess] = useState(false);
   const [step, setStep] = useState<number>(0);
-  const [showHelpComposer, setShowHelpComposer] = useState(false);
   const controls = useForm({
     values: initialValues,
     mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
@@ -33,9 +33,6 @@ const SendRekMail = () => {
   const { watch, reset } = controls;
   const watchAttachmentList = watch('attachmentList');
   const hasAtLeastOneAttachment = watchAttachmentList ? watchAttachmentList.length > 0 : false;
-
-  const openHelpComposer = () => setShowHelpComposer(true);
-  const closeHelpComposer = () => setShowHelpComposer(false);
   const { t } = useTranslation(['common', 'send-mail']);
 
   const getScreenReaderStepperText = () => {
@@ -96,28 +93,11 @@ const SendRekMail = () => {
 
   return (
     <div className="flex items-center flex-col">
-      <div className="flex grow justify-center px-80 py-16 w-full border-b-1 border-solid">
-        <div className="flex grow items-center justify-between w-full max-w-[--max-w-7xl]">
-          <NextLink href="/" passHref legacyBehavior>
-            <Link strong={true} variant="tertiary">
-              Avbryt
-            </Link>
-          </NextLink>
-          <div className="flex items-center gap-12 w-[--w-stepper-content] ml-56">
-            <Icon icon={<MailCheck />} />
-            <h4>Skicka rekommenderat brev</h4>
-          </div>
-          <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
-            <Icon icon={<HelpCircle />} />
-            Hjälp
-          </Button>
-        </div>
-      </div>
+      <FormStepperHeader title="Skicka något" icon={<MailCheck />} />
       <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className="flex flex-col max-w-[--w-max-stepper-content] w-[--w-stepper-content]">
         {success ? contentSuccess : contentFormProvider}
       </div>
-      <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
     </div>
   );
 };

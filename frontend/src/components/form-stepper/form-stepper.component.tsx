@@ -1,4 +1,4 @@
-import { Button, ProgressStepper, Icon, Link } from '@sk-web-gui/react';
+import { Button, ProgressStepper } from '@sk-web-gui/react';
 import { ArrowRight } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
 
@@ -6,7 +6,6 @@ export interface FormStep {
   label: string;
   component: ReactNode;
   valid?: boolean;
-  onNextClick?: (currentStep: number) => void;
 }
 
 interface FormStepperProps {
@@ -18,13 +17,8 @@ interface FormStepperProps {
 export const FormStepper: React.FC<FormStepperProps> = (props) => {
   const { steps, onChangeStep, submitButton } = props;
   const [currentStep, setCurrentStep] = useState<number>(0);
-
-  const handleNextClicked = () => {
-    steps[currentStep].onNextClick?.(currentStep);
-
-    if (steps[currentStep].valid) {
-      setCurrentStep(currentStep + 1);
-    }
+  const handleChangeStep = (step: number) => {
+    setCurrentStep(step);
   };
 
   useEffect(() => {
@@ -38,6 +32,7 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
           className="w-full max-w-[82rem]"
           steps={steps.map((step) => step.label)}
           current={currentStep}
+          rounded={true}
           size={'sm'}
         ></ProgressStepper>
       </div>
@@ -57,8 +52,14 @@ export const FormStepper: React.FC<FormStepperProps> = (props) => {
           {currentStep === steps.length - 1 ? (
             <>{submitButton}</>
           ) : (
-            <Button variant="primary" onClick={() => handleNextClicked()} color="vattjom" rightIcon={<ArrowRight />}>
-              {t('send-mail:stepper.next')}
+            <Button
+              variant="primary"
+              onClick={() => handleChangeStep(currentStep + 1)}
+              disabled={!steps[currentStep].valid}
+              color="vattjom"
+              rightIcon={<ArrowRight />}
+            >
+              Nästa
             </Button>
           )}
         </div>

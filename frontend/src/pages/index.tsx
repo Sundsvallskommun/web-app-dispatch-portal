@@ -38,7 +38,7 @@ const Index = () => {
                   subContentText={t('start-page:price-0.5-kr')}
                 />
               </Link>
-              <Link href={''} className="start-link flex-1 w-full">
+              <Link href={'/send/rek-mail'} className="start-link flex-1 w-full">
                 <MainCard
                   icon={<MailCheck />}
                   title={t('start-page:rec-letter')}
