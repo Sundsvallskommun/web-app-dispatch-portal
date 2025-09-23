@@ -10,6 +10,7 @@
   "sendNew": "Skicka nytt brev",
   "goBack": "Till startsidan",
   "sendLetter": "Skicka brev",
+  "sendRecLetter": "Skicka rekommenderat brev",
   "addTextDocument": "Lägg till textdokument",
   "addSender": "Ange avsändare",
   "attachmentHandler": {

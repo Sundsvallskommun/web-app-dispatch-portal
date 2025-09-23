@@ -1,21 +1,17 @@
 import AttachmentHandler, { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
-import { FormStepper } from '@components/form-stepper/form-stepper.component';
 import RecipientHandler, { RecipientListFormModel } from '@components/recipient-handler/recipient-handler';
 import { SenderFormModel, SenderHandler } from '@components/sender-handler/sender-handler.component';
 import SubmitHandler from '@components/submit-handler/submit-handler';
 import { yupResolver } from '@hookform/resolvers/yup';
-import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useMessageStore } from '@services/recipient-service';
-import { Button, Icon } from '@sk-web-gui/react';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import NextLink from 'next/link';
-import { BadgeCheck } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import FormStepper from '@components/form-stepper/form-stepper.component';
 
 const formSchema = yup
   .object({
@@ -36,6 +32,8 @@ const formSchema = yup
       }),
   })
   .required();
+
+type SendMailForm = yup.InferType<typeof formSchema>;
 
 const initialValues = {
   attachmentList: [],
@@ -62,9 +60,9 @@ const SendMailPage = () => {
   const router = useRouter();
   const { t } = useTranslation(['common', 'send-mail']);
 
-  const controls = useForm({
+  const controls = useForm<SendMailForm>({
     resolver: yupResolver(formSchema),
-    values: initialValues,
+    defaultValues: initialValues,
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
   });
@@ -98,79 +96,40 @@ const SendMailPage = () => {
       (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
     ) || addresses.length > 0;
 
-  const getScreenReaderStepperText = () => {
-    switch (step) {
-      case 0:
-        return t('common:screenReader.postStepper.stepOne');
-      case 1:
-        return t('common:screenReader.postStepper.stepTwo');
-      case 2:
-        return t('common:screenReader.postStepper.stepThree');
-      default:
-        return undefined;
-    }
+  const stepTexts: Record<number, string> = {
+    0: t('common:screenReader.postStepper.stepOne'),
+    1: t('common:screenReader.postStepper.stepTwo'),
+    2: t('common:screenReader.postStepper.stepThree'),
   };
+
+  const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
+
   return (
-    <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">{`${t('common:screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
-      <div className="text-lg mb-11 pt-48">
-        <div className="">
-          <div className="">
-            {success ? (
-              <div className="text-center max-w-[63rem] mx-auto">
-                <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-                <h2 className="mt-24">{t('send-mail:success')}</h2>
-                <p className="my-md text-base">{`${t('send-mail:successInfo')}`}</p>
-                <div className="flex gap-16 justify-center mt-40">
-                  <Button
-                    className="mt-lg"
-                    color="primary"
-                    variant="secondary"
-                    onClick={() => {
-                      resetAll();
-                      setSuccess(false);
-                    }}
-                  >
-                    {t('send-mail:sendNew')}
-                  </Button>
-                  <NextLink href="/" passHref legacyBehavior>
-                    <Button className="mt-lg" color="vattjom">
-                      {t('send-mail:goBack')}
-                    </Button>
-                  </NextLink>
-                </div>
-              </div>
-            ) : (
-              <div className="w-full max-w-[82rem] mx-auto">
-                <h2 className="text-h4-lg">{t('send-mail:sendLetter')}</h2>
-                <FormProvider {...controls}>
-                  <FormStepper
-                    steps={[
-                      {
-                        label: t('send-mail:addTextDocument'),
-                        component: <AttachmentHandler />,
-                        valid: hasAtLeastOneAttachment,
-                      },
-                      {
-                        label: t('send-mail:recipientHandler.addRecipient'),
-                        component: <RecipientHandler />,
-                        valid: hasValidRecipients,
-                        onNextClick: () => {
-                          trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
-                        },
-                      },
-                      { label: t('send-mail:addSender'), component: <SenderHandler /> },
-                    ]}
-                    onChangeStep={setStep}
-                    submitButton={<SubmitHandler />}
-                  ></FormStepper>
-                </FormProvider>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </DefaultLayout>
+    <FormStepper<SendMailForm>
+      steps={[
+        {
+          label: t('send-mail:addTextDocument'),
+          component: <AttachmentHandler />,
+          valid: hasAtLeastOneAttachment,
+        },
+        {
+          label: t('send-mail:recipientHandler.addRecipient'),
+          component: <RecipientHandler />,
+          valid: hasValidRecipients,
+          onNextClick: () => {
+            trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
+          },
+        },
+        { label: t('send-mail:addSender'), component: <SenderHandler /> },
+      ]}
+      onChangeStep={setStep}
+      submitButton={<SubmitHandler />}
+      getScreenReaderStepperText={getScreenReaderStepperText}
+      controls={controls}
+      headerTitle={t('send-mail:sendLetter')}
+      success={success}
+      onResetSuccess={() => setSuccess(false)}
+    />
   );
 };
 
