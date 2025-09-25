@@ -20,7 +20,7 @@ interface FileListItemComponentProps {
   data: Attachment & { index?: number };
   handleRemove: (index: number) => void;
   noBorder?: boolean;
-  callback: () => void;
+  callback?: () => void;
 }
 
 export const FileListItemComponent: React.FC<FileListItemComponentProps> = (props) => {
@@ -74,7 +74,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
             onBlur={() => setFocus(false)}
             className="max-w-[36px] max-h-[36px] relative border-0"
           >
-            <Icon onClick={() => callback()} icon={<Trash />} />
+            <Icon onClick={() => callback && callback()} icon={<Trash />} />
             <Tooltip position="below" className={`${hover || focus ? 'absolute mt-[8rem]' : 'hidden'}`}>
               {t('delete')}
             </Tooltip>

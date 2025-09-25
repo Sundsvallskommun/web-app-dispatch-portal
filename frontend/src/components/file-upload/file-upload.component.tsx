@@ -42,7 +42,7 @@ const FileUpload: React.FC<{
     watch,
     setValue,
     formState: { errors },
-  } = useFormContext<{ newItem: FileList | undefined } & Record<string, any>>();
+  } = useFormContext<{ newItem: FileList | undefined } & Record<string, any>>(); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const newItem: FileList = watch(`${fieldName}-newItem`);
 
@@ -64,9 +64,9 @@ const FileUpload: React.FC<{
     return () => setActive?.(false);
   }, [setActive]);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (!newItem?.[0]) return;
-
     resetErrors(setFileErrors, setError, onErrorReset);
     handleFiles({
       newItem,
@@ -85,12 +85,13 @@ const FileUpload: React.FC<{
       onErrorReset,
     });
   }, [newItem]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   useEffect(() => {
     if (resetErrorTrigger && resetErrorTrigger > 0) {
       resetErrors(setFileErrors, setError, onErrorReset);
     }
-  }, [resetErrorTrigger]);
+  }, [resetErrorTrigger, onErrorReset]);
 
   useEffect(() => {
     if (drop && drop?.length > 0) {

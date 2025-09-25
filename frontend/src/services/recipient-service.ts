@@ -100,7 +100,7 @@ export const getRecipients = async (files: { file?: File }[]): Promise<Recipient
     }
     const fileData = await toBase64(fileItem);
     const buf = Buffer.from(fileData.split(',')[1], 'base64');
-    const blob = new Blob([buf], { type: fileItem.type });
+    const blob = new Blob([new Uint8Array(buf)], { type: fileItem.type });
 
     // Building form data
     const formData = new FormData();
