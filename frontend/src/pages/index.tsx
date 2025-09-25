@@ -1,71 +1,72 @@
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useUserStore } from '@services/user-service/user-service';
-import { Card } from '@sk-web-gui/react';
 import { useTranslation } from 'next-i18next';
+import { Mail, MailCheck, Smartphone } from 'lucide-react';
+import MainCard from '@components/main-card/main-card.component';
+import { Link } from '@sk-web-gui/react';
 
 const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['common', 'start-page']);
 
   useEffect(() => {
     setIsCheckingPermissions(false);
   }, [user.permissions.canSendSMS, router]);
 
   return (
-    <DefaultLayout title={t('appTitle')}>
+    <DefaultLayout title={t('start-page:app-title')}>
       {!isCheckingPermissions && (
-        <>
-          <h1 className="sr-only">{`${t('screenReader.sendPost')}.`}</h1>
-          <div className="flex self-center flex-col text-lg mb-11 pt-48 max-w-max">
-            <div className="text-center">
-              <p className="text-base mb-16">{t('indexSubtitle')}</p>
-              <h1 className="text-display-3-lg mb-40">{`${t('indexSubHeader')}`}</h1>
+        <div className="pt-128 flex flex-col items-center gap-32 flex-1 self-stretch">
+          <h1 className="sr-only">{`${t('start-page:screen-reader')}.`}</h1>
+          <div className="flex self-center items-center flex-col text-lg mb-11 max-w-max gap-56">
+            <div className="text-center flex flex-col gap-16 lining-nums proportional-nums">
+              <div className="text-large text-dark-secondary">{t('start-page:subtitle')}</div>
+              <div className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</div>
             </div>
-            <div className="md:flex flex-1 basis-0 gap-24">
-              <NextLink href="/send/mail" legacyBehavior passHref>
-                <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
-                  <Card.Body className="flex-1">
-                    <Card.Header>
-                      <h2 className="text-h3-md">{t('letter')}</h2>
-                    </Card.Header>
-                    <Card.Text>
-                      {/* <p className="text-small">Någon text som beskriver vad skicka digitalt brev innebär</p> */}
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              </NextLink>
+            <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
+              <Link href={'/send/mail'} className="start-link flex-1 w-full">
+                <MainCard
+                  icon={<Mail />}
+                  title={t('start-page:letter')}
+                  contentText={t('start-page:send-letter-digitally')}
+                  subContentText={t('start-page:price-0.5-kr')}
+                />
+              </Link>
+              <Link href={''} className="start-link flex-1 w-full">
+                <MainCard
+                  icon={<MailCheck />}
+                  title={t('start-page:rec-letter')}
+                  contentText={t('start-page:send-important-doc')}
+                  subContentText={t('start-page:price-20-kr')}
+                />
+              </Link>
               {user.permissions.canSendSMS && (
-                <NextLink href="/send/sms" legacyBehavior passHref>
-                  <Card className="flex-1 mb-32 min-w-[34rem]" color="vattjom" invert={true} useHoverEffect={true}>
-                    <Card.Body className="flex-1">
-                      <Card.Header>
-                        <h2 className="text-h3-md">{t('textMessage')}</h2>
-                      </Card.Header>
-                      <Card.Text>
-                        {/* <p className="text-small">Någon text som beskriver vad skicka sms innebär</p> */}
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                </NextLink>
+                <Link href="/send/sms" className="start-link flex-1 w-full">
+                  <MainCard
+                    icon={<Smartphone />}
+                    title={t('start-page:sms')}
+                    contentText={t('start-page:fast-method-to-share')}
+                    subContentText={t('start-page:price-0.5-kr')}
+                  />
+                </Link>
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
     </DefaultLayout>
   );
 };
 
-export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'start-page'])),
   },
 });
 

@@ -40,13 +40,13 @@ const DefaultLayout = ({ title, pageheader, children }: DefaultLayoutProps) => {
 
       <NextLink legacyBehavior={true} href="#content" passHref>
         <a onClick={setInitialFocus} accessKey="s" className="next-link-a">
-          {t('goToContent')}
+          {t('common:goToContent')}
         </a>
       </NextLink>
-      <div className="z-10">
+      <div className="z-10 header-container">
         <Header
-          title={t('appTitle')}
-          subtitle={t('appSubTitle')}
+          title={t('common:appTitle')}
+          subtitle={t('common:appSubTitle')}
           LogoLinkWrapperComponent={<NextLink legacyBehavior={true} href={'/'} passHref />}
           userMenu={
             <span data-cy="usermenu">
@@ -68,7 +68,7 @@ const DefaultLayout = ({ title, pageheader, children }: DefaultLayoutProps) => {
                   <PopupMenu.Group>
                     {mainMenuItems.map((item, index) => (
                       <PopupMenu.Item key={`mainmenu-${index}`}>
-                        <NextLink href={item.href}>{t(`mainMenu.${item.label}`)}</NextLink>
+                        <NextLink href={item.href}>{t(`common:mainMenu.${item.label}`)}</NextLink>
                       </PopupMenu.Item>
                     ))}
                   </PopupMenu.Group>

@@ -66,8 +66,8 @@ const AttachmentHandler: React.FC = () => {
       <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
         <input type="hidden" {...register('message')} value="hiddenmessage" />
         <div className="w-full">
-          <h4 className="pb-6">{t('send-mail:attachmentHandler:header')}</h4>
-          <p className="text-base pb-6">{t('send-mail:attachmentHandler:description')}</p>
+          <h4 className="pb-6">{t('send-mail:attachmentHandler.header')}</h4>
+          <p className="text-base pb-6">{t('send-mail:attachmentHandler.description')}</p>
           <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
         <FormControl id="attachment" className="w-full gap-8">
@@ -77,7 +77,7 @@ const AttachmentHandler: React.FC = () => {
             allowMultiple={maxMain + maxSecondary > 1}
             allowMax={maxMain + maxSecondary}
             accept={['.pdf', '.PDF']}
-            helperText={t('send-mail:attachmentHandler:helperText')}
+            helperText={t('send-mail:attachmentHandler.helperText')}
             maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
             resetErrorTrigger={resetErrorTrigger}
           />
@@ -86,16 +86,16 @@ const AttachmentHandler: React.FC = () => {
         <div className="w-full">
           {attachmentList.length === 0 && (
             <div>
-              <h3 className="text-label-medium">{t('send-mail:attachmentHandler:addedFilesHeader')}</h3>
+              <h3 className="text-label-medium">{t('send-mail:attachmentHandler.addedFilesHeader')}</h3>
               <p className="text-base">{`${t('send-mail:attachmentHandler:noFiles')}.`}</p>
             </div>
           )}
           {attachmentList.length > 0 && (
             <div className="w-full">
               <h4 className="pb-8 text-label-medium">
-                {t('send-mail:attachmentHandler:addedFiles', { num: attachmentList.length })}
+                {t('send-mail:attachmentHandler.addedFiles', { num: attachmentList.length })}
               </h4>
-              <p className="text-base">{`${t('send-mail:attachmentHandler:sort')}.`}</p>
+              <p className="text-base">{`${t('send-mail:attachmentHandler.sort')}.`}</p>
               <div className="flex flex-col gap-12">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                   <SortableContext

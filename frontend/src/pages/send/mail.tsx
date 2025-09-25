@@ -27,6 +27,13 @@ const formSchema = yup
       return value && value.length > 0;
     }),
     recipientList: yup.array(),
+    singleRecipient: yup.string().nullable(),
+    storeRecipients: yup
+      .array()
+      .default([])
+      .test('HAS_MIN_ONE_RECIPIENT', 'Lägg till minst en mottagare för att fortsätta.', (value) => {
+        return value && value.length > 0;
+      }),
   })
   .required();
 
@@ -38,6 +45,7 @@ const initialValues = {
   subject: '',
   body: '',
   department: '',
+  storeRecipients: [],
 };
 
 export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
@@ -57,11 +65,11 @@ const SendMailPage = () => {
   const controls = useForm({
     resolver: yupResolver(formSchema),
     values: initialValues,
-    mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
   });
 
-  const { watch, reset } = controls;
+  const { watch, reset, trigger, setValue } = controls;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
@@ -80,6 +88,11 @@ const SendMailPage = () => {
     }
   }, [resetAll, response, router]);
 
+  // keep hidden field in sync with store
+  useEffect(() => {
+    setValue('storeRecipients', recipients ?? [], { shouldValidate: true, shouldDirty: false });
+  }, [recipients, setValue]);
+
   const hasValidRecipients =
     recipients?.some(
       (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
@@ -88,18 +101,18 @@ const SendMailPage = () => {
   const getScreenReaderStepperText = () => {
     switch (step) {
       case 0:
-        return t('screenReader.postStepper.stepOne');
+        return t('common:screenReader.postStepper.stepOne');
       case 1:
-        return t('screenReader.postStepper.stepTwo');
+        return t('common:screenReader.postStepper.stepTwo');
       case 2:
-        return t('screenReader.postStepper.stepThree');
+        return t('common:screenReader.postStepper.stepThree');
       default:
         return undefined;
     }
   };
   return (
     <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
+      <h1 className="sr-only">{`${t('common:screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className="text-lg mb-11 pt-48">
         <div className="">
           <div className="">
@@ -142,6 +155,9 @@ const SendMailPage = () => {
                         label: t('send-mail:recipientHandler.addRecipient'),
                         component: <RecipientHandler />,
                         valid: hasValidRecipients,
+                        onNextClick: () => {
+                          trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
+                        },
                       },
                       { label: t('send-mail:addSender'), component: <SenderHandler /> },
                     ]}
@@ -158,7 +174,7 @@ const SendMailPage = () => {
   );
 };
 
-export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility'])),
   },

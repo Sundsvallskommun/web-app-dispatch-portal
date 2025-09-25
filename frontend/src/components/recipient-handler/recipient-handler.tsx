@@ -23,14 +23,17 @@ import {
   RadioButton,
   cx,
   Modal,
+  Icon,
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Trans, useTranslation } from 'next-i18next';
+import { Info } from 'lucide-react';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
   singleRecipient: string;
+  storeRecipients: string;
 }
 
 const RecipientHandler: React.FC = () => {
@@ -54,6 +57,7 @@ const RecipientHandler: React.FC = () => {
     watch,
     setValue,
     setError: setFormError,
+    clearErrors,
     register,
     formState: { errors },
   } = useFormContext<RecipientListFormModel>();
@@ -74,16 +78,16 @@ const RecipientHandler: React.FC = () => {
         let errorMessage: string;
         switch (e.message) {
           case 'NO_FILE':
-            errorMessage = t('recipientHandler.errorHandler.noFile');
+            errorMessage = t('send-mail:recipientHandler.errorHandler.noFile');
             break;
           case 'MAX_SIZE':
-            errorMessage = t('recipientHandler.errorHandler.maxSize', { size: MAX_RECIPIENT_FILE_SIZE_MB });
+            errorMessage = t('send-mail:recipientHandler.errorHandler.maxSize', { size: MAX_RECIPIENT_FILE_SIZE_MB });
             break;
           case 'MAX_RECIPIENT_ROW_SIZE':
-            errorMessage = t('recipientHandler.errorHandler.maxRow', { rows: MAX_RECIPIENT_ROW_SIZE });
+            errorMessage = t('send-mail:recipientHandler.errorHandler.maxRow', { rows: MAX_RECIPIENT_ROW_SIZE });
             break;
           default:
-            errorMessage = t('recipientHandler.errorHandler.default');
+            errorMessage = t('send-mail:recipientHandler.errorHandler.default');
         }
         setIsLoadingRecipients(false);
         setError(errorMessage);
@@ -100,7 +104,9 @@ const RecipientHandler: React.FC = () => {
           (rec) => rec?.recipient?.personnumber === res[0]?.recipient?.personnumber
         );
         if (alreadyExists) {
-          setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.alreadyExists') });
+          setFormError('singleRecipient', {
+            message: t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'),
+          });
           setIsLoadingRecipients(false);
           return;
         }
@@ -108,12 +114,14 @@ const RecipientHandler: React.FC = () => {
         setRecipients(recipients.concat(res));
         setIsLoadingRecipients(false);
         setFoundPerson(undefined);
-        setFormError('singleRecipient', { message: undefined });
+        clearErrors('singleRecipient');
       })
       .catch((e) => {
         console.error(e);
         setIsLoadingRecipients(false);
-        setFormError('singleRecipient', { message: t('recipientHandler.fetchRecipient.singleRecipient') });
+        setFormError('singleRecipient', {
+          message: t('send-mail:recipientHandler.fetchRecipientError.singleRecipient'),
+        });
       });
   };
 
@@ -127,6 +135,11 @@ const RecipientHandler: React.FC = () => {
         console.error(e);
       });
   };
+
+  useEffect(() => {
+    clearErrors('singleRecipient');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipients, setFormError]);
 
   useEffect(() => {
     if (recipientList?.length === 1) {
@@ -146,20 +159,21 @@ const RecipientHandler: React.FC = () => {
   useEffect(() => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setAddresses([]);
     setValue('recipientList', []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
   useEffect(() => {
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors(['storeRecipients', 'singleRecipient']);
     const length = recipient.length;
     if (length >= 12) {
       findPerson(recipient);
       return;
     }
     setFoundPerson(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipient, setFormError]);
 
   const handleSwitchCurrent = (navigateTo: number) => {
@@ -171,21 +185,22 @@ const RecipientHandler: React.FC = () => {
   };
 
   const handleSubmitSingleRecipient = () => {
+    clearErrors(['singleRecipient', 'storeRecipients']);
     if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
       fetchRecipient();
       setValue('singleRecipient', '');
       setFoundPerson(undefined);
     } else if (recipient.length < 12) {
-      setFormError('singleRecipient', { message: t('recipientHandler.personalNumberError.fewNumber') });
+      setFormError('singleRecipient', { message: t('send-mail:recipientHandler.personalNumberError.fewNumber') });
     } else if (recipient.length > 13) {
-      setFormError('singleRecipient', { message: t('recipientHandler.personalNumberError.tooManyNumbers') });
+      setFormError('singleRecipient', { message: t('send-mail:recipientHandler.personalNumberError.tooManyNumbers') });
     }
   };
 
   const handleRemove = () => {
     setRecipients([]);
     setFoundPerson(undefined);
-    setFormError('singleRecipient', { message: undefined });
+    clearErrors('singleRecipient');
     setValue('singleRecipient', '');
     setValue('recipientList', []);
   };
@@ -235,11 +250,11 @@ const RecipientHandler: React.FC = () => {
       <Modal
         show={isWarningOpen}
         onClose={() => onCloseWarningModal(false)}
-        label={t('recipientHandler:modalLabel')}
+        label={t('send-mail:recipientHandler.modalLabel')}
         className="w-[40rem]"
       >
         <Modal.Content>
-          <p>{t('recipientHandler:modalWarning')}</p>
+          <p>{t('send-mail:recipientHandler.modalWarning')}</p>
         </Modal.Content>
 
         <Modal.Footer>
@@ -253,21 +268,21 @@ const RecipientHandler: React.FC = () => {
       </Modal>
       <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
         <div className="w-full">
-          <h4 className="pb-6">{t('recipientHandler.title')}</h4>
+          <h4 className="pb-6">{t('send-mail:recipientHandler.title')}</h4>
           <p className="text-base pb-6">
             <Trans
-              i18nKey="send-mail:recipientHandler:contentFirstRow"
+              i18nKey="send-mail:recipientHandler.contentFirstRow"
               components={{
                 Link: <Link href="/files/example.csv" />,
               }}
             />
           </p>
-          <p className="text-base pb-6">{`${t('recipientHandler.contentSecondRow')}.`}</p>
+          <p className="text-base pb-6">{`${t('send-mail:recipientHandler.contentSecondRow')}.`}</p>
           <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
 
         <div className="w-full gap-32">
-          <h3 className="text-label-medium">{t('recipientHandler.howAddRecipient')}</h3>
+          <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
           <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
             <div
               className={cx(
@@ -276,7 +291,7 @@ const RecipientHandler: React.FC = () => {
               )}
             >
               <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
-                {t('recipientHandler.optionPersonalNumberOrAddress')}
+                {t('send-mail:recipientHandler.optionPersonalNumberOrAddress')}
               </RadioButton>
             </div>
             <div
@@ -286,7 +301,7 @@ const RecipientHandler: React.FC = () => {
               )}
             >
               <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
-                {t('recipientHandler.optionRecipientList')}
+                {t('send-mail:recipientHandler.optionRecipientList')}
               </RadioButton>
             </div>
           </div>
@@ -294,7 +309,7 @@ const RecipientHandler: React.FC = () => {
           {current === 0 ? (
             <div className="flex flex-col gap-12 pt-32">
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
-                <div className="relative w-full">
+                <div className="relative w-full gap-2">
                   <FormLabel className="text-label-medium">
                     <Trans
                       i18nKey="send-mail:recipientHandler.searchPersonalNumber"
@@ -306,7 +321,7 @@ const RecipientHandler: React.FC = () => {
                   <SearchField
                     {...register('singleRecipient')}
                     value={recipient}
-                    className="w-full"
+                    className="w-full mt-12"
                     showSearchButton={false}
                     // showSearchButton={dirtyFields.singleRecipient && ssnPattern.test(recipient)}
                     showResetButton={recipient.length > 0}
@@ -320,8 +335,11 @@ const RecipientHandler: React.FC = () => {
                       setValue('singleRecipient', '');
                       setFoundPerson(undefined);
                     }}
-                    onSearch={() => handleSubmitSingleRecipient()}
+                    onSearch={() => {
+                      handleSubmitSingleRecipient();
+                    }}
                   />
+
                   {foundPerson?.address && (
                     <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
                       <p className="text-body text-base font-bold">
@@ -333,18 +351,26 @@ const RecipientHandler: React.FC = () => {
                       </p>
 
                       <Button className="mt-16" onClick={() => handleSubmitSingleRecipient()}>
-                        {t('recipientHandler.addRecipient')}
+                        {t('send-mail:recipientHandler.addRecipient')}
                       </Button>
                     </div>
                   )}
                 </div>
 
-                {/* <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText> */}
-                {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
+                {errors.storeRecipients?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.storeRecipients.message}
+                  </FormErrorMessage>
+                )}
+                {errors.singleRecipient?.message && (
+                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
+                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}
+                  </FormErrorMessage>
+                )}
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-                <Button onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
-                  {t('recipientHandler.addRecipientWithAddress')}
+                <Button className="mt-20" onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
+                  {t('send-mail:recipientHandler.addRecipientWithAddress')}
                 </Button>
               </FormControl>
             </div>
@@ -355,7 +381,7 @@ const RecipientHandler: React.FC = () => {
                   showLabel
                   fieldName="recipientList"
                   accept={['.csv', '.CSV']}
-                  helperText={t('recipientHandler.csvHelperText')}
+                  helperText={t('send-mail:recipientHandler.csvHelperText')}
                   allowMax={1}
                   allowReplace={allowReplace}
                   maxFileSizeMB={MAX_RECIPIENT_FILE_SIZE_MB}
@@ -370,7 +396,7 @@ const RecipientHandler: React.FC = () => {
 
           {recipientList?.length && recipients?.length && current === 1 ? (
             <div className="mt-56">
-              <h4 className="text-label-medium mb-12">{t('recipientHandler.csvAddedFile')}</h4>
+              <h4 className="text-label-medium mb-12">{t('send-mail:recipientHandler.csvAddedFile')}</h4>
               <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
             </div>
           ) : (
@@ -382,7 +408,7 @@ const RecipientHandler: React.FC = () => {
                 <div>
                   <Spinner className="h-32 w-32"></Spinner>
                 </div>
-                <div>{t('recipientHandler:fetchingRecipient')}</div>
+                <div>{t('send-mail:recipientHandler.fetchingRecipient')}</div>
               </>
             </div>
           )}
@@ -391,9 +417,9 @@ const RecipientHandler: React.FC = () => {
           {invalidRecipient?.length > 0 && !isLoadingRecipients && (
             <div className="mt-56">
               <h4 className="text-label-medium">
-                {t('recipientHandler.errorHandler.invalidRecipient', { num: invalidRecipient.length })}
+                {t('send-mail:recipientHandler.errorHandler.invalidRecipient', { num: invalidRecipient.length })}
               </h4>
-              <p className="text-small text-secondary">{`${t('recipientHandler.errorHandler.invalidRecipient')}.`}</p>
+              <p className="text-small text-secondary">{`${t('send-mail:recipientHandler.errorHandler.invalidRecipient')}.`}</p>
               <div className="mt-12 border-1 rounded-groups border-error-surface-primary">
                 {invalidRecipient.map((rec, index) => (
                   <div
@@ -410,11 +436,13 @@ const RecipientHandler: React.FC = () => {
           {combinedLength > 0 && !isLoadingRecipients && (
             <div className="w-full mt-40">
               {current === 0 && (
-                <h4 className="mb-16 text-h4-sm">{t('recipientHandler.addedRecipientNum', { num: combinedLength })}</h4>
+                <h4 className="mb-16 text-h4-sm">
+                  {t('send-mail:recipientHandler.addedRecipientNum', { num: combinedLength })}
+                </h4>
               )}
               {current === 1 && (
                 <h4 className="mb-16 text-h4-sm">
-                  {t('recipientHandler.addedFromFileNum', { num: validRecipientLength })}
+                  {t('send-mail:recipientHandler.addedFromFileNum', { num: validRecipientLength })}
                 </h4>
               )}
               <RecipientList />
@@ -423,14 +451,14 @@ const RecipientHandler: React.FC = () => {
         </div>
         {combinedLength < 1 && current === 0 && (
           <div>
-            <h3 className="text-label-medium">{t('recipientHandler.addedRecipientsTitle')}</h3>
-            <p className="text-base">{`${t('recipientHandler.noRecipientAdded')}.`}</p>
+            <h3 className="text-label-medium">{t('send-mail:recipientHandler.addedRecipientsTitle')}</h3>
+            <p className="text-base">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
           </div>
         )}
         {recipients?.length < 1 && current === 1 && (
           <div>
-            <h3 className="text-label-medium">{t('recipientHandler.addedFileTitle')}</h3>
-            <p className="text-base">{`${t('recipientHandler.noFileAdded')}.`}</p>
+            <h3 className="text-label-medium">{t('send-mail:recipientHandler.addedFileTitle')}</h3>
+            <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}.`}</p>
           </div>
         )}
       </div>

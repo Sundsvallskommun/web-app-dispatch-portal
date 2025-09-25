@@ -48,7 +48,11 @@ export interface AddWithAddress {
   careOf?: string;
   zipCode: string;
   city: string;
-};
+}
+
+export interface ErrorMessageObj {
+  searchPersonnummerBox: string;
+}
 
 export const ssnPattern = /^$|^((19|20)[0-9]{6}-?[0-9]{4})$/gi;
 
