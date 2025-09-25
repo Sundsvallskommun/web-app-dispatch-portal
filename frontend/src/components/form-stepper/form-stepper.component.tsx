@@ -1,10 +1,12 @@
-import { Button, Icon, ProgressStepper } from '@sk-web-gui/react';
-import { ArrowRight, BadgeCheck, MailCheck } from 'lucide-react';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
-import FormStepperHeader from './form-stepper-header.component';
 import { useTranslation } from 'react-i18next';
+import { Badge, Button, cx, Divider, Icon } from '@sk-web-gui/react';
+import { ArrowRight, BadgeCheck } from 'lucide-react';
+import FormStepperHeader from './form-stepper-header.component';
+import ProgressStepper from '@components/progress-stepper/progress-stepper.component';
+import { useWindowSize } from 'src/hooks/useWindowSize';
 
 export interface FormStep {
   label: string;
@@ -22,6 +24,7 @@ interface FormStepperProps<T extends FieldValues> {
   headerTitle: string;
   success: boolean;
   onResetSuccess: () => void;
+  icon: ReactElement;
 }
 
 const FormStepper = <T extends FieldValues>({
@@ -33,9 +36,11 @@ const FormStepper = <T extends FieldValues>({
   headerTitle,
   success,
   onResetSuccess,
+  icon,
 }: FormStepperProps<T>) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const { t } = useTranslation(['common', 'send-mail']);
+  const { width } = useWindowSize();
 
   const handleChangeStep = (step: number) => {
     setCurrentStep(step);
@@ -65,24 +70,22 @@ const FormStepper = <T extends FieldValues>({
 
   const contentFormProvider = (
     <FormProvider {...controls}>
-      <div className="flex flex-1 justify-between items-center pt-64 z-10 left-0 top-0 right-0">
-        <ProgressStepper
-          className="w-full max-w-[82rem]"
-          steps={steps.map((step) => step.label)}
-          current={currentStep}
-          rounded={true}
-          size={'sm'}
-        ></ProgressStepper>
-      </div>
-      <div className="py-32">{steps[currentStep].component}</div>
-      <div className="flex flex-row justify-end gap-16">
-        <div>
-          {currentStep !== 0 && (
-            <Button variant="secondary" onClick={() => handleChangeStep(currentStep - 1)}>
-              {t('back')}
-            </Button>
-          )}
-        </div>
+      <ProgressStepper
+        steps={steps.map((s) => {
+          return s.label;
+        })}
+        current={currentStep}
+        className={'pt-64 pb-40'}
+        vertical={width <= 890}
+        ellipsisLength={32}
+      />
+      {steps[currentStep].component}
+      <div className="flex flex-row justify-end gap-16 my-40">
+        {currentStep !== 0 && (
+          <Button variant="secondary" onClick={() => handleChangeStep(currentStep - 1)}>
+            {t('back')}
+          </Button>
+        )}
         <div>
           {currentStep === steps.length - 1 ? (
             submitButton
@@ -104,7 +107,7 @@ const FormStepper = <T extends FieldValues>({
 
   return (
     <div className="flex items-center flex-col">
-      <FormStepperHeader title={headerTitle} icon={<MailCheck />} />
+      <FormStepperHeader title={headerTitle} icon={icon} />
       <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className="flex flex-col max-w-[--w-max-stepper-content] w-[--w-stepper-content]">
         {success ? contentSuccess : contentFormProvider}

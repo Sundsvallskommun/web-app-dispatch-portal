@@ -25,7 +25,7 @@ const FormStepperHeader = ({ title, icon }: FormStepperHeaderProps) => {
             {t('cancel')}
           </Link>
         </NextLink>
-        <div className="flex items-center gap-12 w-[--w-stepper-content] ml-56">
+        <div className="flex items-center gap-12 w-[--w-stepper-content] ml-[54px]">
           <Icon icon={icon} />
           <h4>{title}</h4>
         </div>

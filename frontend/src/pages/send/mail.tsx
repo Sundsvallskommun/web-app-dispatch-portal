@@ -12,6 +12,7 @@ import { useTranslation } from 'next-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import FormStepper from '@components/form-stepper/form-stepper.component';
+import { Mail } from 'lucide-react';
 
 const formSchema = yup
   .object({
@@ -129,6 +130,7 @@ const SendMailPage = () => {
       headerTitle={t('send-mail:sendLetter')}
       success={success}
       onResetSuccess={() => setSuccess(false)}
+      icon={<Mail />}
     />
   );
 };
