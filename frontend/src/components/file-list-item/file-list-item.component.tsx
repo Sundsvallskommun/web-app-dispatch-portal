@@ -74,7 +74,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
             onBlur={() => setFocus(false)}
             className="max-w-[36px] max-h-[36px] relative border-0"
           >
-            <Icon onClick={() => callback && callback()} icon={<Trash />} />
+            <Icon onClick={() => callback?.()} icon={<Trash />} />
             <Tooltip position="below" className={`${hover || focus ? 'absolute mt-[8rem]' : 'hidden'}`}>
               {t('delete')}
             </Tooltip>
