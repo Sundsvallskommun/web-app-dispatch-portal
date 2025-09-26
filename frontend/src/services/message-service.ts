@@ -21,7 +21,7 @@ export interface LetterResponse {
         messageType: 'DIGITAL_MAIL' | 'SNAIL_MAIL';
         status: string;
       }[];
-    }
+    },
   ];
 }
 
@@ -49,7 +49,7 @@ const file2blob = async (fileItem: File) => {
     file: fileData.split(',')[1],
   };
   const buf = Buffer.from(attachment.file, 'base64');
-  const blob = new Blob([buf], { type: attachment.mimeType });
+  const blob = new Blob([new Uint8Array(buf)], { type: attachment.mimeType });
   return { attachment, blob };
 };
 
@@ -57,8 +57,12 @@ const file2blob = async (fileItem: File) => {
 export const sendMessage: (
   data: FormModel,
   recipients: RecipientWithAddress[],
-  addresses: AddWithAddress[],
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (data, recipients, addresses) => {
+  addresses: AddWithAddress[]
+) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (
+  data,
+  recipients,
+  addresses
+) => {
   const messageFormData = new FormData();
 
   const attachmentList = data.attachmentList;
