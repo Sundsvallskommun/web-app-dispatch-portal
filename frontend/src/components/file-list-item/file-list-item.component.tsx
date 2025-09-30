@@ -20,10 +20,11 @@ interface FileListItemComponentProps {
   data: Attachment & { index?: number };
   handleRemove: (index: number) => void;
   noBorder?: boolean;
+  callback?: () => void;
 }
 
 export const FileListItemComponent: React.FC<FileListItemComponentProps> = (props) => {
-  const { data, handleRemove, noBorder } = props;
+  const { data, handleRemove, noBorder, callback } = props;
   const [hover, setHover] = React.useState<boolean>(false);
   const [focus, setFocus] = React.useState<boolean>(false);
   const { t } = useTranslation(['common', 'accessibility']);
@@ -73,7 +74,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
             onBlur={() => setFocus(false)}
             className="max-w-[36px] max-h-[36px] relative border-0"
           >
-            <Icon icon={<Trash />} />
+            <Icon onClick={() => callback?.()} icon={<Trash />} />
             <Tooltip position="below" className={`${hover || focus ? 'absolute mt-[8rem]' : 'hidden'}`}>
               {t('delete')}
             </Tooltip>
