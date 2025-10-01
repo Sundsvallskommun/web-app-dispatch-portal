@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -10,6 +10,8 @@ import { MailCheck } from 'lucide-react';
 import RecipientHandler from '@components/recipient-handler/recipient-handler';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
+import { useMessageStore } from '@services/recipient-service';
+import { useRouter } from 'next/router';
 
 const formSchema = yup
   .object({
@@ -46,14 +48,25 @@ const initialValues = {
 const SendRekMail = () => {
   const [success, setSuccess] = useState(false);
   const [step, setStep] = useState<number>(0);
+  const recipients = useMessageStore((state) => state.recipients);
+  const setRecipients = useMessageStore((state) => state.setRecipients);
+  const addresses = useMessageStore((state) => state.addresses);
+  const setAddresses = useMessageStore((state) => state.setAddresses);
+  const response = useMessageStore((state) => state.response);
+  const setResponse = useMessageStore((state) => state.setResponse);
   const controls = useForm<SendRekMailForm>({
     defaultValues: initialValues,
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
-  const { watch, trigger } = controls;
+  const { watch, trigger, setValue, reset } = controls;
   const watchAttachmentList = watch('attachmentList');
   const hasAtLeastOneAttachment = watchAttachmentList ? watchAttachmentList.length > 0 : false;
+  const hasValidRecipients =
+    recipients?.some(
+      (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
+    ) || addresses.length > 0;
+  const router = useRouter();
   const { t } = useTranslation(['common', 'send-mail']);
 
   const stepTexts: Record<number, string> = {
@@ -61,6 +74,24 @@ const SendRekMail = () => {
   };
 
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
+
+  const resetAll = useCallback(() => {
+    setRecipients([]);
+    setAddresses([]);
+    reset({ ...initialValues, department: '', subject: '' });
+    setResponse(undefined);
+  }, [setRecipients, setAddresses, reset, setResponse]);
+
+  useEffect(() => {
+    if (response) {
+      setSuccess(true);
+      resetAll();
+    }
+  }, [resetAll, response, router]);
+
+  useEffect(() => {
+    setValue('storeRecipients', recipients ?? [], { shouldValidate: true, shouldDirty: false });
+  }, [recipients, setValue]);
 
   return (
     <DefaultLayout
@@ -73,10 +104,25 @@ const SendRekMail = () => {
             {
               label: t('send-mail:recipientHandler.addRecipient'),
               component: <RecipientHandler />,
-              valid: hasAtLeastOneAttachment,
+              valid: hasValidRecipients,
               onNextClick: () => {
                 trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
               },
+            },
+            {
+              label: 'Filer',
+              component: <>Filer</>,
+              valid: true,
+            },
+            {
+              label: 'Rubrik och förvaltning',
+              component: <>Rubrik och förvaltning</>,
+              valid: true,
+            },
+            {
+              label: 'Granska',
+              component: <>Granska</>,
+              valid: true,
             },
           ]}
           onChangeStep={setStep}
