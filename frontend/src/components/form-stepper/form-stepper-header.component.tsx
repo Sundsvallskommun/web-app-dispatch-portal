@@ -18,7 +18,7 @@ const FormStepperHeader = ({ title, icon }: FormStepperHeaderProps) => {
   const closeHelpComposer = () => setShowHelpComposer(false);
 
   return (
-    <div className="flex grow justify-center px-80 py-16 w-full border-b-1 border-solid">
+    <div className="flex grow justify-center px-80 py-16 w-full border-b-1 border-solid max-h-[78px]">
       <div className="flex grow items-center justify-between w-full max-w-[--max-w-7xl]">
         <NextLink href="/" passHref legacyBehavior>
           <Link strong={true} variant="tertiary">

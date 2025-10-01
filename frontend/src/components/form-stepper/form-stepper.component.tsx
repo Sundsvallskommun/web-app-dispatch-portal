@@ -69,6 +69,7 @@ const FormStepper = <T extends FieldValues>({
         steps={steps.map((s) => {
           return s.label;
         })}
+        current={currentStep}
       />
       {steps[currentStep].component}
       <div className="flex flex-row justify-end gap-16 my-40">
