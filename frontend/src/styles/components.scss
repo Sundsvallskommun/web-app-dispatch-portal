@@ -18,7 +18,7 @@
   }
 
   .header-container .sk-header {
-    padding: 2px 80px;
+    @apply py-2 md:px-80;
   }
 
   .start-link {
