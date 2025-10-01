@@ -59,9 +59,7 @@ const SendRekMail = () => {
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
-  const { watch, trigger, setValue, reset } = controls;
-  const watchAttachmentList = watch('attachmentList');
-  const hasAtLeastOneAttachment = watchAttachmentList ? watchAttachmentList.length > 0 : false;
+  const { trigger, setValue, reset } = controls;
   const hasValidRecipients =
     recipients?.some(
       (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
@@ -102,26 +100,26 @@ const SendRekMail = () => {
         <FormStepper<SendRekMailForm>
           steps={[
             {
-              label: t('send-mail:recipientHandler.addRecipient'),
-              component: <RecipientHandler />,
+              label: t('stepper.stepOne'),
+              component: <RecipientHandler isRekMail={true} />,
               valid: hasValidRecipients,
               onNextClick: () => {
                 trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
               },
             },
             {
-              label: 'Filer',
-              component: <>Filer</>,
+              label: t('stepper.stepTwo'),
+              component: <>Filer</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
             {
-              label: 'Rubrik och förvaltning',
-              component: <>Rubrik och förvaltning</>,
+              label: t('stepper.stepThree'),
+              component: <>Rubrik och förvaltning</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
             {
-              label: 'Granska',
-              component: <>Granska</>,
+              label: t('stepper.stepFour'),
+              component: <>Granska</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
           ]}

@@ -13,7 +13,6 @@ import {
 } from '@services/recipient-service';
 import {
   Button,
-  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -28,7 +27,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Trans, useTranslation } from 'next-i18next';
-import { Info } from 'lucide-react';
+import { Info, Plus } from 'lucide-react';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -36,7 +35,11 @@ export interface RecipientListFormModel {
   storeRecipients: string;
 }
 
-const RecipientHandler: React.FC = () => {
+interface RecipientHandlerProps {
+  isRekMail?: boolean;
+}
+
+const RecipientHandler = ({ isRekMail = false }: RecipientHandlerProps) => {
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const [error, setError] = useState<string>();
@@ -266,7 +269,9 @@ const RecipientHandler: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
+      <div
+        className={cx('flex flex-col items-start w-full rounded-cards shadow-50 p-32', isRekMail ? 'gap-36' : 'gap-64')}
+      >
         <div className="w-full">
           <h4 className="pb-6">{t('send-mail:recipientHandler.title')}</h4>
           <p className="text-base pb-6">
@@ -278,36 +283,39 @@ const RecipientHandler: React.FC = () => {
             />
           </p>
           <p className="text-base pb-6">{`${t('send-mail:recipientHandler.contentSecondRow')}.`}</p>
-          <Divider className="w-full" orientation="horizontal" strong={false} />
         </div>
-
         <div className="w-full gap-32">
-          <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
-          <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
-            <div
-              className={cx(
-                'flex-1 border rounded-groups p-16',
-                current === 0 ? 'border-dark-primary' : 'border-divider'
-              )}
-            >
-              <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
-                {t('send-mail:recipientHandler.optionPersonalNumberOrAddress')}
-              </RadioButton>
+          {!isRekMail && (
+            <div className="flex flex-col">
+              <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
+              <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
+                <div
+                  className={cx(
+                    'flex-1 border rounded-groups p-16',
+                    current === 0 ? 'border-dark-primary' : 'border-divider'
+                  )}
+                >
+                  <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
+                    {t('send-mail:recipientHandler.optionPersonalNumberOrAddress')}
+                  </RadioButton>
+                </div>
+                {
+                  <div
+                    className={cx(
+                      'flex-1 border rounded-groups p-16',
+                      current === 1 ? 'border-dark-primary' : 'border-divider'
+                    )}
+                  >
+                    <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
+                      {t('send-mail:recipientHandler.optionRecipientList')}
+                    </RadioButton>
+                  </div>
+                }
+              </div>
             </div>
-            <div
-              className={cx(
-                'flex-1 border rounded-groups p-16',
-                current === 1 ? 'border-dark-primary' : 'border-divider'
-              )}
-            >
-              <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
-                {t('send-mail:recipientHandler.optionRecipientList')}
-              </RadioButton>
-            </div>
-          </div>
-
+          )}
           {current === 0 ? (
-            <div className="flex flex-col gap-12 pt-32">
+            <div className={cx('flex flex-col gap-12', !isRekMail && 'pt-32')}>
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
                 <div className="relative w-full gap-2">
                   <FormLabel className="text-label-medium">
@@ -339,6 +347,7 @@ const RecipientHandler: React.FC = () => {
                       handleSubmitSingleRecipient();
                     }}
                   />
+                  <p className="text-xs">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
                     <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
@@ -369,7 +378,13 @@ const RecipientHandler: React.FC = () => {
                 )}
 
                 <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-                <Button className="mt-20" onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
+                <p className="font-bold">{t('send-mail:recipientHandler.missingPersonalNumber')}</p>
+                <Button
+                  leftIcon={<Icon icon={<Plus />} />}
+                  onClick={() => setIsAddWithAddressOpen(true)}
+                  color="vattjom"
+                  inverted
+                >
                   {t('send-mail:recipientHandler.addRecipientWithAddress')}
                 </Button>
               </FormControl>

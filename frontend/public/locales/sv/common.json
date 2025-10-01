@@ -14,9 +14,10 @@
   "recLetter": "Rekommenderat brev",
   "textMessage": "Sms",
   "stepper": {
-    "stepOne": "Lägg till textdokument",
-    "stepTwo": "Lägg till mottagare",
-    "stepThree": "Ange avsändare"
+    "stepOne": "Mottagare",
+    "stepTwo": "Filer",
+    "stepThree": "Rubrik och förvaltning",
+    "stepFour": "Granska"
   },
   "done": "Klart",
   "cancel": "Avbryt",
