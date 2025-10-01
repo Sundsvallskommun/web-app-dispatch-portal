@@ -2,11 +2,9 @@ import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Badge, Button, cx, Divider, Icon } from '@sk-web-gui/react';
+import { Button, Icon, ProgressStepper } from '@sk-web-gui/react';
 import { ArrowRight, BadgeCheck } from 'lucide-react';
 import FormStepperHeader from './form-stepper-header.component';
-import ProgressStepper from '@components/progress-stepper/progress-stepper.component';
-import { useWindowSize } from 'src/hooks/useWindowSize';
 
 export interface FormStep {
   label: string;
@@ -40,7 +38,6 @@ const FormStepper = <T extends FieldValues>({
 }: FormStepperProps<T>) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const { t } = useTranslation(['common', 'send-mail']);
-  const { width } = useWindowSize();
 
   const handleChangeStep = (step: number) => {
     setCurrentStep(step);
@@ -71,13 +68,12 @@ const FormStepper = <T extends FieldValues>({
   const contentFormProvider = (
     <FormProvider {...controls}>
       <ProgressStepper
+        className="pt-64 pb-40"
+        size="sm"
+        labelPosition="right"
         steps={steps.map((s) => {
           return s.label;
         })}
-        current={currentStep}
-        className={'pt-64 pb-40'}
-        vertical={width <= 890}
-        ellipsisLength={32}
       />
       {steps[currentStep].component}
       <div className="flex flex-row justify-end gap-16 my-40">

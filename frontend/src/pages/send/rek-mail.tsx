@@ -60,33 +60,16 @@ const SendRekMail = () => {
 
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
 
-  const stepContent = <div>Content</div>;
-
   return (
     <FormStepper<SendRekMailForm>
       steps={[
         {
           label: t('send-mail:recipientHandler.addRecipient'),
           component: <RecipientHandler />,
-          valid: true,
+          valid: hasAtLeastOneAttachment,
           onNextClick: () => {
             trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
           },
-        },
-        {
-          label: 'Bifoga filer',
-          component: <div>Test</div>,
-          valid: true,
-        },
-        {
-          label: 'Ange ämne och förvaltning',
-          component: <div>Test</div>,
-          valid: true,
-        },
-        {
-          label: 'Granska',
-          component: <div>Test</div>,
-          valid: true,
         },
       ]}
       onChangeStep={setStep}
