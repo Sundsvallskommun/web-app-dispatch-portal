@@ -1,3 +1,4 @@
+import CustomChip from '@components/custom-chip/custom-chip.component';
 import { HelpComposer } from '@components/help/help-composer';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
@@ -315,16 +316,9 @@ export default function SendEmailPage() {
                         {recipientList && recipientList.length > 0 ? (
                           <div className="flex flex-col justify-center items-start gap-8">
                             {recipientList?.map((recipient) => (
-                              <button
-                                className="border-spacing-1 border-1 border-secondary-outline rounded-button items-center py-12 px-12 flex justify-center gap-24 min-w-200"
-                                onClick={() => handleRemove(recipient)}
-                                key={recipient}
-                              >
-                                <div className="text-dark-secondary lining-nums proportional-nums text-base font-normal">
-                                  {formatSwedishNumberDisplay(recipient)}
-                                </div>
-                                <Icon className="flex justify-center items-center gap-4" icon={<Trash />} size={20} />
-                              </button>
+                              <CustomChip onRemove={() => handleRemove(recipient)}>
+                                {formatSwedishNumberDisplay(recipient)}
+                              </CustomChip>
                             ))}
                           </div>
                         ) : (
