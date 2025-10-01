@@ -8,6 +8,7 @@ import { useTranslation } from 'next-i18next';
 import { Mail, MailCheck, Smartphone } from 'lucide-react';
 import MainCard from '@components/main-card/main-card.component';
 import { Link } from '@sk-web-gui/react';
+import HeaderMenu from '@components/header-menu/header-menu.component';
 
 const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
@@ -20,7 +21,7 @@ const Index = () => {
   }, [user.permissions.canSendSMS, router]);
 
   return (
-    <DefaultLayout title={t('start-page:app-title')}>
+    <DefaultLayout title={t('start-page:app-title')} headerMenu={<HeaderMenu />}>
       {!isCheckingPermissions && (
         <div className="pt-128 flex flex-col items-center gap-32 flex-1 self-stretch">
           <h1 className="sr-only">{`${t('start-page:screen-reader')}.`}</h1>

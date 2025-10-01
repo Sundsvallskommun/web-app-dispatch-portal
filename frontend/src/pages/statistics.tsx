@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
+import HeaderMenu from '@components/header-menu/header-menu.component';
 
 const headers: Array<AutoTableHeader | string> = [
   {
@@ -84,7 +85,7 @@ export const StatisticsPage = () => {
   };
 
   return (
-    <DefaultLayout title={`Postportal`}>
+    <DefaultLayout title={`Postportal`} headerMenu={<HeaderMenu />}>
       <div className="text-lg mb-11 pt-32">
         <h1 className="text-h1-lg mb-8">{t('statistics:title')}</h1>
         <p className="text-large text-dark-secondary mt-0">{`${t('statistics:description')}.`}</p>

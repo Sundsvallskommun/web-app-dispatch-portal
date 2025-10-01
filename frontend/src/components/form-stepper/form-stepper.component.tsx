@@ -1,10 +1,9 @@
-import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Button, Icon, ProgressStepper } from '@sk-web-gui/react';
 import { ArrowRight, BadgeCheck } from 'lucide-react';
-import FormStepperHeader from './form-stepper-header.component';
 
 export interface FormStep {
   label: string;
@@ -19,10 +18,8 @@ interface FormStepperProps<T extends FieldValues> {
   submitButton?: JSX.Element;
   getScreenReaderStepperText: () => string | undefined;
   controls: UseFormReturn<T>;
-  headerTitle: string;
   success: boolean;
   onResetSuccess: () => void;
-  icon: ReactElement;
 }
 
 const FormStepper = <T extends FieldValues>({
@@ -31,10 +28,8 @@ const FormStepper = <T extends FieldValues>({
   submitButton,
   getScreenReaderStepperText,
   controls,
-  headerTitle,
   success,
   onResetSuccess,
-  icon,
 }: FormStepperProps<T>) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const { t } = useTranslation(['common', 'send-mail']);
@@ -102,13 +97,12 @@ const FormStepper = <T extends FieldValues>({
   );
 
   return (
-    <div className="flex items-center flex-col">
-      <FormStepperHeader title={headerTitle} icon={icon} />
+    <React.Fragment>
       <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className="flex flex-col max-w-[--w-max-stepper-content] w-[--w-stepper-content]">
         {success ? contentSuccess : contentFormProvider}
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 

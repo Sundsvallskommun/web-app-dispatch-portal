@@ -5,13 +5,14 @@ import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { ListItem } from '@components/list-item/list-item.component';
 import { useTranslation } from 'react-i18next';
+import HeaderMenu from '@components/header-menu/header-menu.component';
 
 export const StatisticsPage = () => {
   const { batches, loaded } = useMyStatistics();
   const { t } = useTranslation();
 
   return (
-    <DefaultLayout title={`Postportal`}>
+    <DefaultLayout title={`Postportal`} headerMenu={<HeaderMenu />}>
       <div className="text-lg mb-56 pt-32">
         <h1 className="text-h1-lg mb-8">{t('common:mainMenu.myStatistics')}</h1>
         <p className="text-large text-dark-secondary mt-0">{t('statistics:myStatistics.description')}</p>

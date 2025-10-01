@@ -13,6 +13,8 @@ import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import FormStepper from '@components/form-stepper/form-stepper.component';
 import { Mail } from 'lucide-react';
+import DefaultLayout from '@layouts/default-layout/default-layout.component';
+import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 
 const formSchema = yup
   .object({
@@ -106,32 +108,37 @@ const SendMailPage = () => {
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
 
   return (
-    <FormStepper<SendMailForm>
-      steps={[
-        {
-          label: t('send-mail:addTextDocument'),
-          component: <AttachmentHandler />,
-          valid: hasAtLeastOneAttachment,
-        },
-        {
-          label: t('send-mail:recipientHandler.addRecipient'),
-          component: <RecipientHandler />,
-          valid: hasValidRecipients,
-          onNextClick: () => {
-            trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
-          },
-        },
-        { label: t('send-mail:addSender'), component: <SenderHandler /> },
-      ]}
-      onChangeStep={setStep}
-      submitButton={<SubmitHandler />}
-      getScreenReaderStepperText={getScreenReaderStepperText}
-      controls={controls}
-      headerTitle={t('send-mail:sendLetter')}
-      success={success}
-      onResetSuccess={() => setSuccess(false)}
-      icon={<Mail />}
-    />
+    <DefaultLayout
+      title={t('send-mail:sendLetter')}
+      headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<Mail />} />}
+    >
+      <div className="flex items-center flex-col">
+        <FormStepper<SendMailForm>
+          steps={[
+            {
+              label: t('send-mail:addTextDocument'),
+              component: <AttachmentHandler />,
+              valid: hasAtLeastOneAttachment,
+            },
+            {
+              label: t('send-mail:recipientHandler.addRecipient'),
+              component: <RecipientHandler />,
+              valid: hasValidRecipients,
+              onNextClick: () => {
+                trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
+              },
+            },
+            { label: t('send-mail:addSender'), component: <SenderHandler /> },
+          ]}
+          onChangeStep={setStep}
+          submitButton={<SubmitHandler />}
+          getScreenReaderStepperText={getScreenReaderStepperText}
+          controls={controls}
+          success={success}
+          onResetSuccess={() => setSuccess(false)}
+        />
+      </div>
+    </DefaultLayout>
   );
 };
 

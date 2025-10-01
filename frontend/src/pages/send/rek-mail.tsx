@@ -8,6 +8,8 @@ import SubmitHandler from '@components/submit-handler/submit-handler';
 import FormStepper from '@components/form-stepper/form-stepper.component';
 import { MailCheck } from 'lucide-react';
 import RecipientHandler from '@components/recipient-handler/recipient-handler';
+import DefaultLayout from '@layouts/default-layout/default-layout.component';
+import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 
 const formSchema = yup
   .object({
@@ -61,26 +63,31 @@ const SendRekMail = () => {
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
 
   return (
-    <FormStepper<SendRekMailForm>
-      steps={[
-        {
-          label: t('send-mail:recipientHandler.addRecipient'),
-          component: <RecipientHandler />,
-          valid: hasAtLeastOneAttachment,
-          onNextClick: () => {
-            trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
-          },
-        },
-      ]}
-      onChangeStep={setStep}
-      submitButton={<SubmitHandler />}
-      getScreenReaderStepperText={getScreenReaderStepperText}
-      controls={controls}
-      headerTitle={t('send-mail:sendRecLetter')}
-      success={success}
-      onResetSuccess={() => setSuccess(false)}
-      icon={<MailCheck />}
-    />
+    <DefaultLayout
+      title={t('start-page:app-title')}
+      headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} />}
+    >
+      <div className="flex items-center flex-col">
+        <FormStepper<SendRekMailForm>
+          steps={[
+            {
+              label: t('send-mail:recipientHandler.addRecipient'),
+              component: <RecipientHandler />,
+              valid: hasAtLeastOneAttachment,
+              onNextClick: () => {
+                trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
+              },
+            },
+          ]}
+          onChangeStep={setStep}
+          submitButton={<SubmitHandler />}
+          getScreenReaderStepperText={getScreenReaderStepperText}
+          controls={controls}
+          success={success}
+          onResetSuccess={() => setSuccess(false)}
+        />
+      </div>
+    </DefaultLayout>
   );
 };
 
