@@ -21,10 +21,12 @@ import { Message } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
+import { isDigitalMessage } from '@utils/statistics-helpers';
 
 const defaultMessageInfo: Message = {
   sent: '',
   subject: '',
+  body: '',
   messageId: '',
   issuer: '',
   attachments: [],
@@ -87,8 +89,8 @@ const MyStatisticsDetails = () => {
       };
     });
 
-  const recipientsSnailMail = recipientList?.filter((r) => r.messageType === 'SNAIL_MAIL');
-  const recipientsDigitalMail = recipientList?.filter((r) => r.messageType === 'DIGITAL_MAIL');
+  const recipientsSnailMail = recipientList?.filter((r) => !isDigitalMessage(r.messageType));
+  const recipientsDigitalMail = recipientList?.filter((r) => isDigitalMessage(r.messageType));
 
   const getAttachment = (fileName: string, index: number) => {
     setLoadingAttachmentIndex(index);

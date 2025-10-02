@@ -7,10 +7,12 @@ import dayjs from 'dayjs';
 import { Message } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
+import { capitalize } from '@mui/material';
 
 const defaultMessageInfo: Message = {
   sent: '',
   subject: '',
+  body: '',
   messageId: '',
   issuer: '',
   recipients: [],
@@ -52,21 +54,21 @@ const MyStatisticsDetails = () => {
           <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <h3 className="pb-16 text-label-medium">
-            {t('statistics:myStatistics.recipient')} ({recipientList.length})
+            {capitalize(t('statistics:myStatistics.recipient'))} ({recipientList.length})
           </h3>
           <div className="flex flex-col items-start gap-6 mb-40">
             {recipientList?.map((recipient, index) => (
               <div
                 className="py-6 px-12 border-1 border-divider rounded-button"
-                key={`${index}-${recipient?.personId}`}
+                key={`${index}-${recipient?.mobileNumber}`}
               >
-                {recipient?.personId ?? t('statistics:myStatistics.unknown')}
+                {recipient?.mobileNumber ?? t('statistics:myStatistics.unknownNumber')}
               </div>
             ))}
           </div>
 
           <h3 className="pb-4 text-label-medium">{t('statistics:myStatistics.message')}</h3>
-          <div className="border-1 border-divider p-20 rounded-button">{message.subject}</div>
+          <div className="border-1 border-divider p-20 rounded-button">{message?.body}</div>
         </div>
       )}
     </DefaultLayout>
