@@ -100,7 +100,7 @@ const SendRekMail = () => {
         <FormStepper<SendRekMailForm>
           steps={[
             {
-              label: t('stepper.stepOne'),
+              label: t('stepper.recipient'),
               component: <RecipientHandler isRekMail={true} />,
               valid: hasValidRecipients,
               onNextClick: () => {
@@ -108,17 +108,17 @@ const SendRekMail = () => {
               },
             },
             {
-              label: t('stepper.stepTwo'),
+              label: t('stepper.files'),
               component: <>Filer</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
             {
-              label: t('stepper.stepThree'),
+              label: t('stepper.header'),
               component: <>Rubrik och förvaltning</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
             {
-              label: t('stepper.stepFour'),
+              label: t('stepper.review'),
               component: <>Granska</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
