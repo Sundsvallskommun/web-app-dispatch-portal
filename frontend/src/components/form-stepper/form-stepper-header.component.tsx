@@ -17,18 +17,21 @@ const FormStepperHeader = ({ title, icon }: FormStepperHeaderProps) => {
   const { width } = useWindowSize();
   const { t } = useTranslation(['common']);
   const isMd = width < tailwindBreakPoint.MD;
-  const iconButtonClass =
-    'focus:outline-none focus:ring-2 focus:ring-vattjom focus:ring-offset-2 rounded-full h-auto p-6';
 
   const openHelpComposer = () => setShowHelpComposer(true);
   const closeHelpComposer = () => setShowHelpComposer(false);
 
   return (
-    <div className="flex grow justify-center px-80 py-16 w-full border-b-1 border-solid max-h-[78px]">
+    <div
+      className={cx(
+        'flex grow justify-center py-16 w-full border-b-1 border-solid max-h-[78px]',
+        isMd ? 'px-16' : 'px-80'
+      )}
+    >
       <div className="flex grow items-center justify-between w-full max-w-[--max-w-7xl]">
         <NextLink href="/" passHref legacyBehavior>
           {isMd ? (
-            <Button color="vattjom" aria-label={t('cancel')} className={iconButtonClass}>
+            <Button iconButton variant="secondary" className="border-0" aria-label={t('cancel')}>
               <Icon icon={<CircleX />} />
             </Button>
           ) : (
@@ -42,7 +45,7 @@ const FormStepperHeader = ({ title, icon }: FormStepperHeaderProps) => {
           <h4 className="text-xs md:text-[2rem]">{title}</h4>
         </div>
         {isMd ? (
-          <Button color="vattjom" onClick={openHelpComposer} aria-label={t('help')} className={iconButtonClass}>
+          <Button iconButton variant="secondary" className="border-0" onClick={openHelpComposer} aria-label={t('help')}>
             <Icon icon={<HelpCircle />} />
           </Button>
         ) : (
