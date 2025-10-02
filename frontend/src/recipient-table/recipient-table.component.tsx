@@ -2,13 +2,17 @@ import { RecipientHandlerSendType } from '@components/recipient-handler/recipien
 import { AddWithAddress, useMessageStore } from '@services/recipient-service';
 import { AutoTable, AutoTableHeader, Button, Icon } from '@sk-web-gui/react';
 import { Trash } from 'lucide-react';
+import { formSendType } from 'src/constants';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
   sendType?: RecipientHandlerSendType;
 }
 
-export const RecipientTable: React.FC<RecipientTableProps> = ({ showRemoveButton = false, sendType = 'MAIL' }) => {
+export const RecipientTable: React.FC<RecipientTableProps> = ({
+  showRemoveButton = false,
+  sendType = formSendType.MAIL,
+}) => {
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const validRecipients = recipients.filter((rec) => !rec?.error);
@@ -104,7 +108,9 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({ showRemoveButton
   } as AutoTableHeader;
 
   const headers: Array<AutoTableHeader | string> =
-    sendType === 'REK-MAIL' ? [AutoTableHeaderRecipient] : [AutoTableHeaderRecipient, AutoTableHeaderAddress];
+    sendType === formSendType.REK_MAIL
+      ? [AutoTableHeaderRecipient]
+      : [AutoTableHeaderRecipient, AutoTableHeaderAddress];
 
   return (
     <AutoTable

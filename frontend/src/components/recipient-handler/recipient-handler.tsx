@@ -296,7 +296,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <p className="text-base pb-6">{`${t('send-mail:recipientHandler.rekMail.content')}.`}</p>
           )}
         </div>
-        <div className="w-full gap-32">
+        <div className="w-full gap-32 relative">
           {sendType === formSendType.MAIL && (
             <div className="flex flex-col">
               <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
@@ -341,7 +341,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                   <SearchField
                     {...register('singleRecipient')}
                     value={recipient}
-                    className="w-full"
+                    className="w-full "
                     showSearchButton={false}
                     showResetButton={recipient.length > 0}
                     type="text"
@@ -475,7 +475,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                 </h3>
               )}
               <div className="w-full">
-                <RecipientTable showRemoveButton sendType={formSendType.REK_MAIL} />
+                <RecipientTable showRemoveButton sendType={sendType} />
               </div>
             </div>
           )}
