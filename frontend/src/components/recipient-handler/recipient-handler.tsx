@@ -28,6 +28,7 @@ import { useFormContext } from 'react-hook-form';
 import { Trans, useTranslation } from 'next-i18next';
 import { Info, Plus } from 'lucide-react';
 import { RecipientTable } from 'src/recipient-table/recipient-table.component';
+import { formSendType } from '../../constants';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -35,13 +36,13 @@ export interface RecipientListFormModel {
   storeRecipients: string;
 }
 
-export type RecipientHandlerSendType = 'MAIL' | 'REK-MAIL';
+export type RecipientHandlerSendType = (typeof formSendType)[keyof typeof formSendType];
 
 interface RecipientHandlerProps {
   sendType?: RecipientHandlerSendType;
 }
 
-const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
+const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProps) => {
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const [error, setError] = useState<string>();
@@ -274,12 +275,12 @@ const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
       <div
         className={cx(
           'flex flex-col items-start w-full rounded-cards shadow-50 p-32',
-          sendType === 'REK-MAIL' ? 'gap-40' : 'gap-64'
+          sendType === formSendType.REK_MAIL ? 'gap-40' : 'gap-64'
         )}
       >
         <div className="w-full">
           <h4 className="pb-6">{t('send-mail:recipientHandler.title')}</h4>
-          {sendType === 'MAIL' ? (
+          {sendType === formSendType.MAIL ? (
             <React.Fragment>
               <p className="text-base pb-6">
                 <Trans
@@ -296,7 +297,7 @@ const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
           )}
         </div>
         <div className="w-full gap-32">
-          {sendType === 'MAIL' && (
+          {sendType === formSendType.MAIL && (
             <div className="flex flex-col">
               <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
               <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
@@ -326,9 +327,9 @@ const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
             </div>
           )}
           {current === 0 ? (
-            <div className={cx('flex flex-col gap-12', sendType === 'MAIL' && 'pt-32')}>
+            <div className={cx('flex flex-col gap-12', sendType === formSendType.MAIL && 'pt-32')}>
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
-                <div className="relative w-full gap-2">
+                <div className="flex flex-col w-full gap-8">
                   <FormLabel className="text-label-medium">
                     <Trans
                       i18nKey="send-mail:recipientHandler.searchPersonalNumber"
@@ -340,9 +341,8 @@ const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
                   <SearchField
                     {...register('singleRecipient')}
                     value={recipient}
-                    className="w-full mt-12"
+                    className="w-full"
                     showSearchButton={false}
-                    // showSearchButton={dirtyFields.singleRecipient && ssnPattern.test(recipient)}
                     showResetButton={recipient.length > 0}
                     type="text"
                     size="md"
@@ -358,7 +358,7 @@ const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
                       handleSubmitSingleRecipient();
                     }}
                   />
-                  <p className="text-xs">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
+                  <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
                     <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
@@ -387,7 +387,7 @@ const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
                     <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}
                   </FormErrorMessage>
                 )}
-                {sendType === 'MAIL' && (
+                {sendType === formSendType.MAIL && (
                   <React.Fragment>
                     <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
                     <p className="font-bold">{t('send-mail:recipientHandler.missingPersonalNumber')}</p>
@@ -475,7 +475,7 @@ const RecipientHandler = ({ sendType = 'MAIL' }: RecipientHandlerProps) => {
                 </h3>
               )}
               <div className="w-full">
-                <RecipientTable showRemoveButton sendType="REK-MAIL" />
+                <RecipientTable showRemoveButton sendType={formSendType.REK_MAIL} />
               </div>
             </div>
           )}

@@ -12,6 +12,7 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { useMessageStore } from '@services/recipient-service';
 import { useRouter } from 'next/router';
+import { formSendType } from 'src/constants';
 
 const formSchema = yup
   .object({
@@ -101,7 +102,7 @@ const SendRekMail = () => {
           steps={[
             {
               label: t('stepper.recipient'),
-              component: <RecipientHandler sendType="REK-MAIL" />,
+              component: <RecipientHandler sendType={formSendType.REK_MAIL} />,
               valid: hasValidRecipients,
               onNextClick: () => {
                 trigger(['singleRecipient', 'recipientList', 'storeRecipients']);

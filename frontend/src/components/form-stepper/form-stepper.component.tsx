@@ -2,8 +2,10 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Button, Icon, ProgressStepper } from '@sk-web-gui/react';
+import { Button, cx, Icon, ProgressStepper } from '@sk-web-gui/react';
 import { ArrowRight, BadgeCheck } from 'lucide-react';
+import { useWindowSize } from 'src/hooks/useWindowSize';
+import { tailwindBreakPoint } from 'src/constants';
 
 export interface FormStep {
   label: string;
@@ -33,6 +35,8 @@ const FormStepper = <T extends FieldValues>({
 }: FormStepperProps<T>) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const { t } = useTranslation(['common', 'send-mail']);
+  const { width } = useWindowSize();
+  const isMd = width < tailwindBreakPoint.MD;
 
   const handleChangeStep = (step: number) => {
     setCurrentStep(step);
@@ -63,13 +67,14 @@ const FormStepper = <T extends FieldValues>({
   const contentFormProvider = (
     <FormProvider {...controls}>
       <ProgressStepper
-        className="pt-64 pb-40"
+        className={cx(isMd ? 'pt-16 pb-16' : 'pt-64 pb-40')}
         size="sm"
         labelPosition="right"
         steps={steps.map((s) => {
           return s.label;
         })}
         current={currentStep}
+        vertical={isMd}
       />
       {steps[currentStep].component}
       <div className="flex flex-row justify-end gap-16 my-40">
@@ -100,7 +105,7 @@ const FormStepper = <T extends FieldValues>({
   return (
     <React.Fragment>
       <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
-      <div className="flex flex-col max-w-[--w-max-stepper-content] w-[--w-stepper-content]">
+      <div className={cx('flex flex-col', isMd ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
         {success ? contentSuccess : contentFormProvider}
       </div>
     </React.Fragment>
