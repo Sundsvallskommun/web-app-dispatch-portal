@@ -1,9 +1,5 @@
-import CustomChip from '@components/custom-chip/custom-chip.component';
-import { HelpComposer } from '@components/help/help-composer';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { useMediaQuery } from '@mui/material';
-import { ApiResponse, apiService } from '@services/api-service';
 import {
   Button,
   Divider,
@@ -17,7 +13,7 @@ import {
   useGui,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { BadgeCheck, HelpCircle, Info, SendHorizontal, Smartphone, Trash } from 'lucide-react';
+import { BadgeCheck, HelpCircle, Info, SendHorizontal, Smartphone } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import { TFunction, Trans, useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -26,7 +22,11 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-const phoneNumberRegex = /^\+46[0-9]{9,13}$/;
+import CustomChip from '@components/custom-chip/custom-chip.component';
+import { HelpComposer } from '@components/help/help-composer';
+import { SMSRequest, SMSStatus } from '@interfaces/sms';
+import { ApiResponse, apiService } from '@services/api-service';
+import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@services/phone-number.service';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -109,40 +109,34 @@ export default function SendEmailPage() {
 
   const addRecipient = () => {
     clearErrors(['singleRecipient', 'recipientList']);
+
     const recipients = getValues('recipientList') ?? [];
     const recipientValue = getValues('singleRecipient');
-    if (!recipientValue) {
-      setFormError('singleRecipient', { message: t('send-sms:errors.give-min-10-digits-mobile-number') });
+
+    const normalizingResult = tryNormalizeMobileNumber(recipientValue);
+    let message = '';
+    if (!normalizingResult.ok || !normalizingResult.value) {
+      if (normalizingResult.error === MobileNumberError.EMPTY_INPUT) {
+        message = t('send-sms:errors.give-min-10-digits-mobile-number');
+      } else {
+        message = t('send-sms:errors.wrong-mobile-number-format');
+      }
+
+      setFormError('singleRecipient', { message });
       return;
     }
 
-    const recipient = recipientValue.replace(/^0/, '+46').replaceAll('-', '').replaceAll(' ', '');
+    let recipient = normalizingResult.value;
 
-    const alreadyExists = recipients ? recipients?.indexOf(recipient) : 0;
+    // const alreadyExists = recipients ? recipients?.indexOf(recipient) : 0;
 
-    if (alreadyExists >= 0) {
+    if (recipients?.includes(recipient)) {
       setFormError('singleRecipient', { message: t('send-sms:errors.number-already-added') });
       return;
     }
 
-    if (!recipient.match(phoneNumberRegex)) {
-      setFormError('singleRecipient', { message: t('send-sms:errors.wrong-mobile-number-format') });
-      return;
-    }
     setValue('singleRecipient', initialValues.singleRecipient);
     setValue('recipientList', [...recipients, recipient]);
-  };
-
-  const formatSwedishNumberDisplay = (num: string): string => {
-    // num is like "+46762468709"
-    const digits = num.replace(/\D/g, '');
-
-    // remove the +46 prefix for formatting
-    if (!digits.startsWith('46')) return num; // fallback if not Swedish
-
-    const rest = digits.slice(2); // e.g. "762468709"
-
-    return rest.replace(/^(\d{2})(\d{3})(\d{2})(\d{2})$/, '+46 $1-$2 $3 $4');
   };
 
   const resetAll = async () => {
@@ -317,7 +311,7 @@ export default function SendEmailPage() {
                           <div className="flex flex-col justify-center items-start gap-8">
                             {recipientList?.map((recipient) => (
                               <CustomChip onRemove={() => handleRemove(recipient)}>
-                                {formatSwedishNumberDisplay(recipient)}
+                                {formatMobileNumberDisplay(recipient)}
                               </CustomChip>
                             ))}
                           </div>

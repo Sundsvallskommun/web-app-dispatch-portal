@@ -9,7 +9,7 @@
   "characters": "tecken",
   "errors": {
     "message-empty": "Meddelandet får inte vara tomt.",
-    "min-one-recipient": "Du måste ha minst en mottagare.",
+    "min-one-recipient": "Du måste lägg till en mottagare.",
     "give-min-10-digits-mobile-number": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
     "number-already-added": "Numret är redan tillagt!",
     "wrong-mobile-number-format": "Formatet på telefonnumret är felaktigt.",
