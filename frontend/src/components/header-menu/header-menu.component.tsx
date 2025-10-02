@@ -3,7 +3,7 @@ import { mainMenuItems } from '@components/main-menu/main-menu-items';
 import { MainMenu } from '@components/main-menu/main-menu.component';
 import { useMediaQuery } from '@mui/material';
 import { useUserStore } from '@services/user-service/user-service';
-import { Header, Icon, PopupMenu, UserMenu, useGui } from '@sk-web-gui/react';
+import { Button, Header, Icon, PopupMenu, UserMenu, useGui } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
 import NextLink from 'next/link';
 import { shallow } from 'zustand/shallow';
@@ -29,9 +29,9 @@ const HeaderMenu = () => {
   return (
     <React.Fragment>
       <NextLink legacyBehavior={true} href="#content" passHref>
-        <a role="button" tabIndex={0} onClick={setInitialFocus} accessKey="s" className="next-link-a">
+        <Button tabIndex={0} onClick={setInitialFocus} onKeyDown={setInitialFocus} className="next-link-a">
           {t('common:goToContent')}
-        </a>
+        </Button>
       </NextLink>
       <div className="z-10 header-container">
         <Header
@@ -56,8 +56,8 @@ const HeaderMenu = () => {
               <PopupMenu.Panel>
                 <PopupMenu.Items>
                   <PopupMenu.Group>
-                    {mainMenuItems.map((item, index) => (
-                      <PopupMenu.Item key={`mainmenu-${index}`}>
+                    {mainMenuItems.map((item) => (
+                      <PopupMenu.Item key={`mainmenu-${item.label}`}>
                         <NextLink href={item.href}>{t(`common:mainMenu.${item.label}`)}</NextLink>
                       </PopupMenu.Item>
                     ))}
