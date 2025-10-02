@@ -101,7 +101,7 @@ const SendRekMail = () => {
           steps={[
             {
               label: t('stepper.recipient'),
-              component: <RecipientHandler isRekMail={true} />,
+              component: <RecipientHandler sendType="REK-MAIL" />,
               valid: hasValidRecipients,
               onNextClick: () => {
                 trigger(['singleRecipient', 'recipientList', 'storeRecipients']);

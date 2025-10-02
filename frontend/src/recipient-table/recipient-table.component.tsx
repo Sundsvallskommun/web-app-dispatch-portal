@@ -1,12 +1,14 @@
+import { RecipientHandlerSendType } from '@components/recipient-handler/recipient-handler';
 import { AddWithAddress, useMessageStore } from '@services/recipient-service';
 import { AutoTable, AutoTableHeader, Button, Icon } from '@sk-web-gui/react';
 import { Trash } from 'lucide-react';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
+  sendType?: RecipientHandlerSendType;
 }
 
-export const RecipientTable: React.FC<RecipientTableProps> = ({ showRemoveButton = false }) => {
+export const RecipientTable: React.FC<RecipientTableProps> = ({ showRemoveButton = false, sendType = 'MAIL' }) => {
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const validRecipients = recipients.filter((rec) => !rec?.error);
@@ -53,54 +55,56 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({ showRemoveButton
       ]
     : [];
 
-  const headers: Array<AutoTableHeader | string> = [
-    {
-      label: 'Mottagare',
-      renderColumn: (value, item) => {
-        // Added with address
-        if (item?.firstName) {
-          return (
-            <>
-              {item?.firstName} {item?.lastName}
-            </>
-          );
-        }
-
-        // Added with file or SSN
+  const AutoTableHeaderRecipient = {
+    label: 'Mottagare',
+    renderColumn: (value, item) => {
+      // Added with address
+      if (item?.firstName) {
         return (
           <>
-            {item?.address?.givenname} {item?.address?.lastname}, {item?.address?.personNumber}
+            {item?.firstName} {item?.lastName}
           </>
         );
-      },
-    } as AutoTableHeader,
-    {
-      label: 'Adress',
-      renderColumn: (value, item) => {
-        // Added with address
-        if (item?.firstName) {
-          const { address, zipCode, city } = item;
+      }
 
-          return (
-            <>
-              {address}, {zipCode} {city}
-            </>
-          );
-        }
+      // Added with file or SSN
+      return (
+        <>
+          {item?.address?.givenname} {item?.address?.lastname}, {item?.address?.personNumber}
+        </>
+      );
+    },
+  } as AutoTableHeader;
 
-        const adress = item?.address?.addresses ? item?.address?.addresses[0] : undefined;
-        if (!adress) return <></>;
-
-        const { address, postalCode, city } = adress;
+  const AutoTableHeaderAddress = {
+    label: 'Adress',
+    renderColumn: (value, item) => {
+      // Added with address
+      if (item?.firstName) {
+        const { address, zipCode, city } = item;
 
         return (
           <>
-            {address}, {postalCode} {city}
+            {address}, {zipCode} {city}
           </>
         );
-      },
-    } as AutoTableHeader,
-  ];
+      }
+
+      const adress = item?.address?.addresses ? item?.address?.addresses[0] : undefined;
+      if (!adress) return <></>;
+
+      const { address, postalCode, city } = adress;
+
+      return (
+        <>
+          {address}, {postalCode} {city}
+        </>
+      );
+    },
+  } as AutoTableHeader;
+
+  const headers: Array<AutoTableHeader | string> =
+    sendType === 'REK-MAIL' ? [AutoTableHeaderRecipient] : [AutoTableHeaderRecipient, AutoTableHeaderAddress];
 
   return (
     <AutoTable
