@@ -14,10 +14,10 @@
   "recLetter": "Rekommenderat brev",
   "textMessage": "Sms",
   "stepper": {
-    "stepOne": "Mottagare",
-    "stepTwo": "Filer",
-    "stepThree": "Rubrik och förvaltning",
-    "stepFour": "Granska"
+    "recipient": "Mottagare",
+    "files": "Filer",
+    "header": "Rubrik och förvaltning",
+    "review": "Granska"
   },
   "done": "Klart",
   "cancel": "Avbryt",
