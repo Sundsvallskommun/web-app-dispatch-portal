@@ -13,7 +13,7 @@ export const HelpComposer: React.FC<{
     setIsAttachmentModalOpen(false);
   };
 
-  return (
+  return props.show ? (
     <>
       <HelpWrapper label="Hjälp" closeHandler={props.closeHandler} show={props.show}>
         <div className="my-md py-8 px-40 flex flex-col gap-12 ">
@@ -23,14 +23,12 @@ export const HelpComposer: React.FC<{
           <Help />
         </div>
       </HelpWrapper>
-
       <Modal show={isAttachmentModalOpen} onClose={closeAttachmentModal} label="Ladda upp bilaga" className="w-[40rem]">
         <Modal.Content>
           <Help />
         </Modal.Content>
-
         <Modal.Footer></Modal.Footer>
       </Modal>
     </>
-  );
+  ) : null;
 };
