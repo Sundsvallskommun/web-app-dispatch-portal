@@ -3,7 +3,7 @@ import { Trash } from 'lucide-react';
 import { MouseEventHandler, ReactNode } from 'react';
 
 type ICustomChipProps = React.HTMLAttributes<HTMLDivElement> & {
-  onRemove?: MouseEventHandler<HTMLButtonElement> | undefined;
+  onRemove?: MouseEventHandler<HTMLButtonElement>;
   children?: ReactNode;
 };
 

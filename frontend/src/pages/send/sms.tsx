@@ -128,8 +128,6 @@ export default function SendEmailPage() {
 
     let recipient = normalizingResult.value;
 
-    // const alreadyExists = recipients ? recipients?.indexOf(recipient) : 0;
-
     if (recipients?.includes(recipient)) {
       setFormError('singleRecipient', { message: t('send-sms:errors.number-already-added') });
       return;
@@ -310,7 +308,7 @@ export default function SendEmailPage() {
                         {recipientList && recipientList.length > 0 ? (
                           <div className="flex flex-col justify-center items-start gap-8">
                             {recipientList?.map((recipient) => (
-                              <CustomChip onRemove={() => handleRemove(recipient)}>
+                              <CustomChip key={recipient} onRemove={() => handleRemove(recipient)}>
                                 {formatMobileNumberDisplay(recipient)}
                               </CustomChip>
                             ))}

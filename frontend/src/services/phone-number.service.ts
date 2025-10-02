@@ -31,13 +31,14 @@ function normalizeDigits(input: string): string {
   if (!input) return input;
   let out = '';
   for (const ch of input) {
-    const code = ch.charCodeAt(0);
+    const code = ch.codePointAt(0);
+    if (code === undefined) continue;
     if (code >= 0x0660 && code <= 0x0669) {
-      out += String.fromCharCode(48 + (code - 0x0660));
+      out += String.fromCodePoint(48 + (code - 0x0660));
       continue;
     }
     if (code >= 0x06f0 && code <= 0x06f9) {
-      out += String.fromCharCode(48 + (code - 0x06f0));
+      out += String.fromCodePoint(48 + (code - 0x06f0));
       continue;
     }
     out += ch;
