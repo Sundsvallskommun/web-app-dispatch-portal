@@ -16,7 +16,7 @@ import { Mail } from 'lucide-react';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 
-const formSchema = yup
+export const formSchema = yup
   .object({
     message: yup.string().nullable(),
     department: yup.string().required(),

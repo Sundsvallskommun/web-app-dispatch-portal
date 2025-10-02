@@ -22,14 +22,14 @@ const HeaderMenu = () => {
 
   const setInitialFocus = () => {
     setTimeout(() => {
-      initialFocus.current && initialFocus.current.focus();
+      initialFocus.current?.focus();
     });
   };
 
   return (
     <React.Fragment>
       <NextLink legacyBehavior={true} href="#content" passHref>
-        <a onClick={setInitialFocus} accessKey="s" className="next-link-a">
+        <a role="button" tabIndex={0} onClick={setInitialFocus} accessKey="s" className="next-link-a">
           {t('common:goToContent')}
         </a>
       </NextLink>
@@ -44,7 +44,7 @@ const HeaderMenu = () => {
                 initials={`${user.givenName.charAt(0)}${user.surname.charAt(0)}`}
                 menuTitle={`${user.name} (${user.username})`}
                 menuGroups={userMenuGroups}
-                image={`${apiURL(`/user/avatar?width=${44}`)}`}
+                image={apiURL(`/user/avatar?width=44`)}
               />
             </span>
           }
@@ -62,10 +62,10 @@ const HeaderMenu = () => {
                       </PopupMenu.Item>
                     ))}
                   </PopupMenu.Group>
-                  {userMenuGroups.map((menuGroup, groupIndex) => (
-                    <PopupMenu.Group key={`userGroup-${groupIndex}`} aria-label={menuGroup.label}>
+                  {userMenuGroups.map((menuGroup) => (
+                    <PopupMenu.Group key={`userGroup-${menuGroup.label}`} aria-label={menuGroup.label}>
                       {menuGroup.elements.map((menuItem, itemIndex) => (
-                        <PopupMenu.Item key={`userGroup-${groupIndex}-${itemIndex}`}>
+                        <PopupMenu.Item key={`userGroup-${menuGroup.label}-${itemIndex}`}>
                           {menuItem.element()}
                         </PopupMenu.Item>
                       ))}
