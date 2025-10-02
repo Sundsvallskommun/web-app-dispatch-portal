@@ -1,18 +1,3 @@
-export const isDigitalMessage = (messageType: string) => {
-  switch (messageType) {
-    case 'EMAIL':
-      return true;
-    case 'SMS':
-      return true;
-    case 'WEB_MESSAGE':
-      return true;
-    case 'DIGITAL_MAIL':
-      return true;
-    case 'DIGITAL_INVOICE':
-      return true;
-    case 'SLACK':
-      return true;
-    default:
-      return false;
-  }
-};
+const digitalMessageTypes = new Set(['EMAIL', 'SMS', 'WEB_MESSAGE', 'DIGITAL_MAIL', 'DIGITAL_INVOICE', 'SLACK']);
+
+export const isDigitalMessage = (messageType: string): boolean => digitalMessageTypes.has(messageType);

@@ -137,9 +137,7 @@ const MyStatisticsDetails = () => {
         </PageHeader>
       }
     >
-      {!loaded ? (
-        <Spinner />
-      ) : (
+      {loaded ? (
         <div className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.letterSubject', { subject: subject })}</h1>
           <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
@@ -223,6 +221,8 @@ const MyStatisticsDetails = () => {
             </Tabs.Item>
           </Tabs>
         </div>
+      ) : (
+        <Spinner />
       )}
     </DefaultLayout>
   );
