@@ -21,7 +21,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextLink from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
 const phoneNumberRegex = /^\+46[0-9]{7,13}$/;
@@ -54,7 +53,6 @@ export default function SendEmailPage() {
   const [success, setSuccess] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const message = useSnackbar();
-  const { t } = useTranslation(['common']);
 
   const controls = useForm<Partial<FormModel>>({
     resolver: yupResolver(formSchema),

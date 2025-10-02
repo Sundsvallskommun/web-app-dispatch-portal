@@ -10,6 +10,7 @@ import { shallow } from 'zustand/shallow';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { userMenuGroups } from '@layouts/default-layout/userMenuGroups';
+import { useRouter } from 'next/router';
 
 const HeaderMenu = () => {
   const initialFocus = useRef<HTMLElement>(null);
@@ -17,6 +18,7 @@ const HeaderMenu = () => {
   const isMedium = useMediaQuery(`screen and (min-width:${gui.theme?.screens?.md})`);
   const user = useUserStore((s) => s.user, shallow);
   const { t } = useTranslation(['common']);
+  const router = useRouter();
 
   const setInitialFocus = () => {
     setTimeout(() => {
@@ -35,7 +37,7 @@ const HeaderMenu = () => {
         <Header
           title={t('common:appTitle')}
           subtitle={t('common:appSubTitle')}
-          LogoLinkWrapperComponent={<NextLink legacyBehavior={true} href={'/'} passHref />}
+          logoLinkOnClick={() => router.push('/')}
           userMenu={
             <span data-cy="usermenu">
               <UserMenu
