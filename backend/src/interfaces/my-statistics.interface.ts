@@ -17,13 +17,14 @@ export interface UserMessage {
   origin: string;
   sent: string;
   subject: string;
-
+  body: string;
   recipients: Recipient[];
   attachments: MessageAttachment[];
 }
 
 export interface Recipient {
-  personId: string;
+  personId?: string;
+  mobileNumber?: string;
   messageType: string;
   status: string;
 }

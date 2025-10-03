@@ -33,6 +33,7 @@ export const useMyStatistics = (): { batches: Batch[]; loaded: boolean } => {
 export const useMessage = (messageId: string): { message: Message; loaded: boolean } => {
   const [message, setMessage] = useState<Message>({
     subject: '',
+    body: '',
     issuer: '',
     sent: '',
     messageId: '',
@@ -47,10 +48,14 @@ export const useMessage = (messageId: string): { message: Message; loaded: boole
       return;
     }
     apiService.get<Message[]>(`my-statistics/${messageId}`).then((res) => {
-      const message = res?.data[0];
+      const filteredMessage = res?.data[0];
 
-      if (message) {
-        setMessage(message);
+      if (filteredMessage) {
+        const recipients = res?.data.map((message) => {
+          return { ...message?.recipients[0] };
+        });
+        filteredMessage.recipients = recipients?.flat();
+        setMessage(filteredMessage);
       }
       setLoaded(true);
     });
