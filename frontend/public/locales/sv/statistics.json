@@ -5,6 +5,7 @@
   "myStatistics": {
     "recipient": "mottagare",
     "unknown": "Okänd",
+    "unknownNumber": "Okänt nummer",
     "message": "Meddelande",
     "description": "Här hittar du dina skickade brev. Utskicken sparas i 30 dagar.",
     "attachments": "textfiler",
@@ -16,6 +17,7 @@
     "snailMail": "Fysiska brev",
     "SMSMessagePrefixUrl" : "/my-statistics/sms",
     "emailMessagePrefixUrl" : "/my-statistics/mail",
-    "letterSubject": "Brev ({subject})"
+    "letterSubject": "Brev ({subject})",
+    "sms" : "Sms"
   }
 }
