@@ -293,7 +293,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
               <p className="text-base pb-6">{`${t('send-mail:recipientHandler.contentSecondRow')}.`}</p>
             </React.Fragment>
           ) : (
-            <p className="text-base pb-6">{`${t('send-mail:recipientHandler.rekMail.content')}.`}</p>
+            <p className="text-base pb-6">{t('send-mail:recipientHandler.rekMail.content')}</p>
           )}
         </div>
         <div className="w-full gap-32 relative">
