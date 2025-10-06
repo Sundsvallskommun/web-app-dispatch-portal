@@ -81,10 +81,12 @@ const SendRekMail = () => {
         type: 'manual',
         message: t('send-mail:recipientHandler:errorHandler.singleRecipientError'),
       });
-      return false;
+      return;
     }
 
-    return isValid;
+    if (isValid) {
+      setStep(step + 1);
+    }
   };
 
   return (
@@ -96,23 +98,23 @@ const SendRekMail = () => {
         <FormStepper<SendRekMailForm>
           steps={[
             {
-              label: t('stepper.recipient'),
+              label: t('common:stepper.recipient'),
               component: <RecipientHandler sendType={formSendType.REK_MAIL} />,
               valid: hasValidRecipients,
               onNextClick: handleOnNextClick,
             },
             {
-              label: t('stepper.files'),
+              label: t('common:stepper.files'),
               component: <>Filer</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
             {
-              label: t('stepper.header'),
+              label: t('common:stepper.header'),
               component: <>Rubrik och förvaltning</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
             {
-              label: t('stepper.review'),
+              label: t('common:stepper.review'),
               component: <>Granska</>, // To Do: lägg till korrekt komponent
               valid: true,
             },
