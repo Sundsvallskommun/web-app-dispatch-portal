@@ -81,12 +81,10 @@ const SendRekMail = () => {
         type: 'manual',
         message: t('send-mail:recipientHandler:errorHandler.singleRecipientError'),
       });
-      return;
+      return false;
     }
 
-    if (isValid) {
-      setStep(step + 1);
-    }
+    return isValid;
   };
 
   return (

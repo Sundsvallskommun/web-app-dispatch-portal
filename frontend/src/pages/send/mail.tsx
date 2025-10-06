@@ -88,6 +88,11 @@ const SendMailPage = () => {
 
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
 
+  const handleOnNextClick = async () => {
+    const isValid = await trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
+    return isValid;
+  };
+
   return (
     <DefaultLayout
       title={t('send-mail:sendLetter')}
@@ -105,9 +110,7 @@ const SendMailPage = () => {
               label: t('send-mail:recipientHandler.addRecipient'),
               component: <RecipientHandler />,
               valid: hasValidRecipients,
-              onNextClick: () => {
-                trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
-              },
+              onNextClick: handleOnNextClick,
             },
             { label: t('send-mail:addSender'), component: <SenderHandler /> },
           ]}

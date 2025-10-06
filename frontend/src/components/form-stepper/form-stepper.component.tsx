@@ -11,7 +11,7 @@ export interface FormStep {
   label: string;
   component: ReactNode;
   valid?: boolean;
-  onNextClick?: (currentStep: number) => void;
+  onNextClick?: (currentStep: number) => Promise<boolean>;
 }
 
 interface FormStepperProps<T extends FieldValues> {
@@ -42,10 +42,14 @@ const FormStepper = <T extends FieldValues>({
     onChangeStep && onChangeStep(currentStep);
   }, [currentStep, onChangeStep]);
 
-  const handleNextClicked = () => {
-    steps[currentStep].onNextClick?.(currentStep);
+  const handleNextClicked = async () => {
+    let canProceed = true;
 
-    if (steps[currentStep].valid) {
+    if (steps[currentStep].onNextClick) {
+      canProceed = await steps[currentStep].onNextClick(currentStep);
+    }
+
+    if (canProceed && steps[currentStep].valid) {
       setCurrentStep(currentStep + 1);
     }
   };
