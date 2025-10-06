@@ -44,7 +44,7 @@
       "default": "Något gick fel när mottagarlistan hanterades",
       "invalidRecipient": "Ogiltiga mottagare ({num})",
       "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
-      "single-recipient-error": "Lägg till minst en mottagare för att fortsätta."
+      "singleRecipientError": "Lägg till minst en mottagare för att fortsätta."
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är readan tillagd",

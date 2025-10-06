@@ -100,6 +100,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
         setRecipients([]);
       });
   };
+
   const fetchRecipient = () => {
     setIsLoadingRecipients(true);
     setError(undefined);

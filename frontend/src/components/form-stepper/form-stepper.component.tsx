@@ -91,13 +91,7 @@ const FormStepper = <T extends FieldValues>({
           {currentStep === steps.length - 1 ? (
             submitButton
           ) : (
-            <Button
-              variant="primary"
-              onClick={() => handleNextClicked()}
-              disabled={!steps[currentStep].valid}
-              color="vattjom"
-              rightIcon={<ArrowRight />}
-            >
+            <Button variant="primary" onClick={() => handleNextClicked()} color="vattjom" rightIcon={<ArrowRight />}>
               {t('next')}
             </Button>
           )}

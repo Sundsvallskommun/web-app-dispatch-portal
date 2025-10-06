@@ -73,6 +73,20 @@ const SendRekMail = () => {
     setValue('storeRecipients', recipients ?? [], { shouldValidate: true, shouldDirty: false });
   }, [recipients, setValue]);
 
+  const handleOnNextClick = async () => {
+    const isValid = await trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
+
+    if (!recipients?.length && isValid) {
+      controls.setError('storeRecipients', {
+        type: 'manual',
+        message: t('send-mail:recipientHandler:errorHandler.singleRecipientError'),
+      });
+      return false;
+    }
+
+    return isValid;
+  };
+
   return (
     <DefaultLayout
       title={t('start-page:app-title')}
@@ -85,9 +99,7 @@ const SendRekMail = () => {
               label: t('stepper.recipient'),
               component: <RecipientHandler sendType={formSendType.REK_MAIL} />,
               valid: hasValidRecipients,
-              onNextClick: () => {
-                trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
-              },
+              onNextClick: handleOnNextClick,
             },
             {
               label: t('stepper.files'),
