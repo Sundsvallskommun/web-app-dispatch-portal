@@ -15,26 +15,7 @@ import FormStepper from '@components/form-stepper/form-stepper.component';
 import { Mail } from 'lucide-react';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
-
-export const formSchema = yup
-  .object({
-    message: yup.string().nullable(),
-    department: yup.string().required(),
-    subject: yup.string().required(),
-    body: yup.string().nullable(),
-    attachmentList: yup.array().test('HAS_MIN_ONE', 'Du måste bifoga ett dokument', (value) => {
-      return value && value.length > 0;
-    }),
-    recipientList: yup.array(),
-    singleRecipient: yup.string().nullable(),
-    storeRecipients: yup
-      .array()
-      .default([])
-      .test('HAS_MIN_ONE_RECIPIENT', 'Lägg till minst en mottagare för att fortsätta.', (value) => {
-        return value && value.length > 0;
-      }),
-  })
-  .required();
+import { formSchema } from './formSchema.yup';
 
 type SendMailForm = yup.InferType<typeof formSchema>;
 

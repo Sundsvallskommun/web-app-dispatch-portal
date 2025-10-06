@@ -11,7 +11,7 @@ export interface FormStep {
   label: string;
   component: ReactNode;
   valid?: boolean;
-  onNextClick?: () => void;
+  onNextClick?: (currentStep: number) => void;
 }
 
 interface FormStepperProps<T extends FieldValues> {
@@ -38,13 +38,17 @@ const FormStepper = <T extends FieldValues>({
   const { width } = useWindowSize();
   const isMd = width < tailwindBreakPoint.MD;
 
-  const handleChangeStep = (step: number) => {
-    setCurrentStep(step);
-  };
-
   useEffect(() => {
     onChangeStep && onChangeStep(currentStep);
   }, [currentStep, onChangeStep]);
+
+  const handleNextClicked = () => {
+    steps[currentStep].onNextClick?.(currentStep);
+
+    if (steps[currentStep].valid) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
 
   const contentSuccess = (
     <div className="text-center max-w-[63rem] mx-auto">
@@ -79,7 +83,7 @@ const FormStepper = <T extends FieldValues>({
       {steps[currentStep].component}
       <div className="flex flex-row justify-end gap-16 my-40">
         {currentStep !== 0 && (
-          <Button variant="secondary" onClick={() => handleChangeStep(currentStep - 1)}>
+          <Button variant="secondary" onClick={() => setCurrentStep(currentStep - 1)}>
             {t('back')}
           </Button>
         )}
@@ -89,7 +93,7 @@ const FormStepper = <T extends FieldValues>({
           ) : (
             <Button
               variant="primary"
-              onClick={() => handleChangeStep(currentStep + 1)}
+              onClick={() => handleNextClicked()}
               disabled={!steps[currentStep].valid}
               color="vattjom"
               rightIcon={<ArrowRight />}

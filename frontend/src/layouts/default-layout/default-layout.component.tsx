@@ -18,7 +18,7 @@ const DefaultLayout = ({ title, pageheader, children, headerMenu }: DefaultLayou
         <meta name="description" content={title} />
       </Head>
       {headerMenu}
-      <main className="main-wrapper" ref={initialFocus}>
+      <main className="main-wrapper focus:outline-none" ref={initialFocus} tabIndex={-1}>
         {pageheader && pageheader}
         <div className="main-container flex-grow">
           <div className="container">{children}</div>
