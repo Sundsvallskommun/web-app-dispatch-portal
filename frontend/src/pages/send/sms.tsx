@@ -1,4 +1,4 @@
-import { HelpComposer } from '@components/help/help-composer';
+import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
@@ -12,11 +12,12 @@ import {
   FormLabel,
   Icon,
   Input,
-  Link,
   Textarea,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { BadgeCheck, HelpCircle, SendHorizontal } from 'lucide-react';
+import { BadgeCheck, SendHorizontal, Smartphone } from 'lucide-react';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextLink from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -52,11 +53,6 @@ export default function SendEmailPage() {
   const [success, setSuccess] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const message = useSnackbar();
-
-  const [showHelpComposer, setShowHelpComposer] = useState(false);
-
-  const openHelpComposer = () => setShowHelpComposer(true);
-  const closeHelpComposer = () => setShowHelpComposer(false);
 
   const controls = useForm<Partial<FormModel>>({
     resolver: yupResolver(formSchema),
@@ -151,18 +147,7 @@ export default function SendEmailPage() {
   };
 
   return (
-    <DefaultLayout title={`Postportalen`}>
-      <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
-      <div className="flex flex-1 items-center justify-between bg-background-content p-40 absolute z-10 left-0 top-0 right-0">
-        <NextLink href="/" passHref legacyBehavior>
-          <Link strong={true} variant="tertiary" className="text-base">
-            Avbryt
-          </Link>
-        </NextLink>
-        <Button variant="secondary" onClick={openHelpComposer}>
-          <Icon icon={<HelpCircle />} /> Hjälp
-        </Button>
-      </div>
+    <DefaultLayout title={`Postportalen`} headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} />}>
       <h1 className="sr-only">Skicka SMS</h1>
       <div className="text-lg mb-11 pt-48">
         {success ? (
@@ -270,3 +255,9 @@ export default function SendEmailPage() {
     </DefaultLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'accessibility'])),
+  },
+});

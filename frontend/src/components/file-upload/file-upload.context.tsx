@@ -50,7 +50,9 @@ export const FileUploadWrapper: React.FC<FileUploadWrapperProps> = ({ children }
 
   return (
     <FileUploadContext.Provider value={context}>
-      <div onDragEnter={handleDragFile}>{children}</div>
+      <div className="handle-drag-file-wrapper" onDragEnter={handleDragFile}>
+        {children}
+      </div>
       {isDragging && (
         <div
           className={cx(

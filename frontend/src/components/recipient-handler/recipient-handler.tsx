@@ -1,7 +1,6 @@
 import { AddWithAddressDialog } from '@components/add-with-address-dialog/add-with-address-dialog.component';
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
-import { RecipientList } from '@components/recipient-list/recipient-list';
 import {
   AddWithAddress,
   getRecipient,
@@ -13,7 +12,6 @@ import {
 } from '@services/recipient-service';
 import {
   Button,
-  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -28,7 +26,9 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Trans, useTranslation } from 'next-i18next';
-import { Info } from 'lucide-react';
+import { Info, Plus } from 'lucide-react';
+import { RecipientTable } from 'src/recipient-table/recipient-table.component';
+import { formSendType } from '../../constants';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -36,7 +36,13 @@ export interface RecipientListFormModel {
   storeRecipients: string;
 }
 
-const RecipientHandler: React.FC = () => {
+export type RecipientHandlerSendType = (typeof formSendType)[keyof typeof formSendType];
+
+interface RecipientHandlerProps {
+  sendType?: RecipientHandlerSendType;
+}
+
+const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProps) => {
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const [error, setError] = useState<string>();
@@ -94,6 +100,7 @@ const RecipientHandler: React.FC = () => {
         setRecipients([]);
       });
   };
+
   const fetchRecipient = () => {
     setIsLoadingRecipients(true);
     setError(undefined);
@@ -266,50 +273,64 @@ const RecipientHandler: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
+      <div
+        className={cx(
+          'flex flex-col items-start w-full rounded-cards shadow-50 p-32',
+          sendType === formSendType.REK_MAIL ? 'gap-40' : 'gap-64'
+        )}
+      >
         <div className="w-full">
           <h4 className="pb-6">{t('send-mail:recipientHandler.title')}</h4>
-          <p className="text-base pb-6">
-            <Trans
-              i18nKey="send-mail:recipientHandler.contentFirstRow"
-              components={{
-                Link: <Link href="/files/example.csv" />,
-              }}
-            />
-          </p>
-          <p className="text-base pb-6">{`${t('send-mail:recipientHandler.contentSecondRow')}.`}</p>
-          <Divider className="w-full" orientation="horizontal" strong={false} />
+          {sendType === formSendType.MAIL ? (
+            <React.Fragment>
+              <p className="text-base pb-6">
+                <Trans
+                  i18nKey="send-mail:recipientHandler.contentFirstRow"
+                  components={{
+                    Link: <Link href="/files/example.csv" />,
+                  }}
+                />
+              </p>
+              <p className="text-base pb-6">{`${t('send-mail:recipientHandler.contentSecondRow')}.`}</p>
+            </React.Fragment>
+          ) : (
+            <p className="text-base pb-6">{t('send-mail:recipientHandler.rekMail.content')}</p>
+          )}
         </div>
-
-        <div className="w-full gap-32">
-          <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
-          <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
-            <div
-              className={cx(
-                'flex-1 border rounded-groups p-16',
-                current === 0 ? 'border-dark-primary' : 'border-divider'
-              )}
-            >
-              <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
-                {t('send-mail:recipientHandler.optionPersonalNumberOrAddress')}
-              </RadioButton>
+        <div className="w-full gap-32 relative">
+          {sendType === formSendType.MAIL && (
+            <div className="flex flex-col">
+              <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
+              <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
+                <div
+                  className={cx(
+                    'flex-1 border rounded-groups p-16',
+                    current === 0 ? 'border-dark-primary' : 'border-divider'
+                  )}
+                >
+                  <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
+                    {t('send-mail:recipientHandler.optionPersonalNumberOrAddress')}
+                  </RadioButton>
+                </div>
+                {
+                  <div
+                    className={cx(
+                      'flex-1 border rounded-groups p-16',
+                      current === 1 ? 'border-dark-primary' : 'border-divider'
+                    )}
+                  >
+                    <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
+                      {t('send-mail:recipientHandler.optionRecipientList')}
+                    </RadioButton>
+                  </div>
+                }
+              </div>
             </div>
-            <div
-              className={cx(
-                'flex-1 border rounded-groups p-16',
-                current === 1 ? 'border-dark-primary' : 'border-divider'
-              )}
-            >
-              <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
-                {t('send-mail:recipientHandler.optionRecipientList')}
-              </RadioButton>
-            </div>
-          </div>
-
+          )}
           {current === 0 ? (
-            <div className="flex flex-col gap-12 pt-32">
+            <div className={cx('flex flex-col gap-12', sendType === formSendType.MAIL && 'pt-32')}>
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
-                <div className="relative w-full gap-2">
+                <div className="flex flex-col w-full gap-8">
                   <FormLabel className="text-label-medium">
                     <Trans
                       i18nKey="send-mail:recipientHandler.searchPersonalNumber"
@@ -321,9 +342,8 @@ const RecipientHandler: React.FC = () => {
                   <SearchField
                     {...register('singleRecipient')}
                     value={recipient}
-                    className="w-full mt-12"
+                    className="w-full "
                     showSearchButton={false}
-                    // showSearchButton={dirtyFields.singleRecipient && ssnPattern.test(recipient)}
                     showResetButton={recipient.length > 0}
                     type="text"
                     size="md"
@@ -339,6 +359,7 @@ const RecipientHandler: React.FC = () => {
                       handleSubmitSingleRecipient();
                     }}
                   />
+                  <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
                     <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
@@ -367,11 +388,20 @@ const RecipientHandler: React.FC = () => {
                     <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}
                   </FormErrorMessage>
                 )}
-
-                <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-                <Button className="mt-20" onClick={() => setIsAddWithAddressOpen(true)} color="vattjom" inverted>
-                  {t('send-mail:recipientHandler.addRecipientWithAddress')}
-                </Button>
+                {sendType === formSendType.MAIL && (
+                  <React.Fragment>
+                    <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
+                    <p className="font-bold">{t('send-mail:recipientHandler.missingPersonalNumber')}</p>
+                    <Button
+                      leftIcon={<Icon icon={<Plus />} />}
+                      onClick={() => setIsAddWithAddressOpen(true)}
+                      color="vattjom"
+                      inverted
+                    >
+                      {t('send-mail:recipientHandler.addRecipientWithAddress')}
+                    </Button>
+                  </React.Fragment>
+                )}
               </FormControl>
             </div>
           ) : (
@@ -436,28 +466,30 @@ const RecipientHandler: React.FC = () => {
           {combinedLength > 0 && !isLoadingRecipients && (
             <div className="w-full mt-40">
               {current === 0 && (
-                <h4 className="mb-16 text-h4-sm">
+                <h3 className="mb-16 text-label-medium font-sans">
                   {t('send-mail:recipientHandler.addedRecipientNum', { num: combinedLength })}
-                </h4>
+                </h3>
               )}
               {current === 1 && (
-                <h4 className="mb-16 text-h4-sm">
+                <h3 className="mb-16 text-label-medium font-sans">
                   {t('send-mail:recipientHandler.addedFromFileNum', { num: validRecipientLength })}
-                </h4>
+                </h3>
               )}
-              <RecipientList />
+              <div className="w-full">
+                <RecipientTable showRemoveButton sendType={sendType} />
+              </div>
             </div>
           )}
         </div>
         {combinedLength < 1 && current === 0 && (
           <div>
-            <h3 className="text-label-medium">{t('send-mail:recipientHandler.addedRecipientsTitle')}</h3>
+            <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedRecipientsTitle')}</h3>
             <p className="text-base">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
           </div>
         )}
         {recipients?.length < 1 && current === 1 && (
           <div>
-            <h3 className="text-label-medium">{t('send-mail:recipientHandler.addedFileTitle')}</h3>
+            <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedFileTitle')}</h3>
             <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}.`}</p>
           </div>
         )}

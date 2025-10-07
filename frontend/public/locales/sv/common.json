@@ -11,15 +11,20 @@
   "example": "Exempel",
   "receiver": "Mottagare",
   "letter": "Brev",
+  "recLetter": "Rekommenderat brev",
   "textMessage": "Sms",
   "stepper": {
-    "stepOne": "Lägg till textdokument",
-    "stepTwo": "Lägg till mottagare",
-    "stepThree": "Ange avsändare"
+    "recipient": "Mottagare",
+    "files": "Filer",
+    "header": "Rubrik och förvaltning",
+    "review": "Granska"
   },
   "done": "Klart",
   "cancel": "Avbryt",
   "delete": "Radera",
+  "help": "Hjälp",
+  "next": "Nästa",
+  "back": "Tillbaka",
   "yesContinue": "Ja, fortsätt",
   "dispatchDone": "Ditt utskick har gjorts",
   "dispatchNew": "Gör ett nytt utskick",
