@@ -13,8 +13,6 @@ interface PreviewPersonProps {
   sendType: RecipientHandlerSendType;
 }
 
-/* - - - Testperson med Kivra: 199011182475 - - - */
-
 const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: PreviewPersonProps) => {
   const { isEligible, isLoading } = useKivraEligibility(personId, sendType);
   const showButton = sendType === formSendType.MAIL || (isEligible && sendType === formSendType.REK_MAIL && !isLoading);

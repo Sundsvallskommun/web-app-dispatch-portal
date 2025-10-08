@@ -1,5 +1,5 @@
 import { RequestWithUser } from '@/interfaces/auth.interface';
-import { DigitalRegisteredletterService } from '@/services/digitalRegisteredLetter.service';
+import { DigitalRegisteredLetterService } from '@/services/digitalRegisteredLetter.service';
 import { IsArray, IsString } from 'class-validator';
 import { Response } from 'express';
 import { Body, Controller, Post, Req, Res } from 'routing-controllers';
@@ -13,7 +13,7 @@ class RequestBodyEligibility {
 
 @Controller()
 export class DigitalRegisteredletterController {
-  private readonly service = new DigitalRegisteredletterService();
+  private readonly service = new DigitalRegisteredLetterService();
 
   @Post('/eligibility-kivra')
   @OpenAPI({ summary: 'Checks if the recipients are eligible for Kivra' })

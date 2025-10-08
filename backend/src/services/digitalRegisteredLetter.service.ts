@@ -15,7 +15,7 @@ interface EligibilityResponseDto {
   results: EligibilityItemResponseDto[];
 }
 
-export class DigitalRegisteredletterService {
+export class DigitalRegisteredLetterService {
   private readonly apiService = new ApiService();
   private readonly SERVICE = `digitalregisteredletter/2.3`;
   private readonly eligibilityCache: Map<string, boolean> = new Map();
