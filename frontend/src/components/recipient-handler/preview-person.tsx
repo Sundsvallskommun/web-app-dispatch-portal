@@ -3,9 +3,8 @@ import { Button, cx, Icon, Spinner } from '@sk-web-gui/react';
 import { RecipientHandlerSendType } from './recipient-handler';
 import { formSendType } from 'src/constants';
 import { Check, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { getEligibilityKivra } from '@services/digital-registered-letter-service';
 import { useTranslation } from 'react-i18next';
+import { useKivraEligibility } from 'src/hooks/useGetEligibility';
 
 interface PreviewPersonProps {
   personId: string;
@@ -17,23 +16,11 @@ interface PreviewPersonProps {
 /* - - - Testperson med Kivra: 199011182475 - - - */
 
 const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: PreviewPersonProps) => {
-  const [isEligible, setIsEligible] = useState<boolean>(false);
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const { isEligible, isLoading } = useKivraEligibility(personId, sendType);
   const showButton = sendType === formSendType.MAIL || (isEligible && sendType === formSendType.REK_MAIL && !isLoading);
   const successClasses = 'border-gronsta-surface-primary bg-gronsta-background-100';
   const errorClasses = 'border-error-surface-primary bg-error-background-100';
   const { t } = useTranslation(['send-mail']);
-
-  useEffect(() => {
-    if (sendType === formSendType.REK_MAIL) {
-      setIsloading(true);
-      getEligibilityKivra([personId]).then((res) => {
-        const hasKivra = res.results.some((r) => r.hasKivra);
-        setIsloading(false);
-        setIsEligible(hasKivra);
-      });
-    }
-  }, [isEligible, sendType, personId]);
 
   const alert = (
     <div
