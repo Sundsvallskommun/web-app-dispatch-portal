@@ -8,6 +8,7 @@ export default {
   theme: {
     extend: {
       spacing: {
+        '120': '120px',
         '128': '128px',
         '220': '220px',
         '249': '249px',

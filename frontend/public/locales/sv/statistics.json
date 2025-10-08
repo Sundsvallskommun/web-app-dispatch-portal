@@ -8,16 +8,17 @@
     "unknownNumber": "Okänt nummer",
     "message": "Meddelande",
     "description": "Här hittar du dina skickade brev. Utskicken sparas i 30 dagar.",
-    "attachments": "textfiler",
+    "attachments": "Bifogade filer",
     "showAttachment": "Öppna fil",
     "all": "Alla",
     "digitalMail_one": "Digitalt brev",
     "digitalMail": "Digitala brev",
     "snailMail_one": "Fysiskt brev",
     "snailMail": "Fysiska brev",
-    "SMSMessagePrefixUrl" : "/my-statistics/sms",
-    "emailMessagePrefixUrl" : "/my-statistics/mail",
+    "SMSMessagePrefixUrl": "/my-statistics/sms",
+    "emailMessagePrefixUrl": "/my-statistics/mail",
     "letterSubject": "Brev ({subject})",
-    "sms" : "Sms"
+    "recLetterSubject": "{subject} (Rekommenderat Brev)",
+    "sms": "Sms"
   }
 }

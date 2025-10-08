@@ -5,6 +5,7 @@ import { Icon } from '@sk-web-gui/react';
 import { Calendar, ChevronRight, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
+import 'dayjs/locale/sv';
 import Link from 'next/link';
 
 interface ListItemComponentProps {
@@ -15,10 +16,13 @@ export const getMessagePrefixUrl = (type: string) => {
   switch (type) {
     case 'SMS':
       return '/my-statistics/sms';
+    case 'REK':
+      return '/my-statistics/rek-mail';
     default:
       return '/my-statistics/mail';
   }
 };
+dayjs.locale('sv');
 
 export const ListItem: React.FC<ListItemComponentProps> = (props) => {
   const { data } = props;
@@ -36,6 +40,8 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
         return t('common:letter');
       case 'LETTER':
         return t('common:letter');
+      case 'REK': // Assumed type value for recommended letter
+        return t('common:recLetter');
       default:
         return type;
     }
@@ -54,14 +60,16 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
       <div className="flex w-full sm:items-center justify-between">
         <PaddedListIcon messageType={data.messageType} />
         <div>
-          <strong>{messageTypeToHumanReadable(data.messageType)}</strong>{' '}
-          <span>{isSMS(data.messageType) ? null : `(${data?.subject})`}</span>
-          <div className="sm:flex block items-center text-small gap-8">
-            <p className="flex items-center gap-8">
-              <Icon icon={<Calendar />} size={20} /> {dayjs(data.sent).format('YYYY-MM-DD, HH:mm')}
-            </p>
-            <p className="flex items-center sm:ml-8 gap-8">
-              <Icon icon={<Users2 />} size={20} /> {data.recipientCount} {t('statistics:myStatistics.recipient')}
+          {isSMS(data.messageType) ? (
+            <span className="text-large text-dark-primary font-normal">
+              {messageTypeToHumanReadable(data.messageType)}
+            </span>
+          ) : (
+            <span className="text-large text-dark-primary">{`${data?.subject} (${messageTypeToHumanReadable(data.messageType)})`}</span>
+          )}
+          <div className="sm:flex block items-center text-base gap-8">
+            <p className="flex items-center gap-8 font-normal text-dark-secondary">
+              {dayjs(data.sent).format('DD MMM YYYY, HH.mm').toLocaleLowerCase()}
             </p>
           </div>
         </div>
