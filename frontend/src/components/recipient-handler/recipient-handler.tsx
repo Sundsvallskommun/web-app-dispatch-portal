@@ -362,6 +362,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     onSearch={() => {
                       allowSearchFieldOnSearch && handleSubmitSingleRecipient();
                     }}
+                    disabled={sendType === formSendType.REK_MAIL && recipients.length === 1}
                   />
                   <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
