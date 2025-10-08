@@ -13,7 +13,7 @@ class RequestBodyEligibility {
 
 @Controller()
 export class DigitalRegisteredletterController {
-  private service = new DigitalRegisteredletterService();
+  private readonly service = new DigitalRegisteredletterService();
 
   @Post('/eligibility-kivra')
   @OpenAPI({ summary: 'Checks if the recipients are eligible for Kivra' })

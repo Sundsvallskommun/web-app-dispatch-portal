@@ -16,9 +16,9 @@ interface EligibilityResponseDto {
 }
 
 export class DigitalRegisteredletterService {
-  private apiService = new ApiService();
-  private SERVICE = `digitalregisteredletter/2.3`;
-  private eligibilityCache: Map<string, boolean> = new Map();
+  private readonly apiService = new ApiService();
+  private readonly SERVICE = `digitalregisteredletter/2.3`;
+  private readonly eligibilityCache: Map<string, boolean> = new Map();
 
   async checkEligibilityKivra(partyIds: string[], user: RequestWithUser['user']): Promise<EligibilityResponseDto> {
     const partyIdsReq: string[] = [];
@@ -27,7 +27,7 @@ export class DigitalRegisteredletterService {
     for (const id of partyIds) {
       const cacheKey = `${user.id}-${id}`;
       if (this.eligibilityCache.has(cacheKey)) {
-        results.push({ partyId: id, hasKivra: this.eligibilityCache.get(cacheKey)! });
+        results.push({ partyId: id, hasKivra: this.eligibilityCache.get(cacheKey) });
       } else {
         partyIdsReq.push(id);
       }
@@ -42,10 +42,11 @@ export class DigitalRegisteredletterService {
         throw new Error('Error when checking eligibility');
       });
 
-      partyIdsReq.forEach(uuid => {
-        results.push({ partyId: uuid, hasKivra: res.data.includes(uuid) });
-        this.eligibilityCache.set(`${user.id}-${uuid}`, res.data.includes(uuid));
-      });
+      for (const uuid of partyIdsReq) {
+        const hasKivra = res.data.includes(uuid);
+        results.push({ partyId: uuid, hasKivra });
+        this.eligibilityCache.set(`${user.id}-${uuid}`, hasKivra);
+      }
     }
 
     results.sort((a, b) => partyIds.indexOf(a.partyId) - partyIds.indexOf(b.partyId));

@@ -6,13 +6,14 @@ Utskicksportalen / Dispatch portal
 
 Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumerera på dessa.
 
-| API             | Version |
-| --------------- | ------: |
-| SimulatorServer |     2.0 |
-| Messaging       |     7.3 |
-| Company         |     1.0 |
-| Employee        |     2.0 |
-| Citizen         |     3.0 |
+| API                            | Version |
+| ------------------------------ | ------: |
+| SimulatorServer                |     2.0 |
+| Messaging                      |     7.3 |
+| Company                        |     1.0 |
+| Employee                       |     2.0 |
+| Citizen                        |     3.0 |
+| DigitalRegisteredletterService |     2.3 |
 
 ## Utveckling
 
