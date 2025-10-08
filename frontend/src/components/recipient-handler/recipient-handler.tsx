@@ -29,6 +29,7 @@ import { Trans, useTranslation } from 'next-i18next';
 import { Info, Plus } from 'lucide-react';
 import { RecipientTable } from 'src/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';
+import PreviewPerson from './preview-person';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -297,7 +298,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <p className="text-base pb-6">{t('send-mail:recipientHandler.rekMail.content')}</p>
           )}
         </div>
-        <div className="w-full gap-32 relative">
+        <div className="w-full gap-32">
           {sendType === formSendType.MAIL && (
             <div className="flex flex-col">
               <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
@@ -362,19 +363,12 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                   <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
-                    <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
-                      <p className="text-body text-base font-bold">
-                        {foundPerson.address.givenname} {foundPerson.address.lastname}
-                      </p>
-                      <p className="text-small">{foundPerson.address?.personNumber}</p>
-                      <p className="text-small">
-                        {foundPerson.address?.addresses[0].address}, {foundPerson.address?.addresses[0].city}
-                      </p>
-
-                      <Button className="mt-16" onClick={() => handleSubmitSingleRecipient()}>
-                        {t('send-mail:recipientHandler.addRecipient')}
-                      </Button>
-                    </div>
+                    <PreviewPerson
+                      personId={foundPerson.address.personId}
+                      personAdress={foundPerson.address}
+                      handleSubmit={handleSubmitSingleRecipient}
+                      sendType={sendType}
+                    />
                   )}
                 </div>
 

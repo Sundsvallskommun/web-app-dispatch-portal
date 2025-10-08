@@ -29,7 +29,7 @@
     "howAddRecipient": "Hur vill du lägga till mottagare?",
     "optionPersonalNumberOrAddress": "Med personnummer eller adress",
     "optionRecipientList": "Med mottagarlista",
-    "addRecipient": "Lägg till mottagare",
+    "addRecipient": "Lägg till",
     "missingPersonalNumber": "Saknar du personnummer?",
     "addRecipientWithAddress": "Lägg till mottagare med adress",
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
@@ -65,7 +65,9 @@
     "addedRecipientNum": "Tillagda mottagare ({num})",
     "addedFromFileNum": "Tillagda mottagare från fil ({num})",
     "rekMail": {
-      "content": "Lägg till mottagare av ditt rekommenderade brev. Rekommenderat brev går bara att skicka till mottagare som har en digital brevlåda hos Kivra."
+      "content": "Lägg till mottagare av ditt rekommenderade brev. Rekommenderat brev går bara att skicka till mottagare som har en digital brevlåda hos Kivra.",
+      "success": "Har digital brevlåda hos Kivra",
+      "error": "Har inte digital brevlåda hos Kivra"
     }
   }
 }
