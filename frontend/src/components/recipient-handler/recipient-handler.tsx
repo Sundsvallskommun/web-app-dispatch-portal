@@ -30,6 +30,7 @@ import { Info, Plus } from 'lucide-react';
 import { RecipientTable } from 'src/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';
 import PreviewPerson from './preview-person';
+import { useKivraEligibility } from 'src/hooks/useGetEligibility';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -58,6 +59,8 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   const validRecipientLength = recipients.filter((rec) => !rec?.error).length;
   const invalidRecipient = recipients.filter((rec) => rec?.error);
   const combinedLength = validRecipientLength + addresses.length;
+  const { isEligible } = useKivraEligibility(foundPerson?.address?.personId, sendType);
+  const allowSearchFieldOnSearch = sendType === formSendType.MAIL || (isEligible && sendType === formSendType.REK_MAIL);
   const { t } = useTranslation(['send-mail', 'common', 'accessibility']);
 
   const {
@@ -357,7 +360,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                       setFoundPerson(undefined);
                     }}
                     onSearch={() => {
-                      handleSubmitSingleRecipient();
+                      allowSearchFieldOnSearch && handleSubmitSingleRecipient();
                     }}
                   />
                   <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
@@ -461,7 +464,9 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <div className="w-full mt-40">
               {current === 0 && (
                 <h3 className="mb-16 text-label-medium font-sans">
-                  {t('send-mail:recipientHandler.addedRecipientNum', { num: combinedLength })}
+                  {sendType === formSendType.MAIL
+                    ? t('send-mail:recipientHandler.addedRecipientNum', { num: combinedLength })
+                    : t('send-mail:recipientHandler.addedRecipientsTitle')}
                 </h3>
               )}
               {current === 1 && (
