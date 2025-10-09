@@ -15,7 +15,7 @@ import FormStepper from '@components/form-stepper/form-stepper.component';
 import { Mail } from 'lucide-react';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
-import { formSchema } from './formSchema.yup';
+import { formSchema } from '../../utils/formSchema.yup';
 
 type SendMailForm = yup.InferType<typeof formSchema>;
 
