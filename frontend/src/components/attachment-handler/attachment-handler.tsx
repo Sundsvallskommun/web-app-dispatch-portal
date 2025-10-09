@@ -17,6 +17,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 
 export interface Attachment {
   file: File | undefined;
@@ -62,63 +63,59 @@ const AttachmentHandler: React.FC = () => {
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor));
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards gap-56 p-32">
-        <input type="hidden" {...register('message')} value="hiddenmessage" />
-        <div className="w-full">
-          <h4 className="pb-6">{t('send-mail:attachmentHandler.header')}</h4>
-          <p className="text-base pb-6">{t('send-mail:attachmentHandler.description')}</p>
-          <Divider className="w-full" orientation="horizontal" strong={false} />
-        </div>
-        <FormControl id="attachment" className="w-full gap-8">
-          <FileUpload
-            label="Dokument"
-            fieldName={'attachmentList'}
-            allowMultiple={maxMain + maxSecondary > 1}
-            allowMax={maxMain + maxSecondary}
-            accept={['.pdf', '.PDF']}
-            helperText={t('send-mail:attachmentHandler.helperText')}
-            maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
-            resetErrorTrigger={resetErrorTrigger}
-          />
-        </FormControl>
+    <HandlerWrapper
+      title={t('send-mail:attachmentHandler.header')}
+      description={t('send-mail:attachmentHandler.description')}
+    >
+      <input type="hidden" {...register('message')} value="hiddenmessage" />
+      <FormControl id="attachment" className="w-full gap-8">
+        <FileUpload
+          label="Dokument"
+          fieldName={'attachmentList'}
+          allowMultiple={maxMain + maxSecondary > 1}
+          allowMax={maxMain + maxSecondary}
+          accept={['.pdf', '.PDF']}
+          helperText={t('send-mail:attachmentHandler.helperText')}
+          maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
+          resetErrorTrigger={resetErrorTrigger}
+        />
+      </FormControl>
 
-        <div className="w-full">
-          {attachmentList.length === 0 && (
-            <div>
-              <h3 className="text-label-medium">{t('send-mail:attachmentHandler.addedFilesHeader')}</h3>
-              <p className="text-base">{`${t('send-mail:attachmentHandler:noFiles')}.`}</p>
+      <div className="w-full">
+        {attachmentList.length === 0 && (
+          <div>
+            <h3 className="text-label-medium">{t('send-mail:attachmentHandler.addedFilesHeader')}</h3>
+            <p className="text-base">{`${t('send-mail:attachmentHandler:noFiles')}.`}</p>
+          </div>
+        )}
+        {attachmentList.length > 0 && (
+          <div className="w-full">
+            <h4 className="pb-8 text-label-medium">
+              {t('send-mail:attachmentHandler.addedFiles', { num: attachmentList.length })}
+            </h4>
+            <p className="text-base">{`${t('send-mail:attachmentHandler.sort')}.`}</p>
+            <div className="flex flex-col gap-12">
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext
+                  items={attachmentList.map((item) => item.index)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {attachmentList.map((attach) => (
+                    <SortableItem
+                      key={attach.index}
+                      id={attach.index}
+                      attach={attach}
+                      handleRemove={handleRemove}
+                      callback={handleErrorTrigger}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
             </div>
-          )}
-          {attachmentList.length > 0 && (
-            <div className="w-full">
-              <h4 className="pb-8 text-label-medium">
-                {t('send-mail:attachmentHandler.addedFiles', { num: attachmentList.length })}
-              </h4>
-              <p className="text-base">{`${t('send-mail:attachmentHandler.sort')}.`}</p>
-              <div className="flex flex-col gap-12">
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext
-                    items={attachmentList.map((item) => item.index)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {attachmentList.map((attach) => (
-                      <SortableItem
-                        key={attach.index}
-                        id={attach.index}
-                        attach={attach}
-                        handleRemove={handleRemove}
-                        callback={handleErrorTrigger}
-                      />
-                    ))}
-                  </SortableContext>
-                </DndContext>
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </div>
+    </HandlerWrapper>
   );
 };
 
