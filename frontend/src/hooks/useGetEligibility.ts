@@ -23,10 +23,9 @@ export const useKivraEligibility = (
 
     setIsLoading(true);
 
-    getEligibilityKivra([personId])
+    getEligibilityKivra(personId)
       .then((res) => {
-        const hasKivra = res.results.some((r) => r.hasKivra);
-        setIsEligible(hasKivra);
+        setIsEligible(res.hasKivra);
       })
       .catch((e) => {
         console.error('Something went wrong when requesting eligibility.', e);

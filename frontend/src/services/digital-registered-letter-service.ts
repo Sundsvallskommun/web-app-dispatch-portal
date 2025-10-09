@@ -1,15 +1,13 @@
 import { apiService } from '@services/api-service';
 
 interface EligibilityItemResponseDto {
-  results: {
-    partyId: string;
-    hasKivra: boolean;
-  }[];
+  partyId: string;
+  hasKivra: boolean;
 }
 
-export const getEligibilityKivra = async (partyIds: string[]): Promise<EligibilityItemResponseDto> => {
+export const getEligibilityKivra = async (partyId: string): Promise<EligibilityItemResponseDto> => {
   return apiService
-    .post<{ data: EligibilityItemResponseDto }, { partyIds: string[] }>('eligibility-kivra', { partyIds })
+    .post<{ data: EligibilityItemResponseDto }, { partyId: string }>('eligibility-kivra', { partyId })
     .then((r) => r.data.data)
     .catch((e) => {
       console.error('Something went wrong when requesting eligibilty.');

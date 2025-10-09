@@ -11,46 +11,21 @@ interface EligibilityItemResponseDto {
   hasKivra: boolean;
 }
 
-interface EligibilityResponseDto {
-  results: EligibilityItemResponseDto[];
-}
-
 export class DigitalRegisteredLetterService {
   private readonly apiService = new ApiService();
   private readonly SERVICE = `digitalregisteredletter/2.3`;
-  private readonly eligibilityCache: Map<string, boolean> = new Map();
 
-  async checkEligibilityKivra(partyIds: string[], user: RequestWithUser['user']): Promise<EligibilityResponseDto> {
-    const partyIdsReq: string[] = [];
-    const results: EligibilityItemResponseDto[] = [];
+  async checkEligibilityKivra(partyId: string, user: RequestWithUser['user']): Promise<EligibilityItemResponseDto> {
+    const data: EligibilityItemDto = { partyIds: [partyId] };
+    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/eligibility/kivra`;
 
-    for (const id of partyIds) {
-      const cacheKey = `${user.id}-${id}`;
-      if (this.eligibilityCache.has(cacheKey)) {
-        results.push({ partyId: id, hasKivra: this.eligibilityCache.get(cacheKey) });
-      } else {
-        partyIdsReq.push(id);
-      }
+    try {
+      const res = await this.apiService.post<string[], EligibilityItemDto>({ url, data }, user);
+      const hasKivra = res.data.includes(partyId);
+      return { partyId, hasKivra };
+    } catch (e) {
+      console.error('Error when checking eligibility:', e);
+      throw new Error('Error when checking eligibility');
     }
-
-    if (partyIdsReq.length > 0) {
-      const data = { partyIds: partyIdsReq };
-      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/eligibility/kivra`;
-
-      const res = await this.apiService.post<string[], EligibilityItemDto>({ url, data }, user).catch(e => {
-        console.log('Error when checking eligibility:', e);
-        throw new Error('Error when checking eligibility');
-      });
-
-      for (const uuid of partyIdsReq) {
-        const hasKivra = res.data.includes(uuid);
-        results.push({ partyId: uuid, hasKivra });
-        this.eligibilityCache.set(`${user.id}-${uuid}`, hasKivra);
-      }
-    }
-
-    results.sort((a, b) => partyIds.indexOf(a.partyId) - partyIds.indexOf(b.partyId));
-
-    return { results };
   }
 }
