@@ -51,6 +51,8 @@ const FileUpload: React.FC<{
     name: fieldName,
   });
 
+  const fileFields = (fields as { file?: File }[]).map((f) => ({ file: f.file }));
+
   const { drop, setDrop, setActive } = useFileUpload();
 
   useEffect(() => {
@@ -83,6 +85,7 @@ const FileUpload: React.FC<{
       setFileErrors,
       setError,
       onErrorReset,
+      fields: fileFields,
     });
   }, [newItem]);
   /* eslint-enable react-hooks/exhaustive-deps */

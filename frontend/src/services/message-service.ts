@@ -3,7 +3,7 @@ import { FormModel } from '@pages/send/mail';
 import { ApiResponse, apiService } from './api-service';
 import { AddWithAddress, RecipientWithAddress, toBase64 } from './recipient-service';
 
-export const MAX_ATTACHMENT_FILE_SIZE_MB = 2;
+export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
 export interface Attachment {
   name: string;
   extension: string;
