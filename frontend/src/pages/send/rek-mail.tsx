@@ -14,6 +14,7 @@ import { useMessageStore } from '@services/recipient-service';
 import { useRouter } from 'next/router';
 import { formSendType } from 'src/constants';
 import { formSchema } from '../../utils/formSchema.yup';
+import AttachmentHandler from '@components/attachment-handler/attachment-handler';
 
 type SendRekMailForm = yup.InferType<typeof formSchema>;
 
@@ -28,25 +29,22 @@ const initialValues = {
 };
 
 const SendRekMail = () => {
-  const [success, setSuccess] = useState(false);
-  const [step, setStep] = useState<number>(0);
-  const recipients = useMessageStore((state) => state.recipients);
-  const setRecipients = useMessageStore((state) => state.setRecipients);
-  const addresses = useMessageStore((state) => state.addresses);
-  const setAddresses = useMessageStore((state) => state.setAddresses);
-  const response = useMessageStore((state) => state.response);
-  const setResponse = useMessageStore((state) => state.setResponse);
   const controls = useForm<SendRekMailForm>({
     defaultValues: initialValues,
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
-  const { trigger, setValue, reset } = controls;
-  const hasValidRecipients =
-    recipients?.some(
-      (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
-    ) || addresses.length > 0;
   const router = useRouter();
+  const { trigger, setValue, reset, watch } = controls;
+  const [success, setSuccess] = useState(false);
+  const [step, setStep] = useState<number>(0);
+  const recipients = useMessageStore((state) => state.recipients);
+  const setRecipients = useMessageStore((state) => state.setRecipients);
+  const setAddresses = useMessageStore((state) => state.setAddresses);
+  const response = useMessageStore((state) => state.response);
+  const setResponse = useMessageStore((state) => state.setResponse);
+  const watchAttachmentList = watch('attachmentList');
+  const hasAtLeastOneAttachment = (watchAttachmentList?.length ?? 0) > 0;
   const { t } = useTranslation(['common', 'send-mail']);
 
   const stepTexts: Record<number, string> = {
@@ -98,13 +96,13 @@ const SendRekMail = () => {
             {
               label: t('common:stepper.recipient'),
               component: <RecipientHandler sendType={formSendType.REK_MAIL} />,
-              valid: hasValidRecipients,
+              valid: true,
               onNextClick: handleOnNextClick,
             },
             {
               label: t('common:stepper.files'),
-              component: <>Filer</>, // To Do: lägg till korrekt komponent
-              valid: true,
+              component: <AttachmentHandler />,
+              valid: hasAtLeastOneAttachment,
             },
             {
               label: t('common:stepper.header'),

@@ -1,7 +1,8 @@
+import { useMemo, useState } from 'react';
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
-import { Divider, FormControl, Icon } from '@sk-web-gui/react';
+import { FormControl, Icon, ProgressBar } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
 import {
   DndContext,
@@ -16,7 +17,6 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 
 export interface Attachment {
@@ -34,6 +34,16 @@ const AttachmentHandler: React.FC = () => {
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
   const [resetErrorTrigger, setResetErrorTrigger] = useState(0);
   const { t } = useTranslation(['send-mail']);
+
+  const fileStorageLimit = useMemo(() => {
+    const totalBytes = attachmentList.reduce((sum, a) => sum + (a.file?.size || 0), 0);
+    return (totalBytes / (1024 * 1024)).toFixed(1);
+  }, [attachmentList]);
+
+  const progressBarValues = {
+    steps: MAX_ATTACHMENT_FILE_SIZE_MB * 10,
+    current: Number(fileStorageLimit) * 10,
+  };
 
   const handleErrorTrigger = () => {
     setResetErrorTrigger((prev) => prev + 1);
@@ -80,7 +90,15 @@ const AttachmentHandler: React.FC = () => {
           resetErrorTrigger={resetErrorTrigger}
         />
       </FormControl>
-
+      <div className="flex flex-col gap-8 w-full">
+        <p className="text-small">
+          {t('send-mail:attachmentHandler.progressStepper', {
+            files: fileStorageLimit,
+            limit: MAX_ATTACHMENT_FILE_SIZE_MB,
+          })}
+        </p>
+        <ProgressBar steps={progressBarValues.steps} current={progressBarValues.current} />
+      </div>
       <div className="w-full">
         {attachmentList.length === 0 && (
           <div>
