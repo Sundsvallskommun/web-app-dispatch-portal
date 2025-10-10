@@ -5,7 +5,7 @@ import ApiService from '@services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { DepartmentStatistics } from '@interfaces/statistics.interface';
 import { MUNICIPALITY_ID } from '@/config';
-import { UserBatches, UserMessage, UserMessages } from '@/interfaces/my-statistics.interface';
+import { RecLetter, SigningInfo, UserBatches, UserMessage, UserMessages, UserRecLetters } from '@/interfaces/my-statistics.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 
@@ -13,6 +13,7 @@ import { logger } from '@/utils/logger';
 export class StatisticsController {
   apiService = new ApiService();
   SERVICE = `messaging/7.7`;
+  REC_SERVICE = `digitalregisteredletter/2.3`;
 
   @Get('/statistics/departments')
   @OpenAPI({ summary: 'Return department statistics' })
@@ -64,6 +65,22 @@ export class StatisticsController {
     }
   }
 
+  @Get('/my-rec-letters')
+  @OpenAPI({ summary: 'Return my rec letters array' })
+  @UseBefore(authMiddleware)
+  async getMyRecLetters(@Req() req: RequestWithUser, @Res() response: any): Promise<UserRecLetters> {
+    try {
+      const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters`;
+      const params = { limit: 9000 };
+      const result = await this.apiService.get<UserRecLetters>({ url, params }, req.user);
+
+      return response.send(result.data);
+    } catch (error) {
+      logger.error('Error getting statistics of rec letters: ', error);
+      throw new HttpException(500, 'Error getting statistics of rec letters');
+    }
+  }
+
   @Get('/my-statistics/:id')
   @OpenAPI({ summary: 'Return my statistics' })
   @UseBefore(authMiddleware)
@@ -75,6 +92,38 @@ export class StatisticsController {
       const result = await this.apiService.get<UserMessages>({ url, params }, req.user);
 
       return response.send(result.data.messages);
+    } catch (error) {
+      logger.error('Error getting statistics: ', error);
+      throw new HttpException(500, 'Error getting statistics');
+    }
+  }
+
+  @Get('/my-rec-letters/:id')
+  @OpenAPI({ summary: 'Return my rec letter' })
+  @UseBefore(authMiddleware)
+  async getMyRecLetter(@Req() req: RequestWithUser, @Res() response: any, @Param('id') id: string): Promise<RecLetter> {
+    try {
+      const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters/${id}`;
+      const params = { limit: 9000 };
+      const result = await this.apiService.get<RecLetter>({ url, params }, req.user);
+
+      return response.send(result.data);
+    } catch (error) {
+      logger.error('Error getting statistics: ', error);
+      throw new HttpException(500, 'Error getting statistics');
+    }
+  }
+
+  @Get('/signing-info/:id')
+  @OpenAPI({ summary: 'Return signing info' })
+  @UseBefore(authMiddleware)
+  async getSigningInfo(@Req() req: RequestWithUser, @Res() response: any, @Param('id') id: string): Promise<SigningInfo> {
+    try {
+      const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters/${id}/signinginfo`;
+      const params = { limit: 9000 };
+      const result = await this.apiService.get<SigningInfo>({ url, params }, req.user);
+
+      return response.send(result.data);
     } catch (error) {
       logger.error('Error getting statistics: ', error);
       throw new HttpException(500, 'Error getting statistics');
@@ -95,6 +144,29 @@ export class StatisticsController {
   ): Promise<any> {
     try {
       const url = `${this.SERVICE}/${MUNICIPALITY_ID}/messages/${messageId}/attachments/${fileName}`;
+      const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);
+      // NOTE: send the raw file
+      return result.data;
+    } catch (error) {
+      logger.error('Error getting statistics: ', error);
+      throw new HttpException(500, 'Error getting statistics');
+    }
+  }
+
+  @Get('/my-rec-letters/attachment/:letterId/:attachmentId')
+  @Header('Cross-Origin-Embedder-Policy', 'require-corp')
+  @Header('Cross-Origin-Resource-Policy', 'cross-origin')
+  @Header('Content-Type', 'application/pdf')
+  @OpenAPI({ summary: 'Return the attachment' })
+  @UseBefore(authMiddleware)
+  async getRecAttachment(
+    @Req() req: RequestWithUser,
+    @Param('letterId') letterId: string,
+    @Param('attachmentId') attachmentId: string,
+    @Res() response: any,
+  ): Promise<any> {
+    try {
+      const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters/${letterId}/attachments/${attachmentId}`;
       const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);
       // NOTE: send the raw file
       return result.data;

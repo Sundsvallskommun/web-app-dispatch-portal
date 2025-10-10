@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 
 export const StatisticsPage = () => {
-  const { batches, loaded } = useMyStatistics();
+  const { batchListItems, loaded } = useMyStatistics();
   const { t } = useTranslation();
 
   return (
@@ -19,13 +19,20 @@ export const StatisticsPage = () => {
       </div>
 
       <div className="max-w-full mb-80">
-        {loaded ? (
-          batches.map((batch) => {
-            return <ListItem data={batch} key={batch?.batchId} />;
-          })
-        ) : (
-          <Spinner />
-        )}
+        {
+          // loaded ? (
+          //   batches.map((batch) => {
+          //     return <ListItem data={batch} key={batch?.batchId} />;
+          //   })
+          // )
+          loaded ? (
+            batchListItems.map((batchListItem) => {
+              return <ListItem data={batchListItem} key={batchListItem?.id} />;
+            })
+          ) : (
+            <Spinner />
+          )
+        }
       </div>
     </DefaultLayout>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Batch } from '@interfaces/statistics.interface';
+import { Batch, BatchListItem, RecLetter } from '@interfaces/statistics.interface';
 import { PaddedListIcon } from '@components/list-item/padded-list-icon.component';
 import { Icon } from '@sk-web-gui/react';
 import { Calendar, ChevronRight, Users2 } from 'lucide-react';
@@ -9,7 +9,7 @@ import 'dayjs/locale/sv';
 import Link from 'next/link';
 
 interface ListItemComponentProps {
-  data: Batch;
+  data: BatchListItem;
 }
 
 export const getMessagePrefixUrl = (type: string) => {
@@ -53,8 +53,8 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
 
   return (
     <Link
-      href={`${getMessagePrefixUrl(data?.messageType)}/${data?.batchId}`}
-      key={data?.batchId}
+      href={`${getMessagePrefixUrl(data?.messageType)}/${data?.id}`}
+      key={data?.id}
       className="flex w-full mb-16 bg-background-content shadow-50 py-16 px-20 rounded-cards justify-between hover:bg-background-color-mixin-1 hover:cursor-pointer focus:ring-2 focus:outline-none"
     >
       <div className="flex w-full sm:items-center justify-between">
