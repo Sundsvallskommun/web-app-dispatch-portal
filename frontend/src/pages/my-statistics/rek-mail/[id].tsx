@@ -124,25 +124,20 @@ const MyStatisticsDetails = () => {
       .finally(() => setLoadingAttachmentIndex(-1));
   };
 
-  return (
-    <DefaultLayout
-      title={`Postportalen`}
-      pageheader={
-        <PageHeader color="transparent">
-          <Breadcrumb>
-            <Breadcrumb.Item>
-              <Breadcrumb.Link href="/my-statistics">{t('common:mainMenu.myStatistics')}</Breadcrumb.Link>
-            </Breadcrumb.Item>
+  const breadCrumb = (
+    <Breadcrumb>
+      <Breadcrumb.Item>
+        <Breadcrumb.Link href="/my-statistics">{t('common:mainMenu.myStatistics')}</Breadcrumb.Link>
+      </Breadcrumb.Item>
 
-            <Breadcrumb.Item currentPage>
-              <Breadcrumb.Link>
-                {t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
-              </Breadcrumb.Link>
-            </Breadcrumb.Item>
-          </Breadcrumb>
-        </PageHeader>
-      }
-    >
+      <Breadcrumb.Item currentPage>
+        <Breadcrumb.Link>{t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}</Breadcrumb.Link>
+      </Breadcrumb.Item>
+    </Breadcrumb>
+  );
+
+  return (
+    <DefaultLayout title={`Postportalen`} pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}>
       {recLoaded ? (
         <div className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">
