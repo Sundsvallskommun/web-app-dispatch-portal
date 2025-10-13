@@ -61,12 +61,15 @@ const MyStatisticsDetails = () => {
       property: 'status',
       renderColumn: (value, item) => {
         let displayValue = '';
-        switch (value) {
-          case 'COMPLETED':
-            displayValue = 'Mottaget';
+        switch ((value as string).toLowerCase()) {
+          case 'completed':
+            displayValue = t('statistics:myStatistics.signingInfo.completed');
             break;
-          case 'NEW':
-            displayValue = 'pending';
+          case 'pending':
+            displayValue = t('statistics:myStatistics.signingInfo.pending');
+            break;
+          case 'failed':
+            displayValue = t('statistics:myStatistics.signingInfo.failed');
             break;
         }
         return (
