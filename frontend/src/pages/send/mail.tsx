@@ -16,8 +16,9 @@ import { Mail } from 'lucide-react';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { formSchema } from '../../utils/formSchema.yup';
+import { useFilesOnNextClick } from '@utils/useFilesOnNextClick';
 
-type SendMailForm = yup.InferType<typeof formSchema>;
+export type SendMailForm = yup.InferType<typeof formSchema>;
 
 const initialValues = {
   attachmentList: [],
@@ -93,6 +94,12 @@ const SendMailPage = () => {
     return isValid;
   };
 
+  const filesOnNextClick = useFilesOnNextClick<SendMailForm>({
+    trigger,
+    setError: controls.setError,
+    hasAtLeastOneAttachment,
+  });
+
   return (
     <DefaultLayout
       title={t('send-mail:sendLetter')}
@@ -105,6 +112,7 @@ const SendMailPage = () => {
               label: t('send-mail:addTextDocument'),
               component: <AttachmentHandler />,
               valid: hasAtLeastOneAttachment,
+              onNextClick: filesOnNextClick,
             },
             {
               label: t('send-mail:recipientHandler.addRecipient'),

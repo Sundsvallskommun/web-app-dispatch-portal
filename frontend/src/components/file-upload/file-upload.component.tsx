@@ -42,6 +42,7 @@ const FileUpload: React.FC<{
     watch,
     setValue,
     formState: { errors },
+    clearErrors,
   } = useFormContext<{ newItem: FileList | undefined } & Record<string, any>>(); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const newItem: FileList = watch(`${fieldName}-newItem`);
@@ -69,6 +70,7 @@ const FileUpload: React.FC<{
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (!newItem?.[0]) return;
+    clearErrors(fieldName);
     resetErrors(setFileErrors, setError, onErrorReset);
     handleFiles({
       newItem,
