@@ -51,7 +51,6 @@ const MyStatisticsDetails = () => {
   const { message, loaded } = useMessage(id ?? '');
   const { letter, loaded: recLoaded } = useLetter(id ?? '');
   const { signingInfo, loaded: signingInfoLoaded } = useSigningInfo(id ?? '');
-  const { recipients, attachments, sent, subject } = message ?? defaultMessageInfo;
 
   const headers: Array<AutoTableHeader | string> = [
     {
@@ -163,9 +162,10 @@ const MyStatisticsDetails = () => {
     >
       {recLoaded ? (
         <div className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
-          <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
+          <h1 className="text-h4-lg mb-8">
+{t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
 </h1>
-          <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
+          <p className="mb-40">{letter.created ? dayjs(letter.created).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
           <AutoTable
