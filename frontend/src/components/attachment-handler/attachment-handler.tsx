@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
-import { FormControl, FormErrorMessage, Icon, ProgressBar } from '@sk-web-gui/react';
+import { FormControl, Icon, ProgressBar } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
 import {
   DndContext,
@@ -15,7 +15,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Info, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 
@@ -35,7 +35,6 @@ const AttachmentHandler: React.FC = () => {
     watch,
     setValue,
     getValues,
-    reset,
     formState: { errors },
   } = useFormContext<AttachmentFormModel>();
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
@@ -100,7 +99,6 @@ const AttachmentHandler: React.FC = () => {
           maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
           resetErrorTrigger={resetErrorTrigger}
         />
-        {errors.attachmentList && <FormErrorMessage>{errors.attachmentList.message?.toString()}</FormErrorMessage>}
       </FormControl>
       <div className="flex flex-col gap-8 w-full">
         <p className="text-small">

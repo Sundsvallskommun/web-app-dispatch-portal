@@ -16,7 +16,7 @@
   "attachmentHandler": {
     "header": "Bifoga filer",
     "description": "Bifoga upp till 4 filer som ska ingå i brevet. Den totala storleken får vara högst 1,5 MB.",
-    "helperText": "Tillåtna filtyper: PDF. Max storlek på utskick: 1.5 MB",
+    "helperText": "Tillåtna filtyper: PDF",
     "addedFilesHeader": "Tillagda filer",
     "noFiles": "Du har inte laddat upp några filer än",
     "addedFiles": "Tillagda filer ({num})",

@@ -13,7 +13,6 @@ type FileHandlerProps = {
   setAdded: (n: number) => void;
   setValue: (name: string, value: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
   setFileErrors: (value: SetStateAction<string[]>) => void;
-  setError: (value: SetStateAction<string | undefined>) => void;
   onErrorReset?: () => void;
 };
 
@@ -30,11 +29,10 @@ export const handleFiles = ({
   setAdded,
   setValue,
   setFileErrors,
-  setError,
   onErrorReset,
   fields,
 }: FileHandlerProps & { fields: { file?: File }[] }) => {
-  resetErrors(setFileErrors, setError, onErrorReset);
+  resetErrors(setFileErrors, onErrorReset);
 
   let numberOfAddedFiles = added;
 
@@ -105,15 +103,9 @@ export const handleFiles = ({
 
   setAdded(numberOfAddedFiles);
   setValue(`${fieldName}-newItem`, undefined);
-  setError(undefined);
 };
 
-export const resetErrors = (
-  setFileErrors: (value: SetStateAction<string[]>) => void,
-  setError: (value: SetStateAction<string | undefined>) => void,
-  onErrorReset?: () => void
-) => {
+export const resetErrors = (setFileErrors: (value: SetStateAction<string[]>) => void, onErrorReset?: () => void) => {
   setFileErrors([]);
-  setError(undefined);
   onErrorReset?.();
 };
