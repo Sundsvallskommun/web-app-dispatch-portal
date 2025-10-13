@@ -7,6 +7,7 @@ import { useFileUpload } from './file-upload.context';
 import { handleFiles, resetErrors } from './file-upload-utils';
 import { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
 import FileUploadError from './file-upload-error';
+import { Trans, useTranslation } from 'react-i18next';
 
 const FileUpload: React.FC<{
   fieldName: string;
@@ -36,6 +37,7 @@ const FileUpload: React.FC<{
   const [fileErrors, setFileErrors] = useState<string[]>([]);
   const [added, setAdded] = useState<number>(0);
   const ref = useRef<HTMLLabelElement>(null);
+  const { t } = useTranslation(['send-mail']);
 
   const {
     register,
@@ -138,8 +140,12 @@ const FileUpload: React.FC<{
             <Upload className="!h-[4rem] !w-[4rem] text-primary" />
             <div className="flex flex-col gap-8 justify-center">
               <div className="text-base font-normal">
-                <span className="underline text-vattjom-text-primary">Välj {allowMultiple ? 'filer' : 'fil'}</span>{' '}
-                eller dra och släpp {allowMultiple ? 'dem' : 'den'} här
+                <Trans
+                  i18nKey={`send-mail:attachmentHandler.uploadHelper${allowMultiple ? 'Multiple' : 'Single'}`}
+                  components={{
+                    span: <span className="underline text-vattjom-text-primary" />,
+                  }}
+                />
               </div>
               {helperText && <FormErrorMessage>{helperText}</FormErrorMessage>}
             </div>
@@ -149,7 +155,7 @@ const FileUpload: React.FC<{
             type="file"
             accept={accept.join(',')}
             multiple={allowMultiple}
-            placeholder="Välja fil att lägga till"
+            placeholder={t('send-mail:attachmentHandler.uploadInputPlaceHolder')}
             {...register(`${fieldName}-newItem`)}
           />
         </FormLabel>

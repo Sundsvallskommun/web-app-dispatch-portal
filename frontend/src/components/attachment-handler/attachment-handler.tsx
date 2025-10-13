@@ -161,10 +161,9 @@ const SortableItem: React.FC<{
   return (
     <div className="flex gap-16 items-center" ref={setNodeRef} style={style} {...attributes}>
       <span className="text-base text-body drag-handler cursor-grab">{id + 1}</span>
-
       <div className="flex flex-1 items-center rounded-groups border-1">
         <div className="py-24 px-22 border-r-1 content-center" {...listeners}>
-          <Icon size="1.4rem" icon={<Menu />} />
+          <Icon icon={<Menu />} />
         </div>
         <FileListItemComponent
           data={attach}
