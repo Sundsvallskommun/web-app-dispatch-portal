@@ -160,14 +160,11 @@ const FileUpload: React.FC<{
           />
         </FormLabel>
       </div>
-
-      <>
-        {errors?.[fieldName]?.message && <FileUploadError id={999} message={errors[fieldName]?.message?.toString()} />}
-        {errors?.newItem && <FormErrorMessage className="my-sm">{errors?.newItem.message}</FormErrorMessage>}
-        {fileErrors.map((e, idx) => (
-          <FileUploadError key={idx} id={idx} message={e} />
-        ))}
-      </>
+      {errors?.[fieldName]?.message && <FileUploadError id={999} message={errors[fieldName]?.message?.toString()} />}
+      {errors?.newItem && <FormErrorMessage className="my-sm">{errors?.newItem.message}</FormErrorMessage>}
+      {fileErrors.map((e, idx) => (
+        <FileUploadError key={`${fieldName}-${idx}`} id={idx} message={e} />
+      ))}
     </div>
   );
 };
