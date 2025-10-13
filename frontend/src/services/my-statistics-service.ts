@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { apiService } from '@services/api-service';
 import {
   Batch,
@@ -24,39 +24,34 @@ export const useMyStatistics = (): {
   batchListItems: BatchListItem[];
   loaded: boolean;
 } => {
-  const [loaded, setLoaded] = useState<boolean>(false);
   const { batches, batchesLoaded } = useMyMessages();
   const { recLetters, recLoaded } = useMyLetters();
 
-  const [batchListItems, setBatchListItems] = useState<BatchListItem[]>([]);
+  const loaded = batchesLoaded && recLoaded;
 
-  useEffect(() => {
-    if (batchesLoaded && recLoaded) {
-      let batchListItems1 = batches.map((batch) => {
-        let batchListItem: BatchListItem = {
-          id: batch.batchId,
-          messageType: batch.messageType,
-          sent: batch.sent,
-          subject: batch.subject,
-        };
-        return batchListItem;
-      });
-      let batchListItems2 = recLetters.map((letter) => {
-        let batchListItem: BatchListItem = {
-          id: letter.id,
-          messageType: 'REK',
-          sent: letter.created,
-          subject: letter.body,
-        };
-        return batchListItem;
-      });
+  const batchListItems = useMemo<BatchListItem[]>(() => {
+    if (!loaded) return [];
 
-      let batchListItems = batchListItems1.concat(batchListItems2).sort((a, b) => (a.sent < b.sent ? 1 : -1));
+    const itemsFromBatches = batches.map<BatchListItem>((batch) => ({
+      id: batch.batchId,
+      messageType: batch.messageType,
+      sent: batch.sent,
+      subject: batch.subject,
+    }));
 
-      setLoaded(true);
-      setBatchListItems(batchListItems);
-    }
-  }, [batchesLoaded, recLoaded, batches, recLetters]);
+    const itemsFromLetters = recLetters.map<BatchListItem>((letter) => ({
+      id: letter.id,
+      messageType: 'REK',
+      sent: letter.created,
+      subject: letter.subject,
+    }));
+
+    return [...itemsFromBatches, ...itemsFromLetters].sort((a, b) => {
+      const ta = typeof a.sent === 'string' ? new Date(a.sent).getTime() : (a.sent as Date).getTime();
+      const tb = typeof b.sent === 'string' ? new Date(b.sent).getTime() : (b.sent as Date).getTime();
+      return tb - ta;
+    });
+  }, [loaded, batches, recLetters]);
 
   return {
     batchListItems,
@@ -143,6 +138,7 @@ export const useMessage = (messageId: string): { message: Message; loaded: boole
 export const useLetter = (letterId: string): { letter: RecLetter; loaded: boolean } => {
   const [letter, setLetter] = useState<RecLetter>({
     id: '',
+    subject: '',
     municipalityId: '',
     status: '',
     body: '',
@@ -207,10 +203,10 @@ export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; lo
       return;
     }
     apiService.get<SigningInfo>(`signing-info/${letterId}`).then((res) => {
-      const letter = res?.data;
+      const signingInfo = res?.data;
 
-      if (letter) {
-        setSigningInfo(letter);
+      if (signingInfo) {
+        setSigningInfo(signingInfo);
       }
       setLoaded(true);
     });
