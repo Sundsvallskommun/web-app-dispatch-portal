@@ -116,7 +116,7 @@ const MyStatisticsDetails = () => {
           URL.revokeObjectURL(url);
         } else {
           snackBar({
-            message: `Misslyckades med att hämta filen "${fileName}"`,
+            message: `Det Misslyckades med att hämta filen "${fileName}"`,
             status: 'error',
           });
         }
