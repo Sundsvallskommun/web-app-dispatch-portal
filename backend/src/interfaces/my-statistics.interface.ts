@@ -61,6 +61,7 @@ export interface UserRecLetters {
 
 export interface RecLetter {
   id: string;
+  subject: string;
   municipalityId: string;
   status: string;
   body: string;
