@@ -16,7 +16,8 @@ import { Mail } from 'lucide-react';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { formSchema } from '../../utils/formSchema.yup';
-import { useFilesOnNextClick } from '@utils/useFilesOnNextClick';
+import { hasValidRecipients } from '@utils/hasValidRecipients';
+import { useMailStepValidations } from 'src/hooks/useMailStepValidation';
 
 export type SendMailForm = yup.InferType<typeof formSchema>;
 
@@ -64,6 +65,12 @@ const SendMailPage = () => {
   const watchAttachmentList = watch('attachmentList');
   const hasAtLeastOneAttachment = watchAttachmentList ? watchAttachmentList.length > 0 : false;
 
+  const { recipientOnNextClick, filesOnNextClick } = useMailStepValidations(
+    trigger,
+    controls.setError,
+    hasAtLeastOneAttachment
+  );
+
   useEffect(() => {
     if (response) {
       setSuccess(true);
@@ -76,11 +83,6 @@ const SendMailPage = () => {
     setValue('storeRecipients', recipients ?? [], { shouldValidate: true, shouldDirty: false });
   }, [recipients, setValue]);
 
-  const hasValidRecipients =
-    recipients?.some(
-      (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
-    ) || addresses.length > 0;
-
   const stepTexts: Record<number, string> = {
     0: t('common:screenReader.postStepper.stepOne'),
     1: t('common:screenReader.postStepper.stepTwo'),
@@ -88,17 +90,6 @@ const SendMailPage = () => {
   };
 
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
-
-  const handleOnNextClick = async () => {
-    const isValid = await trigger(['singleRecipient', 'recipientList', 'storeRecipients']);
-    return isValid;
-  };
-
-  const filesOnNextClick = useFilesOnNextClick<SendMailForm>({
-    trigger,
-    setError: controls.setError,
-    hasAtLeastOneAttachment,
-  });
 
   return (
     <DefaultLayout
@@ -117,8 +108,8 @@ const SendMailPage = () => {
             {
               label: t('send-mail:recipientHandler.addRecipient'),
               component: <RecipientHandler />,
-              valid: hasValidRecipients,
-              onNextClick: handleOnNextClick,
+              valid: hasValidRecipients(recipients, addresses),
+              onNextClick: recipientOnNextClick,
             },
             { label: t('send-mail:addSender'), component: <SenderHandler /> },
           ]}
