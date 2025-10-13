@@ -1,33 +1,15 @@
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import {
-  Icon,
-  Breadcrumb,
-  AutoTable,
-  AutoTableHeader,
-  Tabs,
-  Button,
-  Spinner,
-  useSnackbar,
-  Divider,
-  Label,
-} from '@sk-web-gui/react';
+import { useMemo, useState } from 'react';
+import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnackbar, Divider } from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
-import {
-  getAttachmentFile,
-  useLetter,
-  useMessage,
-  useSigningInfo,
-  getRecAttachmentFile,
-} from '@services/my-statistics-service';
+import { useLetter, useSigningInfo, getRecAttachmentFile } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { Attachment, Message, RecAttachment } from '@interfaces/statistics.interface';
+import { Message, RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
-import { isDigitalMessage } from '@utils/statistics-helpers';
 
 const defaultMessageInfo: Message = {
   sent: '',
@@ -43,11 +25,10 @@ const MyStatisticsDetails = () => {
   const router = useRouter();
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
   const snackBar = useSnackbar();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['common', 'statistics']);
 
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
 
-  const { message, loaded } = useMessage(id ?? '');
   const { letter, loaded: recLoaded } = useLetter(id ?? '');
   const { signingInfo, loaded: signingInfoLoaded } = useSigningInfo(id ?? '');
 
@@ -83,9 +64,9 @@ const MyStatisticsDetails = () => {
       label: '',
       columnPosition: 'right',
       renderColumn: (value, item) => (
-        <div className="min-w-120">
+        <div className="">
           <Button size="sm" color="vattjom" rightIcon={<Download />}>
-            Ladda ner kvittering
+            {t('statistics:myStatistics.downloadRecept')}
           </Button>
         </div>
       ),
@@ -93,7 +74,7 @@ const MyStatisticsDetails = () => {
   ];
 
   let recipient = undefined;
-  if (signingInfo.user) {
+  if (signingInfo.user && signingInfoLoaded) {
     recipient = {
       recipient: `${signingInfo.user?.name ?? ''} ${signingInfo.user?.surname ?? ''}${signingInfo.user?.personalIdentityNumber ? ',' : ''} ${signingInfo.user?.personalIdentityNumber ?? ''}`,
       status: signingInfo.status,
@@ -165,8 +146,8 @@ const MyStatisticsDetails = () => {
       {recLoaded ? (
         <div className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">
-{t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
-</h1>
+            {t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
+          </h1>
           <p className="mb-40">{letter.created ? dayjs(letter.created).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>

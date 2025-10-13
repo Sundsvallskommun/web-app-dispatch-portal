@@ -19,6 +19,12 @@
     "emailMessagePrefixUrl": "/my-statistics/mail",
     "letterSubject": "Brev ({subject})",
     "recLetterSubject": "{subject} (Rekommenderat Brev)",
-    "sms": "Sms"
+    "sms": "Sms",
+    "signingInfo": {
+      "completed": "Mottaget",
+      "pending": "Väntar",
+      "failed": "Misslyckades"
+    },
+    "downloadRecept": "Ladda ner kvittering"
   }
 }
