@@ -1,6 +1,7 @@
 import ApiService from '@/services/api.service';
 import { MUNICIPALITY_ID } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
+import { logger } from '@/utils/logger';
 
 interface EligibilityItemDto {
   partyIds: string[];
@@ -24,8 +25,10 @@ export class DigitalRegisteredLetterService {
       const hasKivra = res.data.includes(partyId);
       return { partyId, hasKivra };
     } catch (e) {
-      console.error('Error when checking eligibility:', e);
-      throw new Error('Error when checking eligibility');
+      const errorMessage = 'Error when checking eligibility';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
+      throw new Error(errorMessage);
     }
   }
 }
