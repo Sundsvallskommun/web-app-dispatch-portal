@@ -46,7 +46,6 @@ const MyStatisticsDetails = () => {
   const { t } = useTranslation();
 
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
-  const [recAttachments, setRecAttachments] = useState<RecAttachment[]>([]);
 
   const { message, loaded } = useMessage(id ?? '');
   const { letter, loaded: recLoaded } = useLetter(id ?? '');
@@ -103,14 +102,14 @@ const MyStatisticsDetails = () => {
     };
   }
 
-  useEffect(() => {
+  const recAttachments = useMemo<RecAttachment[]>(() => {
     if (letter && letter.id) {
       let attachments = letter.attachments.map((a) => {
         return { contentType: a.contentType, fileName: a.fileName, id: a.id } as RecAttachment;
       });
 
-      setRecAttachments(attachments);
-    }
+      return attachments;
+    } else return [];
   }, [letter]);
 
   const getRecAttachment = (fileName: string, attachmentId: string, index: number) => {
