@@ -162,29 +162,27 @@ const MyStatisticsDetails = () => {
 
           <p className="mt-40 font-bold">{capitalize(t('statistics:myStatistics.attachments'))}</p>
           {recAttachments?.length ? (
-            <>
-              <div className="flex flex-col items-start mt-16">
-                {recAttachments?.map((file, index) => (
-                  <div className="w-full" key={`${file.fileName}-${index}`}>
-                    <div className="flex items-center p-12 gap-12 w-full">
-                      <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
-                        <Icon className="text-vattjom-text-primary" icon={<File />} />
-                      </div>
-                      <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
-                      <Button
-                        loading={loadingAttachmentIndex === index}
-                        onClick={() => getRecAttachment(file.fileName, file.id, index)}
-                        variant="tertiary"
-                        aria-label={capitalize(t('statistics:myStatistics.attachments'))}
-                      >
-                        {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
-                      </Button>
+            <div className="flex flex-col items-start mt-16">
+              {recAttachments?.map((file, index) => (
+                <div className="w-full" key={`${file.fileName}-${index}`}>
+                  <div className="flex items-center p-12 gap-12 w-full">
+                    <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
+                      <Icon className="text-vattjom-text-primary" icon={<File />} />
                     </div>
-                    <Divider className="m-0" />
+                    <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
+                    <Button
+                      loading={loadingAttachmentIndex === index}
+                      onClick={() => getRecAttachment(file.fileName, file.id, index)}
+                      variant="tertiary"
+                      aria-label={capitalize(t('statistics:myStatistics.attachments'))}
+                    >
+                      {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
+                    </Button>
                   </div>
-                ))}
-              </div>
-            </>
+                  <Divider className="m-0" />
+                </div>
+              ))}
+            </div>
           ) : null}
         </div>
       ) : (
