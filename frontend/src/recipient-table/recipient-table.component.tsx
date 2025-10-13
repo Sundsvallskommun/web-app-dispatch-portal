@@ -61,6 +61,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
   const AutoTableHeaderRecipient = {
     label: 'Mottagare',
+    isColumnSortable: sendType === formSendType.MAIL,
     renderColumn: (value, item) => {
       // Added with address
       if (item?.firstName) {

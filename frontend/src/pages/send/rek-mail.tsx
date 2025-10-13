@@ -13,7 +13,7 @@ import FormStepperHeader from '@components/form-stepper/form-stepper-header.comp
 import { useMessageStore } from '@services/recipient-service';
 import { useRouter } from 'next/router';
 import { formSendType } from 'src/constants';
-import { formSchema } from './formSchema.yup';
+import { formSchema } from '../../utils/formSchema.yup';
 
 type SendRekMailForm = yup.InferType<typeof formSchema>;
 
