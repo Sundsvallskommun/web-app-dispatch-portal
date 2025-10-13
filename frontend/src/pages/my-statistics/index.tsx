@@ -19,20 +19,13 @@ export const StatisticsPage = () => {
       </div>
 
       <div className="max-w-full mb-80">
-        {
-          // loaded ? (
-          //   batches.map((batch) => {
-          //     return <ListItem data={batch} key={batch?.batchId} />;
-          //   })
-          // )
-          loaded ? (
-            batchListItems.map((batchListItem) => {
-              return <ListItem data={batchListItem} key={batchListItem?.id} />;
-            })
-          ) : (
-            <Spinner />
-          )
-        }
+        {loaded ? (
+          batchListItems.map((batchListItem) => {
+            return <ListItem data={batchListItem} key={batchListItem?.id} />;
+          })
+        ) : (
+          <Spinner />
+        )}
       </div>
     </DefaultLayout>
   );
