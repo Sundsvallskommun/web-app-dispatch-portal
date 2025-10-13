@@ -99,7 +99,9 @@ const MyStatisticsDetails = () => {
   const getRecAttachment = (fileName: string, attachmentId: string, index: number) => {
     setLoadingAttachmentIndex(index);
 
-    getRecAttachmentFile(id!, attachmentId)
+    if (!id) return;
+
+    getRecAttachmentFile(id, attachmentId)
       .then((d) => {
         if (d.error === undefined) {
           const bufferArray = new Uint8Array(d.data).buffer;
