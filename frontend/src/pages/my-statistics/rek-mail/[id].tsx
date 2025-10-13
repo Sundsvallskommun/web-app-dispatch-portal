@@ -87,7 +87,7 @@ const MyStatisticsDetails = () => {
   }
 
   const recAttachments = useMemo<RecAttachment[]>(() => {
-    if (letter && letter.id) {
+    if (letter?.id) {
       let attachments = letter.attachments.map((a) => {
         return { contentType: a.contentType, fileName: a.fileName, id: a.id } as RecAttachment;
       });
@@ -101,7 +101,7 @@ const MyStatisticsDetails = () => {
 
     getRecAttachmentFile(id!, attachmentId)
       .then((d) => {
-        if (typeof d.error === 'undefined') {
+        if (d.error === undefined) {
           const bufferArray = new Uint8Array(d.data).buffer;
           const blob = new Blob([bufferArray], {
             type: 'application/pdf',
@@ -112,7 +112,7 @@ const MyStatisticsDetails = () => {
           a.download = `${fileName}`;
           document.body.appendChild(a);
           a.click();
-          document.body.removeChild(a);
+          a.remove();
           URL.revokeObjectURL(url);
         } else {
           snackBar({
