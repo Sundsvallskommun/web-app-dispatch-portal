@@ -1,5 +1,5 @@
 import React from 'react';
-import { Batch, BatchListItem, RecLetter } from '@interfaces/statistics.interface';
+import { Batch, BatchListItem } from '@interfaces/statistics.interface';
 import { PaddedListIcon } from '@components/list-item/padded-list-icon.component';
 import { Icon } from '@sk-web-gui/react';
 import { Calendar, ChevronRight, Users2 } from 'lucide-react';

@@ -4,12 +4,36 @@ import {
   Batch,
   BatchListItem,
   Message,
-  RecLetter,
+  PagingMetaData,
+  RecAttachment,
   SigningInfo,
   UserBatches,
-  UserRecLetters,
 } from '@interfaces/statistics.interface';
 
+export interface UserRecLetters {
+  _meta: PagingMetaData;
+  letters: RecLetter[];
+}
+
+export interface RecLetter {
+  id: string;
+  subject: string;
+  municipalityId: string;
+  status: string;
+  body: string;
+  contentType: string;
+  created: string;
+  updated: string;
+  supportInfo: RecSupportInfo;
+  attachments: RecAttachment[];
+}
+
+export interface RecSupportInfo {
+  supportText: string;
+  contactInformationUrl: string;
+  contactInformationPhoneNumber: string;
+  contactInformationEmail: string;
+}
 export interface AttachmentResponse {
   data: ArrayBuffer;
   error?: never;
