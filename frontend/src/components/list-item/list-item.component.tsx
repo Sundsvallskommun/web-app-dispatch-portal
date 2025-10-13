@@ -1,8 +1,8 @@
 import React from 'react';
-import { Batch, BatchListItem } from '@interfaces/statistics.interface';
+import { BatchListItem } from '@interfaces/statistics.interface';
 import { PaddedListIcon } from '@components/list-item/padded-list-icon.component';
 import { Icon } from '@sk-web-gui/react';
-import { Calendar, ChevronRight, Users2 } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
