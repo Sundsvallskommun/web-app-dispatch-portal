@@ -30,20 +30,14 @@ export interface AttachmentFormModel {
 const AttachmentHandler: React.FC = () => {
   const maxMain = 1;
   const maxSecondary = 3;
-  const {
-    register,
-    watch,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = useFormContext<AttachmentFormModel>();
+  const { register, watch, setValue, getValues } = useFormContext<AttachmentFormModel>();
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
   const [resetErrorTrigger, setResetErrorTrigger] = useState(0);
   const { t } = useTranslation(['send-mail']);
 
   useEffect(() => {
     setValue('attachmentList', []);
-  }, []);
+  }, [setValue]);
 
   const fileStorageLimit = useMemo(() => {
     const totalBytes = attachmentList.reduce((sum, a) => sum + (a.file?.size || 0), 0);
