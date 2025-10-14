@@ -45,10 +45,10 @@
     @apply flex flex-col grow;
   }
   .sms-main-container {
-    @apply flex pt-64 px-20 bg-transparent grow;
+    @apply flex pt-64 px-20 md:px-48 bg-transparent grow;
 
     .sms-container {
-      @apply mx-auto flex flex-col lg:px-80 justify-center items-start gap-80 self-stretch w-full;
+      @apply mx-auto flex flex-col items-start gap-80 self-stretch w-full;
     }
   }
 }
