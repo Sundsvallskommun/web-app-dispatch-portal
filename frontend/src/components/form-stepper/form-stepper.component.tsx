@@ -55,7 +55,7 @@ const FormStepper = <T extends FieldValues>({
   };
 
   const contentSuccess = (
-    <div className="text-center max-w-[63rem] mx-auto">
+    <div className="text-center max-w-[63rem] mx-auto my-64">
       <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
       <h2 className="mt-24">{t('send-mail:success')}</h2>
       <p className="my-md text-base">{`${t('send-mail:successInfo')}`}</p>
@@ -88,7 +88,7 @@ const FormStepper = <T extends FieldValues>({
       <div className="flex flex-row justify-end gap-16 my-40">
         {currentStep !== 0 && (
           <Button variant="secondary" onClick={() => setCurrentStep(currentStep - 1)}>
-            {t('back')}
+            {t('common:back')}
           </Button>
         )}
         <div>
@@ -96,7 +96,7 @@ const FormStepper = <T extends FieldValues>({
             submitButton
           ) : (
             <Button variant="primary" onClick={() => handleNextClicked()} color="vattjom" rightIcon={<ArrowRight />}>
-              {t('next')}
+              {t('common:next')}
             </Button>
           )}
         </div>
@@ -106,7 +106,7 @@ const FormStepper = <T extends FieldValues>({
 
   return (
     <React.Fragment>
-      <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
+      <h1 className="sr-only">{`${t('common:screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className={cx('flex flex-col', isMd ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
         {success ? contentSuccess : contentFormProvider}
       </div>
