@@ -13,6 +13,15 @@
   "sendRecLetter": "Skicka rekommenderat brev",
   "addTextDocument": "Lägg till textdokument",
   "addSender": "Ange avsändare",
+  "senderHandler": {
+    "headerLabel": "Rubrik för brevet",
+    "headerDescription": "Ange en rubrik som beskriver brevets innehåll.",
+    "formLabelHeader": "Rubrik",
+    "headerManagement": "Din förvaltning",
+    "managementDescription": "Informationen används endast för fakturering. Förvaltningen visas inte för mottagaren.",
+    "managementLabel": "Förvaltning",
+    "selectManagementText": "Välj förvaltning"
+  },
   "attachmentHandler": {
     "header": "Bifoga filer",
     "description": "Bifoga upp till 4 filer som ska ingå i brevet. Den totala storleken får vara högst 1,5 MB.",

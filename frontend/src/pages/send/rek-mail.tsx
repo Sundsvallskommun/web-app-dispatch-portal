@@ -17,6 +17,7 @@ import { formSchema } from '../../utils/formSchema.yup';
 import AttachmentHandler from '@components/attachment-handler/attachment-handler';
 import { hasValidRecipients } from '@utils/hasValidRecipients';
 import { useMailStepValidations } from 'src/hooks/useMailStepValidation';
+import { SenderHandler } from '@components/sender-handler/sender-handler.component';
 
 type SendRekMailForm = yup.InferType<typeof formSchema>;
 
@@ -102,7 +103,7 @@ const SendRekMail = () => {
             },
             {
               label: t('common:stepper.header'),
-              component: <>Rubrik och förvaltning</>, // To Do: lägg till korrekt komponent
+              component: <SenderHandler />,
               valid: true,
             },
             {
