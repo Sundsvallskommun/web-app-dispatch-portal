@@ -58,8 +58,6 @@ export interface FormModel {
 export default function SendEmailPage() {
   const [success, setSuccess] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const gui = useGui();
-  const isMedium = useMediaQuery(`screen and (min-width:${gui.theme?.screens?.md})`);
   const { t } = useTranslation(['common', 'send-sms']);
 
   const message = useSnackbar();
