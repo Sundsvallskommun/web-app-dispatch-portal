@@ -32,6 +32,53 @@ const FormStepperHeader = ({
 
   const justifyClass = !showCancelButton && !showTitle ? 'justify-end' : 'justify-between';
 
+  let cancelButton: React.ReactNode;
+  if (showCancelButton) {
+    const content = isMd ? (
+      <Button iconButton variant="secondary" className="border-0" aria-label={t('common:cancel')}>
+        <Icon icon={<CircleX />} />
+      </Button>
+    ) : (
+      <Link strong={true} variant="tertiary">
+        {t('common:cancel')}
+      </Link>
+    );
+
+    cancelButton = (
+      <div className={cx(!isMd && 'pr-54')}>
+        <NextLink href="/" passHref legacyBehavior>
+          {content}
+        </NextLink>
+      </div>
+    );
+  }
+
+  let helpButton: React.ReactNode;
+  if (showHelpButton) {
+    if (isMd) {
+      helpButton = (
+        <Button
+          iconButton
+          variant="secondary"
+          className="border-0"
+          onClick={openHelpComposer}
+          aria-label={t('common:help')}
+        >
+          <Icon icon={<HelpCircle />} />
+        </Button>
+      );
+    } else {
+      helpButton = (
+        <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
+          <Icon icon={<HelpCircle />} />
+          {t('common:help')}
+        </Button>
+      );
+    }
+  } else {
+    helpButton = <div className="px-54"></div>;
+  }
+
   return (
     <div
       className={cx(
@@ -40,47 +87,14 @@ const FormStepperHeader = ({
       )}
     >
       <div className={cx('flex grow items-center w-full max-w-[--max-w-7xl]', justifyClass)}>
-        {showCancelButton && (
-          <div className={cx(!isMd && 'pr-54')}>
-            <NextLink href="/" passHref legacyBehavior>
-              {isMd ? (
-                <Button iconButton variant="secondary" className="border-0" aria-label={t('common:cancel')}>
-                  <Icon icon={<CircleX />} />
-                </Button>
-              ) : (
-                <Link strong={true} variant="tertiary">
-                  {t('common:cancel')}
-                </Link>
-              )}
-            </NextLink>
-          </div>
-        )}
+        {cancelButton}
         {showTitle && (
           <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content]')}>
             {!isMd && <Icon icon={icon} />}
             <h4 className="text-xs md:text-[2rem]">{title}</h4>
           </div>
         )}
-        {showHelpButton ? (
-          isMd ? (
-            <Button
-              iconButton
-              variant="secondary"
-              className="border-0"
-              onClick={openHelpComposer}
-              aria-label={t('common:help')}
-            >
-              <Icon icon={<HelpCircle />} />
-            </Button>
-          ) : (
-            <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
-              <Icon icon={<HelpCircle />} />
-              {t('common:help')}
-            </Button>
-          )
-        ) : (
-          <div className="px-54"></div>
-        )}
+        {helpButton}
       </div>
       <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
     </div>
