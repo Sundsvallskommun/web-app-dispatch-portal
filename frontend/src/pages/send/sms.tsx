@@ -167,7 +167,12 @@ export default function SendEmailPage() {
   };
 
   return (
-    <DefaultLayout title={`Postportalen`} headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} />}>
+    <DefaultLayout
+      title={`Postportalen`}
+      headerMenu={
+        <FormStepperHeader title="Skicka Sms" icon={<Smartphone />} showCancelButton={!success} showTitle={!success} />
+      }
+    >
       <div className="sms-main-container">
         <div className="sms-container">
           <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
