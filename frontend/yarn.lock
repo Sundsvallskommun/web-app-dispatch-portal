@@ -839,7 +839,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@headlessui/react@npm:^2.2.0":
+"@headlessui/react@npm:^2.2.7":
   version: 2.2.9
   resolution: "@headlessui/react@npm:2.2.9"
   dependencies:
@@ -1379,17 +1379,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lottiefiles/react-lottie-player@npm:3.6.0":
-  version: 3.6.0
-  resolution: "@lottiefiles/react-lottie-player@npm:3.6.0"
-  dependencies:
-    lottie-web: "npm:^5.12.2"
-  peerDependencies:
-    react: 16 - 19
-  checksum: 10c0/a27e36b257bd44e208a027b5c91abee8a24682cd3cf168e32ec164006c01021a21df83dfc6e3350263b360d5b71b3e884ff8aca7886c5828bda69910360b85b4
-  languageName: node
-  linkType: hard
-
 "@mui/base@npm:5.0.0-beta.40":
   version: 5.0.0-beta.40
   resolution: "@mui/base@npm:5.0.0-beta.40"
@@ -1810,133 +1799,133 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/animated@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/animated@npm:9.7.5"
+"@react-spring/animated@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/animated@npm:10.0.3"
   dependencies:
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/shared": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/f8c2473c60f39a878c7dd0fdfcfcdbc720521e1506aa3f63c9de64780694a0a73d5ccc535a5ccec3520ddb70a71cf43b038b32c18e99531522da5388c510ecd7
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/6142522f310926729a92009a108ec1bd0d1fe3dca7e9aa0c49692c82fbed28f70c0ea9808fc7452f04bb688ae34333e780f794495906fa4b0efbfc7d53a19b6b
   languageName: node
   linkType: hard
 
-"@react-spring/core@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/core@npm:9.7.5"
+"@react-spring/core@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/core@npm:10.0.3"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/animated": "npm:~10.0.3"
+    "@react-spring/shared": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/5bfd83dfe248cd91889f215f015d908c7714ef445740fd5afa054b27ebc7d5a456abf6c309e2459d9b5b436e78d6fda16b62b9601f96352e9130552c02270830
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/d941541d4a40a5229f488e78b414149d54238065178fdd14db307a851d285d521ab1914c0d426b102e0190651dbe752aeb743cee4cd497f5c066be937f2d1790
   languageName: node
   linkType: hard
 
-"@react-spring/konva@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/konva@npm:9.7.5"
+"@react-spring/konva@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/konva@npm:10.0.3"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/core": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/animated": "npm:~10.0.3"
+    "@react-spring/core": "npm:~10.0.3"
+    "@react-spring/shared": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
     konva: ">=2.6"
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-konva: ^16.8.0 || ^16.8.7-0 || ^16.9.0-0 || ^16.10.1-0 || ^16.12.0-0 || ^16.13.0-0 || ^17.0.0-0 || ^17.0.1-0 || ^17.0.2-0 || ^18.0.0-0
-  checksum: 10c0/c0df7920e3ff2edec579631e38c5dc1288972ac0a30b639fae482da67755462269d3eaacad057d4c191dd21255d5ab75287db431eaad1a5755d8230dd35e1d8e
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-konva: ^19
+  checksum: 10c0/7b36382c46e9d26b6c4ed9e14ee46eb5dcf0b4cef7ef021c3c0213059c5c4b41157b798fcc19aac0c2606283dc4473c3f66a35e0bb8fb11bda3f004a7c69a1a9
   languageName: node
   linkType: hard
 
-"@react-spring/native@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/native@npm:9.7.5"
+"@react-spring/native@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/native@npm:10.0.3"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/core": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/animated": "npm:~10.0.3"
+    "@react-spring/core": "npm:~10.0.3"
+    "@react-spring/shared": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
-    react: 16.8.0  || >=17.0.0 || >=18.0.0
-    react-native: ">=0.58"
-  checksum: 10c0/a7d4e9806298e5d2a31cfc69acc9aef240857f446151d6eef89c781c40afd36b79ee5517d512f092473dc8307def42460b88aa800645958210ba9c8ca00b2122
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-native: ">=0.78"
+  checksum: 10c0/20a7ca49941f0f00eae11ef775d14bf02af4ba5e825de65a88fbb004ec43ae36fa0567e9bbc54e0be093e4044cdb60b461eeb64c4a7886cf38332dc77a108e5a
   languageName: node
   linkType: hard
 
-"@react-spring/rafz@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/rafz@npm:9.7.5"
-  checksum: 10c0/8bdad180feaa9a0e870a513043a5e98a4e9b7292a9f887575b7e6fadab2677825bc894b7ff16c38511b35bfe6cc1072df5851c5fee64448d67551559578ca759
+"@react-spring/rafz@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/rafz@npm:10.0.3"
+  checksum: 10c0/4cf6f710e2be64a3d94e90a20a24a93c68a89b618538d32aaf0079217f9fbed610395051a181d2d010c7ed6898cb7239a3f2ced1d91dd93e4138563ffd2d44ce
   languageName: node
   linkType: hard
 
-"@react-spring/shared@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/shared@npm:9.7.5"
+"@react-spring/shared@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/shared@npm:10.0.3"
   dependencies:
-    "@react-spring/rafz": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/rafz": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/0207eacccdedd918a2fc55e78356ce937f445ce27ad9abd5d3accba8f9701a39349b55115641dc2b39bb9d3a155b058c185b411d292dc8cc5686bfa56f73b94f
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/d8b33b2390792924d0ff2b57b3098d1c6b688a788fc67e83b168928659aad7435dd2c399925a765ffa5080182634dde8f9f76c919f2c259a33af15319187f72f
   languageName: node
   linkType: hard
 
-"@react-spring/three@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/three@npm:9.7.5"
+"@react-spring/three@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/three@npm:10.0.3"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/core": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/animated": "npm:~10.0.3"
+    "@react-spring/core": "npm:~10.0.3"
+    "@react-spring/shared": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
     "@react-three/fiber": ">=6.0"
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     three: ">=0.126"
-  checksum: 10c0/793f2c27a55060b015880e661ede045f240e4be9b85f448616fb0f8f282bed21d08fb2389a70c73addffbdb868c38bc26d8c6f6f55dd2b0ef67ba6c5a11a55d9
+  checksum: 10c0/bdc9e91bfed61e21a17d9a5894de94f9c90d28906f8460f7b22dfa013014fccdaec7292f9ce3a331d23bce31d7488ee83cf5ef51b388ab895180826d4fffcec8
   languageName: node
   linkType: hard
 
-"@react-spring/types@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/types@npm:9.7.5"
-  checksum: 10c0/85c05121853cacb64f7cf63a4855e9044635e1231f70371cd7b8c78bc10be6f4dd7c68f592f92a2607e8bb68051540989b4677a2ccb525dba937f5cd95dc8bc1
+"@react-spring/types@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/types@npm:10.0.3"
+  checksum: 10c0/f9bc2619dc9997fe93ebab90fd98118106e53bc45c9c279caaa7081b69d3ed0186d603d5ed445e56bb8ad0075553d15908a2a54e3a0a36ef7cd43a03c1650b02
   languageName: node
   linkType: hard
 
-"@react-spring/web@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/web@npm:9.7.5"
+"@react-spring/web@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/web@npm:10.0.3"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/core": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/animated": "npm:~10.0.3"
+    "@react-spring/core": "npm:~10.0.3"
+    "@react-spring/shared": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/bcd1e052e1b16341a12a19bf4515f153ca09d1fa86ff7752a5d02d7c4db58e8baf80e6283e64411f1e388c65340dce2254b013083426806b5dbae38bd151e53e
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/cafbf55991d68920e94419b5b081cfb0aea2ddfa193e984861ab53306365bf81152bce2861370f9b26d4027dd714e8acc0dfbd57bd2eda99e827c3212e22a51c
   languageName: node
   linkType: hard
 
-"@react-spring/zdog@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/zdog@npm:9.7.5"
+"@react-spring/zdog@npm:~10.0.3":
+  version: 10.0.3
+  resolution: "@react-spring/zdog@npm:10.0.3"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/core": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/animated": "npm:~10.0.3"
+    "@react-spring/core": "npm:~10.0.3"
+    "@react-spring/shared": "npm:~10.0.3"
+    "@react-spring/types": "npm:~10.0.3"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-zdog: ">=1.0"
     zdog: ">=1.0"
-  checksum: 10c0/0e506a2c0efb6944334bc21b1df660c090f9c6804846c77b6232314df53a617ef5629c832478357cb8bb943690e60861fb6f56c58be86036901291b119d5d46f
+  checksum: 10c0/ec41cb1cebfe7992aaeede7dc8d80b90aa6297af1b4e02b7bd4674b35dd257dc0f52c17a07d2e7dc46f8bbd6e604bc34ddc39b3d81019a60341a51a25e645c0f
   languageName: node
   linkType: hard
 
@@ -2030,70 +2019,70 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/accordion@npm:2.1.3":
-  version: 2.1.3
-  resolution: "@sk-web-gui/accordion@npm:2.1.3"
+"@sk-web-gui/accordion@npm:2.1.9":
+  version: 2.1.9
+  resolution: "@sk-web-gui/accordion@npm:2.1.9"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/divider": "npm:1.1.3"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/divider": "npm:1.1.6"
     "@sk-web-gui/icon": "npm:3.1.2"
     "@sk-web-gui/label": "npm:1.1.2"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/9deb9d16abcac5425e9c1964cfaa3fa8b29204521e986b30c71427781cf3219e170eb0efaa11aa194b499a1404c3c93c60d30a3ac6b6350b042eeb3144ec54d8
+  checksum: 10c0/43437e16767c95e7cbce22e7e1019a9247b5b0ea51fcd1ebdf7c0d3725489040708997ae5359972b2bb82218fc1526eaa26576f8691b93497d1d7cbd2e6c6089
   languageName: node
   linkType: hard
 
-"@sk-web-gui/avatar@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/avatar@npm:1.1.3"
+"@sk-web-gui/avatar@npm:1.2.2":
+  version: 1.2.2
+  resolution: "@sk-web-gui/avatar@npm:1.2.2"
   dependencies:
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/ca7a2e62dd3191904c44d24b7c7a1d6223326d771ae2c31da304172ebc8818abd018295ad8c561ae4c0bfc73ea23e14203c39d53568d306a29bf7b043d2cced5
+  checksum: 10c0/65c74c70c165934e90262f8e1cfcc2153d9559c0180945ad64aea35510e5fcb4d4e366b80c635ea166b87ee1fd0a96ab4c00330bf0d37da67307ae5042a7df8e
   languageName: node
   linkType: hard
 
-"@sk-web-gui/badge@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@sk-web-gui/badge@npm:1.1.2"
+"@sk-web-gui/badge@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@sk-web-gui/badge@npm:1.2.0"
   dependencies:
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/e9c1d3d8fa8e838f7170932f936eb8a45e55cb8fb51abe6df80b61d0085bac19496002ddb587a1436a45889661916b7f3ac888a305730dac758ba636a72e7d1b
+  checksum: 10c0/b51a31bad26834e4793e22f06e238deba83d664b0da8bc1ecffa3fb38ed292b5705fbb1548f3c6969774a6cc6c0b7afb5b3fdbd5bfdf4523ae6303cf37f91647
   languageName: node
   linkType: hard
 
-"@sk-web-gui/breadcrumb@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/breadcrumb@npm:1.1.3"
+"@sk-web-gui/breadcrumb@npm:1.1.7":
+  version: 1.1.7
+  resolution: "@sk-web-gui/breadcrumb@npm:1.1.7"
   dependencies:
-    "@sk-web-gui/link": "npm:1.2.3"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/link": "npm:1.2.7"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/3f8dc844df7b192301acf83b2365a1a2e4c1f2f93c5c72f3401bded9ae6558e9d2e307aecc34da15348bea00cdc25c0847df1c250fdd59308f59362b3a955939
+  checksum: 10c0/9bc84c46a7dbda4c526828cd4479fbe05b8e89ab6d08df10450c6d55b2a285e1320a0911129de52077769dd1af61a0e691aab65641e1ba3e7c773fd6cf6e1753
   languageName: node
   linkType: hard
 
-"@sk-web-gui/button@npm:2.1.3":
-  version: 2.1.3
-  resolution: "@sk-web-gui/button@npm:2.1.3"
+"@sk-web-gui/button@npm:2.1.8":
+  version: 2.1.8
+  resolution: "@sk-web-gui/button@npm:2.1.8"
   dependencies:
-    "@sk-web-gui/link": "npm:1.2.3"
-    "@sk-web-gui/spinner": "npm:1.1.3"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/link": "npm:1.2.7"
+    "@sk-web-gui/spinner": "npm:1.1.7"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/02fd8569505e0ddfd51482301a00ea272696cda4c0371c0fe44355bf700ee70e5c186fb8b6ca1c6f6aa22f6b8f1b5c9f6416b196496150eaff7db4f39f14b32d
+  checksum: 10c0/fc9969d0afc8a342358738f0ede99f00ed80dd629a7e722d3f98d6bd76dd008bb565cddd8cc49842f67c21e2d6ccbb7d155c086eaaf23a25e60139a260291b2b
   languageName: node
   linkType: hard
 
@@ -2108,105 +2097,105 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/card@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/card@npm:1.1.3"
+"@sk-web-gui/card@npm:1.3.1":
+  version: 1.3.1
+  resolution: "@sk-web-gui/card@npm:1.3.1"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/link": "npm:1.2.3"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/link": "npm:1.2.7"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/75b8367b5f91ac98784dd2bcff7fa88c60c063b51046f535ea119da2e1956642c406ad7427dcfaacb91f9bb4b76b7cb3464724e2711695ce02044d243af3f846
+  checksum: 10c0/deae6d5e9d3071eaeccfebf9b5b8302e2fc42756270334865b3687815800689a44f85ab38860f5a49b420b56f9a9e0e60e3dccb358562e8ff086ede87fb3d7c9
   languageName: node
   linkType: hard
 
-"@sk-web-gui/chip@npm:1.2.2":
-  version: 1.2.2
-  resolution: "@sk-web-gui/chip@npm:1.2.2"
+"@sk-web-gui/chip@npm:1.2.3":
+  version: 1.2.3
+  resolution: "@sk-web-gui/chip@npm:1.2.3"
   dependencies:
     "@sk-web-gui/icon": "npm:3.1.2"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/0e1bf3ed3620dafa94aff6b4f2d59672c5dbdeb1fe3d3e0f0dff18110ca96588bd29b892ace6764f0e1fbaafb0f0b9922ad76319a06eee88006741c7c7eb6778
+  checksum: 10c0/6d8306e3a7a1b5c9c6db1b712228ef122823313902ef84989c186b042a457b1b6baf48e1c5e3938397eb5e82a71528f33d311a59323a45f3581d6807cde12a3f
   languageName: node
   linkType: hard
 
-"@sk-web-gui/cookie-consent@npm:2.1.3":
-  version: 2.1.3
-  resolution: "@sk-web-gui/cookie-consent@npm:2.1.3"
+"@sk-web-gui/cookie-consent@npm:2.1.9":
+  version: 2.1.9
+  resolution: "@sk-web-gui/cookie-consent@npm:2.1.9"
   dependencies:
-    "@headlessui/react": "npm:^2.2.0"
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/forms": "npm:2.4.2"
+    "@headlessui/react": "npm:^2.2.7"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/forms": "npm:2.6.1"
     "@sk-web-gui/utils": "npm:2.2.2"
-    universal-cookie: "npm:^7.2.2"
+    universal-cookie: "npm:^8.0.1"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/0eb6132d61925bc4eda15106d46e99db6fb287212bc4e0fb27d2288495876c2d6c39c2393b3aba5b71643f8e046e1057373f904b93a64fc07cd269568978a2c7
+  checksum: 10c0/aef8e7222822f691e10be16043c24ae309d55e541c55474aeeea6ecac1c351d23d511542fbb6b1a0d12e305969891db8a03aa9482f40cda012b13800ccb4dcb6
   languageName: node
   linkType: hard
 
-"@sk-web-gui/core@npm:3.11.2":
-  version: 3.11.2
-  resolution: "@sk-web-gui/core@npm:3.11.2"
+"@sk-web-gui/core@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@sk-web-gui/core@npm:4.1.0"
   dependencies:
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@tailwindcss/container-queries": "npm:^0.1.1"
     "@tailwindcss/forms": "npm:^0.5.10"
     mini-svg-data-uri: "npm:^1.4.4"
     tailwindcss: "npm:^3.4.17"
-  checksum: 10c0/885e01a57976297b474b018d72ea52b0d146cfc20a43ce3f5b8aa1a2ad4c2d8e217525d1f46c91ff7ab9ecfa1c687acd88f280fcefb6b6e5adf5909b648ecca5
+  checksum: 10c0/ab2cfc654304e6bb1b7961952910d3db100c0199c7c782f6031dc46318d61c1a8b56dffcce767791c68a17132730a323649da2909774d56e8de451a80a45ca11
   languageName: node
   linkType: hard
 
-"@sk-web-gui/divider@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/divider@npm:1.1.3"
+"@sk-web-gui/divider@npm:1.1.6":
+  version: 1.1.6
+  resolution: "@sk-web-gui/divider@npm:1.1.6"
   dependencies:
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/e4de781ad88c11cb64ab468f7657b86ec301901cebcae1093cd9fa873fdf2945a56eb3d5e404cf3275f7ccd57885c8315c0fa3423b21cd64c4f01ddb5a6bc063
+  checksum: 10c0/6e27beaf99cc4705ebf990714d3bb0f4ccca0acade17207420f4b77b0a331a1f7bc5d8335c385b91e11bcc4360e42da473c4d8a6b1b02df5db0774cd3ff124e7
   languageName: node
   linkType: hard
 
-"@sk-web-gui/filter@npm:1.2.3":
-  version: 1.2.3
-  resolution: "@sk-web-gui/filter@npm:1.2.3"
+"@sk-web-gui/filter@npm:1.2.9":
+  version: 1.2.9
+  resolution: "@sk-web-gui/filter@npm:1.2.9"
   dependencies:
-    "@sk-web-gui/badge": "npm:1.1.2"
-    "@sk-web-gui/forms": "npm:2.4.2"
+    "@sk-web-gui/badge": "npm:1.2.0"
+    "@sk-web-gui/forms": "npm:2.6.1"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/f24d68131c75054949d5fd83d6cd1f651e6e333968740fab5e8e53cabc7353ecf1b3f2cc684218e3fcd146ef17ee10e300655ee395e6453d169833951633796e
+  checksum: 10c0/20b9890a818682c7438653ceaf928a7e1a73f7b35468ac0989759fad0d8a09ff31901ba2d131f90cb04c4250227e97183b8ca780f765afb46198afcbb307a7ee
   languageName: node
   linkType: hard
 
-"@sk-web-gui/forms@npm:2.4.2":
-  version: 2.4.2
-  resolution: "@sk-web-gui/forms@npm:2.4.2"
+"@sk-web-gui/forms@npm:2.6.1":
+  version: 2.6.1
+  resolution: "@sk-web-gui/forms@npm:2.6.1"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/divider": "npm:1.1.3"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/divider": "npm:1.1.6"
     "@sk-web-gui/icon": "npm:3.1.2"
-    "@sk-web-gui/link": "npm:1.2.3"
-    "@sk-web-gui/modal": "npm:2.2.3"
-    "@sk-web-gui/popup-menu": "npm:3.1.3"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/link": "npm:1.2.7"
+    "@sk-web-gui/modal": "npm:2.3.1"
+    "@sk-web-gui/popup-menu": "npm:3.1.8"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
-    react-hook-form: "npm:^7.54.2"
+    lucide-react: "npm:^0.537.0"
+    react-hook-form: "npm:^7.62.0"
     usehooks-ts: "npm:^3.1.1"
-    uuid: "npm:11.0.5"
+    uuid: "npm:11.1.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/abebd79ec133a3bb971ccb612587936f8d69b71a5eab84daa155432db77f2d527ab47116ec97e4c5041f72f04034eb8aea7814b75121e1ad7245e664b95fc0c0
+  checksum: 10c0/8c989692c1388195041144d57bba44bd1c85dad90e5cfee68adba07780e11e8a4a2ac44f4b5313f16e8ea0618facad6557ea51d9159e5d58e8d4dd07e5414887
   languageName: node
   linkType: hard
 
@@ -2221,15 +2210,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/image@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/image@npm:1.1.3"
+"@sk-web-gui/image@npm:1.1.6":
+  version: 1.1.6
+  resolution: "@sk-web-gui/image@npm:1.1.6"
   dependencies:
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/efa87229bd798d0c0577d6b66f0d09fb62250f0fa127f03ce3d5a8b6c839bb12a817a1e2b269641ba5383d353d546c6de1feb77ea873dcf23d0823d222ee109f
+  checksum: 10c0/5890f4086c213f620fb5c5524cbe31353d5e3230c8aebbcf7a20befd817791166a5168f4f3141af0fadc6a628a91928dd2a34d8ccac2b827f7edc972809f7da7
   languageName: node
   linkType: hard
 
@@ -2244,129 +2233,129 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/layout@npm:1.3.1":
-  version: 1.3.1
-  resolution: "@sk-web-gui/layout@npm:1.3.1"
+"@sk-web-gui/layout@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@sk-web-gui/layout@npm:2.0.1"
   dependencies:
-    "@sk-web-gui/divider": "npm:1.1.3"
-    "@sk-web-gui/link": "npm:1.2.3"
-    "@sk-web-gui/logo": "npm:1.2.1"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/divider": "npm:1.1.6"
+    "@sk-web-gui/link": "npm:1.2.7"
+    "@sk-web-gui/logo": "npm:1.2.4"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/3d423b6fa5736b122e0eb5b32ac5436ff7d62dd0675191e77eaba8039c7d8c9e5b16a827b93426d9240d367439dda65a24aa523d407b7678a36d9260b2cc4890
+  checksum: 10c0/c1f38676031c129860429c3e16b7835b5a93bb205dabf7e25d0f1eed2ff2051e98ef423d81774bd3f7c7df56663fd44cb81c8a56cbac3c6f46b4d6fc75930cd4
   languageName: node
   linkType: hard
 
-"@sk-web-gui/link@npm:1.2.3":
-  version: 1.2.3
-  resolution: "@sk-web-gui/link@npm:1.2.3"
+"@sk-web-gui/link@npm:1.2.7":
+  version: 1.2.7
+  resolution: "@sk-web-gui/link@npm:1.2.7"
   dependencies:
     "@sk-web-gui/icon": "npm:3.1.2"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/2fe46e4701d7c4d1a9c820cb87bcaeee4a78c304282ec734306cd099e628a6526ee34e0a3a640f8fad3b6b4b4119d535d231ecd87ea45476722b8f76530897f7
+  checksum: 10c0/7c91d5953bfb70865fcd4dcac959b06aba3b9f33a1d6d24403ba33e1552500365cac020e106740c0adb1befeefa3a3ab80a0153326a6218cf75a11a893ef8417
   languageName: node
   linkType: hard
 
-"@sk-web-gui/list@npm:1.2.3":
-  version: 1.2.3
-  resolution: "@sk-web-gui/list@npm:1.2.3"
+"@sk-web-gui/list@npm:1.2.7":
+  version: 1.2.7
+  resolution: "@sk-web-gui/list@npm:1.2.7"
   dependencies:
-    "@sk-web-gui/link": "npm:1.2.3"
+    "@sk-web-gui/link": "npm:1.2.7"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/52cdffe5d2f092b6a98cae227ca6cfe27bcdd5a056575eebd5bfb0c7736f9d53e76d6f2300539621642c87a4955f1e246d06edb911c06560fead27a7fc3fedf6
+  checksum: 10c0/3fd9b2fe976a156b94ba853da1bc1d96373ec96e6adcd51b0b7c75473d85d0cd1f8d533f40722ebd4c3cd0761995515e04979a9f1953b2a554ea6ea0f077929d
   languageName: node
   linkType: hard
 
-"@sk-web-gui/logo@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@sk-web-gui/logo@npm:1.2.1"
+"@sk-web-gui/logo@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@sk-web-gui/logo@npm:1.2.4"
   dependencies:
-    "@sk-web-gui/divider": "npm:1.1.3"
+    "@sk-web-gui/divider": "npm:1.1.6"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/0edde341ab3ebd48a236d6b80e22c92a4236a9f4aa1c1a6b7dd27cf4c6458e7724726ab870bebd414957cf2c05e582192049ade97d5e3e110f5dd674866a9608
+  checksum: 10c0/47204fdcedff0d48ace44bb32d482ad65db2233d0a2802a13e6edd81e19106778e4af7b1cbee7e3bb337c4f0e99773da585b35cff378b217b17e2a8131b45c3c
   languageName: node
   linkType: hard
 
-"@sk-web-gui/menu-vertical@npm:2.2.3":
-  version: 2.2.3
-  resolution: "@sk-web-gui/menu-vertical@npm:2.2.3"
+"@sk-web-gui/menu-vertical@npm:2.2.8":
+  version: 2.2.8
+  resolution: "@sk-web-gui/menu-vertical@npm:2.2.8"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/divider": "npm:1.1.3"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/divider": "npm:1.1.6"
     "@sk-web-gui/icon": "npm:3.1.2"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/6af1a17ebce67248a1fc4046e27b341060aa399bbaf4664fd6ac9b438e2ffdd1d5f4a5898961838bbf279ca7dd849ab2a5b524aa06510747b249c2646e8dd347
+  checksum: 10c0/d8fc557741cc14883785cda283ad7624b0847ba248df193e8022067dd696dbceeb9114ba0f4bc1e0c12b1733d7fbb3c80e545f451c31584e6ffb6de9ab030c06
   languageName: node
   linkType: hard
 
-"@sk-web-gui/menubar@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/menubar@npm:1.1.3"
+"@sk-web-gui/modal@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@sk-web-gui/modal@npm:2.3.1"
   dependencies:
-    "@sk-web-gui/popup-menu": "npm:3.1.3"
-    "@sk-web-gui/utils": "npm:2.2.2"
-  peerDependencies:
-    react: ">=18.3.1"
-  checksum: 10c0/3e15feaf3405b992544f1da1af6fff229dbaa62b587f364f84498e514b0aa241928fd63d799c7b28f8a6450c745f943079c6a0e73af0c6f9f5474a77d71b320f
-  languageName: node
-  linkType: hard
-
-"@sk-web-gui/modal@npm:2.2.3":
-  version: 2.2.3
-  resolution: "@sk-web-gui/modal@npm:2.2.3"
-  dependencies:
-    "@headlessui/react": "npm:^2.2.0"
-    "@sk-web-gui/button": "npm:2.1.3"
+    "@headlessui/react": "npm:^2.2.7"
+    "@sk-web-gui/button": "npm:2.1.8"
     "@sk-web-gui/icon": "npm:3.1.2"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/c8308b35de5897ac053312df324022d51d3b7f688685fcdf00db899edff229959d68b73a60cbaaab701753516b0729603532d04c665716e550d7eeccbbaa879c
+  checksum: 10c0/e518118c58a64810c60579d5de4a25752e614dec0ba1032fef4ddad078a9c7d9bdad8e0d51bf3b770a15df9e5f4a0c51635575d5432fea2d0d986fe8e03569af
   languageName: node
   linkType: hard
 
-"@sk-web-gui/pagination@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/pagination@npm:1.1.3"
+"@sk-web-gui/navigationbar@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@sk-web-gui/navigationbar@npm:3.0.0"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/forms": "npm:2.4.2"
-    "@sk-web-gui/icon": "npm:3.1.2"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/popup-menu": "npm:3.1.8"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/0a6efd0563d5fb1e8346a5f81fc1f245dedfc72ff124a430cbd9ed1623a104f30e214235f4e28798633db22954bda7ca322c7408491fc39e210387799ac78145
+  checksum: 10c0/9199b74c60cfba73d1ad32da0a1048892b3370de056a5d5c18a8af357fbf4c9939770b5c1195ccfe28c5f1a4c61c66a0237002e9d6173fe269f213302bd77cb2
   languageName: node
   linkType: hard
 
-"@sk-web-gui/popup-menu@npm:3.1.3":
-  version: 3.1.3
-  resolution: "@sk-web-gui/popup-menu@npm:3.1.3"
+"@sk-web-gui/pagination@npm:1.1.9":
+  version: 1.1.9
+  resolution: "@sk-web-gui/pagination@npm:1.1.9"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/link": "npm:1.2.3"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/forms": "npm:2.6.1"
+    "@sk-web-gui/icon": "npm:3.1.2"
+    "@sk-web-gui/theme": "npm:2.6.0"
+    "@sk-web-gui/utils": "npm:2.2.2"
+    lucide-react: "npm:^0.537.0"
+  peerDependencies:
+    react: ">=18.3.1"
+  checksum: 10c0/fc94e1ee8562448bddf127b5377dc5f03289ac7967a8f96a6aa80c73ef32c73d5c658dc1021b18b8527183668ea3b3b72ddb997962884eac3e9048f4dfaaa550
+  languageName: node
+  linkType: hard
+
+"@sk-web-gui/popup-menu@npm:3.1.8":
+  version: 3.1.8
+  resolution: "@sk-web-gui/popup-menu@npm:3.1.8"
+  dependencies:
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/link": "npm:1.2.7"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
     usehooks-ts: "npm:^3.1.1"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/645114fc055590f5e333d2a9f387bb52b08d7a4ef61ef073e95a9073850807cfa060a8e4234cc2461ac9ad10da3487e64f09340ef4ae00455199bd3a60270862
+  checksum: 10c0/0bedb0f6afbbfd19bde64c4c093cea7b8ce13f207b23b3f1a39beb38d464fea5e1a76f93a666ae46a2b2133ad9cb0feebb9d1f8d3713d3ed373de40c4678f283
   languageName: node
   linkType: hard
 
@@ -2381,188 +2370,201 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/progress-stepper@npm:1.2.3":
-  version: 1.2.3
-  resolution: "@sk-web-gui/progress-stepper@npm:1.2.3"
+"@sk-web-gui/progress-stepper@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@sk-web-gui/progress-stepper@npm:1.3.0"
   dependencies:
-    "@sk-web-gui/divider": "npm:1.1.3"
+    "@sk-web-gui/divider": "npm:1.1.6"
     "@sk-web-gui/icon": "npm:3.1.2"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/a169527ed5c871a26c33594027a289b484b6577ed5c931678c8b56850f0a74306e9e698e7595195da52abd505dd91dafe23203c6d66b3d343f68a092c0412e08
+  checksum: 10c0/ee1ea6e609c7ffad29e0f0266ae7eb5491e30ea6895a22cbd0d39bcde0c8aa2ca9230297708194295efc65ede90d2cf9fc8e59d444dcfd5bfc8ff0318f28c43f
   languageName: node
   linkType: hard
 
-"@sk-web-gui/react@npm:1.4.1":
-  version: 1.4.1
-  resolution: "@sk-web-gui/react@npm:1.4.1"
+"@sk-web-gui/react@npm:3.0.2":
+  version: 3.0.2
+  resolution: "@sk-web-gui/react@npm:3.0.2"
   dependencies:
-    "@sk-web-gui/accordion": "npm:2.1.3"
-    "@sk-web-gui/avatar": "npm:1.1.3"
-    "@sk-web-gui/badge": "npm:1.1.2"
-    "@sk-web-gui/breadcrumb": "npm:1.1.3"
-    "@sk-web-gui/button": "npm:2.1.3"
+    "@sk-web-gui/accordion": "npm:2.1.9"
+    "@sk-web-gui/avatar": "npm:1.2.2"
+    "@sk-web-gui/badge": "npm:1.2.0"
+    "@sk-web-gui/breadcrumb": "npm:1.1.7"
+    "@sk-web-gui/button": "npm:2.1.8"
     "@sk-web-gui/callout": "npm:1.2.2"
-    "@sk-web-gui/card": "npm:1.1.3"
-    "@sk-web-gui/chip": "npm:1.2.2"
-    "@sk-web-gui/cookie-consent": "npm:2.1.3"
-    "@sk-web-gui/divider": "npm:1.1.3"
-    "@sk-web-gui/filter": "npm:1.2.3"
-    "@sk-web-gui/forms": "npm:2.4.2"
+    "@sk-web-gui/card": "npm:1.3.1"
+    "@sk-web-gui/chip": "npm:1.2.3"
+    "@sk-web-gui/cookie-consent": "npm:2.1.9"
+    "@sk-web-gui/divider": "npm:1.1.6"
+    "@sk-web-gui/filter": "npm:1.2.9"
+    "@sk-web-gui/forms": "npm:2.6.1"
     "@sk-web-gui/icon": "npm:3.1.2"
-    "@sk-web-gui/image": "npm:1.1.3"
+    "@sk-web-gui/image": "npm:1.1.6"
     "@sk-web-gui/label": "npm:1.1.2"
-    "@sk-web-gui/layout": "npm:1.3.1"
-    "@sk-web-gui/link": "npm:1.2.3"
-    "@sk-web-gui/list": "npm:1.2.3"
-    "@sk-web-gui/logo": "npm:1.2.1"
-    "@sk-web-gui/menu-vertical": "npm:2.2.3"
-    "@sk-web-gui/menubar": "npm:1.1.3"
-    "@sk-web-gui/modal": "npm:2.2.3"
-    "@sk-web-gui/pagination": "npm:1.1.3"
-    "@sk-web-gui/popup-menu": "npm:3.1.3"
+    "@sk-web-gui/layout": "npm:2.0.1"
+    "@sk-web-gui/link": "npm:1.2.7"
+    "@sk-web-gui/list": "npm:1.2.7"
+    "@sk-web-gui/logo": "npm:1.2.4"
+    "@sk-web-gui/menu-vertical": "npm:2.2.8"
+    "@sk-web-gui/modal": "npm:2.3.1"
+    "@sk-web-gui/navigationbar": "npm:3.0.0"
+    "@sk-web-gui/pagination": "npm:1.1.9"
+    "@sk-web-gui/popup-menu": "npm:3.1.8"
     "@sk-web-gui/progress-bar": "npm:1.1.2"
-    "@sk-web-gui/progress-stepper": "npm:1.2.3"
-    "@sk-web-gui/searchfield": "npm:2.3.3"
-    "@sk-web-gui/snackbar": "npm:2.2.1"
-    "@sk-web-gui/spinner": "npm:1.1.3"
-    "@sk-web-gui/table": "npm:3.2.3"
-    "@sk-web-gui/tabs": "npm:1.3.3"
-    "@sk-web-gui/text": "npm:1.1.3"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/progress-stepper": "npm:1.3.0"
+    "@sk-web-gui/searchfield": "npm:2.3.9"
+    "@sk-web-gui/snackbar": "npm:2.2.7"
+    "@sk-web-gui/spinner": "npm:1.1.7"
+    "@sk-web-gui/table": "npm:3.2.9"
+    "@sk-web-gui/tabs": "npm:1.4.4"
+    "@sk-web-gui/text": "npm:1.1.7"
+    "@sk-web-gui/text-editor": "npm:2.0.0"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/tooltip": "npm:1.1.2"
-    "@sk-web-gui/user-menu": "npm:1.1.3"
+    "@sk-web-gui/user-menu": "npm:1.1.8"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=19.0.0"
     react-dom: ">=19.0.0"
-  checksum: 10c0/2ba43907341d11199d60673ba4d69275aa3308254b4c951ca6e117c4b3df6d75ccee903c76a80bca22ca280c4eaacad0eed64a23ffb649bec1d0f89d6f99abf8
+  checksum: 10c0/89c670ccfd78c49a7ca8b083be35d0d7838007358aa731b9281ba184f4726ac27f3381645ad233822ff48ab8d1a3026c0dabcfd20229289f9d3354ddc0948424
   languageName: node
   linkType: hard
 
-"@sk-web-gui/searchfield@npm:2.3.3":
-  version: 2.3.3
-  resolution: "@sk-web-gui/searchfield@npm:2.3.3"
+"@sk-web-gui/searchfield@npm:2.3.9":
+  version: 2.3.9
+  resolution: "@sk-web-gui/searchfield@npm:2.3.9"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/forms": "npm:2.4.2"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/forms": "npm:2.6.1"
     "@sk-web-gui/icon": "npm:3.1.2"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/6cf62505ee9a3d93f442647f9e5a90a33750d0a9e5da18776d46498ab76d02a3c96ed10c3fc03e6694f1ffd88a255236ac1da50d8f014f82a2e6731331b01117
+  checksum: 10c0/9561704284cf48386fa76e5b327cab2f319f999a4e5287dc875653e14ff6122cae30ac55dac299b500d5cb112150f1cfa0dddb889d904e04f15b9e4591a208ce
   languageName: node
   linkType: hard
 
-"@sk-web-gui/snackbar@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@sk-web-gui/snackbar@npm:2.2.1"
+"@sk-web-gui/snackbar@npm:2.2.7":
+  version: 2.2.7
+  resolution: "@sk-web-gui/snackbar@npm:2.2.7"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
+    "@sk-web-gui/button": "npm:2.1.8"
     "@sk-web-gui/icon": "npm:3.1.2"
-    "@sk-web-gui/toast": "npm:1.2.1"
+    "@sk-web-gui/toast": "npm:1.2.6"
     "@sk-web-gui/utils": "npm:2.2.2"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/5cd4a6e524a7540329625a17d9bc3621828f136564a3938dd79f7e565c7896b308489c20521f22f0816c86e105e8e8694cd4530a20e6e9b92cce3782ec5251b9
+  checksum: 10c0/2b89e9c6564c269dae811025e274a94aa3936dd01ca4a781d195eb4fb2891f451f86955d1e24b3298cc8f20bf76b2567acce6eb0296406957792b0ccc55263af
   languageName: node
   linkType: hard
 
-"@sk-web-gui/spinner@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/spinner@npm:1.1.3"
+"@sk-web-gui/spinner@npm:1.1.7":
+  version: 1.1.7
+  resolution: "@sk-web-gui/spinner@npm:1.1.7"
   dependencies:
-    "@lottiefiles/react-lottie-player": "npm:3.6.0"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/d592bf478e6794a062993b7a69556befd224fada4438dba993f1ab11ba2a0f2eb49f79a07df4d4401c88cacac5469b363b79468969ac38c27e6a3475cbd6a81e
+  checksum: 10c0/07bc39b927046a46d8c5d2bbfc9c19b024ad26643d67929c96534838ee76b5f889a0e688325b6da5fecb782b4931ffa3a1e28ce1e5b3fd04ca5d5ef2de89db3f
   languageName: node
   linkType: hard
 
-"@sk-web-gui/table@npm:3.2.3":
-  version: 3.2.3
-  resolution: "@sk-web-gui/table@npm:3.2.3"
+"@sk-web-gui/table@npm:3.2.9":
+  version: 3.2.9
+  resolution: "@sk-web-gui/table@npm:3.2.9"
   dependencies:
-    "@sk-web-gui/forms": "npm:2.4.2"
+    "@sk-web-gui/forms": "npm:2.6.1"
     "@sk-web-gui/icon": "npm:3.1.2"
-    "@sk-web-gui/pagination": "npm:1.1.3"
-    "@sk-web-gui/theme": "npm:2.4.3"
+    "@sk-web-gui/pagination": "npm:1.1.9"
+    "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/utils": "npm:2.2.2"
     lodash: "npm:^4.17.21"
-    lucide-react: "npm:^0.471.1"
+    lucide-react: "npm:^0.537.0"
     usehooks-ts: "npm:^3.1.1"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/d9cc7193ae9d012e5f8dce0faa055c55fafc6dc5e9470676f7d75d54c0f2490651f76e0e934cb6945e814961bd049717a24d7076457b332e539c9cc262abcf71
+  checksum: 10c0/ae7bd9c340fc5e54addc5b3e97e0ac7165f49506ac0f955204caa8a66a593bb1c702cfe5460728ef8f6148ed541ce39bf21a667abab89a79cc916b75fb31928f
   languageName: node
   linkType: hard
 
-"@sk-web-gui/tabs@npm:1.3.3":
-  version: 1.3.3
-  resolution: "@sk-web-gui/tabs@npm:1.3.3"
+"@sk-web-gui/tabs@npm:1.4.4":
+  version: 1.4.4
+  resolution: "@sk-web-gui/tabs@npm:1.4.4"
   dependencies:
-    "@sk-web-gui/button": "npm:2.1.3"
-    "@sk-web-gui/divider": "npm:1.1.3"
+    "@sk-web-gui/button": "npm:2.1.8"
+    "@sk-web-gui/divider": "npm:1.1.6"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/79dd7b99342e336a59c1fb878777f7954a6f0312fb2927589233d7540a135fce0b5b603cd79192f6ce192176fb0fe8a274d5d97f2e2859beab29e4cbef3b0fc7
+  checksum: 10c0/bced35cb8fe33e6a72e049d3165f71ce89c5918c859b11f5f5845ca59ca3bfbc5ec6c70a5a0d22cbe4434af3ad083628bda9c1d5ccd1e67905e416e025163ee3
   languageName: node
   linkType: hard
 
-"@sk-web-gui/text@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/text@npm:1.1.3"
+"@sk-web-gui/text-editor@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@sk-web-gui/text-editor@npm:2.0.0"
   dependencies:
-    "@sk-web-gui/link": "npm:1.2.3"
+    "@sk-web-gui/tooltip": "npm:1.1.2"
+    "@sk-web-gui/utils": "npm:2.2.2"
+    quill: "npm:^2.0.3"
+  peerDependencies:
+    react: ">=18.3.1"
+  checksum: 10c0/2958e4d45647cd2d0a027271a8e9be32de972c89f79f7565ac3f6485cc91154ef9fffa357e602a8a1ccf51c66154813fe08cfb12dc1ee699d2a73c8cf932da76
+  languageName: node
+  linkType: hard
+
+"@sk-web-gui/text@npm:1.1.7":
+  version: 1.1.7
+  resolution: "@sk-web-gui/text@npm:1.1.7"
+  dependencies:
+    "@sk-web-gui/link": "npm:1.2.7"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/181e18009a9871015d3c018ec300f00ef08a930fec30d1e1f0d55ea036416462a870b7ba25ff6440b88895871573f4634692250c5d3fa980c62f896511222577
+  checksum: 10c0/ebd5bc64d7ccfa6b38508eef27de371d4b1eda8be4b4b270931e7b6f93e80f71d946fa2c6d2573796fd395ed8f540a36caf974668b1e02fc477338e68767bcb1
   languageName: node
   linkType: hard
 
-"@sk-web-gui/theme@npm:2.4.3":
-  version: 2.4.3
-  resolution: "@sk-web-gui/theme@npm:2.4.3"
+"@sk-web-gui/theme@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@sk-web-gui/theme@npm:2.6.0"
   dependencies:
     "@sk-web-gui/utils": "npm:2.2.2"
     lodash.set: "npm:^4.3.2"
     usehooks-ts: "npm:^3.1.1"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/d25b17807249df7e1d60fd78ab4ef9e6e466a03815a15b521ad8764065803dd0fe6793a44d81cfe401e835c7000280dc01e255ea914764250fa334de944cc0e5
+  checksum: 10c0/53d8ea7517b282100dc8eaaf08d774aba4cf0c49041d77ab0a6d3c5962b06321bf23f09ab12804e351298e758d7e5dd98ef7d26a813ea11e962f14ebed78a534
   languageName: node
   linkType: hard
 
-"@sk-web-gui/toast@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@sk-web-gui/toast@npm:1.2.1"
+"@sk-web-gui/toast@npm:1.2.6":
+  version: 1.2.6
+  resolution: "@sk-web-gui/toast@npm:1.2.6"
   dependencies:
-    "@sk-web-gui/theme": "npm:2.4.3"
-    "@sk-web-gui/toasted-notes": "npm:1.2.0"
+    "@sk-web-gui/theme": "npm:2.6.0"
+    "@sk-web-gui/toasted-notes": "npm:1.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/291588e4556d2c666b279d2d0049b4cbdd9f9404c887e605486796e39dbbe19c92d17636d5b84773d4b01df89e7e25cdf7f241cf8b7febe4eeb0e575aac0d50a
+  checksum: 10c0/9d268cfa80aca6f66ba49f0d9fb74fc75578974cd00f8f6a3547a1c046fd755fce1ee442cc89b1e00b0e3a50a7560b2743b4d18f0a32d1d03e6dd2ca2d7874df
   languageName: node
   linkType: hard
 
-"@sk-web-gui/toasted-notes@npm:1.2.0":
-  version: 1.2.0
-  resolution: "@sk-web-gui/toasted-notes@npm:1.2.0"
+"@sk-web-gui/toasted-notes@npm:1.2.2":
+  version: 1.2.2
+  resolution: "@sk-web-gui/toasted-notes@npm:1.2.2"
   dependencies:
-    react-spring: "npm:^9.7.5"
+    react-spring: "npm:^10.0.1"
   peerDependencies:
     react: ">=18.2.0"
     react-dom: ">=18.2.0"
-  checksum: 10c0/570690c93559dd195f4e64cbc0a90aa9ffc61a6f29802054e672b898fb6f3d459f1ac2cd81f73112a8d30ca06712b8c6cb6a917f5d4de91425898c8f7770cdc4
+  checksum: 10c0/f502f7eb6a6ccc818f8fd53893f1eda1c6051b0540fb0493742520a1058dd6908f3fd9ad6aba80346d14ee027c502ccb405d08fd0e9e8a35788f6ccd7e8c910e
   languageName: node
   linkType: hard
 
@@ -2577,17 +2579,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/user-menu@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@sk-web-gui/user-menu@npm:1.1.3"
+"@sk-web-gui/user-menu@npm:1.1.8":
+  version: 1.1.8
+  resolution: "@sk-web-gui/user-menu@npm:1.1.8"
   dependencies:
-    "@sk-web-gui/avatar": "npm:1.1.3"
-    "@sk-web-gui/logo": "npm:1.2.1"
-    "@sk-web-gui/popup-menu": "npm:3.1.3"
+    "@sk-web-gui/avatar": "npm:1.2.2"
+    "@sk-web-gui/logo": "npm:1.2.4"
+    "@sk-web-gui/popup-menu": "npm:3.1.8"
     "@sk-web-gui/utils": "npm:2.2.2"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/c028f7cf7b680cffe542314186add4a34028e3dec7b5d027adc0ab001d2c9ea73730bd8450f6977db2cd219910f09dc1b0a66782b1c5c0317a60a2ea682e5d51
+  checksum: 10c0/6a20262cb6753a6014c86a3fa20e5703ebda1485a3feab6cafefb68cabc3c347640bdebf808a6bd54c8a84fea49317224842f6ffa9c10c022747fd7f0a37cb75
   languageName: node
   linkType: hard
 
@@ -2616,8 +2618,8 @@ __metadata:
     "@hookform/resolvers": "npm:^3.1.0"
     "@mui/material": "npm:^5.13.2"
     "@next/bundle-analyzer": "npm:14.1.4"
-    "@sk-web-gui/core": "npm:3.11.2"
-    "@sk-web-gui/react": "npm:1.4.1"
+    "@sk-web-gui/core": "npm:4.1.0"
+    "@sk-web-gui/react": "npm:3.0.2"
     "@tailwindcss/container-queries": "npm:^0.1.1"
     "@tailwindcss/forms": "npm:^0.5.3"
     "@testing-library/jest-dom": "npm:^5.16.5"
@@ -4272,10 +4274,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^0.7.2":
-  version: 0.7.2
-  resolution: "cookie@npm:0.7.2"
-  checksum: 10c0/9596e8ccdbf1a3a88ae02cf5ee80c1c50959423e1022e4e60b91dd87c622af1da309253d8abdb258fb5e3eacb4f08e579dc58b4897b8087574eee0fd35dfa5d2
+"cookie@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "cookie@npm:1.0.2"
+  checksum: 10c0/fd25fe79e8fbcfcaf6aa61cd081c55d144eeeba755206c058682257cb38c4bd6795c6620de3f064c740695bb65b7949ebb1db7a95e4636efb8357a335ad3f54b
   languageName: node
   linkType: hard
 
@@ -5365,6 +5367,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eventemitter3@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "eventemitter3@npm:5.0.1"
+  checksum: 10c0/4ba5c00c506e6c786b4d6262cfbce90ddc14c10d4667e5c83ae993c9de88aa856033994dd2b35b83e8dc1170e224e66a319fa80adc4c32adcd2379bbc75da814
+  languageName: node
+  linkType: hard
+
 "execa@npm:4.1.0":
   version: 4.1.0
   resolution: "execa@npm:4.1.0"
@@ -5477,6 +5486,13 @@ __metadata:
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: 10c0/40dedc862eb8992c54579c66d914635afbec43350afbbe991235fdcb4e3a8d5af1b23ae7e79bef7d4882d0ecee06c3197488026998fb19f72dc95acff1d1b1d0
+  languageName: node
+  linkType: hard
+
+"fast-diff@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "fast-diff@npm:1.3.0"
+  checksum: 10c0/5c19af237edb5d5effda008c891a18a585f74bf12953be57923f17a3a4d0979565fc64dbc73b9e20926b9d895f5b690c618cbb969af0cf022e3222471220ad29
   languageName: node
   linkType: hard
 
@@ -7590,10 +7606,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
+  languageName: node
+  linkType: hard
+
+"lodash.clonedeep@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.clonedeep@npm:4.5.0"
+  checksum: 10c0/2caf0e4808f319d761d2939ee0642fa6867a4bbf2cfce43276698828380756b99d4c4fa226d881655e6ac298dd453fe12a5ec8ba49861777759494c534936985
+  languageName: node
+  linkType: hard
+
 "lodash.debounce@npm:^4.0.8":
   version: 4.0.8
   resolution: "lodash.debounce@npm:4.0.8"
   checksum: 10c0/762998a63e095412b6099b8290903e0a8ddcb353ac6e2e0f2d7e7d03abd4275fe3c689d88960eb90b0dde4f177554d51a690f22a343932ecbc50a5d111849987
+  languageName: node
+  linkType: hard
+
+"lodash.isequal@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.isequal@npm:4.5.0"
+  checksum: 10c0/dfdb2356db19631a4b445d5f37868a095e2402292d59539a987f134a8778c62a2810c2452d11ae9e6dcac71fc9de40a6fedcb20e2952a15b431ad8b29e50e28f
   languageName: node
   linkType: hard
 
@@ -7658,13 +7695,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lottie-web@npm:^5.12.2":
-  version: 5.13.0
-  resolution: "lottie-web@npm:5.13.0"
-  checksum: 10c0/b463ad462169df3f7e04b7f3716274e269842554f1d72b8303ca7245628f2512982a59ae31698b3d57fbcda886228ae160fcb2aa518c6cecd8a95974db2458ee
-  languageName: node
-  linkType: hard
-
 "lru-cache@npm:^10.0.1":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
@@ -7694,6 +7724,15 @@ __metadata:
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10c0/4dca36aaa5ebe4405ac0bed13974795d2db0495fdfb6c3c60aaeb59393d24e3295e2f061ba21766808e7b3e29fa948c87a4868fd514e25f9b415df76d963383f
+  languageName: node
+  linkType: hard
+
+"lucide-react@npm:^0.537.0":
+  version: 0.537.0
+  resolution: "lucide-react@npm:0.537.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/d53f159533227ffe64a2e4097c366c5fd483498c02b9cb5c8f5d3badf7f9e02fda2cdb8ccd48ad8431100f2f9bed31811a8d29c150836c1ce9989c30453fad7c
   languageName: node
   linkType: hard
 
@@ -8383,6 +8422,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parchment@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "parchment@npm:3.0.0"
+  checksum: 10c0/83cc55756a899d6769e42b345ae55738f7e93f9027bb0095f518bc75b81d44ba2b69a76bc25f259974d972f8e250066419c3f92e3ded7518f144fc9c1b47430d
+  languageName: node
+  linkType: hard
+
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
@@ -8831,6 +8877,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"quill-delta@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "quill-delta@npm:5.1.0"
+  dependencies:
+    fast-diff: "npm:^1.3.0"
+    lodash.clonedeep: "npm:^4.5.0"
+    lodash.isequal: "npm:^4.5.0"
+  checksum: 10c0/a99462b96177f4559e5a659be0f51bbfe090c11b61c53aa19afabd3fdf8a6495173bbacd84b75acce680ed7c157a024907e74ff077ddd6a135b4da15bf71ada2
+  languageName: node
+  linkType: hard
+
+"quill@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "quill@npm:2.0.3"
+  dependencies:
+    eventemitter3: "npm:^5.0.1"
+    lodash-es: "npm:^4.17.21"
+    parchment: "npm:^3.0.0"
+    quill-delta: "npm:^5.1.0"
+  checksum: 10c0/9897468b3e2b0fbf9c91471deea745d7b6494f866cb8caace63267769b2c4c6128e49da0988c4ed64f1a91a171fbf91c84009b663b1256a3caca0755204bb6b5
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
@@ -8852,12 +8921,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.54.2":
-  version: 7.63.0
-  resolution: "react-hook-form@npm:7.63.0"
+"react-hook-form@npm:^7.62.0":
+  version: 7.65.0
+  resolution: "react-hook-form@npm:7.65.0"
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18 || ^19
-  checksum: 10c0/0b46c0f41bcda524eae03aed16ac48237a351886d48495df8e67190da1eabc5bc113788db42e23c802f2a5e641f15bcca070a9092cbc26b4133e96b9a62c938e
+  checksum: 10c0/119afeaf33510d1ed6c12109f03d22d9e88f9eb01b8e4fb3cd8f40d5fc113cbcfc6154789d1d143151de8119bd08ffc7214d504e0e550ea28a9051ed6a30ae28
   languageName: node
   linkType: hard
 
@@ -8903,20 +8972,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-spring@npm:^9.7.5":
-  version: 9.7.5
-  resolution: "react-spring@npm:9.7.5"
+"react-spring@npm:^10.0.1":
+  version: 10.0.3
+  resolution: "react-spring@npm:10.0.3"
   dependencies:
-    "@react-spring/core": "npm:~9.7.5"
-    "@react-spring/konva": "npm:~9.7.5"
-    "@react-spring/native": "npm:~9.7.5"
-    "@react-spring/three": "npm:~9.7.5"
-    "@react-spring/web": "npm:~9.7.5"
-    "@react-spring/zdog": "npm:~9.7.5"
+    "@react-spring/core": "npm:~10.0.3"
+    "@react-spring/konva": "npm:~10.0.3"
+    "@react-spring/native": "npm:~10.0.3"
+    "@react-spring/three": "npm:~10.0.3"
+    "@react-spring/web": "npm:~10.0.3"
+    "@react-spring/zdog": "npm:~10.0.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/3663e38f69a788a17537257421cb8678bc70ad8048df646f2a923e80b95bead18ece9bead377b2483689420746d5f10c3f66423d9375b361e491c2fa9914c3e8
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/5fdd65df206cc90ac0f83455685f066c22a05454569e3a0d35feb5e5546e67ed2994e9edb1159c64ffca5f3d8a5fb61b3fd6b8532dc0d6493aa76f09e4fff5e2
   languageName: node
   linkType: hard
 
@@ -10283,13 +10352,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"universal-cookie@npm:^7.2.2":
-  version: 7.2.2
-  resolution: "universal-cookie@npm:7.2.2"
+"universal-cookie@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "universal-cookie@npm:8.0.1"
   dependencies:
-    "@types/cookie": "npm:^0.6.0"
-    cookie: "npm:^0.7.2"
-  checksum: 10c0/214c5cf72b12b6d98a72e11a10adb3f1d06dbeadbd9a2d46ded8c288d86387e9ff25499f85d2f85728809484d678c02028ac674cb8747257b38d2c17fb93e896
+    cookie: "npm:^1.0.2"
+  checksum: 10c0/96b1f2eba8941e590892513ab3220fccad9606485452d2443f86c69388a0c663937feb386a2911d2dec5796840ae7af155c6deef8712906a931ae8a30ae93485
   languageName: node
   linkType: hard
 
@@ -10383,12 +10451,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:11.0.5":
-  version: 11.0.5
-  resolution: "uuid@npm:11.0.5"
+"uuid@npm:11.1.0":
+  version: 11.1.0
+  resolution: "uuid@npm:11.1.0"
   bin:
     uuid: dist/esm/bin/uuid
-  checksum: 10c0/6f59f0c605e02c14515401084ca124b9cb462b4dcac866916a49862bcf831874508a308588c23a7718269226ad11a92da29b39d761ad2b86e736623e3a33b6e7
+  checksum: 10c0/34aa51b9874ae398c2b799c88a127701408cd581ee89ec3baa53509dd8728cbb25826f2a038f9465f8b7be446f0fbf11558862965b18d21c993684297628d4d3
   languageName: node
   linkType: hard
 

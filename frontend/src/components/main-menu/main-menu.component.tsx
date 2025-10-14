@@ -1,4 +1,4 @@
-import { MenuBar } from '@sk-web-gui/react';
+import { NavigationBar } from '@sk-web-gui/react';
 import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { mainMenuItems } from './main-menu-items';
@@ -24,13 +24,13 @@ export const MainMenu: React.FC = () => {
 
   return (
     <div className="w-full shrink flex justify-end">
-      <MenuBar current={active} data-cy="mainmenu">
+      <NavigationBar current={active} data-cy="mainmenu">
         {mainMenuItems.map((item, index) => (
-          <MenuBar.Item key={`mainmenu-${index}`} wrapper={<NextLink href={item.href} legacyBehavior passHref />}>
+          <NavigationBar.Item key={`mainmenu-${index}`} wrapper={<NextLink href={item.href} legacyBehavior passHref />}>
             <a>{t(`common:mainMenu.${item.label}`)}</a>
-          </MenuBar.Item>
+          </NavigationBar.Item>
         ))}
-      </MenuBar>
+      </NavigationBar>
     </div>
   );
 };

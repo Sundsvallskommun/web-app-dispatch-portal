@@ -13,6 +13,7 @@ export interface Recipient {
   messageType: string;
   status: string;
   personId?: string;
+  mobileNumber?: string;
   address?: {
     address: string;
     city: string;
@@ -33,6 +34,7 @@ export interface Message {
   issuer: string;
   sent: string;
   subject: string;
+  body: string;
   recipients: Recipient[];
   attachments: Attachment[];
 }

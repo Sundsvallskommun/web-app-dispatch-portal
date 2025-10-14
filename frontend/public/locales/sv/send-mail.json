@@ -10,6 +10,7 @@
   "sendNew": "Skicka nytt brev",
   "goBack": "Till startsidan",
   "sendLetter": "Skicka brev",
+  "sendRecLetter": "Skicka rekommenderat brev",
   "addTextDocument": "Lägg till textdokument",
   "addSender": "Ange avsändare",
   "attachmentHandler": {
@@ -28,8 +29,9 @@
     "howAddRecipient": "Hur vill du lägga till mottagare?",
     "optionPersonalNumberOrAddress": "Med personnummer eller adress",
     "optionRecipientList": "Med mottagarlista",
-    "addRecipient": "Lägg till mottagare",
-    "addRecipientWithAddress": "Lägg till med adress",
+    "addRecipient": "Lägg till",
+    "missingPersonalNumber": "Saknar du personnummer?",
+    "addRecipientWithAddress": "Lägg till mottagare med adress",
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
     "csvAddedFile": "Tillagd fil",
     "IndividualRecipients": "Enskilda mottagare",
@@ -42,7 +44,7 @@
       "default": "Något gick fel när mottagarlistan hanterades",
       "invalidRecipient": "Ogiltiga mottagare ({num})",
       "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
-      "single-recipient-error": "Lägg till minst en mottagare för att fortsätta."
+      "singleRecipientError": "Lägg till minst en mottagare för att fortsätta."
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är readan tillagd",
@@ -54,12 +56,18 @@
     },
     "modalLabel": "Vill du lägga till mottagare med mottagarlista?",
     "modalWarning": "Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna",
-    "searchPersonalNumber": "Sök på personnummer <span className=\"font-normal\">(ååååmmddxxxx)</span>",
+    "searchPersonalNumber": "Sök mottagare med personnummer",
+    "searchPersonalNumberHelper": "Ange personnumret i formatet ååååmmddxxxx",
     "addedRecipientsTitle": "Tillagda mottagare",
     "noRecipientAdded": "Du har inte lagt till några mottagare än",
     "addedFileTitle": "Tillagd fil",
     "noFileAdded": "Du har inte lagt till någon fil än",
     "addedRecipientNum": "Tillagda mottagare ({num})",
-    "addedFromFileNum": "Tillagda mottagare från fil ({num})"
+    "addedFromFileNum": "Tillagda mottagare från fil ({num})",
+    "rekMail": {
+      "content": "Lägg till mottagare av ditt rekommenderade brev. Rekommenderat brev går bara att skicka till mottagare som har en digital brevlåda hos Kivra.",
+      "success": "Har digital brevlåda hos Kivra",
+      "error": "Har inte digital brevlåda hos Kivra"
+    }
   }
 }

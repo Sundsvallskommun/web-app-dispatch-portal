@@ -1,3 +1,4 @@
+import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMediaQuery } from '@mui/material';
 import {
@@ -8,14 +9,13 @@ import {
   FormLabel,
   Icon,
   Input,
-  Link,
   Textarea,
   useGui,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { BadgeCheck, HelpCircle, Info, SendHorizontal, Smartphone } from 'lucide-react';
-import { GetServerSideProps } from 'next';
+import { BadgeCheck, Info, SendHorizontal, Smartphone } from 'lucide-react';
 import { TFunction, Trans, useTranslation } from 'next-i18next';
+import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
@@ -23,10 +23,10 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 import CustomChip from '@components/custom-chip/custom-chip.component';
-import { HelpComposer } from '@components/help/help-composer';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { ApiResponse, apiService } from '@services/api-service';
 import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@services/phone-number.service';
+import DefaultLayout from '@layouts/default-layout/default-layout.component';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -63,11 +63,6 @@ export default function SendEmailPage() {
   const { t } = useTranslation(['common', 'send-sms']);
 
   const message = useSnackbar();
-
-  const [showHelpComposer, setShowHelpComposer] = useState(false);
-
-  const openHelpComposer = () => setShowHelpComposer(true);
-  const closeHelpComposer = () => setShowHelpComposer(false);
 
   const formSchema = createFormSchema(t);
   const controls = useForm<Partial<FormModel>>({
@@ -176,204 +171,181 @@ export default function SendEmailPage() {
   };
 
   return (
-    <div className="main-wrapper">
-      <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
-      <div
-        className={`flex flex-row items-center ${success ? 'justify-end' : 'justify-between'}  self-stretch bg-background-content px-80 py-16 border-b-1 border-divider`}
-      >
-        {!success && (
-          <>
-            <NextLink href="/" passHref className="w-100 text-dark-primary">
-              <Link strong={true} variant="tertiary" className="text-base">
-                {t('common:cancel')}
-              </Link>
-            </NextLink>
-            {isMedium && (
-              <div className="lg:w-818 flex flex-row items-center justify-start">
-                <Icon icon={<Smartphone />} className="w-28 h-28 mr-12" />
-                <div className="text-h4-lg text-dark-primary">{t('send-sms:sendSms')}</div>
-              </div>
-            )}
-          </>
-        )}
-        <Button variant="secondary" onClick={openHelpComposer}>
-          <Icon icon={<HelpCircle />} className="text-dark-primary h-18 w-18" />
-          <div className="text-dark-secondary text-label-medium lining-nums proportional-nums">Hjälp</div>
-        </Button>
-      </div>
-      <div className="sms-main-container">
-        <div className="sms-container">
-          <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
-          <div className="text-lg flex flex-col justify-start items-center gap-56 self-stretch">
-            {success ? (
-              <div className="text-center flex flex-col items-start gap-59 self-stretch">
-                <div className="flex flex-col items-center gap-24 self-stretch">
-                  <Icon size="6.4rem" className="text-gronsta-surface-primary" icon={<BadgeCheck />} />
-                  <div className="flex flex-col items-center gap-16">
-                    <h2 className="text-dark-primary lining-nums proportional-nums text-h2-md">
-                      {t('send-sms:your-message-sent')}
-                    </h2>
-                    <p className="text-dark-primary text-center lining-nums proportional-nums text-base font-normal">
-                      <Trans
-                        i18nKey={'send-sms:you-can-review-messages-in-sent-list'}
-                        components={{ strong: <strong /> }}
-                      ></Trans>
-                      .
-                    </p>
+    <DefaultLayout title={`Postportalen`} headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} />}>
+      <div className="main-wrapper">
+        <div className="sms-main-container">
+          <div className="sms-container">
+            <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
+            <div className="text-lg flex flex-col justify-start items-center gap-56 self-stretch">
+              {success ? (
+                <div className="text-center flex flex-col items-start gap-59 self-stretch">
+                  <div className="flex flex-col items-center gap-24 self-stretch">
+                    <Icon size="6.4rem" className="text-gronsta-surface-primary" icon={<BadgeCheck />} />
+                    <div className="flex flex-col items-center gap-16">
+                      <h2 className="text-dark-primary lining-nums proportional-nums text-h2-md">
+                        {t('send-sms:your-message-sent')}
+                      </h2>
+                      <p className="text-dark-primary text-center lining-nums proportional-nums text-base font-normal">
+                        <Trans
+                          i18nKey={'send-sms:you-can-review-messages-in-sent-list'}
+                          components={{ strong: <strong /> }}
+                        ></Trans>
+                        .
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex md-px-174 py-0 justify-center items-start gap-16 self-stretch flex-wrap">
-                  <Button
-                    color="primary"
-                    variant="secondary"
-                    onClick={() => {
-                      resetAll();
-                      setSuccess(false);
-                    }}
-                  >
-                    {t('send-sms:send-new-sms')}
-                  </Button>
-                  <NextLink href="/" passHref legacyBehavior>
-                    <Button color="vattjom">{t('send-sms:to-start-page')}</Button>
-                  </NextLink>
-                </div>
-              </div>
-            ) : (
-              <form
-                className="flex flex-col items-start gap-24 flex-1 w-full max-w-818"
-                onSubmit={handleSubmit(onSubmit)}
-              >
-                <div className="flex flex-col items-start gap-56 self-stretch p-32 w-full shadow-50 rounded-groups">
-                  <div className="flex flex-col items-start gap-12 self-stretch w-full">
-                    <div className="flex flex-col pb-6 items-start gap-6 self-stretch text-label-medium font-normal text-dark-primary">
-                      {t('send-sms:some-info')}
-                    </div>
-                    <Divider className="w-full" orientation="horizontal" strong={false} />
-                  </div>
-                  <div className="flex flex-col gap-56 items-start self-stretch">
-                    <div>
-                      <div className="flex max-w-382 flex-col items-start gap-16">
-                        <div className="flex flex-col items-start gap-8 self-stretch w-full">
-                          <FormControl
-                            invalid={!!errors.singleRecipient?.message}
-                            id="recipient"
-                            className="flex-grow w-full"
-                            size="md"
-                          >
-                            <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums w-full">
-                              {t('send-sms:add-mobile-number')}
-                            </FormLabel>
-                            <div className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full">
-                              <Input
-                                className="flex items-center gap-8 flex-1 w-full min-w-249"
-                                {...register('singleRecipient')}
-                              />
-                              <Button
-                                className="self-end"
-                                variant="tertiary"
-                                onClick={() => {
-                                  addRecipient();
-                                }}
-                              >
-                                {t('send-sms:add')}
-                              </Button>
-                            </div>
-                            {errors?.recipientList && (
-                              <FormErrorMessage
-                                className="text-error-text-primary flex items-center gap-8"
-                                key={`recipientList-errors`}
-                              >
-                                <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
-                                {errors.recipientList.message}
-                              </FormErrorMessage>
-                            )}
-                            {errors?.singleRecipient && (
-                              <FormErrorMessage
-                                className="text-error-text-primary flex items-center gap-8"
-                                key={`singleRecipient-errors`}
-                              >
-                                <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
-                                {errors.singleRecipient.message}
-                              </FormErrorMessage>
-                            )}
-                          </FormControl>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-start gap-12 self-stretch">
-                      <div className="flex flex-col items-start gap-12 self-stretch">
-                        <div className="text-label-medium text-dark-primary lining-nums proportional-nums">
-                          {t('send-sms:added-recipients')}
-                        </div>
-                        {recipientList && recipientList.length > 0 ? (
-                          <div className="flex flex-col justify-center items-start gap-8">
-                            {recipientList?.map((recipient) => (
-                              <CustomChip key={recipient} onRemove={() => handleRemove(recipient)}>
-                                {formatMobileNumberDisplay(recipient)}
-                              </CustomChip>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-dark-secondary lining-nums proportional-nums text-label-medium font-normal">
-                            {t('send-sms:you-did-not-add-some-recipients')}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <FormControl
-                      invalid={!!errors?.message}
-                      id="message"
-                      className="flex flex-col items-start gap-8 self-stretch w-full"
-                      size="md"
+                  <div className="flex md-px-174 py-0 justify-center items-start gap-16 self-stretch flex-wrap">
+                    <Button
+                      color="primary"
+                      variant="secondary"
+                      onClick={() => {
+                        resetAll();
+                        setSuccess(false);
+                      }}
                     >
-                      <div className="flex flex-row items-center gap-56 self-stretch justify-between">
-                        <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums flex-1">
-                          {t('send-sms:message')}
-                        </FormLabel>
-                        <div className="text-dark-secondary lining-nums proportional-nums text-small font-normal">
-                          {messageText?.length} / 459 {t('send-sms:characters')}
-                        </div>
-                      </div>
-                      <Textarea
-                        className="flex min-h-182 flex-col items-start gap-8 self-stretch w-full text-dark-placeholder"
-                        maxLength={459}
-                        {...register('message')}
-                      />
-                      {errors.message && (
-                        <FormErrorMessage
-                          className="text-error-text-primary flex items-center gap-8"
-                          key={`message-errors`}
-                        >
-                          <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
-                          {errors.message?.message}
-                        </FormErrorMessage>
-                      )}
-                    </FormControl>
+                      {t('send-sms:send-new-sms')}
+                    </Button>
+                    <NextLink href="/" passHref legacyBehavior>
+                      <Button color="vattjom">{t('send-sms:to-start-page')}</Button>
+                    </NextLink>
                   </div>
                 </div>
-                <div className="flex justify-end items-start gap-80 self-stretch">
-                  <Button
-                    type="submit"
-                    color="vattjom"
-                    className="flex py-8 pr-16 pl-18 justify-center items-center gap-8"
-                    rightIcon={<Icon icon={<SendHorizontal />} />}
-                    loading={isSending}
-                  >
-                    {t('send-sms:sendSms')}
-                  </Button>
-                </div>
-              </form>
-            )}
+              ) : (
+                <form
+                  className="flex flex-col items-start gap-24 flex-1 w-full max-w-818"
+                  onSubmit={handleSubmit(onSubmit)}
+                >
+                  <div className="flex flex-col items-start gap-56 self-stretch p-32 w-full shadow-50 rounded-groups">
+                    <div className="flex flex-col items-start gap-12 self-stretch w-full">
+                      <div className="flex flex-col pb-6 items-start gap-6 self-stretch text-label-medium font-normal text-dark-primary">
+                        {t('send-sms:some-info')}
+                      </div>
+                      <Divider className="w-full" orientation="horizontal" strong={false} />
+                    </div>
+                    <div className="flex flex-col gap-56 items-start self-stretch">
+                      <div>
+                        <div className="flex max-w-382 flex-col items-start gap-16">
+                          <div className="flex flex-col items-start gap-8 self-stretch w-full">
+                            <FormControl
+                              invalid={!!errors.singleRecipient?.message}
+                              id="recipient"
+                              className="flex-grow w-full"
+                              size="md"
+                            >
+                              <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums w-full">
+                                {t('send-sms:add-mobile-number')}
+                              </FormLabel>
+                              <div className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full">
+                                <Input
+                                  className="flex items-center gap-8 flex-1 w-full min-w-249"
+                                  {...register('singleRecipient')}
+                                />
+                                <Button
+                                  className="self-end"
+                                  variant="tertiary"
+                                  onClick={() => {
+                                    addRecipient();
+                                  }}
+                                >
+                                  {t('send-sms:add')}
+                                </Button>
+                              </div>
+                              {errors?.recipientList && (
+                                <FormErrorMessage
+                                  className="text-error-text-primary flex items-center gap-8"
+                                  key={`recipientList-errors`}
+                                >
+                                  <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
+                                  {errors.recipientList.message}
+                                </FormErrorMessage>
+                              )}
+                              {errors?.singleRecipient && (
+                                <FormErrorMessage
+                                  className="text-error-text-primary flex items-center gap-8"
+                                  key={`singleRecipient-errors`}
+                                >
+                                  <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
+                                  {errors.singleRecipient.message}
+                                </FormErrorMessage>
+                              )}
+                            </FormControl>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-start gap-12 self-stretch">
+                        <div className="flex flex-col items-start gap-12 self-stretch">
+                          <div className="text-label-medium text-dark-primary lining-nums proportional-nums">
+                            {t('send-sms:added-recipients')}
+                          </div>
+                          {recipientList && recipientList.length > 0 ? (
+                            <div className="flex flex-col justify-center items-start gap-8">
+                              {recipientList?.map((recipient) => (
+                                <CustomChip key={recipient} onRemove={() => handleRemove(recipient)}>
+                                  {formatMobileNumberDisplay(recipient)}
+                                </CustomChip>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-dark-secondary lining-nums proportional-nums text-label-medium font-normal">
+                              {t('send-sms:you-did-not-add-some-recipients')}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <FormControl
+                        invalid={!!errors?.message}
+                        id="message"
+                        className="flex flex-col items-start gap-8 self-stretch w-full"
+                        size="md"
+                      >
+                        <div className="flex flex-row items-center gap-56 self-stretch justify-between">
+                          <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums flex-1">
+                            {t('send-sms:message')}
+                          </FormLabel>
+                          <div className="text-dark-secondary lining-nums proportional-nums text-small font-normal">
+                            {messageText?.length} / 459 {t('send-sms:characters')}
+                          </div>
+                        </div>
+                        <Textarea
+                          className="flex min-h-182 flex-col items-start gap-8 self-stretch w-full text-dark-placeholder"
+                          maxLength={459}
+                          {...register('message')}
+                        />
+                        {errors.message && (
+                          <FormErrorMessage
+                            className="text-error-text-primary flex items-center gap-8"
+                            key={`message-errors`}
+                          >
+                            <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
+                            {errors.message?.message}
+                          </FormErrorMessage>
+                        )}
+                      </FormControl>
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-start gap-80 self-stretch">
+                    <Button
+                      type="submit"
+                      color="vattjom"
+                      className="flex py-8 pr-16 pl-18 justify-center items-center gap-8"
+                      rightIcon={<Icon icon={<SendHorizontal />} />}
+                      loading={isSending}
+                    >
+                      {t('send-sms:sendSms')}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </DefaultLayout>
   );
 }
-
 export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-sms'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'accessibility', 'send-sms'])),
   },
 });
