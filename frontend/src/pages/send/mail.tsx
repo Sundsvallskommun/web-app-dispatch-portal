@@ -35,6 +35,12 @@ const initialValues = {
 export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
 
 const SendMailPage = () => {
+  const controls = useForm<SendMailForm>({
+    resolver: yupResolver(formSchema),
+    defaultValues: initialValues,
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
+  });
   const [step, setStep] = useState<number>(0);
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
@@ -45,15 +51,9 @@ const SendMailPage = () => {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { t } = useTranslation(['common', 'send-mail']);
-
-  const controls = useForm<SendMailForm>({
-    resolver: yupResolver(formSchema),
-    defaultValues: initialValues,
-    mode: 'onSubmit',
-    reValidateMode: 'onSubmit',
-  });
-
   const { watch, reset, trigger, setValue } = controls;
+  const hasSubject = watch('subject').length > 0;
+  const hasDepartment = watch('department').length > 0;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
@@ -68,7 +68,9 @@ const SendMailPage = () => {
   const { recipientOnNextClick, filesOnNextClick } = useMailStepValidations(
     trigger,
     controls.setError,
-    hasAtLeastOneAttachment
+    hasAtLeastOneAttachment,
+    hasSubject,
+    hasDepartment
   );
 
   useEffect(() => {

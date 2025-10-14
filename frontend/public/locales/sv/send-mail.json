@@ -20,7 +20,11 @@
     "headerManagement": "Din förvaltning",
     "managementDescription": "Informationen används endast för fakturering. Förvaltningen visas inte för mottagaren.",
     "managementLabel": "Förvaltning",
-    "selectManagementText": "Välj förvaltning"
+    "selectManagementText": "Välj förvaltning",
+    "error": {
+      "noDepartment": "Välj din förvaltning.",
+      "noSubject": "Ange ett ämne för utskicket."
+    }
   },
   "attachmentHandler": {
     "header": "Bifoga filer",
@@ -33,7 +37,8 @@
     "progressStepper": "Använt utrymme: {files} MB av {limit} MB",
     "uploadHelperSingle": "<span>Välj fil</span> eller dra och släpp den här",
     "uploadHelperMultiple": "<span>Välj filer</span> eller dra och släpp dem här",
-    "uploadInputPlaceHolder": "Välj fil att lägga till"
+    "uploadInputPlaceHolder": "Välj fil att lägga till",
+    "errorMessage": "Du måste bifoga minst ett dokument."
   },
   "recipientHandler": {
     "title": "Lägg till mottagare",

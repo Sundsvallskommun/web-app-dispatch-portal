@@ -3,6 +3,7 @@ import { useDepartments } from '@services/departments-service';
 import { FormControl, FormLabel, Input, Spinner, Select, Divider } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 
 export interface SenderFormModel {
   department: string;
@@ -10,8 +11,11 @@ export interface SenderFormModel {
 }
 
 export const SenderHandler: React.FC = () => {
-  const { register } = useFormContext<SenderFormModel>();
   const { departments, loaded } = useDepartments();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<SenderFormModel>();
   const { t } = useTranslation(['common', 'send-mail']);
 
   return !loaded ? (
@@ -25,14 +29,20 @@ export const SenderHandler: React.FC = () => {
         </div>
         <FormControl className="w-full mb-40" size="md">
           <FormLabel className="text-label-medium">{t('send-mail:senderHandler.formLabelHeader')}</FormLabel>
-          <Input className="max-w-[467px]" {...register('subject')} />
+          <Input invalid={!!errors?.subject} className="max-w-[467px]" {...register('subject')} />
+          {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} padded={false} />}
         </FormControl>
         <Divider className="w-full mb-40" />
         <FormControl className="w-full">
           <h4>{t('send-mail:senderHandler.headerManagement')}</h4>
           <p>{t('send-mail:senderHandler.managementDescription')}</p>
           <FormLabel className="text-label-medium mt-24">{t('send-mail:senderHandler.managementLabel')}</FormLabel>
-          <Select className="w-full max-w-[467px]" {...register('department')} defaultValue={''}>
+          <Select
+            invalid={!!errors?.department}
+            className="w-full max-w-[467px]"
+            {...register('department')}
+            defaultValue={''}
+          >
             <Select.Option value="" disabled>
               {t('send-mail:senderHandler.selectManagementText')}
             </Select.Option>
@@ -42,6 +52,9 @@ export const SenderHandler: React.FC = () => {
               </Select.Option>
             ))}
           </Select>
+          {errors?.department && (
+            <CustomFormErrorMessage message={errors.department.message?.toString()} padded={false} />
+          )}
         </FormControl>
       </div>
     </div>

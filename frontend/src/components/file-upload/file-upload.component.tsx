@@ -6,8 +6,8 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useFileUpload } from './file-upload.context';
 import { handleFiles, resetErrors } from './file-upload-utils';
 import { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
-import FileUploadError from './file-upload-error';
 import { Trans, useTranslation } from 'react-i18next';
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 
 const FileUpload: React.FC<{
   fieldName: string;
@@ -160,10 +160,10 @@ const FileUpload: React.FC<{
           />
         </FormLabel>
       </div>
-      {errors?.[fieldName]?.message && <FileUploadError id={999} message={errors[fieldName]?.message?.toString()} />}
+      {errors?.[fieldName]?.message && <CustomFormErrorMessage message={errors[fieldName]?.message?.toString()} />}
       {errors?.newItem && <FormErrorMessage className="my-sm">{errors?.newItem.message}</FormErrorMessage>}
       {fileErrors.map((e, idx) => (
-        <FileUploadError key={`${fieldName}-${idx}`} id={idx} message={e} />
+        <CustomFormErrorMessage key={`${fieldName}-${idx}`} message={e} />
       ))}
     </div>
   );

@@ -3,11 +3,14 @@ import { UseFormSetError, UseFormTrigger } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { useMessageStore } from '@services/recipient-service';
 import { SendMailForm } from '@pages/send/mail';
+import { useCallback } from 'react';
 
 export const useMailStepValidations = (
   trigger: UseFormTrigger<SendMailForm>,
   setError: UseFormSetError<SendMailForm>,
-  hasAtLeastOneAttachment: boolean
+  hasAtLeastOneAttachment: boolean,
+  hasSubject: boolean,
+  hasDepartment: boolean
 ) => {
   const { t } = useTranslation(['send-mail']);
   const recipients = useMessageStore((state) => state.recipients);
@@ -27,8 +30,28 @@ export const useMailStepValidations = (
     fieldsToValidate: ['attachmentList'],
     condition: hasAtLeastOneAttachment,
     errorField: 'attachmentList',
-    errorMessage: t('send-mail:attachmentHandler.errorMessage', 'Du måste bifoga minst ett dokument.'),
+    errorMessage: t('send-mail:attachmentHandler.errorMessage'),
   });
 
-  return { recipientOnNextClick, filesOnNextClick };
+  const senderOnNextClick = useCallback(async () => {
+    const isValid = await trigger(['department', 'subject']);
+
+    if (!hasDepartment) {
+      setError('department', {
+        type: 'manual',
+        message: t('send-mail:senderHandler.error.noDepartment'),
+      });
+    }
+
+    if (!hasSubject) {
+      setError('subject', {
+        type: 'manual',
+        message: t('send-mail:senderHandler.error.noSubject'),
+      });
+    }
+
+    return isValid && hasDepartment && hasSubject;
+  }, [trigger, setError, hasDepartment, hasSubject, t]);
+
+  return { recipientOnNextClick, filesOnNextClick, senderOnNextClick };
 };

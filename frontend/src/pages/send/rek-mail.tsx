@@ -48,6 +48,8 @@ const SendRekMail = () => {
   const response = useMessageStore((state) => state.response);
   const setResponse = useMessageStore((state) => state.setResponse);
   const watchAttachmentList = watch('attachmentList');
+  const hasSubject = watch('subject').length > 0;
+  const hasDepartment = watch('department').length > 0;
   const hasAtLeastOneAttachment = (watchAttachmentList?.length ?? 0) > 0;
   const { t } = useTranslation(['common', 'send-mail']);
 
@@ -55,10 +57,12 @@ const SendRekMail = () => {
     0: t('common:screenReader.postStepper.stepOne'),
   };
 
-  const { recipientOnNextClick, filesOnNextClick } = useMailStepValidations(
+  const { recipientOnNextClick, filesOnNextClick, senderOnNextClick } = useMailStepValidations(
     trigger,
     controls.setError,
-    hasAtLeastOneAttachment
+    hasAtLeastOneAttachment,
+    hasSubject,
+    hasDepartment
   );
 
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
@@ -104,7 +108,8 @@ const SendRekMail = () => {
             {
               label: t('common:stepper.header'),
               component: <SenderHandler />,
-              valid: true,
+              valid: hasDepartment && hasSubject,
+              onNextClick: senderOnNextClick,
             },
             {
               label: t('common:stepper.review'),
