@@ -1,6 +1,5 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMediaQuery } from '@mui/material';
 import {
   Button,
   Divider,
@@ -10,7 +9,6 @@ import {
   Icon,
   Input,
   Textarea,
-  useGui,
   useSnackbar,
 } from '@sk-web-gui/react';
 import { BadgeCheck, Info, SendHorizontal, Smartphone } from 'lucide-react';
