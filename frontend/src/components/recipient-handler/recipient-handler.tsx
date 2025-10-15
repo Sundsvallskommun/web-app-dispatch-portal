@@ -29,6 +29,9 @@ import { Trans, useTranslation } from 'next-i18next';
 import { Info, Plus } from 'lucide-react';
 import { RecipientTable } from 'src/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';
+import PreviewPerson from './preview-person';
+import { useKivraEligibility } from 'src/hooks/useGetEligibility';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -57,6 +60,8 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   const validRecipientLength = recipients.filter((rec) => !rec?.error).length;
   const invalidRecipient = recipients.filter((rec) => rec?.error);
   const combinedLength = validRecipientLength + addresses.length;
+  const { isEligible } = useKivraEligibility(foundPerson?.address?.personId, sendType);
+  const allowSearchFieldOnSearch = sendType === formSendType.MAIL || (isEligible && sendType === formSendType.REK_MAIL);
   const { t } = useTranslation(['send-mail', 'common', 'accessibility']);
 
   const {
@@ -273,31 +278,27 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
           </Button>
         </Modal.Footer>
       </Modal>
-      <div
-        className={cx(
-          'flex flex-col items-start w-full rounded-cards shadow-50 p-32',
-          sendType === formSendType.REK_MAIL ? 'gap-40' : 'gap-64'
-        )}
-      >
-        <div className="w-full">
-          <h4 className="pb-6">{t('send-mail:recipientHandler.title')}</h4>
-          {sendType === formSendType.MAIL ? (
-            <React.Fragment>
-              <p className="text-base pb-6">
+      <HandlerWrapper
+        title={t('send-mail:recipientHandler.title')}
+        description={
+          sendType === formSendType.MAIL ? (
+            <>
+              <span>
                 <Trans
                   i18nKey="send-mail:recipientHandler.contentFirstRow"
                   components={{
                     Link: <Link href="/files/example.csv" />,
                   }}
                 />
-              </p>
-              <p className="text-base pb-6">{`${t('send-mail:recipientHandler.contentSecondRow')}.`}</p>
-            </React.Fragment>
+              </span>
+              <span>{t('send-mail:recipientHandler.contentSecondRow')}</span>
+            </>
           ) : (
-            <p className="text-base pb-6">{t('send-mail:recipientHandler.rekMail.content')}</p>
-          )}
-        </div>
-        <div className="w-full gap-32 relative">
+            t('send-mail:recipientHandler.rekMail.content')
+          )
+        }
+      >
+        <div className="w-full gap-32">
           {sendType === formSendType.MAIL && (
             <div className="flex flex-col">
               <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
@@ -356,25 +357,19 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                       setFoundPerson(undefined);
                     }}
                     onSearch={() => {
-                      handleSubmitSingleRecipient();
+                      allowSearchFieldOnSearch && handleSubmitSingleRecipient();
                     }}
+                    disabled={sendType === formSendType.REK_MAIL && recipients.length === 1}
                   />
                   <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
-                    <div className="preview-person absolute mt-4 bg-background-content p-16 rounded-button border-1 border-divider w-full z-10">
-                      <p className="text-body text-base font-bold">
-                        {foundPerson.address.givenname} {foundPerson.address.lastname}
-                      </p>
-                      <p className="text-small">{foundPerson.address?.personNumber}</p>
-                      <p className="text-small">
-                        {foundPerson.address?.addresses[0].address}, {foundPerson.address?.addresses[0].city}
-                      </p>
-
-                      <Button className="mt-16" onClick={() => handleSubmitSingleRecipient()}>
-                        {t('send-mail:recipientHandler.addRecipient')}
-                      </Button>
-                    </div>
+                    <PreviewPerson
+                      personId={foundPerson.address.personId}
+                      personAdress={foundPerson.address}
+                      handleSubmit={handleSubmitSingleRecipient}
+                      sendType={sendType}
+                    />
                   )}
                 </div>
 
@@ -467,7 +462,9 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <div className="w-full mt-40">
               {current === 0 && (
                 <h3 className="mb-16 text-label-medium font-sans">
-                  {t('send-mail:recipientHandler.addedRecipientNum', { num: combinedLength })}
+                  {sendType === formSendType.MAIL
+                    ? t('send-mail:recipientHandler.addedRecipientNum', { num: combinedLength })
+                    : t('send-mail:recipientHandler.addedRecipientsTitle')}
                 </h3>
               )}
               {current === 1 && (
@@ -493,7 +490,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}.`}</p>
           </div>
         )}
-      </div>
+      </HandlerWrapper>
     </div>
   );
 };

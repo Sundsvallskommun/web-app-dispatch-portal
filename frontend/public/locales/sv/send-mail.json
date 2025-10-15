@@ -14,13 +14,17 @@
   "addTextDocument": "Lägg till textdokument",
   "addSender": "Ange avsändare",
   "attachmentHandler": {
-    "header": "Lägg till textfil",
-    "description": "Ladda upp filer som ska ingå i ditt digitala brev, till exempel textfiler, fakturor och andra bilagor. Filerna får tillsammans ha en storlek på maximalt 1.5 MB",
-    "helperText": "Tillåtna filtyper: PDF. Max storlek på utskick: 1.5 MB",
+    "header": "Bifoga filer",
+    "description": "Bifoga upp till 4 filer som ska ingå i brevet. Den totala storleken får vara högst 1,5 MB.",
+    "helperText": "Tillåtna filtyper: PDF",
     "addedFilesHeader": "Tillagda filer",
     "noFiles": "Du har inte laddat upp några filer än",
     "addedFiles": "Tillagda filer ({num})",
-    "sort": "Sortera filerna i den ordning du vill att dom ska synas i utskicket"
+    "sort": "Sortera filerna i den ordning du vill att dom ska synas i utskicket",
+    "progressStepper": "Använt utrymme: {files} MB av {limit} MB",
+    "uploadHelperSingle": "<span>Välj fil</span> eller dra och släpp den här",
+    "uploadHelperMultiple": "<span>Välj filer</span> eller dra och släpp dem här",
+    "uploadInputPlaceHolder": "Välj fil att lägga till"
   },
   "recipientHandler": {
     "title": "Lägg till mottagare",
@@ -29,7 +33,7 @@
     "howAddRecipient": "Hur vill du lägga till mottagare?",
     "optionPersonalNumberOrAddress": "Med personnummer eller adress",
     "optionRecipientList": "Med mottagarlista",
-    "addRecipient": "Lägg till mottagare",
+    "addRecipient": "Lägg till",
     "missingPersonalNumber": "Saknar du personnummer?",
     "addRecipientWithAddress": "Lägg till mottagare med adress",
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
@@ -65,7 +69,9 @@
     "addedRecipientNum": "Tillagda mottagare ({num})",
     "addedFromFileNum": "Tillagda mottagare från fil ({num})",
     "rekMail": {
-      "content": "Lägg till mottagare av ditt rekommenderade brev. Rekommenderat brev går bara att skicka till mottagare som har en digital brevlåda hos Kivra."
+      "content": "Lägg till mottagare av ditt rekommenderade brev. Rekommenderat brev går bara att skicka till mottagare som har en digital brevlåda hos Kivra.",
+      "success": "Har digital brevlåda hos Kivra",
+      "error": "Har inte digital brevlåda hos Kivra"
     }
   }
 }
