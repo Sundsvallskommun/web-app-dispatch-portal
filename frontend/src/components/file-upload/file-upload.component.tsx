@@ -5,6 +5,9 @@ import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useFileUpload } from './file-upload.context';
 import { handleFiles, resetErrors } from './file-upload-utils';
+import { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
+import FileUploadError from './file-upload-error';
+import { Trans, useTranslation } from 'react-i18next';
 
 const FileUpload: React.FC<{
   fieldName: string;
@@ -31,10 +34,10 @@ const FileUpload: React.FC<{
   onErrorReset,
   resetErrorTrigger,
 }) => {
-  const [error, setError] = useState<string>();
   const [fileErrors, setFileErrors] = useState<string[]>([]);
   const [added, setAdded] = useState<number>(0);
   const ref = useRef<HTMLLabelElement>(null);
+  const { t } = useTranslation(['send-mail']);
 
   const {
     register,
@@ -42,7 +45,8 @@ const FileUpload: React.FC<{
     watch,
     setValue,
     formState: { errors },
-  } = useFormContext<{ newItem: FileList | undefined } & Record<string, any>>(); // eslint-disable-line @typescript-eslint/no-explicit-any
+    clearErrors,
+  } = useFormContext<{ newItem: FileList | undefined } & Record<string, any> & AttachmentFormModel>(); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const newItem: FileList = watch(`${fieldName}-newItem`);
 
@@ -50,6 +54,8 @@ const FileUpload: React.FC<{
     control,
     name: fieldName,
   });
+
+  const fileFields = (fields as { file?: File }[]).map((f) => ({ file: f.file }));
 
   const { drop, setDrop, setActive } = useFileUpload();
 
@@ -67,7 +73,8 @@ const FileUpload: React.FC<{
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (!newItem?.[0]) return;
-    resetErrors(setFileErrors, setError, onErrorReset);
+    clearErrors(fieldName);
+    resetErrors(setFileErrors, onErrorReset);
     handleFiles({
       newItem,
       added,
@@ -81,15 +88,15 @@ const FileUpload: React.FC<{
       setAdded,
       setValue,
       setFileErrors,
-      setError,
       onErrorReset,
+      fields: fileFields,
     });
   }, [newItem]);
   /* eslint-enable react-hooks/exhaustive-deps */
 
   useEffect(() => {
     if (resetErrorTrigger && resetErrorTrigger > 0) {
-      resetErrors(setFileErrors, setError, onErrorReset);
+      resetErrors(setFileErrors, onErrorReset);
     }
   }, [resetErrorTrigger, onErrorReset]);
 
@@ -122,18 +129,23 @@ const FileUpload: React.FC<{
               'focus-within:ring',
               'focus-within:ring-ring',
               'focus-within:ring-offset',
-              'text-base gap-16 box-border flex flex-col justify-center items-center',
-              'p-12 md:p-24 xl:p-32',
-              'bg-vattjom-background-100',
-              'border border-vattjom-surface-primary',
-              'hover:bg-vattjom-background-200 hover:border-solid border-dashed cursor-pointer'
+              'text-base gap-16 box-border flex justify-center items-center border p-32',
+              'hover:border-solid border-dashed cursor-pointer',
+              fileErrors.length || errors.attachmentList ? 'bg-error-background-100' : 'bg-vattjom-background-100',
+              fileErrors.length || errors.attachmentList
+                ? 'border-error-surface-primary hover:bg-error-background-200'
+                : 'border-vattjom-surface-primary hover:bg-vattjom-background-200'
             )}
           >
             <Upload className="!h-[4rem] !w-[4rem] text-primary" />
             <div className="flex flex-col gap-8 justify-center">
               <div className="text-base font-normal">
-                <span className="underline text-vattjom-text-primary">Välj {allowMultiple ? 'filer' : 'fil'}</span>{' '}
-                eller dra och släpp {allowMultiple ? 'dem' : 'den'} här
+                <Trans
+                  i18nKey={`send-mail:attachmentHandler.uploadHelper${allowMultiple ? 'Multiple' : 'Single'}`}
+                  components={{
+                    span: <span className="underline text-vattjom-text-primary" />,
+                  }}
+                />
               </div>
               {helperText && <FormErrorMessage>{helperText}</FormErrorMessage>}
             </div>
@@ -143,21 +155,16 @@ const FileUpload: React.FC<{
             type="file"
             accept={accept.join(',')}
             multiple={allowMultiple}
-            placeholder="Välja fil att lägga till"
+            placeholder={t('send-mail:attachmentHandler.uploadInputPlaceHolder')}
             {...register(`${fieldName}-newItem`)}
           />
         </FormLabel>
       </div>
-
-      <div>
-        {errors?.newItem && <FormErrorMessage className="my-sm">{errors?.newItem.message}</FormErrorMessage>}
-        {error && <FormErrorMessage className="my-sm">{error}</FormErrorMessage>}
-        {fileErrors.map((e, idx) => (
-          <FormErrorMessage key={`fileError-${idx}`} className="my-sm">
-            {e}
-          </FormErrorMessage>
-        ))}
-      </div>
+      {errors?.[fieldName]?.message && <FileUploadError id={999} message={errors[fieldName]?.message?.toString()} />}
+      {errors?.newItem && <FormErrorMessage className="my-sm">{errors?.newItem.message}</FormErrorMessage>}
+      {fileErrors.map((e, idx) => (
+        <FileUploadError key={`${fieldName}-${idx}`} id={idx} message={e} />
+      ))}
     </div>
   );
 };

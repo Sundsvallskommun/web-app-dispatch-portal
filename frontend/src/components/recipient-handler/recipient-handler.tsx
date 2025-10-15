@@ -31,6 +31,7 @@ import { RecipientTable } from 'src/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';
 import PreviewPerson from './preview-person';
 import { useKivraEligibility } from 'src/hooks/useGetEligibility';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -277,30 +278,26 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
           </Button>
         </Modal.Footer>
       </Modal>
-      <div
-        className={cx(
-          'flex flex-col items-start w-full rounded-cards shadow-50 p-32',
-          sendType === formSendType.REK_MAIL ? 'gap-40' : 'gap-64'
-        )}
-      >
-        <div className="w-full">
-          <h4 className="pb-6">{t('send-mail:recipientHandler.title')}</h4>
-          {sendType === formSendType.MAIL ? (
-            <React.Fragment>
-              <p className="text-base pb-6">
+      <HandlerWrapper
+        title={t('send-mail:recipientHandler.title')}
+        description={
+          sendType === formSendType.MAIL ? (
+            <>
+              <span>
                 <Trans
                   i18nKey="send-mail:recipientHandler.contentFirstRow"
                   components={{
                     Link: <Link href="/files/example.csv" />,
                   }}
                 />
-              </p>
-              <p className="text-base pb-6">{`${t('send-mail:recipientHandler.contentSecondRow')}.`}</p>
-            </React.Fragment>
+              </span>
+              <span>{t('send-mail:recipientHandler.contentSecondRow')}</span>
+            </>
           ) : (
-            <p className="text-base pb-6">{t('send-mail:recipientHandler.rekMail.content')}</p>
-          )}
-        </div>
+            t('send-mail:recipientHandler.rekMail.content')
+          )
+        }
+      >
         <div className="w-full gap-32">
           {sendType === formSendType.MAIL && (
             <div className="flex flex-col">
@@ -493,7 +490,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}.`}</p>
           </div>
         )}
-      </div>
+      </HandlerWrapper>
     </div>
   );
 };
