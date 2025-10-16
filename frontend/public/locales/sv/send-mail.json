@@ -38,7 +38,13 @@
     "uploadHelperSingle": "<span>Välj fil</span> eller dra och släpp den här",
     "uploadHelperMultiple": "<span>Välj filer</span> eller dra och släpp dem här",
     "uploadInputPlaceHolder": "Välj fil att lägga till",
-    "errorMessage": "Du måste bifoga minst ett dokument."
+    "errorMessage": "Du måste bifoga minst ett dokument.",
+    "validation": {
+      "wrongFileType": "Fel filtyp - {fileName}",
+      "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
+      "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
+      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB."
+    }
   },
   "recipientHandler": {
     "title": "Lägg till mottagare",

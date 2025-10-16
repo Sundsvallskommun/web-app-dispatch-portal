@@ -44,6 +44,7 @@ const FileUpload: React.FC<{
     control,
     watch,
     setValue,
+    setError,
     formState: { errors },
     clearErrors,
   } = useFormContext<{ newItem: FileList | undefined } & Record<string, any> & AttachmentFormModel>(); // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -59,10 +60,12 @@ const FileUpload: React.FC<{
 
   const { drop, setDrop, setActive } = useFileUpload();
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (fields.length !== added) {
       setAdded(fields.length);
     }
+    clearErrors(fieldName);
   }, [fields.length, added]);
 
   useEffect(() => {
@@ -87,9 +90,10 @@ const FileUpload: React.FC<{
       replace,
       setAdded,
       setValue,
-      setFileErrors,
-      onErrorReset,
       fields: fileFields,
+      setError,
+      clearErrors,
+      t,
     });
   }, [newItem]);
   /* eslint-enable react-hooks/exhaustive-deps */
@@ -162,9 +166,6 @@ const FileUpload: React.FC<{
       </div>
       {errors?.[fieldName]?.message && <CustomFormErrorMessage message={errors[fieldName]?.message?.toString()} />}
       {errors?.newItem && <FormErrorMessage className="my-sm">{errors?.newItem.message}</FormErrorMessage>}
-      {fileErrors.map((e, idx) => (
-        <CustomFormErrorMessage key={`${fieldName}-${idx}`} message={e} />
-      ))}
     </div>
   );
 };
