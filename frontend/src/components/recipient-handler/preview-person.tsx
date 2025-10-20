@@ -1,16 +1,16 @@
 import { Citizenaddress } from '@services/recipient-service';
 import { Button, cx, Icon, Spinner } from '@sk-web-gui/react';
-import { RecipientHandlerSendType } from './recipient-handler';
 import { formSendType } from 'src/constants';
 import { Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useKivraEligibility } from 'src/hooks/useGetEligibility';
+import { SendType } from 'src/types';
 
 interface PreviewPersonProps {
   personId: string;
   personAdress: Citizenaddress | undefined;
   handleSubmit: () => void;
-  sendType: RecipientHandlerSendType;
+  sendType: SendType;
 }
 
 const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: PreviewPersonProps) => {

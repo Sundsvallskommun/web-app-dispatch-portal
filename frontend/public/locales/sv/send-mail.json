@@ -93,5 +93,14 @@
       "success": "Har digital brevlåda hos Kivra",
       "error": "Har inte digital brevlåda hos Kivra"
     }
+  },
+  "reviewHandler": {
+    "header": "Granska utskick",
+    "recipients": "Mottagare",
+    "attachments": "Bifogade filer",
+    "subject": "Rubrik",
+    "department": "Förvaltning",
+    "address": "Adress",
+    "deliveryMethod": "Leveranssätt"
   }
 }

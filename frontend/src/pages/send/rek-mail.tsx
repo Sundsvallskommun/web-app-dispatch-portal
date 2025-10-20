@@ -19,6 +19,7 @@ import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
 import { SenderHandler } from '@components/sender-handler/sender-handler.component';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
+import ReviewHandler from '@components/review-handler/review-handler.component';
 
 export type SendRekMailForm = yup.InferType<typeof formSchema>;
 
@@ -100,7 +101,7 @@ const SendRekMail = () => {
             },
             {
               label: t('common:stepper.review'),
-              component: <>Granska</>, // To Do: lägg till korrekt komponent
+              component: <ReviewHandler sendType={formSendType.REK_MAIL} />,
               valid: true,
             },
           ]}

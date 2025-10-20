@@ -1,7 +1,7 @@
-import { RecipientHandlerSendType } from '@components/recipient-handler/recipient-handler';
 import { getEligibilityKivra } from '@services/digital-registered-letter-service';
 import { useEffect, useState } from 'react';
 import { formSendType } from 'src/constants';
+import { SendType } from 'src/types';
 
 interface UseKivraEligibilityResult {
   isEligible: boolean;
@@ -10,7 +10,7 @@ interface UseKivraEligibilityResult {
 
 export const useKivraEligibility = (
   personId: string | null | undefined,
-  sendType: RecipientHandlerSendType
+  sendType: SendType
 ): UseKivraEligibilityResult => {
   const [isEligible, setIsEligible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);

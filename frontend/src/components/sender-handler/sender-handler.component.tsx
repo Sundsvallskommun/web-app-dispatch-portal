@@ -25,14 +25,14 @@ export const SenderHandler: React.FC = () => {
     <HandlerWrapper
       title={t('send-mail:senderHandler.headerLabel')}
       description={t('send-mail:senderHandler.headerDescription')}
-      gap={24}
+      gap={18}
     >
       <FormControl className="w-full" size="md">
         <FormLabel className="text-label-medium">{t('send-mail:senderHandler.formLabelHeader')}</FormLabel>
         <Input invalid={!!errors?.subject} className="max-w-[467px]" {...register('subject')} />
         {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} padded={false} />}
       </FormControl>
-      <Divider className="w-full my-16" />
+      <Divider className="w-full my-22" />
       <FormControl className="w-full">
         <h4>{t('send-mail:senderHandler.headerManagement')}</h4>
         <p>{t('send-mail:senderHandler.managementDescription')}</p>
