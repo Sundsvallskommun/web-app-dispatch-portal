@@ -3,10 +3,10 @@ import * as yup from 'yup';
 export const formSchema = yup
   .object({
     message: yup.string().nullable(),
-    department: yup.string().required(),
-    subject: yup.string().required(),
+    department: yup.string().required('send-mail:senderHandler.error.noDepartment'),
+    subject: yup.string().required('send-mail:senderHandler.error.noSubject'),
     body: yup.string().nullable(),
-    attachmentList: yup.array().test('HAS_MIN_ONE', 'Du måste bifoga ett dokument', (value) => {
+    attachmentList: yup.array().test('HAS_MIN_ONE', 'send-mail:attachmentHandler.errorMessage', (value) => {
       return value && value.length > 0;
     }),
     recipientList: yup.array(),
@@ -14,7 +14,7 @@ export const formSchema = yup
     storeRecipients: yup
       .array()
       .default([])
-      .test('HAS_MIN_ONE_RECIPIENT', 'Lägg till minst en mottagare för att fortsätta.', (value) => {
+      .test('HAS_MIN_ONE_RECIPIENT', 'send-mail:recipientHandler.errorHandler.singleRecipientError', (value) => {
         return value && value.length > 0;
       }),
   })
