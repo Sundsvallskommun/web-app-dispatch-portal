@@ -90,14 +90,14 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
   const subjectContent = (
     <div className="flex flex-col w-full gap-12">
       <h3 className="text-label-medium">{t('send-mail:reviewHandler.subject')}</h3>
-      <p className="my-auto">{subject ? subject : 'Inget subject'}</p>
+      <p className="my-auto">{subject ? subject : t('send-mail:reviewHandler.noSubject')}</p>
     </div>
   );
 
   const departmentContent = (
     <div className="flex flex-col w-full gap-12">
       <h3 className="text-label-medium">{t('send-mail:reviewHandler.department')}</h3>
-      <p className="my-auto">{department}</p>
+      <p className="my-auto">{department ? department : t('send-mail:reviewHandler.noDepartment')}</p>
     </div>
   );
 

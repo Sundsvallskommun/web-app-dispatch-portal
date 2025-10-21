@@ -58,6 +58,11 @@ const FormStepper = <T extends FieldValues>({
     }
   };
 
+  const handleOnResetSuccess = () => {
+    setCurrentStep(0);
+    onResetSuccess();
+  };
+
   const contentFormProvider = (
     <FormProvider {...controls}>
       <ProgressStepper
@@ -96,7 +101,7 @@ const FormStepper = <T extends FieldValues>({
       <div className={cx('flex flex-col', isMd ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
         {success ? (
           <SuccessContainer
-            onClick={onResetSuccess}
+            onClick={handleOnResetSuccess}
             title={t(`${i18nSendType}.header`)}
             message={t(`${i18nSendType}.description`)}
             sendNewBtntext={t(`${i18nSendType}.buttonMsg`)}

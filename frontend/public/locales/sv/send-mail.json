@@ -112,6 +112,8 @@
     "department": "Förvaltning",
     "address": "Adress",
     "deliveryMethod": "Leveranssätt",
-    "error": "Något gick fel"
+    "error": "Något gick fel",
+    "noDepartment": "Ingen förvaltning vald",
+    "noSubject": "Inget ämne valt"
   }
 }
