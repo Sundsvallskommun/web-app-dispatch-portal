@@ -29,9 +29,10 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: false,
     renderColumn: (_value, item) => {
+      const personalNumber = `, ${item?.address?.personNumber}`;
       return (
         <p className="flex flex-col">
-          <span>{`${item?.address?.givenname} ${item?.address?.lastname} ${sendType === formSendType.REK_MAIL ? `, ${item?.address?.personNumber}` : ''}`}</span>
+          <span>{`${item?.address?.givenname} ${item?.address?.lastname} ${sendType === formSendType.REK_MAIL ? personalNumber : ''}`}</span>
           {sendType === formSendType.MAIL && <span>{item?.address?.personNumber}</span>}
         </p>
       );
@@ -73,7 +74,7 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
       <h3 className="text-label-medium">{t('send-mail:reviewHandler.attachments')}</h3>
       {attachments.map((a, i) => {
         return (
-          <React.Fragment key={`item-${i}`}>
+          <React.Fragment key={`item-${a.file?.name.substring(0, 5)}-${a.file?.type}`}>
             <div className="flex items-center gap-16 p-12">
               <div className="bg-vattjom-surface-accent p-10 gap-8 rounded-utility max-w-[44px] max-h-[44px]">
                 <Icon icon={<File />} />
@@ -90,14 +91,14 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
   const subjectContent = (
     <div className="flex flex-col w-full gap-12">
       <h3 className="text-label-medium">{t('send-mail:reviewHandler.subject')}</h3>
-      <p className="my-auto">{subject ? subject : t('send-mail:reviewHandler.noSubject')}</p>
+      <p className="my-auto">{subject}</p>
     </div>
   );
 
   const departmentContent = (
     <div className="flex flex-col w-full gap-12">
       <h3 className="text-label-medium">{t('send-mail:reviewHandler.department')}</h3>
-      <p className="my-auto">{department ? department : t('send-mail:reviewHandler.noDepartment')}</p>
+      <p className="my-auto">{department}</p>
     </div>
   );
 
