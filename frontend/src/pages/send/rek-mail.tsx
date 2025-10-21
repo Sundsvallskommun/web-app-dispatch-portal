@@ -72,7 +72,7 @@ const SendRekMail = () => {
   return (
     <DefaultLayout
       title={t('start-page:app-title')}
-      headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} />}
+      headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} isSuccess={success} />}
     >
       <div className="flex items-center flex-col">
         <FormStepper<SendRekMailForm>
@@ -111,6 +111,7 @@ const SendRekMail = () => {
           controls={controls}
           success={success}
           onResetSuccess={() => setSuccess(false)}
+          sendType={formSendType.REK_MAIL}
         />
       </div>
     </DefaultLayout>

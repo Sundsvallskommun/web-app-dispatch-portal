@@ -1,4 +1,5 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
+import SuccessContainer from '@components/success-container/success-container';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
@@ -15,10 +16,9 @@ import {
   Textarea,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { BadgeCheck, SendHorizontal, Smartphone } from 'lucide-react';
+import { SendHorizontal, Smartphone } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import NextLink from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -146,36 +146,25 @@ export default function SendEmailPage() {
     setIsSending(false);
   };
 
+  const handleSendNew = () => {
+    resetAll();
+    setSuccess(false);
+  };
+
   return (
-    <DefaultLayout title={`Postportalen`} headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} />}>
+    <DefaultLayout
+      title={`Postportalen`}
+      headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} isSuccess={success} />}
+    >
       <h1 className="sr-only">Skicka SMS</h1>
-      <div className="text-lg mb-11 pt-48">
+      <div className="text-lg mb-11">
         {success ? (
-          <div className="text-center">
-            <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-            <h2 className="mt-24">Ditt sms har skickats</h2>
-            <p className="my-md text-base">
-              Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan.
-            </p>
-            <div className="flex gap-16 justify-center mt-40">
-              <Button
-                className="mt-lg"
-                color="primary"
-                variant="secondary"
-                onClick={() => {
-                  resetAll();
-                  setSuccess(false);
-                }}
-              >
-                Skicka nytt sms
-              </Button>
-              <NextLink href="/" passHref legacyBehavior>
-                <Button className="mt-lg" color="vattjom">
-                  Till startsidan
-                </Button>
-              </NextLink>
-            </div>
-          </div>
+          <SuccessContainer
+            onClick={handleSendNew}
+            title="Ditt sms är skickat"
+            message="Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan."
+            sendNewBtntext="Skicka nytt sms"
+          />
         ) : (
           <div className="w-full max-w-[82rem] mx-auto">
             <h2 className="text-h4-lg">Skicka sms</h2>

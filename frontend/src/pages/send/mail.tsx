@@ -78,7 +78,7 @@ const SendMailPage = () => {
   return (
     <DefaultLayout
       title={t('send-mail:sendLetter')}
-      headerMenu={<FormStepperHeader title={t('send-mail:sendLetter')} icon={<Mail />} />}
+      headerMenu={<FormStepperHeader title={t('send-mail:sendLetter')} icon={<Mail />} isSuccess={success} />}
     >
       <div className="flex items-center flex-col">
         <FormStepper<SendMailForm>

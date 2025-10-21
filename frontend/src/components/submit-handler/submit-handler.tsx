@@ -1,25 +1,25 @@
-import { ConfirmDialog } from '@components/confirm-dialog/confirm-dialog.component';
 import { FormModel } from '@pages/send/mail';
 import { sendMessage } from '@services/message-service';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, useSnackbar } from '@sk-web-gui/react';
-import { ArrowRight } from 'lucide-react';
+import { SendHorizonal } from 'lucide-react';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
-const SubmitHandler: React.FC = () => {
+const SubmitHandler = () => {
   const [isSending, setIsSending] = useState(false);
+  const { t } = useTranslation(['common', 'send-mail']);
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const setResponse = useMessageStore((state) => state.setResponse);
-  const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const message = useSnackbar();
   const {
     getValues,
     formState: { isValid },
   } = useFormContext<FormModel>();
 
-  const send = () => {
+  const handleSend = () => {
     setIsSending(true);
     sendMessage(
       getValues(),
@@ -28,38 +28,27 @@ const SubmitHandler: React.FC = () => {
     )
       .then((res) => {
         setIsSending(false);
-        message({ message: 'Post skickades', status: 'success' });
         setResponse(res);
       })
       .catch((e) => {
         console.error(e);
         setIsSending(false);
-        message({ message: 'Något gick fel', status: 'error' });
+        message({ message: t('send-mail:reviewHandler.error'), status: 'error' });
       });
   };
 
-  const handleConfirm = (confirm: boolean) => {
-    setShowConfirm(false);
-    if (confirm) {
-      send();
-    }
-  };
-
   return (
-    <>
-      <Button
-        variant="primary"
-        color="vattjom"
-        disabled={(recipients.filter((r) => !r.error).length === 0 && addresses.length === 0) || !isValid}
-        rightIcon={<ArrowRight />}
-        loading={isSending}
-        loadingText="Skickar..."
-        onClick={() => setShowConfirm(true)}
-      >
-        Granska utskick
-      </Button>
-      <ConfirmDialog open={showConfirm} onClose={handleConfirm} />
-    </>
+    <Button
+      variant="primary"
+      color="vattjom"
+      disabled={(recipients.filter((r) => !r.error).length === 0 && addresses.length === 0) || !isValid}
+      rightIcon={<SendHorizonal />}
+      loading={isSending}
+      loadingText={'common:send'}
+      onClick={() => handleSend()}
+    >
+      {t('common:send')}
+    </Button>
   );
 };
 

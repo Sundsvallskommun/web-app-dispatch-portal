@@ -10,16 +10,41 @@ import { tailwindBreakPoint } from 'src/constants';
 interface FormStepperHeaderProps {
   title: string;
   icon: ReactElement;
+  isSuccess?: boolean;
 }
 
-const FormStepperHeader = ({ title, icon }: FormStepperHeaderProps) => {
+const FormStepperHeader = ({ title, icon, isSuccess = false }: FormStepperHeaderProps) => {
   const [showHelpComposer, setShowHelpComposer] = useState(false);
   const { width } = useWindowSize();
   const { t } = useTranslation(['common']);
   const isMd = width < tailwindBreakPoint.MD;
-
   const openHelpComposer = () => setShowHelpComposer(true);
   const closeHelpComposer = () => setShowHelpComposer(false);
+
+  const helpButton = isMd ? (
+    <Button iconButton variant="secondary" className="border-0" onClick={openHelpComposer} aria-label={t('help')}>
+      <Icon icon={<HelpCircle />} />
+    </Button>
+  ) : (
+    <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
+      <Icon icon={<HelpCircle />} />
+      {t('help')}
+    </Button>
+  );
+
+  const cancelButton = (
+    <NextLink href="/" passHref legacyBehavior>
+      {isMd ? (
+        <Button iconButton variant="secondary" className="border-0" aria-label={t('cancel')}>
+          <Icon icon={<CircleX />} />
+        </Button>
+      ) : (
+        <Link strong={true} variant="tertiary">
+          {t('cancel')}
+        </Link>
+      )}
+    </NextLink>
+  );
 
   return (
     <div
@@ -28,32 +53,20 @@ const FormStepperHeader = ({ title, icon }: FormStepperHeaderProps) => {
         isMd ? 'px-16' : 'px-80'
       )}
     >
-      <div className="flex grow items-center justify-between w-full max-w-[--max-w-7xl]">
-        <NextLink href="/" passHref legacyBehavior>
-          {isMd ? (
-            <Button iconButton variant="secondary" className="border-0" aria-label={t('cancel')}>
-              <Icon icon={<CircleX />} />
-            </Button>
-          ) : (
-            <Link strong={true} variant="tertiary">
-              {t('cancel')}
-            </Link>
-          )}
-        </NextLink>
-        <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content] ml-[54px]')}>
-          {!isMd && <Icon icon={icon} />}
-          <h4 className="text-xs md:text-[2rem]">{title}</h4>
-        </div>
-        {isMd ? (
-          <Button iconButton variant="secondary" className="border-0" onClick={openHelpComposer} aria-label={t('help')}>
-            <Icon icon={<HelpCircle />} />
-          </Button>
-        ) : (
-          <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
-            <Icon icon={<HelpCircle />} />
-            {t('help')}
-          </Button>
+      <div
+        className={cx(
+          'flex grow items-center w-full max-w-[--max-w-7xl]',
+          isSuccess ? 'justify-end' : 'justify-between'
         )}
+      >
+        {!isSuccess && cancelButton}
+        {!isSuccess && (
+          <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content] ml-[54px]')}>
+            {!isMd && <Icon icon={icon} />}
+            <h4 className="text-xs md:text-[2rem]">{title}</h4>
+          </div>
+        )}
+        {helpButton}
       </div>
       <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
     </div>
