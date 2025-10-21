@@ -8,7 +8,7 @@
   "success": {
     "mail": {
       "header": "Ditt brev är skickat",
-      "description": "Brevet skickas digitalt till mottagare med en digital brevlåda. De som saknar en får brevet som vanlig post. Du kan granska och och se status för utskicket under Dina utskick från startsidan.",
+      "description": "Brevet skickas digitalt till mottagare med en digital brevlåda. De som saknar en får brevet som vanlig post. Du kan granska och se status för utskicket under Dina utskick från startsidan.",
       "buttonMsg": "Skicka nytt brev"
     },
     "rekMail": {
