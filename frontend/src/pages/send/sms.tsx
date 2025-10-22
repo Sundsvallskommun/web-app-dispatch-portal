@@ -166,7 +166,7 @@ export default function SendEmailPage() {
             sendNewBtntext="Skicka nytt sms"
           />
         ) : (
-          <div className="w-full max-w-[82rem] mx-auto">
+          <div className="w-full max-w-[82rem] mx-auto mt-40">
             <h2 className="text-h4-lg">Skicka sms</h2>
             <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
               <div className="w-full flex justify-center">
