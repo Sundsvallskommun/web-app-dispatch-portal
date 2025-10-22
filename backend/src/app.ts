@@ -179,7 +179,7 @@ const samlStrategy = new Strategy(
       done(err);
     }
   },
-  async function (profile: Profile, done: VerifiedCallback) {
+  async function (_profile: Profile, done: VerifiedCallback) {
     return done(null, {});
   },
 );
@@ -221,9 +221,9 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    this.app.use(hpp());
+    this.app.use(hpp() as any);
     this.app.use(helmet());
-    this.app.use(compression());
+    this.app.use(compression() as any);
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
@@ -234,16 +234,16 @@ class App {
         resave: false,
         saveUninitialized: false,
         store: sessionStore,
-      }),
+      }) as any,
     );
 
-    this.app.use(passport.initialize());
+    this.app.use(passport.initialize() as any);
     this.app.use(passport.session());
-    passport.use('saml', samlStrategy);
+    passport.use('saml', samlStrategy as any);
 
     this.app.get(
       `${BASE_URL_PREFIX}/saml/login`,
-      (req, res, next) => {
+      (req, _res, next) => {
         if (req.session.returnTo) {
           req.query.RelayState = req.session.returnTo;
         }
@@ -293,7 +293,7 @@ class App {
           failureRedirect: SAML_FAILURE_REDIRECT,
         })(req, res, next);
       },
-      (req, res, next) => {
+      (_req, res, _next) => {
         res.redirect(SAML_SUCCESS_REDIRECT);
       },
     );
