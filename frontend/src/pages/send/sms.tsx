@@ -23,7 +23,7 @@ import * as yup from 'yup';
 import CustomChip from '@components/custom-chip/custom-chip.component';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { ApiResponse, apiService } from '@services/api-service';
-import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@services/phone-number.service';
+import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@utils/phone-number.helpers';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 
 const createFormSchema = (t: TFunction) => {
