@@ -8,6 +8,7 @@ import { MUNICIPALITY_ID } from '@/config';
 import { RecLetter, SigningInfo, UserBatches, UserMessage, UserMessages, UserRecLetters } from '@/interfaces/my-statistics.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
+import { Response } from 'express';
 
 @Controller()
 export class StatisticsController {
@@ -68,16 +69,16 @@ export class StatisticsController {
   @Get('/my-rec-letters')
   @OpenAPI({ summary: 'Return my rec letters array' })
   @UseBefore(authMiddleware)
-  async getMyRecLetters(@Req() req: RequestWithUser, @Res() response: any): Promise<UserRecLetters> {
+  async getMyRecLetters(@Req() req: RequestWithUser, @Res() response: Response): Promise<Response> {
     try {
       const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters`;
       const params = { limit: 9000 };
       const result = await this.apiService.get<UserRecLetters>({ url, params }, req.user);
 
-      return response.send(result.data);
+      return response.status(200).json(result.data);
     } catch (error) {
       logger.error('Error getting statistics of rec letters: ', error);
-      throw new HttpException(500, 'Error getting statistics of rec letters');
+      return response.status(500).json({ message: 'Error getting statistics of rec letters' });
     }
   }
 
@@ -101,32 +102,32 @@ export class StatisticsController {
   @Get('/my-rec-letters/:id')
   @OpenAPI({ summary: 'Return my rec letter' })
   @UseBefore(authMiddleware)
-  async getMyRecLetter(@Req() req: RequestWithUser, @Res() response: any, @Param('id') id: string): Promise<RecLetter> {
+  async getMyRecLetter(@Req() req: RequestWithUser, @Res() response: Response, @Param('id') id: string): Promise<Response> {
     try {
       const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters/${id}`;
       const params = { limit: 9000 };
       const result = await this.apiService.get<RecLetter>({ url, params }, req.user);
 
-      return response.send(result.data);
+      return response.status(200).json(result.data);
     } catch (error) {
       logger.error('Error getting statistics: ', error);
-      throw new HttpException(500, 'Error getting statistics');
+      return response.status(500).json({ message: 'Error getting rec letter' });
     }
   }
 
   @Get('/signing-info/:id')
   @OpenAPI({ summary: 'Return signing info' })
   @UseBefore(authMiddleware)
-  async getSigningInfo(@Req() req: RequestWithUser, @Res() response: any, @Param('id') id: string): Promise<SigningInfo> {
+  async getSigningInfo(@Req() req: RequestWithUser, @Res() response: Response, @Param('id') id: string): Promise<Response> {
     try {
       const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters/${id}/signinginfo`;
       const params = { limit: 9000 };
       const result = await this.apiService.get<SigningInfo>({ url, params }, req.user);
 
-      return response.send(result.data);
+      return response.status(200).json(result.data);
     } catch (error) {
-      logger.error('Error getting statistics: ', error);
-      throw new HttpException(500, 'Error getting statistics');
+      logger.error('Error getting signing info: ', error);
+      return response.status(500).json({ message: 'Error getting signing info' });
     }
   }
 
@@ -163,7 +164,6 @@ export class StatisticsController {
     @Req() req: RequestWithUser,
     @Param('letterId') letterId: string,
     @Param('attachmentId') attachmentId: string,
-    @Res() response: any,
   ): Promise<any> {
     try {
       const url = `${this.REC_SERVICE}/${MUNICIPALITY_ID}/letters/${letterId}/attachments/${attachmentId}`;
