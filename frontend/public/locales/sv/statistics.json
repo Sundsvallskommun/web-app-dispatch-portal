@@ -25,6 +25,9 @@
       "pending": "Väntar",
       "failed": "Misslyckades"
     },
-    "downloadRecept": "Ladda ner kvittering"
+    "downloadRecept": "Ladda ner kvittering",
+    "errors": {
+      "FailedGettingFile": "Det Misslyckades med att hämta filen ({subject})"
+    }
   }
 }
