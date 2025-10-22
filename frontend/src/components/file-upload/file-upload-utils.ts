@@ -1,4 +1,5 @@
 import { SetStateAction } from 'react';
+import { FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 
 type Validator = (file: File, currentCount: number) => string | undefined;
 
@@ -16,6 +17,7 @@ type FileHandlerProps = {
   setValue: (name: string, value: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
   setFileErrors: (value: SetStateAction<string[]>) => void;
   onErrorReset?: () => void;
+  t: (key: string, options?: Record<string, unknown>) => string;
 };
 
 const calculateExistingTotalMB = (files: { file?: File }[]): number =>
@@ -24,23 +26,44 @@ const calculateExistingTotalMB = (files: { file?: File }[]): number =>
 const calculateNewFilesTotalMB = (files: FileList): number =>
   Array.from(files).reduce((sum, f) => sum + f.size / 1024 / 1024, 0);
 
-const buildFileValidators = (accept: string[], allowMax: number, allowReplace: boolean): Validator[] => [
+const buildFileValidators = (
+  accept: string[],
+  allowMax: number,
+  allowReplace: boolean,
+  t: (key: string, options?: Record<string, unknown>) => string
+): Validator[] => [
   (file) => {
     const ext = `.${file.name.split('.').pop()?.toLowerCase()}`;
-    return accept.length > 0 && !accept.includes(ext) ? `Fel filtyp - ${file.name}` : undefined;
+    return accept.length > 0 && !accept.includes(ext)
+      ? t('send-mail:attachmentHandler.validation.wrongFileType', {
+          fileName: file.name,
+        })
+      : undefined;
   },
-  (file) => (file.size === 0 ? 'Filen du försöker bifoga är tom. Försök igen.' : undefined),
+  (file) => (file.size === 0 ? t('send-mail:attachmentHandler.validation.emptyFile') : undefined),
   (_, count) =>
-    count === allowMax && !allowReplace ? `För många valda filer - max ${allowMax} st kan läggas till.` : undefined,
+    count === allowMax && !allowReplace
+      ? t('send-mail:attachmentHandler.validation.maxNumberFiles', {
+          allowMax: allowMax,
+        })
+      : undefined,
 ];
 
 const validateFile = (file: File, count: number, validators: Validator[]): string[] =>
   validators.map((v) => v(file, count)).filter((msg): msg is string => Boolean(msg));
 
-const validateTotalSize = (existingMB: number, newMB: number, maxMB: number): string | undefined => {
+const validateTotalSize = (
+  existingMB: number,
+  newMB: number,
+  maxMB: number,
+  t: (key: string, options?: Record<string, unknown>) => string
+): string | undefined => {
   const total = existingMB + newMB;
   if (total > maxMB) {
-    return `Totala filstorleken (${total.toFixed(1)} MB) överskrider gränsen på ${maxMB} MB.`;
+    return t('send-mail:attachmentHandler.validation.totalSize', {
+      total: total.toFixed(1),
+      maxMB: maxMB,
+    });
   }
 };
 
@@ -84,53 +107,52 @@ export const handleFiles = ({
   replace,
   setAdded,
   setValue,
-  setFileErrors,
-  onErrorReset,
+  setError,
+  clearErrors,
   fields,
-}: FileHandlerProps & { fields: { file?: File }[] }) => {
-  resetFileState(setFileErrors, onErrorReset);
-
+  t,
+}: Omit<FileHandlerProps, 'setFileErrors' | 'onErrorReset'> & {
+  setError: UseFormSetError<FieldValues>;
+  clearErrors: UseFormClearErrors<FieldValues>;
+  fields: { file?: File }[];
+}) => {
+  clearErrors(fieldName);
   let numberOfAddedFiles = added;
   const existingTotalMB = calculateExistingTotalMB(fields);
   const newFiles = Array.from(newItem).filter(Boolean);
   const newFilesTotalMB = calculateNewFilesTotalMB(newItem);
 
-  const sizeError = validateTotalSize(existingTotalMB, newFilesTotalMB, maxFileSizeMB);
+  const sizeError = validateTotalSize(existingTotalMB, newFilesTotalMB, maxFileSizeMB, t);
   if (sizeError) {
-    setFileErrors([sizeError]);
+    setError(fieldName, { type: 'manual', message: sizeError });
     return;
   }
 
-  const validators = buildFileValidators(accept, allowMax, allowReplace);
+  const validators = buildFileValidators(accept, allowMax, allowReplace, t);
   let runningTotalMB = existingTotalMB;
+  const allErrors: string[] = [];
 
   for (const original of newFiles) {
-    const file = new File([original], original.name, {
-      type: original.type,
-      lastModified: original.lastModified,
-    });
-
+    const file = new File([original], original.name, { type: original.type, lastModified: original.lastModified });
     const fileSizeMB = file.size / 1024 / 1024;
     const errors: string[] = [];
 
-    const sizeExceeded = validateTotalSize(runningTotalMB, fileSizeMB, maxFileSizeMB);
+    const sizeExceeded = validateTotalSize(runningTotalMB, fileSizeMB, maxFileSizeMB, t);
     if (sizeExceeded) errors.push(sizeExceeded);
-
     errors.push(...validateFile(file, numberOfAddedFiles, validators));
 
     if (errors.length > 0) {
-      setFileErrors((prev) => [...prev, ...errors]);
+      allErrors.push(...errors);
     } else {
-      numberOfAddedFiles = handleFileAppend({
-        file,
-        allowMax,
-        allowReplace,
-        numberOfAddedFiles,
-        append,
-        replace,
-      });
+      numberOfAddedFiles = handleFileAppend({ file, allowMax, allowReplace, numberOfAddedFiles, append, replace });
       runningTotalMB += fileSizeMB;
     }
+  }
+
+  if (allErrors.length > 0) {
+    setError(fieldName, { type: 'manual', message: allErrors.join('\n') });
+  } else {
+    clearErrors(fieldName);
   }
 
   setAdded(numberOfAddedFiles);
