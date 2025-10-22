@@ -361,7 +361,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     }}
                     disabled={sendType === formSendType.REK_MAIL && recipients.length === 1}
                   />
-                  <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
+                  <p className="text-[14px] m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
                     <PreviewPerson

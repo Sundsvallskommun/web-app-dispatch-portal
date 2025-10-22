@@ -38,9 +38,11 @@ const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: Previ
         {personAdress?.givenname} {personAdress?.lastname}
       </p>
       <p className="text-small">{personAdress?.personNumber}</p>
-      <p className="text-small">
-        {personAdress?.addresses[0].address}, {personAdress?.addresses[0].city}
-      </p>
+      {sendType === formSendType.MAIL && (
+        <p className="text-small">
+          {personAdress?.addresses[0].address}, {personAdress?.addresses[0].city}
+        </p>
+      )}
       {sendType === formSendType.REK_MAIL &&
         (isLoading ? (
           <div className="flex w-full items-center justify-center pt-8">

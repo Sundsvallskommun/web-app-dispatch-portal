@@ -71,7 +71,7 @@ const SendRekMail = () => {
 
   return (
     <DefaultLayout
-      title={t('start-page:app-title')}
+      title={t('send-mail:sendRecLetter')}
       headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} isSuccess={success} />}
     >
       <div className="flex items-center flex-col">
