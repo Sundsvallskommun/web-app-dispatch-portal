@@ -1,4 +1,5 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
+import SuccessContainer from '@components/success-container/success-container';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Button,
@@ -165,6 +166,11 @@ export default function SendEmailPage() {
     }
 
     setIsSending(false);
+  };
+
+  const handleSendNew = () => {
+    resetAll();
+    setSuccess(false);
   };
 
   return (
