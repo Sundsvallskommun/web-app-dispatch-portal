@@ -33,6 +33,7 @@ import PreviewPerson from './preview-person';
 import { useKivraEligibility } from 'src/hooks/useGetEligibility';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
+import { SendType } from 'src/types';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
@@ -40,10 +41,8 @@ export interface RecipientListFormModel {
   storeRecipients: RecipientWithAddress[];
 }
 
-export type RecipientHandlerSendType = (typeof formSendType)[keyof typeof formSendType];
-
 interface RecipientHandlerProps {
-  sendType?: RecipientHandlerSendType;
+  sendType?: SendType;
 }
 
 const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProps) => {
@@ -362,7 +361,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     }}
                     disabled={sendType === formSendType.REK_MAIL && recipients.length === 1}
                   />
-                  <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
+                  <p className="text-[14px] m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
                     <PreviewPerson
