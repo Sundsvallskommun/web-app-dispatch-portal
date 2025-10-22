@@ -1,26 +1,26 @@
 {
   "sendSms": "Skicka sms",
-  "some-info": "Någon info ?",
-  "add-mobile-number": "Lägg till mottagaren (mobilnummer)",
+  "someInfo": "Någon info ?",
+  "addMobileNumber": "Lägg till mottagaren (mobilnummer)",
   "add": "Lägg till",
-  "added-recipients": "Tillagda mottagare",
-  "you-did-not-add-some-recipients": "Du har inte lagt till några mottagare än",
+  "addedRecipients": "Tillagda mottagare",
+  "youDidNotAddSomeRecipients": "Du har inte lagt till några mottagare än",
   "message": "Meddelande",
   "characters": "tecken",
   "errors": {
-    "message-empty": "Meddelandet får inte vara tomt.",
-    "min-one-recipient": "Du måste lägg till en mottagare.",
-    "give-min-10-digits-mobile-number": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
-    "number-already-added": "Numret är redan tillagt!",
-    "wrong-mobile-number-format": "Formatet på telefonnumret är felaktigt.",
-    "something-wrong-when-send-sms": "Något gick fel när jag skickade sms:et:"
+    "messageEmpty": "Meddelandet får inte vara tomt.",
+    "minOneRecipient": "Du måste lägg till en mottagare.",
+    "giveMin10DigitsMobileNumber": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
+    "numberAlreadyAdded": "Numret är redan tillagt!",
+    "wrongMobileNumberFormat": "Formatet på telefonnumret är felaktigt.",
+    "somethingWrongWhenSendSms": "Något gick fel när jag skickade sms:et:"
   },
   "messages": {
-    "something-wrong": "Något gick fel",
-    "sms-sent": "SMS skickades"
+    "somethingWrong": "Något gick fel",
+    "smsSent": "SMS skickades"
   },
-  "your-message-sent": "Ditt sms har skickats",
-  "you-can-review-messages-in-sent-list": "Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan",
-  "send-new-sms": "Skicka nytt sms",
-  "to-start-page": "Till startsidan"
+  "yourMessageSent": "Ditt sms har skickats",
+  "youCanReviewMessagesInSentList": "Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan",
+  "sendNewSms": "Skicka nytt sms",
+  "toStartPage": "Till startsidan"
 }

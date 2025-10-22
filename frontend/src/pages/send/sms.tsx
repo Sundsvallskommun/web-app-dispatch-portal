@@ -29,8 +29,8 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
     .object({
-      message: yup.string().min(3, t('send-sms:errors.message-empty')),
-      recipientList: yup.array().test('HAS_MIN_ONE', t('send-sms:errors:min-one-recipient'), (value) => {
+      message: yup.string().min(3, t('send-sms:errors.messageEmpty')),
+      recipientList: yup.array().test('HAS_MIN_ONE', t('send-sms:errors:minOneRecipient'), (value) => {
         return value && value.length > 0;
       }),
     })
@@ -108,9 +108,9 @@ export default function SendEmailPage() {
     let message = '';
     if (!normalizingResult.ok || !normalizingResult.value) {
       if (normalizingResult.error === MobileNumberError.EMPTY_INPUT) {
-        message = t('send-sms:errors.give-min-10-digits-mobile-number');
+        message = t('send-sms:errors.giveMin10DigitsMobileNumber');
       } else {
-        message = t('send-sms:errors.wrong-mobile-number-format');
+        message = t('send-sms:errors.wrongMobileNumberFormat');
       }
 
       setFormError('singleRecipient', { message });
@@ -120,7 +120,7 @@ export default function SendEmailPage() {
     let recipient = normalizingResult.value;
 
     if (recipients?.includes(recipient)) {
-      setFormError('singleRecipient', { message: t('send-sms:errors.number-already-added') });
+      setFormError('singleRecipient', { message: t('send-sms:errors.numberAlreadyAdded') });
       return;
     }
 
@@ -149,14 +149,14 @@ export default function SendEmailPage() {
 
     const res = await apiService.post<ApiResponse<SMSStatus>, SMSRequest>(`sms`, data).catch((e) => {
       setSuccess(false);
-      message({ message: t('send-sms:messages.something-wrong'), status: 'error' });
-      console.error(t('send-sms:errors.something-wrong-when-send-sms'), e);
+      message({ message: t('send-sms:messages.somethingWrong'), status: 'error' });
+      console.error(t('send-sms:errors.somethingWrongWhenSendSms'), e);
       throw e;
     });
 
     if (res?.data?.data?.batchId) {
       setSuccess(true);
-      message({ message: t('send-sms:messages.sms-sent'), status: 'success' });
+      message({ message: t('send-sms:messages.smsSent'), status: 'success' });
       // NOTE: fix for textarea (message) to update
       setTimeout(() => {
         reset(initialValues);
@@ -181,11 +181,11 @@ export default function SendEmailPage() {
                   <Icon size="6.4rem" className="text-gronsta-surface-primary" icon={<BadgeCheck />} />
                   <div className="flex flex-col items-center gap-16">
                     <h2 className="text-dark-primary lining-nums proportional-nums text-h2-md">
-                      {t('send-sms:your-message-sent')}
+                      {t('send-sms:yourMessageSent')}
                     </h2>
                     <p className="text-dark-primary text-center lining-nums proportional-nums text-base font-normal">
                       <Trans
-                        i18nKey={'send-sms:you-can-review-messages-in-sent-list'}
+                        i18nKey={'send-sms:youCanReviewMessagesInSentList'}
                         components={{ strong: <strong /> }}
                       ></Trans>
                       .
@@ -201,10 +201,10 @@ export default function SendEmailPage() {
                       setSuccess(false);
                     }}
                   >
-                    {t('send-sms:send-new-sms')}
+                    {t('send-sms:sendNewSms')}
                   </Button>
                   <NextLink href="/" passHref legacyBehavior>
-                    <Button color="vattjom">{t('send-sms:to-start-page')}</Button>
+                    <Button color="vattjom">{t('send-sms:toStartPage')}</Button>
                   </NextLink>
                 </div>
               </div>
@@ -216,7 +216,7 @@ export default function SendEmailPage() {
                 <div className="flex flex-col items-start gap-56 self-stretch p-32 w-full shadow-50 rounded-groups">
                   <div className="flex flex-col items-start gap-12 self-stretch w-full">
                     <div className="flex flex-col pb-6 items-start gap-6 self-stretch text-label-medium font-normal text-dark-primary">
-                      {t('send-sms:some-info')}
+                      {t('send-sms:someInfo')}
                     </div>
                     <Divider className="w-full" orientation="horizontal" strong={false} />
                   </div>
@@ -231,7 +231,7 @@ export default function SendEmailPage() {
                             size="md"
                           >
                             <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums w-full">
-                              {t('send-sms:add-mobile-number')}
+                              {t('send-sms:addMobileNumber')}
                             </FormLabel>
                             <div className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full">
                               <Input
@@ -273,7 +273,7 @@ export default function SendEmailPage() {
                     <div className="flex flex-col items-start gap-12 self-stretch">
                       <div className="flex flex-col items-start gap-12 self-stretch">
                         <div className="text-label-medium text-dark-primary lining-nums proportional-nums">
-                          {t('send-sms:added-recipients')}
+                          {t('send-sms:addedRecipients')}
                         </div>
                         {recipientList && recipientList.length > 0 ? (
                           <div className="flex flex-col justify-center items-start gap-8">
@@ -285,7 +285,7 @@ export default function SendEmailPage() {
                           </div>
                         ) : (
                           <div className="text-dark-secondary lining-nums proportional-nums text-label-medium font-normal">
-                            {t('send-sms:you-did-not-add-some-recipients')}
+                            {t('send-sms:youDidNotAddSomeRecipients')}
                           </div>
                         )}
                       </div>
