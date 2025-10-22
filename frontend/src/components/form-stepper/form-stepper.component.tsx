@@ -58,23 +58,6 @@ const FormStepper = <T extends FieldValues>({
     }
   };
 
-  const contentSuccess = (
-    <div className="text-center max-w-[63rem] mx-auto my-64">
-      <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-      <h2 className="mt-24">{t('send-mail:success')}</h2>
-      <p className="my-md text-base">{`${t('send-mail:successInfo')}`}</p>
-      <div className="flex gap-16 justify-center mt-40">
-        <Button className="mt-lg" color="primary" variant="secondary" onClick={onResetSuccess}>
-          {t('send-mail:sendNew')}
-        </Button>
-        <NextLink href="/" passHref legacyBehavior>
-          <Button className="mt-lg" color="vattjom">
-            {t('send-mail:goBack')}
-          </Button>
-        </NextLink>
-      </div>
-    </div>
-  );
   const handleOnResetSuccess = () => {
     setCurrentStep(0);
     onResetSuccess();
