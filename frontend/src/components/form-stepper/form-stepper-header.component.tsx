@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import NextLink from 'next/link';
 import { Button, cx, Icon, Link } from '@sk-web-gui/react';
 import { CircleX, HelpCircle } from 'lucide-react';
@@ -10,22 +10,18 @@ import { tailwindBreakPoint } from 'src/constants';
 interface FormStepperHeaderProps {
   title: string;
   icon: ReactElement;
-  showCancelButton?: boolean;
-  showTitle?: boolean;
-  showHelpButton?: boolean;
+  isSuccess?: boolean;
 }
 
-const FormStepperHeader = ({
-  title,
-  icon,
-  showCancelButton = true,
-  showTitle = true,
-  showHelpButton = true,
-}: FormStepperHeaderProps) => {
+const FormStepperHeader = ({ title, icon, isSuccess = false }: FormStepperHeaderProps) => {
   const [showHelpComposer, setShowHelpComposer] = useState(false);
   const { width } = useWindowSize();
   const { t } = useTranslation(['common']);
   const isMd = width < tailwindBreakPoint.MD;
+
+  const showHelpButton = true;
+  const showCancelButton = useMemo(() => !isSuccess, [isSuccess]);
+  const showTitle = useMemo(() => !isSuccess, [isSuccess]);
 
   const openHelpComposer = () => setShowHelpComposer(true);
   const closeHelpComposer = () => setShowHelpComposer(false);
