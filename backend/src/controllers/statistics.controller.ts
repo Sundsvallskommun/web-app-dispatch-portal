@@ -13,7 +13,7 @@ import { logger } from '@/utils/logger';
 export class StatisticsController {
   apiService = new ApiService();
   SERVICE = `messaging/7.7`;
-  REC_SERVICE = `digitalregisteredletter/2.3`;
+  REC_SERVICE = `digitalregisteredletter/2.4`;
 
   @Get('/statistics/departments')
   @OpenAPI({ summary: 'Return department statistics' })
