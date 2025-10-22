@@ -41,18 +41,15 @@ const MyStatisticsDetails = () => {
       label: 'Status',
       property: 'status',
       renderColumn: (value, item) => {
-        let displayValue = '';
-        switch ((value as string).toLowerCase()) {
-          case 'completed':
-            displayValue = t('statistics:myStatistics.signingInfo.completed');
-            break;
-          case 'pending':
-            displayValue = t('statistics:myStatistics.signingInfo.pending');
-            break;
-          case 'failed':
-            displayValue = t('statistics:myStatistics.signingInfo.failed');
-            break;
-        }
+        const map: Record<string, string> = {
+          completed: t('statistics:myStatistics.signingInfo.completed'),
+          pending: t('statistics:myStatistics.signingInfo.pending'),
+          failed: t('statistics:myStatistics.signingInfo.failed'),
+        };
+
+        const key = (value as string)?.toLowerCase();
+        const displayValue = map[key] ?? '';
+
         return (
           <div className="flex items-center bg-gronsta-surface-accent text-gronsta-text-primary py-4 px-10 rounded-circular font-bold">
             {displayValue}{' '}
