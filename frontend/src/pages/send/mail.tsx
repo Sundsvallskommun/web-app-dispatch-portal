@@ -18,6 +18,8 @@ import { formSchema } from '../../utils/formSchema.yup';
 import { hasValidRecipients } from '@utils/hasValidRecipients';
 import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
+import ReviewHandler from '@components/review-handler/review-handler.component';
+import { formSendType } from 'src/constants';
 
 export type SendMailForm = yup.InferType<typeof formSchema>;
 
@@ -60,6 +62,8 @@ const SendMailPage = () => {
 
   const watchAttachmentList = watch('attachmentList');
   const hasAtLeastOneAttachment = watchAttachmentList ? watchAttachmentList.length > 0 : false;
+  const hasSubject = watch('subject').length > 0;
+  const hasDepartment = watch('department').length > 0;
 
   useSendMailEffects({ setValue, resetAll, setSuccess });
 
@@ -74,7 +78,7 @@ const SendMailPage = () => {
   return (
     <DefaultLayout
       title={t('send-mail:sendLetter')}
-      headerMenu={<FormStepperHeader title={t('send-mail:sendLetter')} icon={<Mail />} />}
+      headerMenu={<FormStepperHeader title={t('send-mail:sendLetter')} icon={<Mail />} isSuccess={success} />}
     >
       <div className="flex items-center flex-col">
         <FormStepper<SendMailForm>
@@ -98,7 +102,13 @@ const SendMailPage = () => {
             {
               label: t('send-mail:addSender'),
               component: <SenderHandler />,
+              valid: hasDepartment && hasSubject,
               onNextClick: useMailStepValidation(clearErrors, trigger, ['department', 'subject']),
+            },
+            {
+              label: t('common:stepper.review'),
+              component: <ReviewHandler sendType={formSendType.MAIL} />,
+              valid: true,
             },
           ]}
           onChangeStep={setStep}

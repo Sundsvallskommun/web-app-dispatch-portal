@@ -5,8 +5,18 @@
     "cancel": "Avbryt",
     "help": "Hjälp"
   },
-  "success": "Ditt brev har skickats",
-  "successInfo": "Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan",
+  "success": {
+    "mail": {
+      "header": "Ditt brev är skickat",
+      "description": "Brevet skickas digitalt till mottagare med en digital brevlåda. De som saknar en får brevet som vanlig post. Du kan granska och se status för utskicket under Dina utskick från startsidan.",
+      "buttonMsg": "Skicka nytt brev"
+    },
+    "rekMail": {
+      "header": "Ditt rekommenderade brev är skickat",
+      "description": "Du kan granska och och se status för utskicket under Dina utskick på startsidan.",
+      "buttonMsg": "Skicka nytt rekommenderat brev"
+    }
+  },
   "sendNew": "Skicka nytt brev",
   "goBack": "Till startsidan",
   "sendLetter": "Skicka brev",
@@ -93,5 +103,15 @@
       "success": "Har digital brevlåda hos Kivra",
       "error": "Har inte digital brevlåda hos Kivra"
     }
+  },
+  "reviewHandler": {
+    "header": "Granska utskick",
+    "recipients": "Mottagare",
+    "attachments": "Bifogade filer",
+    "subject": "Rubrik",
+    "department": "Förvaltning",
+    "address": "Adress",
+    "deliveryMethod": "Leveranssätt",
+    "error": "Något gick fel"
   }
 }

@@ -1,11 +1,12 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import NextLink from 'next/link';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Button, cx, Icon, ProgressStepper } from '@sk-web-gui/react';
-import { ArrowRight, BadgeCheck } from 'lucide-react';
+import { Button, cx, ProgressStepper } from '@sk-web-gui/react';
+import { ArrowRight } from 'lucide-react';
 import { useWindowSize } from 'src/hooks/useWindowSize';
-import { tailwindBreakPoint } from 'src/constants';
+import { formSendType, tailwindBreakPoint } from 'src/constants';
+import SuccessContainer from '@components/success-container/success-container';
+import { SendType } from 'src/types';
 
 export interface FormStep {
   label: string;
@@ -22,6 +23,7 @@ interface FormStepperProps<T extends FieldValues> {
   controls: UseFormReturn<T>;
   success: boolean;
   onResetSuccess: () => void;
+  sendType?: SendType;
 }
 
 const FormStepper = <T extends FieldValues>({
@@ -32,11 +34,13 @@ const FormStepper = <T extends FieldValues>({
   controls,
   success,
   onResetSuccess,
+  sendType = formSendType.MAIL,
 }: FormStepperProps<T>) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const { t } = useTranslation(['common', 'send-mail']);
   const { width } = useWindowSize();
   const isMd = width < tailwindBreakPoint.MD;
+  const i18nSendType = `send-mail:success.${sendType === formSendType.MAIL ? 'mail' : 'rekMail'}`;
 
   useEffect(() => {
     onChangeStep && onChangeStep(currentStep);
@@ -54,23 +58,10 @@ const FormStepper = <T extends FieldValues>({
     }
   };
 
-  const contentSuccess = (
-    <div className="text-center max-w-[63rem] mx-auto">
-      <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-      <h2 className="mt-24">{t('send-mail:success')}</h2>
-      <p className="my-md text-base">{`${t('send-mail:successInfo')}`}</p>
-      <div className="flex gap-16 justify-center mt-40">
-        <Button className="mt-lg" color="primary" variant="secondary" onClick={onResetSuccess}>
-          {t('send-mail:sendNew')}
-        </Button>
-        <NextLink href="/" passHref legacyBehavior>
-          <Button className="mt-lg" color="vattjom">
-            {t('send-mail:goBack')}
-          </Button>
-        </NextLink>
-      </div>
-    </div>
-  );
+  const handleOnResetSuccess = () => {
+    setCurrentStep(0);
+    onResetSuccess();
+  };
 
   const contentFormProvider = (
     <FormProvider {...controls}>
@@ -108,7 +99,16 @@ const FormStepper = <T extends FieldValues>({
     <React.Fragment>
       <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className={cx('flex flex-col', isMd ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
-        {success ? contentSuccess : contentFormProvider}
+        {success ? (
+          <SuccessContainer
+            onClick={handleOnResetSuccess}
+            title={t(`${i18nSendType}.header`)}
+            message={t(`${i18nSendType}.description`)}
+            sendNewBtntext={t(`${i18nSendType}.buttonMsg`)}
+          />
+        ) : (
+          contentFormProvider
+        )}
       </div>
     </React.Fragment>
   );

@@ -25,6 +25,8 @@
   "help": "Hjälp",
   "next": "Nästa",
   "back": "Tillbaka",
+  "send": "Skicka",
+  "sending": "Skickar...",
   "yesContinue": "Ja, fortsätt",
   "dispatchDone": "Ditt utskick har gjorts",
   "dispatchNew": "Gör ett nytt utskick",

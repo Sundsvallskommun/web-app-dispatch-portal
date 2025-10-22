@@ -19,6 +19,7 @@ import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
 import { SenderHandler } from '@components/sender-handler/sender-handler.component';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
+import ReviewHandler from '@components/review-handler/review-handler.component';
 
 export type SendRekMailForm = yup.InferType<typeof formSchema>;
 
@@ -70,8 +71,8 @@ const SendRekMail = () => {
 
   return (
     <DefaultLayout
-      title={t('start-page:app-title')}
-      headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} />}
+      title={t('send-mail:sendRecLetter')}
+      headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} isSuccess={success} />}
     >
       <div className="flex items-center flex-col">
         <FormStepper<SendRekMailForm>
@@ -100,7 +101,7 @@ const SendRekMail = () => {
             },
             {
               label: t('common:stepper.review'),
-              component: <>Granska</>, // To Do: lägg till korrekt komponent
+              component: <ReviewHandler sendType={formSendType.REK_MAIL} />,
               valid: true,
             },
           ]}
@@ -110,6 +111,7 @@ const SendRekMail = () => {
           controls={controls}
           success={success}
           onResetSuccess={() => setSuccess(false)}
+          sendType={formSendType.REK_MAIL}
         />
       </div>
     </DefaultLayout>
