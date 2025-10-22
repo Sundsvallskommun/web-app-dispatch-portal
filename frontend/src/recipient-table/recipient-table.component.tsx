@@ -1,12 +1,12 @@
-import { RecipientHandlerSendType } from '@components/recipient-handler/recipient-handler';
 import { AddWithAddress, useMessageStore } from '@services/recipient-service';
 import { AutoTable, AutoTableHeader, Button, Icon } from '@sk-web-gui/react';
 import { Trash } from 'lucide-react';
 import { formSendType } from 'src/constants';
+import { SendType } from 'src/types';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
-  sendType?: RecipientHandlerSendType;
+  sendType?: SendType;
 }
 
 export const RecipientTable: React.FC<RecipientTableProps> = ({

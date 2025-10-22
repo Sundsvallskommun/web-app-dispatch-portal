@@ -1,4 +1,5 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
+import SuccessContainer from '@components/success-container/success-container';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Button,
@@ -11,11 +12,10 @@ import {
   Textarea,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { BadgeCheck, Info, SendHorizontal, Smartphone } from 'lucide-react';
+import { Info, SendHorizontal, Smartphone } from 'lucide-react';
 import { TFunction, Trans, useTranslation } from 'next-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -166,58 +166,33 @@ export default function SendEmailPage() {
     setIsSending(false);
   };
 
+  const handleSendNew = () => {
+    resetAll();
+    setSuccess(false);
+  };
+
   return (
     <DefaultLayout
       title={`Postportalen`}
       headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} isSuccess={success} />}
     >
-      <div className="sms-main-container">
-        <div className="sms-container">
-          <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
-          <div className="text-lg flex flex-col justify-start items-center gap-56 self-stretch">
-            {success ? (
-              <div className="text-center flex flex-col items-start gap-59 self-stretch">
-                <div className="flex flex-col items-center gap-24 self-stretch">
-                  <Icon size="6.4rem" className="text-gronsta-surface-primary" icon={<BadgeCheck />} />
-                  <div className="flex flex-col items-center gap-16">
-                    <h2 className="text-dark-primary lining-nums proportional-nums text-h2-md">
-                      {t('send-sms:yourMessageSent')}
-                    </h2>
-                    <p className="text-dark-primary text-center lining-nums proportional-nums text-base font-normal">
-                      <Trans
-                        i18nKey={'send-sms:youCanReviewMessagesInSentList'}
-                        components={{ strong: <strong /> }}
-                      ></Trans>
-                      .
-                    </p>
-                  </div>
-                </div>
-                <div className="flex md-px-174 py-0 justify-center items-start gap-16 self-stretch flex-wrap">
-                  <Button
-                    color="primary"
-                    variant="secondary"
-                    onClick={() => {
-                      resetAll();
-                      setSuccess(false);
-                    }}
-                  >
-                    {t('send-sms:sendNewSms')}
-                  </Button>
-                  <NextLink href="/" passHref legacyBehavior>
-                    <Button color="vattjom">{t('send-sms:toStartPage')}</Button>
-                  </NextLink>
-                </div>
-              </div>
-            ) : (
-              <form
-                className="flex flex-col items-start gap-24 flex-1 w-full max-w-818"
-                onSubmit={handleSubmit(onSubmit)}
-              >
-                <div className="flex flex-col items-start gap-56 self-stretch p-32 w-full shadow-50 rounded-groups">
-                  <div className="flex flex-col items-start gap-12 self-stretch w-full">
-                    <div className="flex flex-col pb-6 items-start gap-6 self-stretch text-label-medium font-normal text-dark-primary">
-                      {t('send-sms:someInfo')}
-                    </div>
+      <h1 className="sr-only">Skicka SMS</h1>
+      <div className="text-lg mb-11">
+        {success ? (
+          <SuccessContainer
+            onClick={handleSendNew}
+            title="Ditt sms är skickat"
+            message="Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan."
+            sendNewBtntext="Skicka nytt sms"
+          />
+        ) : (
+          <div className="w-full max-w-[82rem] mx-auto mt-40">
+            <h2 className="text-h4-lg">Skicka sms</h2>
+            <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+              <div className="w-full flex justify-center">
+                <div className="mt-24 flex flex-col items-start w-full shadow-50 p-32 rounded-14">
+                  <div className="w-full">
+                    <h4 className="pb-6 text-lead">Lägg till mottagare och meddelande</h4>
                     <Divider className="w-full" orientation="horizontal" strong={false} />
                   </div>
                   <div className="flex flex-col gap-56 items-start self-stretch">

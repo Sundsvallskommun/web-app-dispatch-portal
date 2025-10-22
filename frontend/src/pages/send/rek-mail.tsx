@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -11,14 +11,17 @@ import RecipientHandler from '@components/recipient-handler/recipient-handler';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { useMessageStore } from '@services/recipient-service';
-import { useRouter } from 'next/router';
 import { formSendType } from 'src/constants';
 import { formSchema } from '../../utils/formSchema.yup';
 import AttachmentHandler from '@components/attachment-handler/attachment-handler';
 import { hasValidRecipients } from '@utils/hasValidRecipients';
-import { useMailStepValidations } from 'src/hooks/useMailStepValidation';
+import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
+import { SenderHandler } from '@components/sender-handler/sender-handler.component';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
+import ReviewHandler from '@components/review-handler/review-handler.component';
 
-type SendRekMailForm = yup.InferType<typeof formSchema>;
+export type SendRekMailForm = yup.InferType<typeof formSchema>;
 
 const initialValues = {
   attachmentList: [],
@@ -35,30 +38,25 @@ const SendRekMail = () => {
     defaultValues: initialValues,
     mode: 'onChange',
     reValidateMode: 'onChange',
+    resolver: yupResolver(formSchema),
   });
-  const router = useRouter();
-  const { trigger, setValue, reset, watch } = controls;
+  const { trigger, reset, watch, setValue, clearErrors } = controls;
   const [success, setSuccess] = useState(false);
   const [step, setStep] = useState<number>(0);
   const recipients = useMessageStore((state) => state.recipients);
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const addresses = useMessageStore((state) => state.addresses);
   const setAddresses = useMessageStore((state) => state.setAddresses);
-  const response = useMessageStore((state) => state.response);
   const setResponse = useMessageStore((state) => state.setResponse);
   const watchAttachmentList = watch('attachmentList');
+  const hasSubject = watch('subject').length > 0;
+  const hasDepartment = watch('department').length > 0;
   const hasAtLeastOneAttachment = (watchAttachmentList?.length ?? 0) > 0;
   const { t } = useTranslation(['common', 'send-mail']);
 
   const stepTexts: Record<number, string> = {
     0: t('common:screenReader.postStepper.stepOne'),
   };
-
-  const { recipientOnNextClick, filesOnNextClick } = useMailStepValidations(
-    trigger,
-    controls.setError,
-    hasAtLeastOneAttachment
-  );
 
   const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
 
@@ -69,20 +67,11 @@ const SendRekMail = () => {
     setResponse(undefined);
   }, [setRecipients, setAddresses, reset, setResponse]);
 
-  useEffect(() => {
-    if (response) {
-      setSuccess(true);
-      resetAll();
-    }
-  }, [resetAll, response, router]);
-
-  useEffect(() => {
-    setValue('storeRecipients', recipients ?? [], { shouldValidate: true, shouldDirty: false });
-  }, [recipients, setValue]);
+  useSendMailEffects({ setValue, resetAll, setSuccess });
 
   return (
     <DefaultLayout
-      title={t('start-page:appTitle')}
+      title={t('send-mail:sendRecLetter')}
       headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} isSuccess={success} />}
     >
       <div className="flex items-center flex-col">
@@ -92,22 +81,27 @@ const SendRekMail = () => {
               label: t('common:stepper.recipient'),
               component: <RecipientHandler sendType={formSendType.REK_MAIL} />,
               valid: hasValidRecipients(recipients, addresses),
-              onNextClick: recipientOnNextClick,
+              onNextClick: useMailStepValidation(clearErrors, trigger, [
+                'singleRecipient',
+                'recipientList',
+                'storeRecipients',
+              ]),
             },
             {
               label: t('common:stepper.files'),
               component: <AttachmentHandler />,
               valid: hasAtLeastOneAttachment,
-              onNextClick: filesOnNextClick,
+              onNextClick: useMailStepValidation(clearErrors, trigger, ['attachmentList']),
             },
             {
               label: t('common:stepper.header'),
-              component: <>Rubrik och förvaltning</>, // To Do: lägg till korrekt komponent
-              valid: true,
+              component: <SenderHandler />,
+              valid: hasDepartment && hasSubject,
+              onNextClick: useMailStepValidation(clearErrors, trigger, ['department', 'subject']),
             },
             {
               label: t('common:stepper.review'),
-              component: <>Granska</>, // To Do: lägg till korrekt komponent
+              component: <ReviewHandler sendType={formSendType.REK_MAIL} />,
               valid: true,
             },
           ]}
@@ -117,6 +111,7 @@ const SendRekMail = () => {
           controls={controls}
           success={success}
           onResetSuccess={() => setSuccess(false)}
+          sendType={formSendType.REK_MAIL}
         />
       </div>
     </DefaultLayout>

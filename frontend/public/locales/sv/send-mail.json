@@ -5,14 +5,37 @@
     "cancel": "Avbryt",
     "help": "Hjälp"
   },
-  "success": "Ditt brev har skickats",
-  "successInfo": "Mottagare som saknar digital brevlåda får brevet som vanlig fysisk post. Du kan granska och se status för utskicket under <strong>Dina utskick</strong> på startsidan",
+  "success": {
+    "mail": {
+      "header": "Ditt brev är skickat",
+      "description": "Brevet skickas digitalt till mottagare med en digital brevlåda. De som saknar en får brevet som vanlig post. Du kan granska och se status för utskicket under Dina utskick från startsidan.",
+      "buttonMsg": "Skicka nytt brev"
+    },
+    "rekMail": {
+      "header": "Ditt rekommenderade brev är skickat",
+      "description": "Du kan granska och och se status för utskicket under Dina utskick på startsidan.",
+      "buttonMsg": "Skicka nytt rekommenderat brev"
+    }
+  },
   "sendNew": "Skicka nytt brev",
   "goBack": "Till startsidan",
   "sendLetter": "Skicka brev",
   "sendRecLetter": "Skicka rekommenderat brev",
   "addTextDocument": "Lägg till textdokument",
   "addSender": "Ange avsändare",
+  "senderHandler": {
+    "headerLabel": "Rubrik för brevet",
+    "headerDescription": "Ange en rubrik som beskriver brevets innehåll.",
+    "formLabelHeader": "Rubrik",
+    "headerManagement": "Din förvaltning",
+    "managementDescription": "Informationen används endast för fakturering. Förvaltningen visas inte för mottagaren.",
+    "managementLabel": "Förvaltning",
+    "selectManagementText": "Välj förvaltning",
+    "error": {
+      "noDepartment": "Välj din förvaltning.",
+      "noSubject": "Ange ett ämne för utskicket."
+    }
+  },
   "attachmentHandler": {
     "header": "Bifoga filer",
     "description": "Bifoga upp till 4 filer som ska ingå i brevet. Den totala storleken får vara högst 1,5 MB.",
@@ -24,7 +47,14 @@
     "progressStepper": "Använt utrymme: {files} MB av {limit} MB",
     "uploadHelperSingle": "<span>Välj fil</span> eller dra och släpp den här",
     "uploadHelperMultiple": "<span>Välj filer</span> eller dra och släpp dem här",
-    "uploadInputPlaceHolder": "Välj fil att lägga till"
+    "uploadInputPlaceHolder": "Välj fil att lägga till",
+    "errorMessage": "Du måste bifoga minst ett dokument.",
+    "validation": {
+      "wrongFileType": "Fel filtyp - {fileName}",
+      "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
+      "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
+      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB."
+    }
   },
   "recipientHandler": {
     "title": "Lägg till mottagare",
@@ -73,5 +103,15 @@
       "success": "Har digital brevlåda hos Kivra",
       "error": "Har inte digital brevlåda hos Kivra"
     }
+  },
+  "reviewHandler": {
+    "header": "Granska utskick",
+    "recipients": "Mottagare",
+    "attachments": "Bifogade filer",
+    "subject": "Rubrik",
+    "department": "Förvaltning",
+    "address": "Adress",
+    "deliveryMethod": "Leveranssätt",
+    "error": "Något gick fel"
   }
 }

@@ -14,7 +14,7 @@ interface EligibilityItemResponseDto {
 
 export class DigitalRegisteredLetterService {
   private readonly apiService = new ApiService();
-  private readonly SERVICE = `digitalregisteredletter/2.3`;
+  private readonly SERVICE = `digitalregisteredletter/2.4`;
 
   async checkEligibilityKivra(partyId: string, user: RequestWithUser['user']): Promise<EligibilityItemResponseDto> {
     const data: EligibilityItemDto = { partyIds: [partyId] };

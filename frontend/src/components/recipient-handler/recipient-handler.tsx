@@ -26,23 +26,23 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Trans, useTranslation } from 'next-i18next';
-import { Info, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { RecipientTable } from 'src/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';
 import PreviewPerson from './preview-person';
 import { useKivraEligibility } from 'src/hooks/useGetEligibility';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
+import { SendType } from 'src/types';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
   singleRecipient: string;
-  storeRecipients: string;
+  storeRecipients: RecipientWithAddress[];
 }
 
-export type RecipientHandlerSendType = (typeof formSendType)[keyof typeof formSendType];
-
 interface RecipientHandlerProps {
-  sendType?: RecipientHandlerSendType;
+  sendType?: SendType;
 }
 
 const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProps) => {
@@ -173,7 +173,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
     setFoundPerson(undefined);
     clearErrors('singleRecipient');
     setAddresses([]);
-    setValue('recipientList', []);
+    setValue('storeRecipients', recipients ?? []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
@@ -361,7 +361,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     }}
                     disabled={sendType === formSendType.REK_MAIL && recipients.length === 1}
                   />
-                  <p className="text-xs m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
+                  <p className="text-[14px] m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
                   {foundPerson?.address && (
                     <PreviewPerson
@@ -372,17 +372,8 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     />
                   )}
                 </div>
-
-                {errors.storeRecipients?.message && (
-                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
-                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.storeRecipients.message}
-                  </FormErrorMessage>
-                )}
-                {errors.singleRecipient?.message && (
-                  <FormErrorMessage className="text-error-text-primary flex items-center gap-8">
-                    <Icon size="1.6rem" icon={<Info />} color="error" /> {errors.singleRecipient.message}
-                  </FormErrorMessage>
-                )}
+                {errors.storeRecipients?.message && <CustomFormErrorMessage message={errors.storeRecipients.message} />}
+                {errors.singleRecipient?.message && <CustomFormErrorMessage message={errors.singleRecipient.message} />}
                 {sendType === formSendType.MAIL && (
                   <React.Fragment>
                     <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />

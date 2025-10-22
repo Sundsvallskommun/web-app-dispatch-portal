@@ -13,7 +13,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 | Company                 |     1.0 |
 | Employee                |     2.0 |
 | Citizen                 |     3.0 |
-| DigitalRegisteredLetter |     2.3 |
+| DigitalRegisteredLetter |     2.4 |
 
 ## Utveckling
 
