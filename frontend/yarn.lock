@@ -2097,9 +2097,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/card@npm:1.3.1":
-  version: 1.3.1
-  resolution: "@sk-web-gui/card@npm:1.3.1"
+"@sk-web-gui/card@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@sk-web-gui/card@npm:2.0.0"
   dependencies:
     "@sk-web-gui/button": "npm:2.1.8"
     "@sk-web-gui/link": "npm:1.2.7"
@@ -2107,7 +2107,7 @@ __metadata:
     lucide-react: "npm:^0.537.0"
   peerDependencies:
     react: ">=18.3.1"
-  checksum: 10c0/deae6d5e9d3071eaeccfebf9b5b8302e2fc42756270334865b3687815800689a44f85ab38860f5a49b420b56f9a9e0e60e3dccb358562e8ff086ede87fb3d7c9
+  checksum: 10c0/edf584d6ca15f391209da25b1460eeaf2afdfcb27cd33a321824301a78cd76eb8c912c9e27ef5ba7c5d42ae208b3857a935c4bca7861951de80be7cc16ea0141
   languageName: node
   linkType: hard
 
@@ -2385,9 +2385,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sk-web-gui/react@npm:3.0.2":
-  version: 3.0.2
-  resolution: "@sk-web-gui/react@npm:3.0.2"
+"@sk-web-gui/react@npm:3.0.3":
+  version: 3.0.3
+  resolution: "@sk-web-gui/react@npm:3.0.3"
   dependencies:
     "@sk-web-gui/accordion": "npm:2.1.9"
     "@sk-web-gui/avatar": "npm:1.2.2"
@@ -2395,7 +2395,7 @@ __metadata:
     "@sk-web-gui/breadcrumb": "npm:1.1.7"
     "@sk-web-gui/button": "npm:2.1.8"
     "@sk-web-gui/callout": "npm:1.2.2"
-    "@sk-web-gui/card": "npm:1.3.1"
+    "@sk-web-gui/card": "npm:2.0.0"
     "@sk-web-gui/chip": "npm:1.2.3"
     "@sk-web-gui/cookie-consent": "npm:2.1.9"
     "@sk-web-gui/divider": "npm:1.1.6"
@@ -2421,7 +2421,6 @@ __metadata:
     "@sk-web-gui/table": "npm:3.2.9"
     "@sk-web-gui/tabs": "npm:1.4.4"
     "@sk-web-gui/text": "npm:1.1.7"
-    "@sk-web-gui/text-editor": "npm:2.0.0"
     "@sk-web-gui/theme": "npm:2.6.0"
     "@sk-web-gui/tooltip": "npm:1.1.2"
     "@sk-web-gui/user-menu": "npm:1.1.8"
@@ -2429,7 +2428,7 @@ __metadata:
   peerDependencies:
     react: ">=19.0.0"
     react-dom: ">=19.0.0"
-  checksum: 10c0/89c670ccfd78c49a7ca8b083be35d0d7838007358aa731b9281ba184f4726ac27f3381645ad233822ff48ab8d1a3026c0dabcfd20229289f9d3354ddc0948424
+  checksum: 10c0/a3c6dbaceaa3c889c759a1c66494f86aa684d73be58c9ca53750e6d6c95ad43a7fe1e6afb6d60027be96a696536820b245c4f622aca0fc6a9dca8ed9eb228128
   languageName: node
   linkType: hard
 
@@ -2503,19 +2502,6 @@ __metadata:
   peerDependencies:
     react: ">=18.3.1"
   checksum: 10c0/bced35cb8fe33e6a72e049d3165f71ce89c5918c859b11f5f5845ca59ca3bfbc5ec6c70a5a0d22cbe4434af3ad083628bda9c1d5ccd1e67905e416e025163ee3
-  languageName: node
-  linkType: hard
-
-"@sk-web-gui/text-editor@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@sk-web-gui/text-editor@npm:2.0.0"
-  dependencies:
-    "@sk-web-gui/tooltip": "npm:1.1.2"
-    "@sk-web-gui/utils": "npm:2.2.2"
-    quill: "npm:^2.0.3"
-  peerDependencies:
-    react: ">=18.3.1"
-  checksum: 10c0/2958e4d45647cd2d0a027271a8e9be32de972c89f79f7565ac3f6485cc91154ef9fffa357e602a8a1ccf51c66154813fe08cfb12dc1ee699d2a73c8cf932da76
   languageName: node
   linkType: hard
 
@@ -2619,7 +2605,7 @@ __metadata:
     "@mui/material": "npm:^5.13.2"
     "@next/bundle-analyzer": "npm:14.1.4"
     "@sk-web-gui/core": "npm:4.1.0"
-    "@sk-web-gui/react": "npm:3.0.2"
+    "@sk-web-gui/react": "npm:3.0.3"
     "@tailwindcss/container-queries": "npm:^0.1.1"
     "@tailwindcss/forms": "npm:^0.5.3"
     "@testing-library/jest-dom": "npm:^5.16.5"
@@ -5367,13 +5353,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "eventemitter3@npm:5.0.1"
-  checksum: 10c0/4ba5c00c506e6c786b4d6262cfbce90ddc14c10d4667e5c83ae993c9de88aa856033994dd2b35b83e8dc1170e224e66a319fa80adc4c32adcd2379bbc75da814
-  languageName: node
-  linkType: hard
-
 "execa@npm:4.1.0":
   version: 4.1.0
   resolution: "execa@npm:4.1.0"
@@ -5486,13 +5465,6 @@ __metadata:
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: 10c0/40dedc862eb8992c54579c66d914635afbec43350afbbe991235fdcb4e3a8d5af1b23ae7e79bef7d4882d0ecee06c3197488026998fb19f72dc95acff1d1b1d0
-  languageName: node
-  linkType: hard
-
-"fast-diff@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "fast-diff@npm:1.3.0"
-  checksum: 10c0/5c19af237edb5d5effda008c891a18a585f74bf12953be57923f17a3a4d0979565fc64dbc73b9e20926b9d895f5b690c618cbb969af0cf022e3222471220ad29
   languageName: node
   linkType: hard
 
@@ -7606,31 +7578,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.21":
-  version: 4.17.21
-  resolution: "lodash-es@npm:4.17.21"
-  checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
-  languageName: node
-  linkType: hard
-
-"lodash.clonedeep@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "lodash.clonedeep@npm:4.5.0"
-  checksum: 10c0/2caf0e4808f319d761d2939ee0642fa6867a4bbf2cfce43276698828380756b99d4c4fa226d881655e6ac298dd453fe12a5ec8ba49861777759494c534936985
-  languageName: node
-  linkType: hard
-
 "lodash.debounce@npm:^4.0.8":
   version: 4.0.8
   resolution: "lodash.debounce@npm:4.0.8"
   checksum: 10c0/762998a63e095412b6099b8290903e0a8ddcb353ac6e2e0f2d7e7d03abd4275fe3c689d88960eb90b0dde4f177554d51a690f22a343932ecbc50a5d111849987
-  languageName: node
-  linkType: hard
-
-"lodash.isequal@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "lodash.isequal@npm:4.5.0"
-  checksum: 10c0/dfdb2356db19631a4b445d5f37868a095e2402292d59539a987f134a8778c62a2810c2452d11ae9e6dcac71fc9de40a6fedcb20e2952a15b431ad8b29e50e28f
   languageName: node
   linkType: hard
 
@@ -8422,13 +8373,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parchment@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "parchment@npm:3.0.0"
-  checksum: 10c0/83cc55756a899d6769e42b345ae55738f7e93f9027bb0095f518bc75b81d44ba2b69a76bc25f259974d972f8e250066419c3f92e3ded7518f144fc9c1b47430d
-  languageName: node
-  linkType: hard
-
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
@@ -8874,29 +8818,6 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: 10c0/900a93d3cdae3acd7d16f642c29a642aea32c2026446151f0778c62ac089d4b8e6c986811076e1ae180a694cedf077d453a11b58ff0a865629a4f82ab558e102
-  languageName: node
-  linkType: hard
-
-"quill-delta@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "quill-delta@npm:5.1.0"
-  dependencies:
-    fast-diff: "npm:^1.3.0"
-    lodash.clonedeep: "npm:^4.5.0"
-    lodash.isequal: "npm:^4.5.0"
-  checksum: 10c0/a99462b96177f4559e5a659be0f51bbfe090c11b61c53aa19afabd3fdf8a6495173bbacd84b75acce680ed7c157a024907e74ff077ddd6a135b4da15bf71ada2
-  languageName: node
-  linkType: hard
-
-"quill@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "quill@npm:2.0.3"
-  dependencies:
-    eventemitter3: "npm:^5.0.1"
-    lodash-es: "npm:^4.17.21"
-    parchment: "npm:^3.0.0"
-    quill-delta: "npm:^5.1.0"
-  checksum: 10c0/9897468b3e2b0fbf9c91471deea745d7b6494f866cb8caace63267769b2c4c6128e49da0988c4ed64f1a91a171fbf91c84009b663b1256a3caca0755204bb6b5
   languageName: node
   linkType: hard
 
