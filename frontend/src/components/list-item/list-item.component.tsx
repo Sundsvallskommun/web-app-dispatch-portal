@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
 import Link from 'next/link';
+import { formSendType } from 'src/constants';
 
 interface ListItemComponentProps {
   data: BatchListItem;
@@ -14,9 +15,9 @@ interface ListItemComponentProps {
 
 export const getMessagePrefixUrl = (type: string) => {
   switch (type) {
-    case 'SMS':
+    case formSendType.SMS:
       return '/my-statistics/sms';
-    case 'REK':
+    case formSendType.REK_MAIL:
       return '/my-statistics/rek-mail';
     default:
       return '/my-statistics/mail';
@@ -30,25 +31,22 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
 
   const messageTypeToHumanReadable = (type: string) => {
     switch (type) {
-      case 'SMS':
+      case formSendType.SMS:
         return t('common:textMessage');
-      case 'SNAIL_MAIL':
-        return t('common:letter');
-      case 'DIGITAL_MAIL':
-        return t('common:letter');
-      case 'EMAIL':
-        return t('common:letter');
-      case 'LETTER':
-        return t('common:letter');
-      case 'REK': // Assumed type value for recommended letter
+      case formSendType.REK_MAIL:
         return t('common:recLetter');
+      case formSendType.SNAIL_MAIL:
+      case formSendType.DIGITAL_MAIL:
+      case formSendType.EMAIL:
+      case formSendType.LETTER:
+        return t('common:letter');
       default:
         return type;
     }
   };
 
   const isSMS = (type: string) => {
-    return type === 'SMS';
+    return type === formSendType.SMS;
   };
 
   return (

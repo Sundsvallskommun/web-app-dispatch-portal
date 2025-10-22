@@ -9,6 +9,7 @@ import {
   SigningInfo,
   UserBatches,
 } from '@interfaces/statistics.interface';
+import { formSendType } from 'src/constants';
 
 export interface UserRecLetters {
   _meta: PagingMetaData;
@@ -65,7 +66,7 @@ export const useMyStatistics = (): {
 
     const itemsFromLetters = recLetters.map<BatchListItem>((letter) => ({
       id: letter.id,
-      messageType: 'REK',
+      messageType: formSendType.REK_MAIL,
       sent: letter.created,
       subject: letter.subject,
     }));
