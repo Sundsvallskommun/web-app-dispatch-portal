@@ -1,23 +1,24 @@
 import { Mail, MailCheck, Smartphone } from 'lucide-react';
 import React from 'react';
 import { Icon } from '@sk-web-gui/react';
+import { formSendType } from 'src/constants';
 
 type ColorName = NonNullable<React.ComponentProps<typeof Icon>['color']>;
 
 const icons: Record<string, React.ReactElement> = {
-  LETTER: <Mail />,
-  SMS: <Smartphone />,
-  REK: <MailCheck />,
+  [formSendType.LETTER]: <Mail />,
+  [formSendType.SMS]: <Smartphone />,
+  [formSendType.REK_MAIL]: <MailCheck />,
 };
 const colors: Record<string, ColorName> = {
-  LETTER: 'vattjom',
-  SMS: 'gronsta',
-  REK: 'bjornstigen',
+  [formSendType.LETTER]: 'vattjom',
+  [formSendType.SMS]: 'gronsta',
+  [formSendType.REK_MAIL]: 'bjornstigen',
 };
 const bgClasses: Record<string, string> = {
-  LETTER: 'bg-vattjom-surface-accent',
-  SMS: 'bg-gronsta-surface-accent',
-  REK: 'bg-bjornstigen-surface-accent',
+  [formSendType.LETTER]: 'bg-vattjom-surface-accent',
+  [formSendType.SMS]: 'bg-gronsta-surface-accent',
+  [formSendType.REK_MAIL]: 'bg-bjornstigen-surface-accent',
 };
 
 interface PaddedListItemComponentProps {
