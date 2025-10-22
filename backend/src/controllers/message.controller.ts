@@ -53,7 +53,7 @@ interface SMSReponse {
 @Controller()
 export class MessageController {
   private apiService = new ApiService();
-  SERVICE = `messaging/7.3`;
+  SERVICE = `messaging/7.7`;
 
   @Post('/sms')
   @OpenAPI({ summary: 'Send SMS to recipients' })

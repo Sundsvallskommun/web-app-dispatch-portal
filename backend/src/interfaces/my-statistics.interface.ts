@@ -53,3 +53,50 @@ export interface Status {
   successful: number;
   unsuccessful: number;
 }
+
+export interface UserRecLetters {
+  _meta: PagingMetaData;
+  letters: RecLetter[];
+}
+
+export interface RecLetter {
+  id: string;
+  subject: string;
+  municipalityId: string;
+  status: string;
+  body: string;
+  contentType: string;
+  created: string;
+  updated: string;
+  supportInfo: RecSupportInfo;
+  attachments: RecAttachment[];
+}
+
+export interface RecAttachment {
+  id: string;
+  fileName: string;
+  contentType: string;
+}
+
+export interface RecSupportInfo {
+  supportText: string;
+  contactInformationUrl: string;
+  contactInformationPhoneNumber: string;
+  contactInformationEmail: string;
+}
+
+export interface SigningInfo {
+  status: string;
+  signed: string;
+  contentKey: string;
+  orderRef: string;
+  user: {
+    personalIdentityNumber: string;
+    name: string;
+    givenName: string;
+    surname: string;
+  };
+  device: {
+    ipAddress: string;
+  };
+}

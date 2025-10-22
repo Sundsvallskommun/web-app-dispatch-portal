@@ -39,7 +39,7 @@ export interface Message {
   attachments: Attachment[];
 }
 
-interface PagingMetaData {
+export interface PagingMetaData {
   page: number;
   limit: number;
   count: number;
@@ -62,7 +62,36 @@ export interface Batch {
   status: Status;
 }
 
+export interface BatchListItem {
+  id: string;
+  messageType: string;
+  subject: string;
+  sent: string;
+}
+
 export interface Status {
   successful: number;
   unsuccessful: number;
+}
+
+export interface RecAttachment {
+  id: string;
+  fileName: string;
+  contentType: string;
+}
+
+export interface SigningInfo {
+  status: string;
+  signed: string;
+  contentKey: string;
+  orderRef: string;
+  user: {
+    personalIdentityNumber: string;
+    name: string;
+    givenName: string;
+    surname: string;
+  };
+  device: {
+    ipAddress: string;
+  };
 }
