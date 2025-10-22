@@ -1,6 +1,7 @@
 {
-  "sendSms": "Skicka sms",
-  "someInfo": "Någon info ?",
+  "sendSms": "Skicka",
+  "title": "Rubrik",
+  "discription": "Beskrivning",
   "addMobileNumber": "Lägg till mottagaren (mobilnummer)",
   "add": "Lägg till",
   "addedRecipients": "Tillagda mottagare",

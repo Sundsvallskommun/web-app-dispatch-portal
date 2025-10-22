@@ -1,5 +1,4 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
-import SuccessContainer from '@components/success-container/success-container';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Button,
@@ -12,10 +11,10 @@ import {
   Textarea,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { Info, SendHorizontal, Smartphone } from 'lucide-react';
-import { TFunction, Trans, useTranslation } from 'next-i18next';
+import { BadgeCheck, Info, SendHorizontal, Smartphone } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -25,6 +24,8 @@ import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { ApiResponse, apiService } from '@services/api-service';
 import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@utils/phone-number.helpers';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -166,34 +167,51 @@ export default function SendEmailPage() {
     setIsSending(false);
   };
 
-  const handleSendNew = () => {
-    resetAll();
-    setSuccess(false);
-  };
-
   return (
     <DefaultLayout
       title={`Postportalen`}
       headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} isSuccess={success} />}
     >
       <h1 className="sr-only">Skicka SMS</h1>
-      <div className="text-lg mb-11">
+      <div className="text-lg mb-11 ">
         {success ? (
-          <SuccessContainer
-            onClick={handleSendNew}
-            title="Ditt sms är skickat"
-            message="Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan."
-            sendNewBtntext="Skicka nytt sms"
-          />
+          <div className="text-center pt-64">
+            <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
+            <h2 className="mt-24">Ditt sms har skickats</h2>
+            <p className="my-md text-base">
+              Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan.
+            </p>
+            <div className="flex gap-16 justify-center mt-40">
+              <Button
+                className="mt-lg"
+                color="primary"
+                variant="secondary"
+                onClick={() => {
+                  resetAll();
+                  setSuccess(false);
+                }}
+              >
+                Skicka nytt sms
+              </Button>
+              <NextLink href="/" passHref legacyBehavior>
+                <Button className="mt-lg" color="vattjom">
+                  Till startsidan
+                </Button>
+              </NextLink>
+            </div>
+          </div>
         ) : (
-          <div className="w-full max-w-[82rem] mx-auto mt-40">
-            <h2 className="text-h4-lg">Skicka sms</h2>
+          <div className="flex flex-col w-full max-w-[82rem] mx-auto mt-64">
             <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-              <div className="w-full flex justify-center">
-                <div className="mt-24 flex flex-col items-start w-full shadow-50 p-32 rounded-14">
+              <div className="flex flex-col w-full justify-center gap-24">
+                <div className="flex flex-col items-start w-full shadow-50 p-32 rounded-14 gap-40">
                   <div className="w-full">
-                    <h4 className="pb-6 text-lead">Lägg till mottagare och meddelande</h4>
-                    <Divider className="w-full" orientation="horizontal" strong={false} />
+                    <FormControl size="md" className="flex-grow w-full" id="title">
+                      <div className="text-h4-md">{t('send-sms:title')}</div>
+                      <div className="font-normal text-dark-secondary text-label-medium">
+                        {t('send-sms:discription')}
+                      </div>
+                    </FormControl>
                   </div>
                   <div className="flex flex-col gap-56 items-start self-stretch">
                     <div>
@@ -308,10 +326,10 @@ export default function SendEmailPage() {
                     {t('send-sms:sendSms')}
                   </Button>
                 </div>
-              </form>
-            )}
+              </div>
+            </form>
           </div>
-        </div>
+        )}
       </div>
     </DefaultLayout>
   );
