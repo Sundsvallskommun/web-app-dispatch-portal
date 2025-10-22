@@ -32,7 +32,7 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
       const personalNumber = `, ${item?.address?.personNumber}`;
       return (
         <p className="flex flex-col">
-          <span>{`${item?.address?.givenname} ${item?.address?.lastname} ${sendType === formSendType.REK_MAIL ? personalNumber : ''}`}</span>
+          <span>{`${item?.address?.givenname} ${item?.address?.lastname}${sendType === formSendType.REK_MAIL ? personalNumber : ''}`}</span>
           {sendType === formSendType.MAIL && <span>{item?.address?.personNumber}</span>}
         </p>
       );
