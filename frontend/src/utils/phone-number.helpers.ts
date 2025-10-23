@@ -88,9 +88,11 @@ export function trySanitizeMobileNumber(raw: string | undefined): ITryResult {
 
   let cleaned: string;
   if (plusFirst === 0) {
+    // eslint-disable-next-line prefer-string-replaceall
     const rest = trimmed.slice(1).replace(TRIVIAL_CHARS_REGEX, '').replace(/\D/g, '');
     cleaned = rest ? `+${rest}` : '';
   } else {
+    // eslint-disable-next-line prefer-string-replaceall
     cleaned = trimmed.replace(TRIVIAL_CHARS_REGEX, '').replace(/\D/g, '');
   }
 
@@ -139,7 +141,7 @@ export function tryNormalizeMobileNumber(raw: string | undefined): ITryResult {
 export function formatMobileNumberDisplay(raw: string): string {
   const r = tryNormalizeMobileNumber(raw);
   if (!r.ok || !r.value) return raw;
-
+  // eslint-disable-next-line prefer-string-replaceall
   const digits = r.value.replace(/\D/g, ''); // "46762358914"
   if (!digits.startsWith('46')) return r.value;
 
