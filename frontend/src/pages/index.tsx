@@ -21,10 +21,10 @@ const Index = () => {
   }, [user.permissions.canSendSMS, router]);
 
   return (
-    <DefaultLayout title={t('start-page:app-title')} headerMenu={<HeaderMenu />}>
+    <DefaultLayout title={t('start-page:appTitle')} headerMenu={<HeaderMenu />}>
       {!isCheckingPermissions && (
         <div className="pt-128 flex flex-col items-center gap-32 flex-1 self-stretch">
-          <h1 className="sr-only">{`${t('start-page:screen-reader')}.`}</h1>
+          <h1 className="sr-only">{`${t('start-page:screenReader')}.`}</h1>
           <div className="flex self-center items-center flex-col text-lg mb-11 max-w-max gap-56">
             <div className="text-center flex flex-col gap-16 lining-nums proportional-nums">
               <div className="text-large text-dark-secondary">{t('start-page:subtitle')}</div>
@@ -35,16 +35,16 @@ const Index = () => {
                 <MainCard
                   icon={<Mail />}
                   title={t('start-page:letter')}
-                  contentText={t('start-page:send-letter-digitally')}
-                  subContentText={t('start-page:price-0.5-kr')}
+                  contentText={t('start-page:sendLetterDigitally')}
+                  subContentText={t('start-page:priceHalfKr')}
                 />
               </Link>
               <Link href={'/send/rek-mail'} className="start-link flex-1 w-full">
                 <MainCard
                   icon={<MailCheck />}
-                  title={t('start-page:rec-letter')}
-                  contentText={t('start-page:send-important-doc')}
-                  subContentText={t('start-page:price-20-kr')}
+                  title={t('start-page:recLetter')}
+                  contentText={t('start-page:sendImportantDoc')}
+                  subContentText={t('start-page:price20kr')}
                 />
               </Link>
               {user.permissions.canSendSMS && (
@@ -52,8 +52,8 @@ const Index = () => {
                   <MainCard
                     icon={<Smartphone />}
                     title={t('start-page:sms')}
-                    contentText={t('start-page:fast-method-to-share')}
-                    subContentText={t('start-page:price-0.5-kr')}
+                    contentText={t('start-page:fastMethodToShare')}
+                    subContentText={t('start-page:priceHalfKr')}
                   />
                 </Link>
               )}

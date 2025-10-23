@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import NextLink from 'next/link';
 import { Button, cx, Icon, Link } from '@sk-web-gui/react';
 import { CircleX, HelpCircle } from 'lucide-react';
@@ -18,33 +18,62 @@ const FormStepperHeader = ({ title, icon, isSuccess = false }: FormStepperHeader
   const { width } = useWindowSize();
   const { t } = useTranslation(['common']);
   const isMd = width < tailwindBreakPoint.MD;
+
+  const showHelpButton = true;
+  const showCancelButton = useMemo(() => !isSuccess, [isSuccess]);
+  const showTitle = useMemo(() => !isSuccess, [isSuccess]);
+
   const openHelpComposer = () => setShowHelpComposer(true);
   const closeHelpComposer = () => setShowHelpComposer(false);
 
-  const helpButton = isMd ? (
-    <Button iconButton variant="secondary" className="border-0" onClick={openHelpComposer} aria-label={t('help')}>
-      <Icon icon={<HelpCircle />} />
-    </Button>
-  ) : (
-    <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
-      <Icon icon={<HelpCircle />} />
-      {t('help')}
-    </Button>
-  );
+  const justifyClass = !showCancelButton && !showTitle ? 'justify-end' : 'justify-between';
 
-  const cancelButton = (
-    <NextLink href="/" passHref legacyBehavior>
-      {isMd ? (
-        <Button iconButton variant="secondary" className="border-0" aria-label={t('cancel')}>
-          <Icon icon={<CircleX />} />
+  let cancelButton: React.ReactNode;
+  if (showCancelButton) {
+    const content = isMd ? (
+      <Button iconButton variant="secondary" className="border-0" aria-label={t('common:cancel')}>
+        <Icon icon={<CircleX />} />
+      </Button>
+    ) : (
+      <Link strong={true} variant="tertiary">
+        {t('common:cancel')}
+      </Link>
+    );
+
+    cancelButton = (
+      <div className={cx(!isMd && 'pr-54')}>
+        <NextLink href="/" passHref legacyBehavior>
+          {content}
+        </NextLink>
+      </div>
+    );
+  }
+
+  let helpButton: React.ReactNode;
+  if (showHelpButton) {
+    if (isMd) {
+      helpButton = (
+        <Button
+          iconButton
+          variant="secondary"
+          className="border-0"
+          onClick={openHelpComposer}
+          aria-label={t('common:help')}
+        >
+          <Icon icon={<HelpCircle />} />
         </Button>
-      ) : (
-        <Link strong={true} variant="tertiary">
-          {t('cancel')}
-        </Link>
-      )}
-    </NextLink>
-  );
+      );
+    } else {
+      helpButton = (
+        <Button className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
+          <Icon icon={<HelpCircle />} />
+          {t('common:help')}
+        </Button>
+      );
+    }
+  } else {
+    helpButton = <div className="px-54"></div>;
+  }
 
   return (
     <div
@@ -53,15 +82,10 @@ const FormStepperHeader = ({ title, icon, isSuccess = false }: FormStepperHeader
         isMd ? 'px-16' : 'px-80'
       )}
     >
-      <div
-        className={cx(
-          'flex grow items-center w-full max-w-[--max-w-7xl]',
-          isSuccess ? 'justify-end' : 'justify-between'
-        )}
-      >
-        {!isSuccess && cancelButton}
-        {!isSuccess && (
-          <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content] ml-[54px]')}>
+      <div className={cx('flex grow items-center w-full max-w-[--max-w-7xl]', justifyClass)}>
+        {cancelButton}
+        {showTitle && (
+          <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content]')}>
             {!isMd && <Icon icon={icon} />}
             <h4 className="text-xs md:text-[2rem]">{title}</h4>
           </div>

@@ -1,0 +1,27 @@
+{
+  "sendSms": "Skicka",
+  "title": "Rubrik",
+  "discription": "Beskrivning",
+  "addMobileNumber": "Lägg till mottagaren (mobilnummer)",
+  "add": "Lägg till",
+  "addedRecipients": "Tillagda mottagare",
+  "youDidNotAddSomeRecipients": "Du har inte lagt till några mottagare än",
+  "message": "Meddelande",
+  "characters": "tecken",
+  "errors": {
+    "messageEmpty": "Meddelandet får inte vara tomt.",
+    "minOneRecipient": "Du måste lägg till en mottagare.",
+    "giveMin10DigitsMobileNumber": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
+    "numberAlreadyAdded": "Numret är redan tillagt!",
+    "wrongMobileNumberFormat": "Formatet på telefonnumret är felaktigt.",
+    "somethingWrongWhenSendSms": "Något gick fel när jag skickade sms:et:"
+  },
+  "messages": {
+    "somethingWrong": "Något gick fel",
+    "smsSent": "SMS skickades"
+  },
+  "yourMessageSent": "Ditt sms har skickats",
+  "youCanReviewMessagesInSentList": "Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan",
+  "sendNewSms": "Skicka nytt sms",
+  "toStartPage": "Till startsidan"
+}

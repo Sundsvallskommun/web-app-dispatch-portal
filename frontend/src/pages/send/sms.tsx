@@ -1,13 +1,7 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
-import SuccessContainer from '@components/success-container/success-container';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { SMSRequest, SMSStatus } from '@interfaces/sms';
-import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { ApiResponse, apiService } from '@services/api-service';
 import {
   Button,
-  Chip,
-  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -16,23 +10,34 @@ import {
   Textarea,
   useSnackbar,
 } from '@sk-web-gui/react';
-import { SendHorizontal, Smartphone } from 'lucide-react';
+import { BadgeCheck, Info, SendHorizontal, Smartphone } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useState } from 'react';
+import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-const phoneNumberRegex = /^\+46[0-9]{7,13}$/;
+import CustomChip from '@components/custom-chip/custom-chip.component';
+import { SMSRequest, SMSStatus } from '@interfaces/sms';
+import { ApiResponse, apiService } from '@services/api-service';
+import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@utils/phone-number.helpers';
+import DefaultLayout from '@layouts/default-layout/default-layout.component';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
-const formSchema = yup
-  .object({
-    message: yup.string().min(3, 'Du måste skriva ett meddelande med minst 3 tecken'),
-    recipientList: yup.array().test('HAS_MIN_ONE', 'Du måste ha minst en mottagare', (value) => {
-      return value && value.length > 0;
-    }),
-  })
-  .required();
+const createFormSchema = (t: TFunction) => {
+  const formSchema = yup
+    .object({
+      message: yup.string().min(3, t('send-sms:errors.messageEmpty')),
+      recipientList: yup.array().test('HAS_MIN_ONE', t('send-sms:errors:minOneRecipient'), (value) => {
+        return value && value.length > 0;
+      }),
+    })
+    .required();
+
+  return formSchema;
+};
 
 const initialValues = {
   country: '0',
@@ -49,16 +54,18 @@ export interface FormModel {
 }
 
 export default function SendEmailPage() {
-  const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const { t } = useTranslation(['common', 'send-sms']);
+
   const message = useSnackbar();
 
+  const formSchema = createFormSchema(t);
   const controls = useForm<Partial<FormModel>>({
     resolver: yupResolver(formSchema),
     values: initialValues,
-    mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
   });
 
   const {
@@ -69,10 +76,13 @@ export default function SendEmailPage() {
     register,
     reset,
     formState: { errors },
+    clearErrors,
+    setError: setFormError,
   } = controls;
 
   const recipientList = watch('recipientList');
-
+  const messageText = watch('message');
+  const singleRecipient = watch('singleRecipient');
   const handleRemove = (recipient: string) => {
     const recipients = getValues('recipientList');
     setValue(
@@ -81,29 +91,39 @@ export default function SendEmailPage() {
     );
   };
 
+  useEffect(() => {
+    clearErrors(['recipientList', 'singleRecipient']);
+  }, [singleRecipient]);
+  useEffect(() => {
+    clearErrors('message');
+  }, [messageText]);
+
   const addRecipient = () => {
-    setError('');
+    clearErrors(['singleRecipient', 'recipientList']);
+
     const recipients = getValues('recipientList') ?? [];
     const recipientValue = getValues('singleRecipient');
-    if (!recipientValue) {
+
+    const normalizingResult = tryNormalizeMobileNumber(recipientValue);
+    let message = '';
+    if (!normalizingResult.ok || !normalizingResult.value) {
+      if (normalizingResult.error === MobileNumberError.EMPTY_INPUT) {
+        message = t('send-sms:errors.giveMin10DigitsMobileNumber');
+      } else {
+        message = t('send-sms:errors.wrongMobileNumberFormat');
+      }
+
+      setFormError('singleRecipient', { message });
       return;
     }
 
-    const recipient = recipientValue.replace(/^0/, '+46').replaceAll('-', '').replaceAll(' ', '');
+    let recipient = normalizingResult.value;
 
-    setValue('singleRecipient', recipient);
-
-    const alreadyExists = recipients ? recipients?.indexOf(recipient) : 0;
-
-    if (alreadyExists >= 0) {
-      setError('Numret är redan tillagt!');
+    if (recipients?.includes(recipient)) {
+      setFormError('singleRecipient', { message: t('send-sms:errors.numberAlreadyAdded') });
       return;
     }
 
-    if (!recipient.match(phoneNumberRegex)) {
-      setError('Formatet på telefonnumret är felaktigt');
-      return;
-    }
     setValue('singleRecipient', initialValues.singleRecipient);
     setValue('recipientList', [...recipients, recipient]);
   };
@@ -129,14 +149,14 @@ export default function SendEmailPage() {
 
     const res = await apiService.post<ApiResponse<SMSStatus>, SMSRequest>(`sms`, data).catch((e) => {
       setSuccess(false);
-      message({ message: 'Något gick fel', status: 'error' });
-      console.error('Something went wrong when sending sms:', e);
+      message({ message: t('send-sms:messages.somethingWrong'), status: 'error' });
+      console.error(t('send-sms:errors.somethingWrongWhenSendSms'), e);
       throw e;
     });
 
     if (res?.data?.data?.batchId) {
       setSuccess(true);
-      message({ message: 'SMS skickades', status: 'success' });
+      message({ message: t('send-sms:messages.smsSent'), status: 'success' });
       // NOTE: fix for textarea (message) to update
       setTimeout(() => {
         reset(initialValues);
@@ -146,97 +166,166 @@ export default function SendEmailPage() {
     setIsSending(false);
   };
 
-  const handleSendNew = () => {
-    resetAll();
-    setSuccess(false);
-  };
-
   return (
     <DefaultLayout
       title={`Postportalen`}
       headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} isSuccess={success} />}
     >
       <h1 className="sr-only">Skicka SMS</h1>
-      <div className="text-lg mb-11">
+      <div className="text-lg mb-11 ">
         {success ? (
-          <SuccessContainer
-            onClick={handleSendNew}
-            title="Ditt sms är skickat"
-            message="Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan."
-            sendNewBtntext="Skicka nytt sms"
-          />
+          <div className="text-center pt-64">
+            <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
+            <h2 className="mt-24">Ditt sms har skickats</h2>
+            <p className="my-md text-base">
+              Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan.
+            </p>
+            <div className="flex gap-16 justify-center mt-40">
+              <Button
+                className="mt-lg"
+                color="primary"
+                variant="secondary"
+                onClick={() => {
+                  resetAll();
+                  setSuccess(false);
+                }}
+              >
+                Skicka nytt sms
+              </Button>
+              <NextLink href="/" passHref legacyBehavior>
+                <Button className="mt-lg" color="vattjom">
+                  Till startsidan
+                </Button>
+              </NextLink>
+            </div>
+          </div>
         ) : (
-          <div className="w-full max-w-[82rem] mx-auto mt-40">
-            <h2 className="text-h4-lg">Skicka sms</h2>
+          <div className="flex flex-col w-full max-w-[82rem] mx-auto mt-64">
             <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-              <div className="w-full flex justify-center">
-                <div className="mt-24 flex flex-col items-start w-full shadow-50 p-32 rounded-14">
+              <div className="flex flex-col w-full justify-center gap-24">
+                <div className="flex flex-col items-start w-full shadow-50 p-32 rounded-14 gap-40">
                   <div className="w-full">
-                    <h4 className="pb-6 text-lead">Lägg till mottagare och meddelande</h4>
-                    <Divider className="w-full" orientation="horizontal" strong={false} />
+                    <FormControl size="md" className="flex-grow w-full" id="title">
+                      <div className="text-h4-md">{t('send-sms:title')}</div>
+                      <div className="font-normal text-dark-secondary text-label-medium">
+                        {t('send-sms:discription')}
+                      </div>
+                    </FormControl>
                   </div>
-                  <div className="w-full flex flex-col gap-xl mt-56">
+                  <div className="flex flex-col gap-56 items-start self-stretch">
                     <div>
-                      <div className="flex gap-16 max-w-sm">
-                        <FormControl invalid={!!error} id="recipient" className="flex-grow" size="md">
-                          <FormLabel className="text-label-medium">Mottagarens mobilnummer</FormLabel>
-                          <Input {...register('singleRecipient')} placeholder="+46" />
-                        </FormControl>
-
-                        <Button
-                          className="self-end"
-                          variant="tertiary"
-                          onClick={() => {
-                            addRecipient();
-                          }}
-                        >
-                          Lägg till
-                        </Button>
+                      <div className="flex max-w-382 flex-col items-start gap-16">
+                        <div className="flex flex-col items-start gap-8 self-stretch w-full">
+                          <FormControl
+                            invalid={!!errors.singleRecipient?.message}
+                            id="recipient"
+                            className="flex-grow w-full"
+                            size="md"
+                          >
+                            <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums w-full">
+                              {t('send-sms:addMobileNumber')}
+                            </FormLabel>
+                            <div className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full">
+                              <Input
+                                className="flex items-center gap-8 flex-1 w-full min-w-249"
+                                {...register('singleRecipient')}
+                              />
+                              <Button
+                                className="self-end"
+                                variant="tertiary"
+                                onClick={() => {
+                                  addRecipient();
+                                }}
+                              >
+                                {t('send-sms:add')}
+                              </Button>
+                            </div>
+                            {errors?.recipientList && (
+                              <FormErrorMessage
+                                className="text-error-text-primary flex items-center gap-8"
+                                key={`recipientList-errors`}
+                              >
+                                <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
+                                {errors.recipientList.message}
+                              </FormErrorMessage>
+                            )}
+                            {errors?.singleRecipient && (
+                              <FormErrorMessage
+                                className="text-error-text-primary flex items-center gap-8"
+                                key={`singleRecipient-errors`}
+                              >
+                                <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
+                                {errors.singleRecipient.message}
+                              </FormErrorMessage>
+                            )}
+                          </FormControl>
+                        </div>
                       </div>
-
-                      <div>{error && <FormErrorMessage className="my-8">{error}</FormErrorMessage>}</div>
                     </div>
-                    <div className="">
-                      <h3 className="pb-16 text-label-medium">Tillagda mottagare</h3>
-                      <div className="flex flex-col items-start gap-6">
-                        {recipientList?.map((recipient) => (
-                          <Chip className="" onClick={() => handleRemove(recipient)} key={recipient}>
-                            {recipient}
-                          </Chip>
-                        ))}
+                    <div className="flex flex-col items-start gap-12 self-stretch">
+                      <div className="flex flex-col items-start gap-12 self-stretch">
+                        <div className="text-label-medium text-dark-primary lining-nums proportional-nums">
+                          {t('send-sms:addedRecipients')}
+                        </div>
+                        {recipientList && recipientList.length > 0 ? (
+                          <div className="flex flex-col justify-center items-start gap-8">
+                            {recipientList?.map((recipient) => (
+                              <CustomChip key={recipient} onRemove={() => handleRemove(recipient)}>
+                                {formatMobileNumberDisplay(recipient)}
+                              </CustomChip>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-dark-secondary lining-nums proportional-nums text-label-medium font-normal">
+                            {t('send-sms:youDidNotAddSomeRecipients')}
+                          </div>
+                        )}
                       </div>
-                      {errors?.recipientList && (
-                        <FormErrorMessage key={`recipientList-errors`}>
-                          {errors.recipientList?.message}
-                        </FormErrorMessage>
-                      )}
                     </div>
 
-                    <FormControl invalid={!!errors?.message} id="message" className="w-full" size="md">
-                      <FormLabel className="text-label-medium">Meddelande</FormLabel>
+                    <FormControl
+                      invalid={!!errors?.message}
+                      id="message"
+                      className="flex flex-col items-start gap-8 self-stretch w-full"
+                      size="md"
+                    >
+                      <div className="flex flex-row items-center gap-56 self-stretch justify-between">
+                        <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums flex-1">
+                          {t('send-sms:message')}
+                        </FormLabel>
+                        <div className="text-dark-secondary lining-nums proportional-nums text-small font-normal">
+                          {messageText?.length} / 459 {t('send-sms:characters')}
+                        </div>
+                      </div>
                       <Textarea
-                        className="w-full min-h-[17rem]"
-                        showCount={true}
+                        className="flex min-h-182 flex-col items-start gap-8 self-stretch w-full text-dark-placeholder"
                         maxLength={459}
                         {...register('message')}
                       />
+                      {errors.message && (
+                        <FormErrorMessage
+                          className="text-error-text-primary flex items-center gap-8"
+                          key={`message-errors`}
+                        >
+                          <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
+                          {errors.message?.message}
+                        </FormErrorMessage>
+                      )}
                     </FormControl>
-
-                    {errors.message && (
-                      <FormErrorMessage key={`message-errors`}>{errors.message?.message}</FormErrorMessage>
-                    )}
                   </div>
                 </div>
+                <div className="flex justify-end items-start gap-80 self-stretch">
+                  <Button
+                    type="submit"
+                    color="vattjom"
+                    className="flex py-8 pr-16 pl-18 justify-center items-center gap-8"
+                    rightIcon={<Icon icon={<SendHorizontal />} />}
+                    loading={isSending}
+                  >
+                    {t('send-sms:sendSms')}
+                  </Button>
+                </div>
               </div>
-              <Button
-                type="submit"
-                color="vattjom"
-                className="mt-16 self-end"
-                rightIcon={<Icon icon={<SendHorizontal />} />}
-                loading={isSending}
-              >
-                Skicka sms
-              </Button>
             </form>
           </div>
         )}
@@ -244,9 +333,8 @@ export default function SendEmailPage() {
     </DefaultLayout>
   );
 }
-
 export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'accessibility'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-sms'])),
   },
 });
