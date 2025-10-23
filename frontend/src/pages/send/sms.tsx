@@ -25,6 +25,7 @@ import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber 
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { EnumQATags } from '@components/help/help-types';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -169,7 +170,9 @@ export default function SendEmailPage() {
   return (
     <DefaultLayout
       title={`Postportalen`}
-      headerMenu={<FormStepperHeader title="Skicka Sms" icon={<Smartphone />} isSuccess={success} />}
+      headerMenu={
+        <FormStepperHeader title="Skicka Sms" icon={<Smartphone />} isSuccess={success} helpType={EnumQATags.SMS} />
+      }
     >
       <h1 className="sr-only">Skicka SMS</h1>
       <div className="text-lg mb-11 ">
