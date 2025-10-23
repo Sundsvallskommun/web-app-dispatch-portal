@@ -88,14 +88,10 @@ export function trySanitizeMobileNumber(raw: string | undefined): ITryResult {
 
   let cleaned: string;
   if (plusFirst === 0) {
-    // eslint-disable-next-line prefer-string-replaceall
-    // NOSONAR: using regex intentionally; replaceAll() does not support RegExp
-    const rest = trimmed.slice(1).replace(TRIVIAL_CHARS_REGEX, '').replace(/\D/g, '');
+    const rest = trimmed.slice(1).replaceAll(TRIVIAL_CHARS_REGEX, '').replaceAll(/\D/g, '');
     cleaned = rest ? `+${rest}` : '';
   } else {
-    // eslint-disable-next-line prefer-string-replaceall
-    // NOSONAR: using regex intentionally; replaceAll() does not support RegExp
-    cleaned = trimmed.replace(TRIVIAL_CHARS_REGEX, '').replace(/\D/g, '');
+    cleaned = trimmed.replaceAll(TRIVIAL_CHARS_REGEX, '').replaceAll(/\D/g, '');
   }
 
   if (!cleaned) {
@@ -143,9 +139,7 @@ export function tryNormalizeMobileNumber(raw: string | undefined): ITryResult {
 export function formatMobileNumberDisplay(raw: string): string {
   const r = tryNormalizeMobileNumber(raw);
   if (!r.ok || !r.value) return raw;
-  // eslint-disable-next-line prefer-string-replaceall
-  // NOSONAR: using regex intentionally; replaceAll() does not support RegExp
-  const digits = r.value.replace(/\D/g, ''); // "46762358914"
+  const digits = r.value.replaceAll(/\D/g, ''); // "46762358914"
   if (!digits.startsWith('46')) return r.value;
 
   const rest = digits.slice(2); // "762358914"
