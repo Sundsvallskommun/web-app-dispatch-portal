@@ -6,20 +6,10 @@ import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnack
 import { File, Download } from 'lucide-react';
 import { useLetter, useSigningInfo, getRecAttachmentFile } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { Message, RecAttachment } from '@interfaces/statistics.interface';
+import { RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
-
-const defaultMessageInfo: Message = {
-  sent: '',
-  subject: '',
-  body: '',
-  messageId: '',
-  issuer: '',
-  attachments: [],
-  recipients: [],
-};
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -40,7 +30,7 @@ const MyStatisticsDetails = () => {
     {
       label: 'Status',
       property: 'status',
-      renderColumn: (value, item) => {
+      renderColumn: (value) => {
         const map: Record<string, string> = {
           completed: t('statistics:myStatistics.signingInfo.completed'),
           pending: t('statistics:myStatistics.signingInfo.pending'),
@@ -60,7 +50,7 @@ const MyStatisticsDetails = () => {
     {
       label: '',
       columnPosition: 'right',
-      renderColumn: (value, item) => (
+      renderColumn: () => (
         <div className="">
           <Button size="sm" color="vattjom" rightIcon={<Download />}>
             {t('statistics:myStatistics.downloadRecept')}
@@ -85,7 +75,7 @@ const MyStatisticsDetails = () => {
 
   const recAttachments = useMemo<RecAttachment[]>(() => {
     if (letter?.id) {
-      let attachments = letter.attachments.map((a) => {
+      const attachments = letter.attachments.map((a) => {
         return { contentType: a.contentType, fileName: a.fileName, id: a.id } as RecAttachment;
       });
 
