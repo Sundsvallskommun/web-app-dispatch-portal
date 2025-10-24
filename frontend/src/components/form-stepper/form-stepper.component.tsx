@@ -51,7 +51,7 @@ const FormStepper = <T extends FieldValues>({
 
     const step = steps[currentStep];
     if (step?.onNextClick) {
-      canProceed = await step!.onNextClick(currentStep);
+      canProceed = await step.onNextClick(currentStep);
     }
 
     if (canProceed && step.valid) {
