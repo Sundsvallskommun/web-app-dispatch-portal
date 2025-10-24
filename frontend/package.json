@@ -10,8 +10,8 @@
     "analyze": "dotenv ANALYZE=true next build",
     "analyze:server": "dotenv BUNDLE_ANALYZE=server next build",
     "analyze:browser": "dotenv BUNDLE_ANALYZE=browser next build",
-    "cypress": "dotenv cypress open",
-    "cypress:headless": "cross-env ELECTRON_EXTRA_LAUNCH_ARGS=--disable-gpu-sandbox cypress run",
+    "cypress": "cross-env TS_NODE_PROJECT=tsconfig.cypress.json dotenv cypress open",
+    "cypress:headless": "cross-env TS_NODE_PROJECT=tsconfig.cypress.json ELECTRON_EXTRA_LAUNCH_ARGS=--disable-gpu-sandbox dotenv cypress run",
     "test": "yarn cypress",
     "test:coverage": "yarn cypress:headless",
     "type-check": "tsc --pretty --noEmit"

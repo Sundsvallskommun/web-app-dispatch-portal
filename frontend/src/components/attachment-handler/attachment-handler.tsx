@@ -111,12 +111,12 @@ const AttachmentHandler: React.FC = () => {
           </div>
         )}
         {attachmentList.length > 0 && (
-          <div className="w-full">
+          <div className="w-full" data-cy="attachments">
             <h4 className="pb-8 text-label-medium">
               {t('send-mail:attachmentHandler.addedFiles', { num: attachmentList.length })}
             </h4>
             <p className="text-base">{`${t('send-mail:attachmentHandler.sort')}.`}</p>
-            <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-12" data-cy="file-list">
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext
                   items={attachmentList.map((item) => item.index)}
