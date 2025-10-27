@@ -1,8 +1,9 @@
-import { useMemo, useRef } from 'react';
-import { Button, Dialog, Input, FormControl, FormLabel, FormErrorMessage } from '@sk-web-gui/react';
+import React, { useMemo, useRef } from 'react';
+import { Button, Input, FormControl, FormLabel, FormErrorMessage, Modal } from '@sk-web-gui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 interface AddWithAddressDialogFormModel {
   firstName: string;
@@ -11,24 +12,22 @@ interface AddWithAddressDialogFormModel {
   careOf?: string;
   zipCode: string;
   city: string;
-};
+}
 
 interface AddWithAddressDialogProps {
   open: boolean;
   onClose: (data?: AddWithAddressDialogFormModel) => void;
   addWithAddressDialogForm?: AddWithAddressDialogFormModel;
-};
+}
 
-const formSchema = yup
-  .object({
-    firstName: yup.string().required('Förnamn måste anges'),
-    lastName: yup.string().required('Efternamn måste anges'),
-    address: yup.string().required('Adress måste anges'),
-    careOf: yup.string().optional(),
-    //zipCode: yup.number().typeError('Måste vara ett nummer').required('Postnummer måste anges'),
-    zipCode: yup.string().required('Postnummer måste anges'),
-    city: yup.string().required('Ort måste anges'),
-  });
+const formSchema = yup.object({
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+  address: yup.string().required(),
+  careOf: yup.string().optional(),
+  zipCode: yup.string().required(),
+  city: yup.string().required(),
+});
 
 const defaultValues = {
   firstName: '',
@@ -36,11 +35,16 @@ const defaultValues = {
   address: '',
   careOf: '',
   zipCode: '',
-  city: ''
+  city: '',
 };
 
-export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({ open, onClose, addWithAddressDialogForm = defaultValues  }) => {
+export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
+  open,
+  onClose,
+  addWithAddressDialogForm = defaultValues,
+}) => {
   const initialFocus = useRef(null);
+  const { t } = useTranslation(['common', 'send-mail']);
 
   const {
     reset,
@@ -63,70 +67,88 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({ open
     const vals = getValues();
     reset();
     onClose(vals);
-  }
+  };
 
   const handleClose = () => {
     reset();
     onClose();
-  }
+  };
 
   return (
-    <Dialog show={open} className="md:min-w-[50rem]">
-      <Dialog.Content>
-        <h1 className="h3">Lägg till mottagare med adress</h1>
-        <p>
-          När du lägger till en mottagare med adress kommer brevet att skickas med vanlig post. För att kunna skicka
-          till en digital brevlåda krävs ett personnummer.
-        </p>
+    <Modal
+      show={open}
+      onClose={onClose}
+      className="max-w-[60rem]"
+      label={t('send-mail:recipientHandler.addWithAddress.title')}
+    >
+      <Modal.Content>
+        <p className="pb-16">{t('send-mail:recipientHandler.addWithAddress.description')}</p>
 
-        <div className="flex flex-col gap-16">
-          <div className="flex flex-wrap items-center w-full gap-16">
-            <FormControl id="firstName" invalid={!!errors.firstName}>
-              <FormLabel>Förnamn</FormLabel>
-              <Input {...register("firstName")} aria-describedby="firstName-error" />
-              {errors.firstName && <FormErrorMessage key={`firstName-errors`}>{errors.firstName?.message}</FormErrorMessage>}
-            </FormControl>
+        <div className="grid grid-cols-2 items-center w-full gap-y-24 gap-x-16">
+          <FormControl className="w-full" id="firstName" invalid={!!errors.firstName}>
+            <FormLabel>{t('send-mail:recipientHandler.addWithAddress.firstName')}</FormLabel>
+            <Input {...register('firstName')} aria-describedby="firstName-error" />
+            {errors.firstName && (
+              <FormErrorMessage key={`firstName-errors`}>
+                {t('send-mail:recipientHandler.addWithAddress.error.firstName')}
+              </FormErrorMessage>
+            )}
+          </FormControl>
 
-            <FormControl id="lastName" invalid={!!errors.lastName}>
-              <FormLabel>Efternamn</FormLabel>
-              <Input {...register("lastName")} aria-describedby="lastName-error" />
-              {errors.lastName && <FormErrorMessage key={`lastName-errors`}>{errors.lastName?.message}</FormErrorMessage>}
-            </FormControl>
+          <FormControl className="w-full" id="lastName" invalid={!!errors.lastName}>
+            <FormLabel>{t('send-mail:recipientHandler.addWithAddress.lastName')}</FormLabel>
+            <Input {...register('lastName')} aria-describedby="lastName-error" />
+            {errors.lastName && (
+              <FormErrorMessage key={`lastName-errors`}>
+                {t('send-mail:recipientHandler.addWithAddress.error.lastName')}
+              </FormErrorMessage>
+            )}
+          </FormControl>
 
-            <FormControl id="address" invalid={!!errors.address}>
-              <FormLabel>Adress</FormLabel>
-              <Input {...register("address")} aria-describedby="address-error" />
-              {errors.address && <FormErrorMessage key={`address-errors`}>{errors.address?.message}</FormErrorMessage>}
-            </FormControl>
+          <FormControl className="w-full" id="address" invalid={!!errors.address}>
+            <FormLabel>{t('send-mail:recipientHandler.addWithAddress.address')}</FormLabel>
+            <Input {...register('address')} aria-describedby="address-error" />
+            {errors.address && (
+              <FormErrorMessage key={`address-errors`}>
+                {t('send-mail:recipientHandler.addWithAddress.error.address')}
+              </FormErrorMessage>
+            )}
+          </FormControl>
 
-            <FormControl id="careOf">
-              <FormLabel>C/o adress (valfri)</FormLabel>
-              <Input {...register("careOf")} aria-describedby="careOf-error" />
-              {errors.careOf && <FormErrorMessage key={`careOf-errors`}>{errors.careOf?.message}</FormErrorMessage>}
-            </FormControl>
+          <FormControl className="w-full" id="careOf">
+            <FormLabel>{t('send-mail:recipientHandler.addWithAddress.careOf')}</FormLabel>
+            <Input {...register('careOf')} aria-describedby="careOf-error" />
+          </FormControl>
 
-            <FormControl id="zipCode" invalid={!!errors.zipCode}>
-              <FormLabel>Postnummer</FormLabel>
-              <Input {...register("zipCode")} aria-describedby="zipCode-error" />
-              {errors.zipCode && <FormErrorMessage key={`zipCode-errors`}>{errors.zipCode?.message}</FormErrorMessage>}
-            </FormControl>
+          <FormControl className="w-full" id="zipCode" invalid={!!errors.zipCode}>
+            <FormLabel>{t('send-mail:recipientHandler.addWithAddress.zipCode')}</FormLabel>
+            <Input {...register('zipCode')} aria-describedby="zipCode-error" />
+            {errors.zipCode && (
+              <FormErrorMessage key={`zipCode-errors`}>
+                {t('send-mail:recipientHandler.addWithAddress.error.zipCode')}
+              </FormErrorMessage>
+            )}
+          </FormControl>
 
-            <FormControl id="city" invalid={!!errors.city}>
-              <FormLabel>Ort</FormLabel>
-              <Input {...register("city")} aria-describedby="city-error" />
-              {errors.city && <FormErrorMessage key={`city-errors`}>{errors.city?.message}</FormErrorMessage>}
-            </FormControl>
-          </div>
+          <FormControl className="w-full" id="city" invalid={!!errors.city}>
+            <FormLabel>{t('send-mail:recipientHandler.addWithAddress.city')}</FormLabel>
+            <Input {...register('city')} aria-describedby="city-error" />
+            {errors.city && (
+              <FormErrorMessage key={`city-errors`}>
+                {t('send-mail:recipientHandler.addWithAddress.error.city')}
+              </FormErrorMessage>
+            )}
+          </FormControl>
         </div>
-      </Dialog.Content>
-      <Dialog.Buttons>
+      </Modal.Content>
+      <Modal.Footer>
         <Button variant="secondary" ref={initialFocus} onClick={() => handleClose()}>
-          Avbryt
+          {t('common:cancel')}
         </Button>
         <Button variant="primary" color="primary" onClick={() => handleAdd()}>
-          Lägg till mottagare
+          {t('send-mail:recipientHandler.title')}
         </Button>
-      </Dialog.Buttons>
-    </Dialog>
+      </Modal.Footer>
+    </Modal>
   );
 };

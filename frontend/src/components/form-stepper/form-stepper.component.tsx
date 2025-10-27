@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Button, cx, ProgressStepper } from '@sk-web-gui/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useWindowSize } from 'src/hooks/useWindowSize';
 import { formSendType, tailwindBreakPoint } from 'src/constants';
 import SuccessContainer from '@components/success-container/success-container';
@@ -79,7 +79,12 @@ const FormStepper = <T extends FieldValues>({
       {steps[currentStep].component}
       <div className="flex flex-row justify-end gap-16 my-40">
         {currentStep !== 0 && (
-          <Button variant="secondary" onClick={() => setCurrentStep(currentStep - 1)}>
+          <Button
+            showBackground={false}
+            variant="tertiary"
+            onClick={() => setCurrentStep(currentStep - 1)}
+            leftIcon={<ArrowLeft />}
+          >
             {t('common:back')}
           </Button>
         )}

@@ -84,13 +84,7 @@ const SendMailPage = () => {
         <FormStepper<SendMailForm>
           steps={[
             {
-              label: t('send-mail:addTextDocument'),
-              component: <AttachmentHandler />,
-              valid: hasAtLeastOneAttachment,
-              onNextClick: useMailStepValidation(clearErrors, trigger, ['attachmentList']),
-            },
-            {
-              label: t('send-mail:recipientHandler.addRecipient'),
+              label: t('common:stepper.recipient'),
               component: <RecipientHandler />,
               valid: hasValidRecipients(recipients, addresses),
               onNextClick: useMailStepValidation(clearErrors, trigger, [
@@ -100,7 +94,13 @@ const SendMailPage = () => {
               ]),
             },
             {
-              label: t('send-mail:addSender'),
+              label: t('common:stepper.files'),
+              component: <AttachmentHandler />,
+              valid: hasAtLeastOneAttachment,
+              onNextClick: useMailStepValidation(clearErrors, trigger, ['attachmentList']),
+            },
+            {
+              label: t('common:stepper.header'),
               component: <SenderHandler />,
               valid: hasDepartment && hasSubject,
               onNextClick: useMailStepValidation(clearErrors, trigger, ['department', 'subject']),
