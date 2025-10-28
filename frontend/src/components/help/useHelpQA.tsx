@@ -50,24 +50,11 @@ export const useHelpQA = (): QAItem[] => {
         <>
           {splitInParagraphs(t('help-menu:questionsAndAnswers.6.answer'))}
           <List listStyle="bullet">
-            <List.Item>
-              <List.Text>{t('help-menu:questionsAndAnswers.6.listItems.1')} </List.Text>
-            </List.Item>
-            <List.Item>
-              <List.Text>{t('help-menu:questionsAndAnswers.6.listItems.2')}</List.Text>
-            </List.Item>
-            <List.Item>
-              <List.Text>{t('help-menu:questionsAndAnswers.6.listItems.3')} </List.Text>
-            </List.Item>
-            <List.Item>
-              <List.Text>{t('help-menu:questionsAndAnswers.6.listItems.4')}</List.Text>
-            </List.Item>
-            <List.Item>
-              <List.Text>{t('help-menu:questionsAndAnswers.6.listItems.5')}</List.Text>
-            </List.Item>
-            <List.Item>
-              <List.Text>{t('help-menu:questionsAndAnswers.6.listItems.6')}</List.Text>
-            </List.Item>
+            {[1, 3, 4, 5, 6].map((i) => (
+              <List.Item>
+                <List.Text>{t(`help-menu:questionsAndAnswers.6.listItems.${i}`)} </List.Text>
+              </List.Item>
+            ))}
           </List>
         </>
       ),
@@ -202,7 +189,11 @@ export const useHelpQA = (): QAItem[] => {
           components={{
             p: <p />,
             strong: <strong />,
-            a: <a className="text-vattjom-text-primary underline" href="mailto:support@sundsvall.se" />,
+            a: (
+              <a className="text-vattjom-text-primary underline" href="mailto:support@sundsvall.se">
+                {/* translation will inject text here */}
+              </a>
+            ),
           }}
         />
       ),
