@@ -66,48 +66,13 @@ export const useHelpQA = (): QAItem[] => {
       answer: splitInParagraphs(t('help-menu:questionsAndAnswers.7.answer')),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
-    {
-      id: '8',
-      question: t('help-menu:questionsAndAnswers.8.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.8.answer')),
+
+    ...[8, 9, 10, 11, 12, 13, 14].map((i) => ({
+      id: String(i),
+      question: t(`help-menu:questionsAndAnswers.${i}.question`),
+      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`)),
       tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-    },
-    {
-      id: '9',
-      question: t('help-menu:questionsAndAnswers.9.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.9.answer')),
-      tags: [EnumQATags.REK_MAIL, EnumQATags.MAIL],
-    },
-    {
-      id: '10',
-      question: t('help-menu:questionsAndAnswers.10.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.10.answer')),
-      tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-    },
-    {
-      id: '11',
-      question: t('help-menu:questionsAndAnswers.11.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.11.answer')),
-      tags: [EnumQATags.REK_MAIL, EnumQATags.MAIL],
-    },
-    {
-      id: '12',
-      question: t('help-menu:questionsAndAnswers.12.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.12.answer')),
-      tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-    },
-    {
-      id: '13',
-      question: t('help-menu:questionsAndAnswers.13.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.13.answer')),
-      tags: [EnumQATags.REK_MAIL, EnumQATags.MAIL],
-    },
-    {
-      id: '14',
-      question: t('help-menu:questionsAndAnswers.14.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.14.answer')),
-      tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-    },
+    })),
     {
       id: '15',
       question: t('help-menu:questionsAndAnswers.15.question'),
