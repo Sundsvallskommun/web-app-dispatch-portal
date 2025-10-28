@@ -6,11 +6,9 @@ export const useHelpQA = (): QAItem[] => {
   const { t } = useTranslation(['help-menu']);
 
   const splitInParagraphs = (text: string) =>
-    text.split('\n').map((paragraph, i) => (
-      <p key={i} className={i > 0 ? 'mt-4 leading-normal' : 'leading-normal'}>
-        {paragraph}
-      </p>
-    ));
+    text
+      .split('\n')
+      .map((paragraph, i) => <p className={i > 0 ? 'mt-4 leading-normal' : 'leading-normal'}>{paragraph}</p>);
 
   return [
     {
@@ -66,7 +64,6 @@ export const useHelpQA = (): QAItem[] => {
       answer: splitInParagraphs(t('help-menu:questionsAndAnswers.7.answer')),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
-
     ...[8, 9, 10, 11, 12, 13, 14].map((i) => ({
       id: String(i),
       question: t(`help-menu:questionsAndAnswers.${i}.question`),
@@ -164,24 +161,12 @@ export const useHelpQA = (): QAItem[] => {
       ),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
-    {
-      id: '24',
-      question: t('help-menu:questionsAndAnswers.24.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.24.answer')),
+    ...[24, 25, 26].map((i) => ({
+      id: String(i),
+      question: t(`help-menu:questionsAndAnswers.${i}.question`),
+      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`)),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
-    },
-    {
-      id: '25',
-      question: t('help-menu:questionsAndAnswers.25.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.25.answer')),
-      tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
-    },
-    {
-      id: '26',
-      question: t('help-menu:questionsAndAnswers.26.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.26.answer')),
-      tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
-    },
+    })),
     {
       id: '27',
       question: t('help-menu:questionsAndAnswers.27.question'),
