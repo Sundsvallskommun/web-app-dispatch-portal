@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@mui/material';
-import { Accordion, Link, List, useGui } from '@sk-web-gui/react';
+import { Accordion, useGui } from '@sk-web-gui/react';
 import { useMemo } from 'react';
-import { EnumQATags, QAItem } from './help-types';
+import { EnumQATags } from './help-types';
 import { useHelpQA } from './useHelpQA';
 
 interface HelpProps {
@@ -16,7 +16,7 @@ export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
 
   const size = _size || (isMedium ? 'md' : 'sm');
 
-  let filteredQAItems = useMemo(() => {
+  const filteredQAItems = useMemo(() => {
     if (!filterTag || filterTag?.length === 0) return qaItems;
     return qaItems.filter((q) => q.tags.includes(filterTag));
   }, [filterTag, qaItems]);

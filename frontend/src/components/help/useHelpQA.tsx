@@ -1,6 +1,5 @@
 import { Link, List } from '@sk-web-gui/react';
 import { EnumQATags, QAItem } from './help-types';
-import NextLink from 'next/link';
 import { Trans, useTranslation } from 'next-i18next';
 
 export const useHelpQA = (): QAItem[] => {

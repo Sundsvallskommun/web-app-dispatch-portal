@@ -1,4 +1,4 @@
-import { Button, Header, cx, Icon } from '@sk-web-gui/react';
+import { Button, Header, Icon } from '@sk-web-gui/react';
 import React from 'react';
 import { HelpCircle, X } from 'lucide-react';
 import CustomModal from '@components/custom-modal/custom-modal.component';

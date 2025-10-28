@@ -94,10 +94,10 @@ export default function SendEmailPage() {
 
   useEffect(() => {
     clearErrors(['recipientList', 'singleRecipient']);
-  }, [singleRecipient]);
+  }, [singleRecipient, clearErrors]);
   useEffect(() => {
     clearErrors('message');
-  }, [messageText]);
+  }, [messageText, clearErrors]);
 
   const addRecipient = () => {
     clearErrors(['singleRecipient', 'recipientList']);
@@ -118,7 +118,7 @@ export default function SendEmailPage() {
       return;
     }
 
-    let recipient = normalizingResult.value;
+    const recipient = normalizingResult.value;
 
     if (recipients?.includes(recipient)) {
       setFormError('singleRecipient', { message: t('send-sms:errors.numberAlreadyAdded') });
