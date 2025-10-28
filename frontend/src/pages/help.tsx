@@ -1,6 +1,8 @@
 import { Help } from '@components/help/help.component';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export const HelpPage = () => {
   return (
@@ -23,3 +25,9 @@ export const HelpPage = () => {
 };
 
 export default HelpPage;
+
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['help-menu'])),
+  },
+});
