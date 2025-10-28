@@ -51,7 +51,7 @@ export const useHelpQA = (): QAItem[] => {
           {splitInParagraphs(t('help-menu:questionsAndAnswers.6.answer'))}
           <List listStyle="bullet">
             {[1, 3, 4, 5, 6].map((i) => (
-              <List.Item>
+              <List.Item key={i}>
                 <List.Text>{t(`help-menu:questionsAndAnswers.6.listItems.${i}`)} </List.Text>
               </List.Item>
             ))}
@@ -76,7 +76,7 @@ export const useHelpQA = (): QAItem[] => {
       id: '9',
       question: t('help-menu:questionsAndAnswers.9.question'),
       answer: splitInParagraphs(t('help-menu:questionsAndAnswers.9.answer')),
-      tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
+      tags: [EnumQATags.REK_MAIL, EnumQATags.MAIL],
     },
     {
       id: '10',
@@ -88,7 +88,7 @@ export const useHelpQA = (): QAItem[] => {
       id: '11',
       question: t('help-menu:questionsAndAnswers.11.question'),
       answer: splitInParagraphs(t('help-menu:questionsAndAnswers.11.answer')),
-      tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
+      tags: [EnumQATags.REK_MAIL, EnumQATags.MAIL],
     },
     {
       id: '12',
@@ -100,7 +100,7 @@ export const useHelpQA = (): QAItem[] => {
       id: '13',
       question: t('help-menu:questionsAndAnswers.13.question'),
       answer: splitInParagraphs(t('help-menu:questionsAndAnswers.13.answer')),
-      tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
+      tags: [EnumQATags.REK_MAIL, EnumQATags.MAIL],
     },
     {
       id: '14',
