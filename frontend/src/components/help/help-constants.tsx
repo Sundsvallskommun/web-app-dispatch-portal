@@ -115,7 +115,7 @@ export const allQAItems: QAItem[] = [
     id: '7',
     question: 'Skriver Servicecenter administration ut i färg?',
     answer: <p>Ja, de skriver ut i det format och i färg eller svartvit beroende på beställning.</p>,
-    tags: [],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '8',
@@ -159,7 +159,7 @@ export const allQAItems: QAItem[] = [
         tillhör en minderårig person går det inte att komma vidare.
       </p>
     ),
-    tags: [],
+    tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '12',
@@ -171,13 +171,13 @@ export const allQAItems: QAItem[] = [
         delgivningar går att skicka via digital post.
       </p>
     ),
-    tags: [],
+    tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '13',
     question: 'När kan en delgivning skickas via Postportalen?',
     answer: <p>En delgivning kan skickas via Postportalen om det gäller en förenklad delgivning.</p>,
-    tags: [],
+    tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '14',
@@ -198,7 +198,7 @@ export const allQAItems: QAItem[] = [
         </p>
       </>
     ),
-    tags: [],
+    tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '15',
@@ -211,7 +211,7 @@ export const allQAItems: QAItem[] = [
         specifik person har blivit delgiven.
       </p>
     ),
-    tags: [],
+    tags: [EnumQATags.REK_MAIL],
   },
   {
     id: '16',
@@ -222,7 +222,7 @@ export const allQAItems: QAItem[] = [
         eller Komprimera PDF. Spara filen.
       </p>
     ),
-    tags: [],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '17',
@@ -233,7 +233,7 @@ export const allQAItems: QAItem[] = [
         skicka fler eller större filer måste du tyvärr skicka dem med fysisk post.
       </p>
     ),
-    tags: [],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '18',
@@ -254,7 +254,7 @@ export const allQAItems: QAItem[] = [
         </p>
       </>
     ),
-    tags: [EnumQATags.RECIPIENTS],
+    tags: [EnumQATags.RECIPIENTS, EnumQATags.MAIL],
   },
   {
     id: '19',
@@ -265,7 +265,7 @@ export const allQAItems: QAItem[] = [
         Du behöver inte skriva vilken förvaltning posten skickas från.
       </p>
     ),
-    tags: [EnumQATags.SENDER],
+    tags: [EnumQATags.SENDER, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '20',
@@ -277,7 +277,7 @@ export const allQAItems: QAItem[] = [
         vanlig, fysisk post. I dessa fall behövs uppgifter om din förvaltningstillhörighet.
       </p>
     ),
-    tags: [EnumQATags.SENDER],
+    tags: [EnumQATags.SENDER, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '21',
@@ -292,7 +292,7 @@ export const allQAItems: QAItem[] = [
         </NextLink>
       </p>
     ),
-    tags: [EnumQATags.DOCUMENTS],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '22',
@@ -306,7 +306,7 @@ export const allQAItems: QAItem[] = [
         </NextLink>{' '}
       </p>
     ),
-    tags: [EnumQATags.DOCUMENTS],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '23',
@@ -326,7 +326,7 @@ export const allQAItems: QAItem[] = [
         </p>
       </>
     ),
-    tags: [EnumQATags.DOCUMENTS],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '24',
@@ -344,7 +344,7 @@ export const allQAItems: QAItem[] = [
         </p>
       </>
     ),
-    tags: [EnumQATags.DOCUMENTS],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '25',
@@ -356,7 +356,7 @@ export const allQAItems: QAItem[] = [
         säkerhetsklass 3.
       </p>
     ),
-    tags: [EnumQATags.DOCUMENTS],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '26',
@@ -367,7 +367,7 @@ export const allQAItems: QAItem[] = [
         Postportalen.
       </p>
     ),
-    tags: [EnumQATags.DOCUMENTS],
+    tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
   },
   {
     id: '27',
