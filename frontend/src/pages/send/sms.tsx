@@ -338,6 +338,6 @@ export default function SendEmailPage() {
 }
 export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-sms'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-sms', 'help-menu'])),
   },
 });

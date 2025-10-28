@@ -20,6 +20,7 @@ import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
 import ReviewHandler from '@components/review-handler/review-handler.component';
 import { formSendType } from 'src/constants';
+import { EnumQATags } from '@components/help/help-types';
 
 export type SendMailForm = yup.InferType<typeof formSchema>;
 
@@ -78,7 +79,14 @@ const SendMailPage = () => {
   return (
     <DefaultLayout
       title={t('send-mail:sendLetter')}
-      headerMenu={<FormStepperHeader title={t('send-mail:sendLetter')} icon={<Mail />} isSuccess={success} />}
+      headerMenu={
+        <FormStepperHeader
+          title={t('send-mail:sendLetter')}
+          icon={<Mail />}
+          isSuccess={success}
+          helpType={EnumQATags.MAIL}
+        />
+      }
     >
       <div className="flex items-center flex-col">
         <FormStepper<SendMailForm>
@@ -125,7 +133,7 @@ const SendMailPage = () => {
 
 export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility', 'help-menu'])),
   },
 });
 

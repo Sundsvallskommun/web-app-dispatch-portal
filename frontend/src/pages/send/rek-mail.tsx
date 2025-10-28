@@ -20,6 +20,7 @@ import { SenderHandler } from '@components/sender-handler/sender-handler.compone
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
 import ReviewHandler from '@components/review-handler/review-handler.component';
+import { EnumQATags } from '@components/help/help-types';
 
 export type SendRekMailForm = yup.InferType<typeof formSchema>;
 
@@ -72,7 +73,14 @@ const SendRekMail = () => {
   return (
     <DefaultLayout
       title={t('send-mail:sendRecLetter')}
-      headerMenu={<FormStepperHeader title={t('send-mail:sendRecLetter')} icon={<MailCheck />} isSuccess={success} />}
+      headerMenu={
+        <FormStepperHeader
+          title={t('send-mail:sendRecLetter')}
+          icon={<MailCheck />}
+          isSuccess={success}
+          helpType={EnumQATags.REK_MAIL}
+        />
+      }
     >
       <div className="flex items-center flex-col">
         <FormStepper<SendRekMailForm>
@@ -120,7 +128,7 @@ const SendRekMail = () => {
 
 export const getStaticProps: GetServerSideProps<object> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility'])),
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'send-mail', 'accessibility', 'help-menu'])),
   },
 });
 
