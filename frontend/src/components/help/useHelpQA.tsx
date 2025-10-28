@@ -7,7 +7,7 @@ export const useHelpQA = (): QAItem[] => {
 
   const splitInParagraphs = (text: string) =>
     text.split('\n').map((p, i) => (
-      <p key={`${p.length}-${p.charCodeAt(0) ?? i}`} className={i > 0 ? 'mt-4 leading-normal' : 'leading-normal'}>
+      <p key={`${p.length}-${p.codePointAt(0) ?? i}`} className={i > 0 ? 'mt-4 leading-normal' : 'leading-normal'}>
         {p}
       </p>
     ));
