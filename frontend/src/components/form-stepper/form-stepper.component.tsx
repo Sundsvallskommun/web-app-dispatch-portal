@@ -49,11 +49,12 @@ const FormStepper = <T extends FieldValues>({
   const handleNextClicked = async () => {
     let canProceed = true;
 
-    if (steps[currentStep].onNextClick) {
-      canProceed = await steps[currentStep].onNextClick(currentStep);
+    const step = steps[currentStep];
+    if (step?.onNextClick) {
+      canProceed = await step.onNextClick(currentStep);
     }
 
-    if (canProceed && steps[currentStep].valid) {
+    if (canProceed && step.valid) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -79,7 +80,7 @@ const FormStepper = <T extends FieldValues>({
       <div className="flex flex-row justify-end gap-16 my-40">
         {currentStep !== 0 && (
           <Button variant="secondary" onClick={() => setCurrentStep(currentStep - 1)}>
-            {t('back')}
+            {t('common:back')}
           </Button>
         )}
         <div>
@@ -93,7 +94,7 @@ const FormStepper = <T extends FieldValues>({
               color="vattjom"
               rightIcon={<ArrowRight />}
             >
-              {t('next')}
+              {t('common:next')}
             </Button>
           )}
         </div>
@@ -103,7 +104,7 @@ const FormStepper = <T extends FieldValues>({
 
   return (
     <React.Fragment>
-      <h1 className="sr-only">{`${t('screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
+      <h1 className="sr-only">{`${t('common:screenReader.sendPost')}. ${getScreenReaderStepperText()}`}</h1>
       <div className={cx('flex flex-col', isMd ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
         {success ? (
           <SuccessContainer

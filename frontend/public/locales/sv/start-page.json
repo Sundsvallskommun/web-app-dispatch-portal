@@ -1,16 +1,14 @@
 {
-  "app-title": "Postportalen",
-  "screen-reader": "Skicka post",
+  "appTitle": "Postportalen",
+  "screenReader": "Skicka post",
   "subtitle": "Skicka meddelande till invånare med vår postportal",
   "header": "Vad vill du skicka idag?",
   "letter": "Brev",
-  "send-letter-digitally": "Skicka brev digitalt, eller som vanlig post om mottagaren saknar digital brevlåda.",
-  "price-0": {
-    "5-kr": "Pris: 0,5 kr/mottagare"
-  },
-  "rec-letter": "Rekommenderat brev",
-  "send-important-doc": "Skicka viktiga dokument tryggt via Kivra när en kvittens från mottagaren behövs.",
-  "price-20-kr": "Pris: 20 kr/mottagare",
-  "fast-method-to-share": "Ett snabbt sätt att nå mottagaren när viktig information behöver delas.",
+  "sendLetterDigitally": "Skicka brev digitalt, eller som vanlig post om mottagaren saknar digital brevlåda.",
+  "priceHalfKr": "Pris: 0,5 kr/mottagare",
+  "recLetter": "Rekomenderat brev",
+  "sendImportantDoc": "Skicka viktiga dokument tryggt via Kivra när en kvittens från mottagaren behövs.",
+  "price20kr": "Pris: 20 kr/mottagare",
+  "fastMethodToShare": "Ett snabbt sätt att nå mottagaren när viktig information behöver delas.",
   "sms": "Sms"
 }

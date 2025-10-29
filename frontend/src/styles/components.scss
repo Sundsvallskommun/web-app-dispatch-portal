@@ -18,7 +18,7 @@
   }
 
   .header-container .sk-header {
-    padding: 2px 80px;
+    @apply py-2 md:px-80;
   }
 
   .start-link {
@@ -39,5 +39,16 @@
 
   .main-card-body .sk-card-body-header span {
     padding-left: 0px;
+  }
+
+  .main-wrapper {
+    @apply flex flex-col grow;
+  }
+  .sms-main-container {
+    @apply flex pt-64 px-20 md:px-48 bg-transparent grow;
+
+    .sms-container {
+      @apply mx-auto flex flex-col items-start gap-80 self-stretch w-full;
+    }
   }
 }
