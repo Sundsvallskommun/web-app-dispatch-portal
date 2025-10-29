@@ -33,7 +33,10 @@ const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: Previ
   );
 
   return (
-    <div className="preview-person bg-background-100 -mt-32 p-16 rounded-button border-1 border-divider w-full z-10">
+    <div
+      data-cy="preview-person"
+      className="preview-person bg-background-100 -mt-32 p-16 rounded-button border-1 border-divider w-full z-10"
+    >
       <p className="text-body text-base font-bold">
         {personAdress?.givenname} {personAdress?.lastname}
       </p>
