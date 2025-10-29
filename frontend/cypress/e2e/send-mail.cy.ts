@@ -18,6 +18,7 @@ describe('Send mail flow', () => {
       cy.get('[data-cy="file-input"]').selectFile('cypress/files/document2.pdf', { force: true });
       cy.get('[data-cy="attachments"]').contains('document2.pdf').should('be.visible');
     });
+
     it('should add two documents and remove first document', () => {
       cy.get('[data-cy="file-input"]').selectFile(['cypress/files/document1.pdf', 'cypress/files/document2.pdf'], {
         force: true,
@@ -25,14 +26,17 @@ describe('Send mail flow', () => {
       cy.get('[data-cy="file-list"]').find('[data-cy="delete-file-button"]').first().click();
       cy.get('[data-cy="attachments"]').contains('document2.pdf').should('be.visible');
     });
+
     it('should show validation error when no documents are added and "next" is clicked', () => {
       cy.get('[data-cy="next-button"]').click();
       cy.get('[data-cy="form-error-message"]').should('be.visible');
     });
+
     it('should show validation error when an attachment that is larger than 1.5 MB is added and "next" is clicked', () => {
       cy.get('[data-cy="file-input"]').selectFile('cypress/files/document3.pdf', { force: true });
       cy.get('[data-cy="form-error-message"]').should('be.visible');
     });
+
     it('should navigate to next step if a file is added and "next" is clicked', () => {
       cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
       cy.get('[data-cy="next-button"]').click();
@@ -62,6 +66,28 @@ describe('Send mail flow', () => {
       cy.get('[data-cy="file-input"]').selectFile('cypress/files/personal-numbers.csv', { force: true });
       cy.wait('@recipients');
       cy.get('[data-cy="recipients"]').contains('personal-numbers.csv').should('be.visible');
+    });
+
+    it('should navigate to next step if a recipient is added and "next" is clicked', () => {
+      addPerson('189001019802');
+      cy.get('[data-cy="next-button"]').click();
+      cy.get('.sk-progress-stepper-step[data-progress="current"]')
+        .should('exist')
+        .and('contain.text', 'Ange avsändare');
+    });
+  });
+
+  describe('Sender handler', () => {
+    beforeEach(() => {
+      cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
+      cy.get('[data-cy="next-button"]').click();
+      addPerson('189001019802');
+      cy.get('[data-cy="next-button"]').click();
+    });
+
+    it('should show validation error if no label or management is added - and "next" is clicked', () => {
+      cy.get('[data-cy="next-button"]').click();
+      cy.get('[data-cy="form-error-message"]').should('be.visible');
     });
   });
 });
