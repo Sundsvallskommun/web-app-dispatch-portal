@@ -60,7 +60,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
       </div>
 
       <div className="flex flex-wrap gap-16 break-words">
-        <div className="relative">
+        <div data-cy="delete-file-button" className="relative">
           <Button
             aria-label={t('accessibility:ariaLabel.removeFile')}
             iconButton
@@ -78,7 +78,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
           >
             <Icon onClick={() => callback?.()} icon={<Trash />} />
             <Tooltip position="below" className={`${hover || focus ? 'absolute mt-[8rem]' : 'hidden'}`}>
-              {t('delete')}
+              {t('common:delete')}
             </Tooltip>
           </Button>
         </div>
