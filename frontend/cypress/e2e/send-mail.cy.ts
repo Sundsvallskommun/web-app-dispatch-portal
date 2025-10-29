@@ -35,5 +35,11 @@ describe('Send mail flow', () => {
       cy.get('[data-cy="file-input"]').selectFile('cypress/files/document3.pdf', { force: true });
       cy.get('[data-cy="form-error-message"]').should('be.visible');
     });
+
+    it('should navigate to next step if a file is added and "next" is clicked', () => {
+      cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
+      cy.get('[data-cy="next-button"]').click();
+      cy.get('.sk-progress-stepper-step[data-progress="current"]').should('exist').and('contain.text', 'Lägg till');
+    });
   });
 });
