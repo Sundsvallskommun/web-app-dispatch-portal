@@ -19,7 +19,7 @@ export const HelpComposer: React.FC<IHelpComposerProps> = ({ show, helpType, clo
   const helpHeader = helpType ? headerMap[helpType] : t('help-menu:generalHeader');
   return (
     <HelpWrapper label="Hjälp" closeHandler={closeHandler} show={show}>
-      <div className="my-md py-8 px-40 flex flex-col gap-12 ">
+      <div className="my-md py-8 px-40 flex flex-col gap-24 ">
         <div className="text-h4-lg font-header">{helpHeader}</div>
         <Help filterTag={helpType} />
       </div>
