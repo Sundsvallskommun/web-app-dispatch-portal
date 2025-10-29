@@ -51,7 +51,9 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
 
         <div className="flex flex-col w-full gap-2">
           <span className="text-base">
-            <strong className="text-secondary break-all">{data?.file?.name}</strong>
+            <strong data-cy="file-name" className="text-secondary break-all">
+              {data?.file?.name}
+            </strong>
           </span>
           <span className="text-small text-secondary">{data?.file?.size && formatBytes(data.file.size, 0)}</span>
         </div>

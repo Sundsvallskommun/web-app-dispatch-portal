@@ -11,7 +11,10 @@ const CustomFormErrorMessage = ({ message, padded = true }: CustomFormErrorMessa
   const { t } = useTranslation(['send-mail', 'common']);
 
   return (
-    <FormErrorMessage className={cx('flex items-center gap-8', padded ? 'mt-8' : 'mt-auto')}>
+    <FormErrorMessage
+      data-cy="form-error-message"
+      className={cx('flex items-center gap-8', padded ? 'mt-8' : 'mt-auto')}
+    >
       <Icon size={16} icon={<Info />} color="error" />
       <p className="text-error">{message ? t(message) : ''}</p>
     </FormErrorMessage>
