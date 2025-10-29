@@ -9,15 +9,14 @@ export interface ICustomModalProps {
 
 const CustomModal = ({ children, show, onClose }: ICustomModalProps) => {
   // when the user clicks the overlay background, close the modal
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleOverlayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // prevent closing if the user clicks inside the modal content
     if (e.target === e.currentTarget) onClose?.();
   };
   return (
     <>
-      <div
+      <button
         className={cx(show ? 'sk-modal-wrapper cursor-default' : 'fixed')}
-        role="button"
         tabIndex={0}
         onClick={handleOverlayClick}
         aria-label="Close modal by clicking the background"
@@ -25,7 +24,7 @@ const CustomModal = ({ children, show, onClose }: ICustomModalProps) => {
           if (e.key === 'Enter' || e.key === ' ') onClose?.();
           if (e.key === 'Escape') onClose?.();
         }}
-      ></div>
+      ></button>
       <section
         className={cx(
           'fixed right-0 top-0 h-full bg-background-content overflow-auto z-[20] shadow-100',
