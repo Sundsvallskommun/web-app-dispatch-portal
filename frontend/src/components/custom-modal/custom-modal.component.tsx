@@ -4,12 +4,18 @@ import { ReactNode } from 'react';
 export interface ICustomModalProps {
   children: ReactNode;
   show: boolean;
+  onClose?: () => void;
 }
 
-const CustomModal = ({ children, show }: ICustomModalProps) => {
+const CustomModal = ({ children, show, onClose }: ICustomModalProps) => {
+  // when the user clicks the overlay background, close the modal
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // prevent closing if the user clicks inside the modal content
+    if (e.target === e.currentTarget) onClose?.();
+  };
   return (
     <>
-      <div className={cx(show ? 'sk-modal-wrapper' : 'fixed')}></div>
+      <div className={cx(show ? 'sk-modal-wrapper' : 'fixed')} onClick={handleOverlayClick}></div>
       <section
         className={cx(
           'fixed right-0 top-0 h-full bg-background-content overflow-auto z-[20] shadow-100',

@@ -10,7 +10,7 @@ export const HelpWrapper: React.FC<{
   children: React.ReactNode;
 }> = ({ show, label = '', closeHandler, children }) => {
   return (
-    <CustomModal show={show}>
+    <CustomModal show={show} onClose={closeHandler}>
       <Header className="h-[64px] flex justify-between" wrapperClasses="py-4 px-40">
         <div className="text-h4-sm flex items-center gap-12">
           <Icon icon={<HelpCircle />} /> {label}
