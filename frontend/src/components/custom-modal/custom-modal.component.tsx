@@ -15,7 +15,17 @@ const CustomModal = ({ children, show, onClose }: ICustomModalProps) => {
   };
   return (
     <>
-      <div className={cx(show ? 'sk-modal-wrapper' : 'fixed')} onClick={handleOverlayClick}></div>
+      <div
+        className={cx(show ? 'sk-modal-wrapper cursor-default' : 'fixed')}
+        role="button"
+        tabIndex={0}
+        onClick={handleOverlayClick}
+        aria-label="Close modal by clicking the background"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') onClose?.();
+          if (e.key === 'Escape') onClose?.();
+        }}
+      ></div>
       <section
         className={cx(
           'fixed right-0 top-0 h-full bg-background-content overflow-auto z-[20] shadow-100',
