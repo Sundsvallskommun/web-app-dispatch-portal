@@ -124,7 +124,6 @@ export const useHelpQA = (): QAItem[] => {
           i18nKey="help-menu:questionsAndAnswers.21.answer"
           components={{
             p: <p />,
-            a: <Link href="/help" passHref legacyBehavior />,
           }}
         />
       ),
@@ -138,7 +137,6 @@ export const useHelpQA = (): QAItem[] => {
           i18nKey={'help-menu:questionsAndAnswers.22.answer'}
           components={{
             p: <p />,
-            a: <Link href="/help" passHref legacyBehavior />,
           }}
         />
       ),

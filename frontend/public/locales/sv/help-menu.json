@@ -94,11 +94,11 @@
     },
     "21": {
       "question": "Tänk på det här innan du skickar",
-      "answer": "<p>Mottagaren använder antagligen sin mobiltelefon för att öppna och läsa sin post. Tänk därför en extra gång på tillgänglighet och mängden text i dokumenten. Kanske finns det möjlighet att hänvisa till sidor med allmän information i stället för att skicka långa löptexter? Läs mer om tillgänglighet under <a>Hjälp.</a></p>"
+      "answer": "<p>Mottagaren använder antagligen sin mobiltelefon för att öppna och läsa sin post. Tänk därför en extra gång på tillgänglighet och mängden text i dokumenten. Kanske finns det möjlighet att hänvisa till sidor med allmän information i stället för att skicka långa löptexter?</p>"
     },
     "22": {
       "question": "Vilka filformat är tillåtna?",
-      "answer": "<p>Du kan skicka din post i formatet pdf. Tänk på att göra pdf:en tillgänglig. Läs mer om tillgängliga dokument under <a>Hjälp.</a></p>"
+      "answer": "<p>Du kan skicka din post i formatet pdf. Tänk på att göra pdf:en tillgänglig.</p>"
     },
     "23": {
       "question": "Var skickar jag tekniska frågor och felanmälan?",
