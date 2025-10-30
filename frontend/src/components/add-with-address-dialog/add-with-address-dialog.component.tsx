@@ -1,9 +1,10 @@
 import React, { useMemo, useRef } from 'react';
-import { Button, Input, FormControl, FormLabel, FormErrorMessage, Modal } from '@sk-web-gui/react';
+import { Button, Input, FormControl, FormLabel, Modal } from '@sk-web-gui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 
 interface AddWithAddressDialogFormModel {
   firstName: string;
@@ -89,9 +90,10 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
             <FormLabel>{t('send-mail:recipientHandler.addWithAddress.firstName')}</FormLabel>
             <Input {...register('firstName')} aria-describedby="firstName-error" />
             {errors.firstName && (
-              <FormErrorMessage key={`firstName-errors`}>
-                {t('send-mail:recipientHandler.addWithAddress.error.firstName')}
-              </FormErrorMessage>
+              <CustomFormErrorMessage
+                padded={false}
+                message={t('send-mail:recipientHandler.addWithAddress.error.firstName')}
+              />
             )}
           </FormControl>
 
@@ -99,9 +101,10 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
             <FormLabel>{t('send-mail:recipientHandler.addWithAddress.lastName')}</FormLabel>
             <Input {...register('lastName')} aria-describedby="lastName-error" />
             {errors.lastName && (
-              <FormErrorMessage key={`lastName-errors`}>
-                {t('send-mail:recipientHandler.addWithAddress.error.lastName')}
-              </FormErrorMessage>
+              <CustomFormErrorMessage
+                padded={false}
+                message={t('send-mail:recipientHandler.addWithAddress.error.lastName')}
+              />
             )}
           </FormControl>
 
@@ -109,9 +112,10 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
             <FormLabel>{t('send-mail:recipientHandler.addWithAddress.address')}</FormLabel>
             <Input {...register('address')} aria-describedby="address-error" />
             {errors.address && (
-              <FormErrorMessage key={`address-errors`}>
-                {t('send-mail:recipientHandler.addWithAddress.error.address')}
-              </FormErrorMessage>
+              <CustomFormErrorMessage
+                padded={false}
+                message={t('send-mail:recipientHandler.addWithAddress.error.address')}
+              />
             )}
           </FormControl>
 
@@ -124,9 +128,10 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
             <FormLabel>{t('send-mail:recipientHandler.addWithAddress.zipCode')}</FormLabel>
             <Input {...register('zipCode')} aria-describedby="zipCode-error" />
             {errors.zipCode && (
-              <FormErrorMessage key={`zipCode-errors`}>
-                {t('send-mail:recipientHandler.addWithAddress.error.zipCode')}
-              </FormErrorMessage>
+              <CustomFormErrorMessage
+                padded={false}
+                message={t('send-mail:recipientHandler.addWithAddress.error.zipCode')}
+              />
             )}
           </FormControl>
 
@@ -134,9 +139,10 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
             <FormLabel>{t('send-mail:recipientHandler.addWithAddress.city')}</FormLabel>
             <Input {...register('city')} aria-describedby="city-error" />
             {errors.city && (
-              <FormErrorMessage key={`city-errors`}>
-                {t('send-mail:recipientHandler.addWithAddress.error.city')}
-              </FormErrorMessage>
+              <CustomFormErrorMessage
+                padded={false}
+                message={t('send-mail:recipientHandler.addWithAddress.error.city')}
+              />
             )}
           </FormControl>
         </div>
