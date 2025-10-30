@@ -23,7 +23,7 @@ import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { ApiResponse, apiService } from '@services/api-service';
 import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@utils/phone-number.helpers';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { EnumQATags } from '@components/help/help-types';
 
@@ -171,7 +171,12 @@ export default function SendEmailPage() {
     <DefaultLayout
       title={`Postportalen`}
       headerMenu={
-        <FormStepperHeader title="Skicka Sms" icon={<Smartphone />} isSuccess={success} helpType={EnumQATags.SMS} />
+        <FormStepperHeader
+          title={t('send-sms:sendSms')}
+          icon={<Smartphone />}
+          isSuccess={success}
+          helpType={EnumQATags.SMS}
+        />
       }
     >
       <h1 className="sr-only">Skicka SMS</h1>
@@ -179,9 +184,9 @@ export default function SendEmailPage() {
         {success ? (
           <div className="text-center pt-64">
             <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-            <h2 className="mt-24">Ditt sms har skickats</h2>
+            <h2 className="mt-24">{t('send-sms:yourMessageSent')}</h2>
             <p className="my-md text-base">
-              Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan.
+              <Trans i18nKey={'send-sms:youCanReviewUnderSentTab'} components={{ strong: <strong /> }} />
             </p>
             <div className="flex gap-16 justify-center mt-40">
               <Button
@@ -193,11 +198,11 @@ export default function SendEmailPage() {
                   setSuccess(false);
                 }}
               >
-                Skicka nytt sms
+                {t('send-sms:sendNewSms')}
               </Button>
               <NextLink href="/" passHref legacyBehavior>
                 <Button className="mt-lg" color="vattjom">
-                  Till startsidan
+                  {t('send-sms:toStartPage')}
                 </Button>
               </NextLink>
             </div>
@@ -325,7 +330,7 @@ export default function SendEmailPage() {
                     rightIcon={<Icon icon={<SendHorizontal />} />}
                     loading={isSending}
                   >
-                    {t('send-sms:sendSms')}
+                    {t('send-sms:send')}
                   </Button>
                 </div>
               </div>

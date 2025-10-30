@@ -124,5 +124,6 @@
       "question": "Hur lägger jag till flera mottagare i sms-tjänsten?",
       "answer": "När du skrivit ditt meddelande kan du lägga till ett eller flera telefonnummer innan du klickar på skicka."
     }
-  }
+  },
+  "closeHelp": "Stäng hjälp"
 }

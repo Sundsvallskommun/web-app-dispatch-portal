@@ -2,6 +2,7 @@ import { Button, Header, Icon } from '@sk-web-gui/react';
 import React from 'react';
 import { HelpCircle, X } from 'lucide-react';
 import CustomModal from '@components/custom-modal/custom-modal.component';
+import { useTranslation } from 'react-i18next';
 
 export const HelpWrapper: React.FC<{
   show: boolean;
@@ -9,6 +10,7 @@ export const HelpWrapper: React.FC<{
   closeHandler: () => void;
   children: React.ReactNode;
 }> = ({ show, label = '', closeHandler, children }) => {
+  const { t } = useTranslation(['help-menu']);
   return (
     <CustomModal show={show} onClose={closeHandler}>
       <Header className="h-[64px] flex justify-between" wrapperClasses="py-4 px-40">
@@ -17,7 +19,7 @@ export const HelpWrapper: React.FC<{
         </div>
         <Button
           tabIndex={show ? 0 : -1}
-          aria-label="Stäng hjälp"
+          aria-label={t('help-menu:closeHelp')}
           iconButton
           variant="tertiary"
           onClick={() => {
