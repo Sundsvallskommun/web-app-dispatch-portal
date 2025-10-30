@@ -155,6 +155,7 @@ const FileUpload: React.FC<{
             </div>
           </div>
           <Input
+            data-cy="file-input"
             className="hidden"
             type="file"
             accept={accept.join(',')}

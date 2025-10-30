@@ -1,11 +1,14 @@
 {
   "data": {
-    "name": "Person Personsson",
-    "username": "perper",
-    "givenName": "Person",
-    "surname": "Personsson",
-    "email": "person@example.com",
-    "orgTree": "1|11|Organisation1¤3|111|OrgAvdelningar¤4|1111|Org Avdelning 1¤5|11111|Org Avdelning 1¤6|99999|Org Avdelning 1"
+    "name": "Darth Vader",
+    "username": "DaVa",
+    "givenName": "Darth",
+    "surname": "Vader",
+    "permissions": {
+      "canSendSMS": true
+    },
+    "email": "darth.vadeer@sundsvall.se",
+    "orgTree": "2|26|Stadsbyggnadskontoret¤3|714|SBK Gatuavdelning¤4|720|SBK GA Gatuavdelning¤5|699|SBK GA Gatuavdelning¤6|656|SBK GA Gatuavdelning"
   },
   "message": "success"
 }

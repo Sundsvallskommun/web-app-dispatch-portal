@@ -41,6 +41,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
           renderColumn: (_value, item) => (
             <div className="flex flex-1 justify-end text-right">
               <Button
+                data-cy="delete-person-button"
                 aria-label="Ta bort mottagare"
                 iconButton
                 variant="secondary"
@@ -121,6 +122,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     <AutoTable
       footer={combinedLength > 16}
       pageSize={16}
+      data-cy="recipient-table"
       autodata={[...validRecipients, ...addresses]}
       autoheaders={[...headers, ...removeButton]}
     />
