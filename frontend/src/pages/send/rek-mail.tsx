@@ -20,7 +20,7 @@ import { SenderHandler } from '@components/sender-handler/sender-handler.compone
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
 import ReviewHandler from '@components/review-handler/review-handler.component';
-import { EnumQATags } from '@components/help/help-types';
+import { EnumQATags } from 'src/types';
 
 export type SendRekMailForm = yup.InferType<typeof formSchema>;
 

@@ -1,6 +1,6 @@
 import { Link, List } from '@sk-web-gui/react';
-import { EnumQATags, QAItem } from './help-types';
 import { Trans, useTranslation } from 'next-i18next';
+import { EnumQATags, QAItem } from 'src/types';
 
 export const useHelpQA = (): QAItem[] => {
   const { t } = useTranslation(['help-menu']);
@@ -124,7 +124,6 @@ export const useHelpQA = (): QAItem[] => {
           i18nKey="help-menu:questionsAndAnswers.21.answer"
           components={{
             p: <p />,
-            a: <Link href="/help" passHref legacyBehavior />,
           }}
         />
       ),
@@ -138,7 +137,6 @@ export const useHelpQA = (): QAItem[] => {
           i18nKey={'help-menu:questionsAndAnswers.22.answer'}
           components={{
             p: <p />,
-            a: <Link href="/help" passHref legacyBehavior />,
           }}
         />
       ),

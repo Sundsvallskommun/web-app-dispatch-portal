@@ -20,7 +20,7 @@ import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
 import ReviewHandler from '@components/review-handler/review-handler.component';
 import { formSendType } from 'src/constants';
-import { EnumQATags } from '@components/help/help-types';
+import { EnumQATags } from 'src/types';
 
 export type SendMailForm = yup.InferType<typeof formSchema>;
 

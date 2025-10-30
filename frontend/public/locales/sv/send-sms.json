@@ -1,5 +1,5 @@
 {
-  "sendSms": "Skicka",
+  "send": "Skicka",
   "title": "Rubrik",
   "discription": "Beskrivning",
   "addMobileNumber": "Lägg till mottagaren (mobilnummer)",
@@ -23,5 +23,7 @@
   "yourMessageSent": "Ditt sms har skickats",
   "youCanReviewMessagesInSentList": "Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan",
   "sendNewSms": "Skicka nytt sms",
-  "toStartPage": "Till startsidan"
+  "toStartPage": "Till startsidan",
+  "sendSms": "Skicka Sms",
+  "youCanReviewUnderSentTab": "Du kan granska utskicket under <strong>Dina utskick</strong> på startsidan."
 }

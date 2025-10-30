@@ -342,6 +342,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                   </FormLabel>
                   <SearchField
                     {...register('singleRecipient')}
+                    data-cy="person-search-field"
                     value={recipient}
                     className="w-full "
                     showSearchButton={false}
@@ -411,7 +412,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
           )}
 
           {recipientList?.length && recipients?.length && current === 1 ? (
-            <div className="mt-56">
+            <div className="mt-56" data-cy="recipients">
               <h4 className="text-label-medium mb-12">{t('send-mail:recipientHandler.csvAddedFile')}</h4>
               <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
             </div>

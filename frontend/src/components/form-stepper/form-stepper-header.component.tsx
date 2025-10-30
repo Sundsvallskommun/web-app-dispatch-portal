@@ -6,7 +6,7 @@ import { HelpComposer } from '@components/help/help-composer';
 import { useTranslation } from 'react-i18next';
 import { useWindowSize } from 'src/hooks/useWindowSize';
 import { tailwindBreakPoint } from 'src/constants';
-import { EnumQATags } from '@components/help/help-types';
+import { EnumQATags } from 'src/types';
 
 interface FormStepperHeaderProps {
   title: string;

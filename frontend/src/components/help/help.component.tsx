@@ -1,8 +1,9 @@
-import { useMediaQuery } from '@mui/material';
-import { Accordion, useGui } from '@sk-web-gui/react';
+import { Accordion } from '@sk-web-gui/react';
 import { useMemo } from 'react';
-import { EnumQATags } from './help-types';
+import { EnumQATags } from 'src/types';
 import { useHelpQA } from './useHelpQA';
+import { useWindowSize } from 'src/hooks/useWindowSize';
+import { tailwindBreakPoint } from 'src/constants';
 
 interface HelpProps {
   filterTag?: EnumQATags;
@@ -10,8 +11,8 @@ interface HelpProps {
 }
 
 export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
-  const gui = useGui();
-  const isMedium = useMediaQuery(`screen and (min-width:${gui.theme?.screens?.md})`);
+  const { width } = useWindowSize();
+  const isMedium = width < tailwindBreakPoint.MD;
   const qaItems = useHelpQA();
 
   const size = _size || (isMedium ? 'md' : 'sm');

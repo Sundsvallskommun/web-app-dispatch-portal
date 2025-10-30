@@ -1,5 +1,6 @@
 import { cx } from '@sk-web-gui/react';
 import { ReactNode } from 'react';
+import { usePreventBodyScroll } from 'src/hooks/usePreventBodyScroll';
 
 export interface ICustomModalProps {
   children: ReactNode;
@@ -8,13 +9,16 @@ export interface ICustomModalProps {
 }
 
 const CustomModal = ({ children, show, onClose }: ICustomModalProps) => {
+  usePreventBodyScroll(show);
+
   // when the user clicks the overlay background, close the modal
   const handleOverlayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // prevent closing if the user clicks inside the modal content
     if (e.target === e.currentTarget) onClose?.();
   };
+
   return (
-    <>
+    <div>
       <button
         className={cx(show ? 'sk-modal-wrapper cursor-default' : 'fixed')}
         tabIndex={0}
@@ -35,7 +39,7 @@ const CustomModal = ({ children, show, onClose }: ICustomModalProps) => {
       >
         {children}
       </section>
-    </>
+    </div>
   );
 };
 
