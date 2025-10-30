@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@mui/material';
 import { Accordion, useGui } from '@sk-web-gui/react';
 import { useMemo } from 'react';
-import { EnumQATags } from './help-types';
+import { EnumQATags } from 'src/types';
 import { useHelpQA } from './useHelpQA';
 
 interface HelpProps {

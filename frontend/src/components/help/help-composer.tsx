@@ -1,7 +1,7 @@
 import { Help } from './help.component';
 import { HelpWrapper } from './help-wrapper';
-import { EnumQATags } from './help-types';
 import { useTranslation } from 'react-i18next';
+import { EnumQATags } from 'src/types';
 
 interface IHelpComposerProps {
   show: boolean;

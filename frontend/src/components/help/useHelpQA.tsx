@@ -1,6 +1,6 @@
 import { Link, List } from '@sk-web-gui/react';
-import { EnumQATags, QAItem } from './help-types';
 import { Trans, useTranslation } from 'next-i18next';
+import { EnumQATags, QAItem } from 'src/types';
 
 export const useHelpQA = (): QAItem[] => {
   const { t } = useTranslation(['help-menu']);

@@ -25,7 +25,7 @@ import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber 
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { EnumQATags } from '@components/help/help-types';
+import { EnumQATags } from 'src/types';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
