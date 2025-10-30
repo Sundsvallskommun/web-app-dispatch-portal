@@ -1,21 +1,24 @@
+// @ts-check
 import { defineConfig } from 'cypress';
-import { config } from 'dotenv';
-config({ path: `.env` });
+import { config as loadEnv } from 'dotenv';
+
+loadEnv({ path: '.env' });
 
 export default defineConfig({
   env: {
-    apiUrl: `${process.env.NEXT_PUBLIC_API_URL}`,
+    apiUrl: process.env.NEXT_PUBLIC_API_URL,
   },
-
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
+    baseUrl: `http://localhost:${process.env.PORT || 3000}`,
     experimentalRunAllSpecs: true,
-    baseUrl: `http://localhost:${process.env.PORT}`,
     video: false,
     screenshotOnRunFailure: false,
     chromeWebSecurity: false,
     defaultCommandTimeout: 10000,
+
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      return config;
+    },
   },
 });
