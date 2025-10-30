@@ -1,34 +1,28 @@
-import { useState } from 'react';
 import { Help } from './help.component';
-import { Input, Modal } from '@sk-web-gui/react';
 import { HelpWrapper } from './help-wrapper';
+import { useTranslation } from 'react-i18next';
+import { EnumQATags } from 'src/types';
 
-export const HelpComposer: React.FC<{
+interface IHelpComposerProps {
   show: boolean;
   closeHandler: () => void;
-}> = (props) => {
-  const [isAttachmentModalOpen, setIsAttachmentModalOpen] = useState<boolean>(false);
+  helpType?: EnumQATags;
+}
 
-  const closeAttachmentModal = () => {
-    setIsAttachmentModalOpen(false);
+export const HelpComposer: React.FC<IHelpComposerProps> = ({ show, helpType, closeHandler }) => {
+  const { t } = useTranslation(['help-menu']);
+  const headerMap: Record<string, string> = {
+    [EnumQATags.SMS]: t('help-menu:smsHeader'),
+    [EnumQATags.MAIL]: t('help-menu:mailHeader'),
+    [EnumQATags.REK_MAIL]: t('help-menu:rekMailHeader'),
   };
-
-  return props.show ? (
-    <>
-      <HelpWrapper label="Hjälp" closeHandler={props.closeHandler} show={props.show}>
-        <div className="my-md py-8 px-40 flex flex-col gap-12 ">
-          <Input type="hidden" />
-          <Input type="hidden" />
-          <h1>Behöver du hjälp att komma igång?</h1>
-          <Help />
-        </div>
-      </HelpWrapper>
-      <Modal show={isAttachmentModalOpen} onClose={closeAttachmentModal} label="Ladda upp bilaga" className="w-[40rem]">
-        <Modal.Content>
-          <Help />
-        </Modal.Content>
-        <Modal.Footer></Modal.Footer>
-      </Modal>
-    </>
-  ) : null;
+  const helpHeader = helpType ? headerMap[helpType] : t('help-menu:generalHeader');
+  return (
+    <HelpWrapper label="Hjälp" closeHandler={closeHandler} show={show}>
+      <div className="my-md py-8 px-40 flex flex-col gap-24 ">
+        <div className="text-h4-lg font-header">{helpHeader}</div>
+        <Help filterTag={helpType} />
+      </div>
+    </HelpWrapper>
+  );
 };

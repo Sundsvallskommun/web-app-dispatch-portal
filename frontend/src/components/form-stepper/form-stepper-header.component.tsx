@@ -6,14 +6,16 @@ import { HelpComposer } from '@components/help/help-composer';
 import { useTranslation } from 'react-i18next';
 import { useWindowSize } from 'src/hooks/useWindowSize';
 import { tailwindBreakPoint } from 'src/constants';
+import { EnumQATags } from 'src/types';
 
 interface FormStepperHeaderProps {
   title: string;
   icon: ReactElement;
   isSuccess?: boolean;
+  helpType?: EnumQATags;
 }
 
-const FormStepperHeader = ({ title, icon, isSuccess = false }: FormStepperHeaderProps) => {
+const FormStepperHeader = ({ title, icon, helpType, isSuccess = false }: FormStepperHeaderProps) => {
   const [showHelpComposer, setShowHelpComposer] = useState(false);
   const { width } = useWindowSize();
   const { t } = useTranslation(['common']);
@@ -92,7 +94,7 @@ const FormStepperHeader = ({ title, icon, isSuccess = false }: FormStepperHeader
         )}
         {helpButton}
       </div>
-      <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} />
+      <HelpComposer show={showHelpComposer} closeHandler={closeHelpComposer} helpType={helpType} />
     </div>
   );
 };
