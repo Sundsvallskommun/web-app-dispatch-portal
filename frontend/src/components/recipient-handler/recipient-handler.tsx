@@ -376,7 +376,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                 {errors.storeRecipients?.message && <CustomFormErrorMessage message={errors.storeRecipients.message} />}
                 {errors.singleRecipient?.message && <CustomFormErrorMessage message={errors.singleRecipient.message} />}
                 {sendType === formSendType.MAIL && (
-                  <React.Fragment>
+                  <div className="my-32">
                     <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
                     <p className="font-bold">{t('send-mail:recipientHandler.missingPersonalNumber')}</p>
                     <Button
@@ -387,7 +387,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     >
                       {t('send-mail:recipientHandler.addRecipientWithAddress')}
                     </Button>
-                  </React.Fragment>
+                  </div>
                 )}
               </FormControl>
             </div>
@@ -479,7 +479,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
         {recipients?.length < 1 && current === 1 && (
           <div>
             <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedFileTitle')}</h3>
-            <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}.`}</p>
+            <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}`}</p>
           </div>
         )}
       </HandlerWrapper>

@@ -107,7 +107,7 @@ const AttachmentHandler: React.FC = () => {
         {attachmentList.length === 0 && (
           <div>
             <h3 className="text-label-medium">{t('send-mail:attachmentHandler.addedFilesHeader')}</h3>
-            <p className="text-base">{`${t('send-mail:attachmentHandler:noFiles')}.`}</p>
+            <p className="text-base">{`${t('send-mail:attachmentHandler:noFiles')}`}</p>
           </div>
         )}
         {attachmentList.length > 0 && (
