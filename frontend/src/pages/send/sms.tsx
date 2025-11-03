@@ -1,7 +1,7 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, FormControl, FormLabel, Icon, Input, Textarea, useSnackbar } from '@sk-web-gui/react';
-import { BadgeCheck, Info, SendHorizontal, Smartphone } from 'lucide-react';
+import { BadgeCheck, SendHorizontal, Smartphone } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextLink from 'next/link';
