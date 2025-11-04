@@ -1,12 +1,4 @@
-type Pages = {
-  route: '/send/mail' | '/send/rek-mail';
-  description: string;
-};
-
-type PersonNumber = {
-  isEligible: '199011182475';
-  isNotEligible: '192301010159';
-};
+import { Pages, PersonNumber } from './types';
 
 const pages = [
   { route: '/send/mail', description: 'Send letter flow' },

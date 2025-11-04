@@ -35,6 +35,7 @@ const HeaderMenu = () => {
       </NextLink>
       <div className="z-10 header-container">
         <Header
+          data-cy="header"
           title={t('common:appTitle')}
           subtitle={t('common:appSubTitle')}
           logoLinkOnClick={() => router.push('/')}
