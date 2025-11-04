@@ -40,13 +40,13 @@ describe('Header', () => {
 
       it('should contain a header with cancel button, label and help button', () => {
         cy.get('[data-cy="header"]').should('exist').should('contain.html', 'h4');
-        cy.get('[data-cy="cancel-button"] a').should('exist');
+        cy.get('[data-cy="cancel-button"]').should('exist');
         cy.get('[data-cy="help-button"]').should('exist');
       });
 
       it('should show icons if mobile view', () => {
         cy.viewport('iphone-6');
-        cy.get('[data-cy="cancel-button"]').should('exist').find('svg').should('exist');
+        cy.get('[data-cy="cancel-mobile-button"]').should('exist').find('svg').should('exist');
         cy.get('[data-cy="help-button"]').should('exist');
       });
     });

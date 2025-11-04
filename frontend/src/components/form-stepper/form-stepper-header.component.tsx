@@ -27,19 +27,23 @@ const FormStepperHeader = ({ title, icon, helpType, isSuccess = false }: FormSte
   const justifyClass = !showCancelButton && !showTitle ? 'justify-end' : 'justify-between';
 
   const cancelButton = (
-    <div className={cx(!isMd && 'pr-54')} data-cy="cancel-button" role="button">
-      <NextLink href="/" passHref legacyBehavior>
-        {isMd ? (
-          <Button iconButton variant="secondary" className="border-0" aria-label={t('common:cancel')}>
-            <Icon icon={<CircleX />} />
-          </Button>
-        ) : (
-          <Link data-cy="cancel-button" strong={true} variant="tertiary">
-            {t('common:cancel')}
-          </Link>
-        )}
-      </NextLink>
-    </div>
+    <NextLink href="/" passHref legacyBehavior>
+      {isMd ? (
+        <Button
+          data-cy="cancel-mobile-button"
+          iconButton
+          variant="secondary"
+          className="border-0"
+          aria-label={t('common:cancel')}
+        >
+          <Icon icon={<CircleX />} />
+        </Button>
+      ) : (
+        <Link data-cy="cancel-button" strong={true} variant="tertiary">
+          {t('common:cancel')}
+        </Link>
+      )}
+    </NextLink>
   );
 
   const helpButton = isMd ? (
@@ -69,7 +73,7 @@ const FormStepperHeader = ({ title, icon, helpType, isSuccess = false }: FormSte
       )}
     >
       <div className={cx('flex grow items-center w-full max-w-[--max-w-7xl]', justifyClass)}>
-        {showCancelButton && cancelButton}
+        <div className={cx(!isMd && 'pr-54')}>{showCancelButton && cancelButton}</div>
         {showTitle && (
           <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content]')}>
             {!isMd && <Icon icon={icon} />}
