@@ -7,7 +7,6 @@ import { RecipientController } from './controllers/recipient.controller';
 import { MessageController } from './controllers/message.controller';
 import { DepartmentsController } from './controllers/departments.controller';
 import { StatisticsController } from '@controllers/statistics.controller';
-import { DigitalRegisteredletterController } from './controllers/digitalRegisteredLetter.controller';
 
 validateEnv();
 
@@ -19,7 +18,6 @@ const app = new App([
   MessageController,
   DepartmentsController,
   StatisticsController,
-  DigitalRegisteredletterController,
 ]);
 
 app.listen();
