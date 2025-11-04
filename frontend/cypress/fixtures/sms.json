@@ -1,0 +1,17 @@
+{
+  "data": {
+    "batchId": "c59e1746-6e30-489c-ab05-0b55ce6ae730",
+    "messages": [
+      {
+        "messageId": "72daeb8c-8c71-467d-b32d-b8bfc577b7ac",
+        "deliveries": [
+          {
+            "deliveryId": "f003589d-4721-44a8-911b-08d253d8764c",
+            "messageType": "SMS"
+          }
+        ]
+      }
+    ]
+  },
+  "message": "success"
+}
