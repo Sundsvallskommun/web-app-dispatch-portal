@@ -24,9 +24,10 @@ class ApiService {
           return Promise.resolve(request);
         }
         const token = await apiTokenService.getToken();
+        const currHeaders = request.headers['Content-Type'];
         const defaultHeaders = {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Content-Type': currHeaders?.toString().startsWith('multipart/form-data') ? currHeaders : 'application/json',
           'X-Request-Id': uuidv4(),
         };
         request.headers = request.headers.concat(defaultHeaders);

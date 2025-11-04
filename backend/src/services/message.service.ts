@@ -3,6 +3,7 @@ import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
 import { logger } from '@/utils/logger';
 import { User } from '@/interfaces/users.interface';
+import FormData from 'form-data';
 
 export interface AgnosticMessageResponse {
   messageId: string;
@@ -75,30 +76,30 @@ interface Address {
 }
 
 export interface LetterRequest {
-  party?: {
-    partyIds: string[];
-    addresses: Address[];
-    externalReferences?: { [key: string]: string }[];
-  };
+  subject?: string;
+  contentType: 'text/plain';
+  body: string;
+  recipients: {
+    partyId: string;
+    deliveryMethod: string;
+    address: {
+      firstName: string;
+      lastName: string;
+      street: string;
+      apartmentNumber: string;
+      careOf: string;
+      zipCode: string;
+      city: string;
+      country: string;
+    };
+  }[];
+  addresses: Address[];
   headers?: [
     {
       name: string;
       values: string[];
     },
   ];
-  subject?: string;
-  sender: {
-    supportInfo: {
-      text: string;
-      emailAddress: string;
-      phoneNumber: string;
-      url: string;
-    };
-  };
-  contentType: 'text/plain';
-  body: string;
-  department: string;
-  deviation?: string;
   attachments?: DigitalMailAttachment[];
 }
 
@@ -203,8 +204,9 @@ export const sendLetter: (
   department: string,
   addresses: Address[],
 ) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, message, department, addresses) => {
+  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files } = message;
-  const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/letter?async=true`;
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
   const attachments = [];
   files.forEach(f => {
     const base64String = f.buffer.toString('base64');
@@ -222,26 +224,57 @@ export const sendLetter: (
   });
 
   const request = {
-    party: {
-      partyIds: recipients.map(r => r.address.personId),
-      addresses,
-    },
     subject: subject,
     contentType: 'text/plain',
-    department: department,
-    sender: {
-      supportInfo: {
-        text: 'Vänd dig till Sundsvalls kommun om du har frågor angående detta meddelande.',
-        url: 'https://www.sundsvall.se',
-      },
-    },
+    recipients: recipients.map(r => {
+      const currAddress = r.address.addresses?.length > 0 ? r.address.addresses[0] : undefined;
+      return {
+        partyId: r.address.personId,
+        deliveryMethod: r.address.deliveryMethod,
+        address: {
+          firstName: r.address.givenname,
+          lastName: r.address.lastname,
+          street: currAddress.address,
+          apartmentNumber: currAddress.appartmentNumber,
+          careOf: currAddress.co,
+          zipCode: currAddress.postalCode,
+          city: currAddress.city,
+          country: currAddress.country,
+        },
+      };
+    }),
+    addresses: addresses,
+    body: 'This is the body',
   } as LetterRequest;
-  if (attachments.length > 0) {
-    request.attachments = attachments;
+
+  const form = new FormData();
+  form.append('request', JSON.stringify(request), {
+    contentType: 'application/json',
+  });
+  // form.append('request', request);
+  if (files?.length) {
+    for (const f of files) {
+      if (f.mimetype !== 'application/pdf') {
+        throw new Error('Wrong attachment mimetype; must be application/pdf');
+      }
+      if (!Buffer.isBuffer(f.buffer)) {
+        throw new Error('Attachment buffer missing');
+      }
+
+      form.append('attachments', f.buffer, {
+        filename: f.originalname,
+        contentType: 'application/pdf',
+      });
+    }
   }
 
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+
   return api
-    .post<LetterResponse, LetterRequest>({ url, data: request }, user)
+    .post<LetterResponse, FormData>({ url, data: form, headers }, user)
     .then(async (res: ApiResponse<LetterResponse>) => {
       return { recipients, response: res.data };
     })
