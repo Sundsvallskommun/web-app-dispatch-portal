@@ -110,6 +110,62 @@ export const sendMessage: (
   return res.data.data;
 };
 
+export const sendRecMessage: (
+  data: FormModel,
+  recipients: RecipientWithAddress[],
+  addresses: AddWithAddress[]
+) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (
+  data,
+  recipients,
+  addresses
+) => {
+  const messageFormData = new FormData();
+
+  const attachmentList = data.attachmentList;
+  const attachmentPromises: Promise<{ attachment: Attachment; blob: Blob }>[] =
+    attachmentList?.map(async (f) => {
+      const fileItem = f.file;
+      if (fileItem) {
+        const blobObject = file2blob(fileItem);
+        return Promise.resolve(blobObject);
+      } else {
+        return Promise.reject();
+      }
+    }) || [];
+
+  const res = await Promise.allSettled(attachmentPromises)
+    .then((r) => {
+      r.forEach((r) => {
+        if (r.status === 'fulfilled') {
+          const attachment = r.value.attachment;
+          const blob = r.value.blob;
+          messageFormData.append(`files`, blob, attachment.name);
+        } else {
+          console.error(`Error: attachment could not be processed for the following reason: ${r.reason}`);
+        }
+      });
+    })
+    .then(() => {
+      messageFormData.append('department', data.department);
+      messageFormData.append('subject', data.subject);
+      messageFormData.append('recipients', JSON.stringify(recipients));
+      messageFormData.append('addresses', JSON.stringify(addresses));
+      return apiService
+        .post<ApiResponse<{ recipients: RecipientWithAddress[]; response: LetterResponse }>, FormData>(
+          `message`,
+          messageFormData,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          }
+        )
+        .catch((e) => {
+          console.error('Something went wrong when sending message:', e);
+          throw e;
+        });
+    });
+  return res.data.data;
+};
+
 export const getBatchStatus: (id: string) => Promise<BatchStatus> = async (id) => {
   if (!id) {
     return Promise.reject('No id supplied');

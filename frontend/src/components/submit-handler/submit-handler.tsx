@@ -1,13 +1,19 @@
 import { FormModel } from '@pages/send/mail';
-import { sendMessage } from '@services/message-service';
+import { sendMessage, sendRecMessage } from '@services/message-service';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, useSnackbar } from '@sk-web-gui/react';
 import { SendHorizonal } from 'lucide-react';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { formSendType } from 'src/constants';
+import { SendType } from 'src/types';
 
-const SubmitHandler = () => {
+interface SubmitHandlerProps {
+  sendType?: SendType;
+}
+
+const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => {
   const [isSending, setIsSending] = useState(false);
   const { t } = useTranslation(['common', 'send-mail']);
   const recipients = useMessageStore((state) => state.recipients);
@@ -19,9 +25,26 @@ const SubmitHandler = () => {
     formState: { isValid },
   } = useFormContext<FormModel>();
 
-  const handleSend = () => {
+  const handleNormalSend = () => {
     setIsSending(true);
     sendMessage(
+      getValues(),
+      recipients.filter((r) => !r.error),
+      addresses
+    )
+      .then((res) => {
+        setIsSending(false);
+        setResponse(res);
+      })
+      .catch((e) => {
+        console.error(e);
+        setIsSending(false);
+        message({ message: t('send-mail:reviewHandler.error'), status: 'error' });
+      });
+  };
+  const handleRecSend = () => {
+    setIsSending(true);
+    sendRecMessage(
       getValues(),
       recipients.filter((r) => !r.error),
       addresses
@@ -45,7 +68,10 @@ const SubmitHandler = () => {
       rightIcon={<SendHorizonal />}
       loading={isSending}
       loadingText={'common:send'}
-      onClick={() => handleSend()}
+      onClick={() => {
+        if (sendType === formSendType.REK_MAIL) handleRecSend();
+        else handleNormalSend();
+      }}
     >
       {t('common:send')}
     </Button>
