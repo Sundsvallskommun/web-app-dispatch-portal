@@ -11,20 +11,6 @@ export interface Attachment {
   file: string;
 }
 
-export interface LetterResponse {
-  batchId: string;
-  messages: [
-    {
-      messageId: string;
-      deliveries: {
-        deliveryId: string;
-        messageType: 'DIGITAL_MAIL' | 'SNAIL_MAIL';
-        status: string;
-      }[];
-    },
-  ];
-}
-
 export const mapMessageType = (key: 'DIGITAL_MAIL' | 'SNAIL_MAIL') => {
   switch (key) {
     case 'DIGITAL_MAIL':
@@ -58,11 +44,7 @@ export const sendMessage: (
   data: FormModel,
   recipients: RecipientWithAddress[],
   addresses: AddWithAddress[]
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (
-  data,
-  recipients,
-  addresses
-) => {
+) => Promise<{ recipients: RecipientWithAddress[] }> = async (data, recipients, addresses) => {
   const messageFormData = new FormData();
 
   const attachmentList = data.attachmentList;
@@ -95,13 +77,9 @@ export const sendMessage: (
       messageFormData.append('recipients', JSON.stringify(recipients));
       messageFormData.append('addresses', JSON.stringify(addresses));
       return apiService
-        .post<ApiResponse<{ recipients: RecipientWithAddress[]; response: LetterResponse }>, FormData>(
-          `message`,
-          messageFormData,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        )
+        .post<ApiResponse<{ recipients: RecipientWithAddress[] }>, FormData>(`message`, messageFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
         .catch((e) => {
           console.error('Something went wrong when sending message:', e);
           throw e;
@@ -113,7 +91,7 @@ export const sendMessage: (
 export const sendRecMessage: (
   formData: FormModel,
   recipientPersonId: string
-) => Promise<{ recipientPersonId: string; response: LetterResponse }> = async (data, recipientPersonId) => {
+) => Promise<{ recipientPersonId: string }> = async (data, recipientPersonId) => {
   const messageFormData = new FormData();
 
   const attachmentList = data.attachmentList;
@@ -144,13 +122,9 @@ export const sendRecMessage: (
       messageFormData.append('subject', data.subject);
       messageFormData.append('recipientPersonId', recipientPersonId);
       return apiService
-        .post<ApiResponse<{ recipientPersonId: string; response: LetterResponse }>, FormData>(
-          `rec-message`,
-          messageFormData,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        )
+        .post<ApiResponse<{ recipientPersonId: string }>, FormData>(`rec-message`, messageFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
         .catch((e) => {
           console.error('Something went wrong when sending message:', e);
           throw e;

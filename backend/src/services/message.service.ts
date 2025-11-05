@@ -108,20 +108,6 @@ export interface RecLetterRequest {
   partyId: string;
 }
 
-export interface LetterResponse {
-  batchId: string;
-  messages: [
-    {
-      messageId: string;
-      deliveries: {
-        deliveryId: string;
-        messageType: 'DIGITAL_MAIL' | 'SNAIL_MAIL';
-        status: string;
-      }[];
-    },
-  ];
-}
-
 export interface EmailMessageAttachment {
   content: string;
   name?: string;
@@ -214,7 +200,7 @@ export const sendLetter: (
   message: Message,
   department: string,
   addresses: Address[],
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, message, department, addresses) => {
+) => Promise<{ recipients: RecipientWithAddress[] }> = async (user, api, recipients, message, department, addresses) => {
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
@@ -284,20 +270,20 @@ export const sendLetter: (
   };
 
   return api
-    .post<LetterResponse, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<LetterResponse>) => {
-      return { recipients, response: res.data };
+    .post<any, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<any>) => {
+      return { recipients };
     })
     .catch(e => {
       console.log('Error when sending message:', e);
       throw e;
     });
 };
-export const sendRecLetter: (
-  user: User,
-  api: ApiService,
-  message: RecMessage,
-) => Promise<{ recipientPersonId: string; response: LetterResponse }> = async (user, api, message) => {
+export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<{ recipientPersonId: string }> = async (
+  user,
+  api,
+  message,
+) => {
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body, recipientPersonId: recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
@@ -350,9 +336,9 @@ export const sendRecLetter: (
   };
 
   return api
-    .post<LetterResponse, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<LetterResponse>) => {
-      return { recipientPersonId: recipientPersonId, response: res.data };
+    .post<any, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<any>) => {
+      return { recipientPersonId: recipientPersonId };
     })
     .catch(e => {
       console.log('Error when sending registered letter:', e);

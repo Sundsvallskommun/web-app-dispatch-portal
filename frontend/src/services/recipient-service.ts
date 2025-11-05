@@ -2,7 +2,6 @@ import { apiService } from '@services/api-service';
 import { __DEV__ } from '@sk-web-gui/react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { LetterResponse } from './message-service';
 
 export const MAX_RECIPIENT_FILE_SIZE_MB = 50;
 export const MAX_RECIPIENT_ROW_SIZE = 250;
@@ -138,14 +137,14 @@ export const getRecipient = async (personnumber: string): Promise<RecipientWithA
 interface State {
   recipients: RecipientWithAddress[];
   addresses: AddWithAddress[];
-  response?: { recipients: RecipientWithAddress[]; response: LetterResponse };
-  recResponse?: { recipientPersonId: string; response: LetterResponse };
+  response?: { recipients: RecipientWithAddress[] };
+  recResponse?: { recipientPersonId: string };
 }
 interface Actions {
   setRecipients: (rs: RecipientWithAddress[]) => void;
   setAddresses: (addresses: AddWithAddress[]) => void;
-  setResponse: (r: { recipients: RecipientWithAddress[]; response: LetterResponse } | undefined) => void;
-  setRecResponse: (r: { recipientPersonId: string; response: LetterResponse } | undefined) => void;
+  setResponse: (r: { recipients: RecipientWithAddress[] } | undefined) => void;
+  setRecResponse: (r: { recipientPersonId: string } | undefined) => void;
   reset: () => void;
 }
 
