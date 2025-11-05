@@ -1,7 +1,6 @@
 import { MUNICIPALITY_ID } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
-import { logger } from '@/utils/logger';
 import { User } from '@/interfaces/users.interface';
 import FormData from 'form-data';
 
@@ -253,21 +252,6 @@ export const sendLetter: (
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
-  const attachments = [];
-  files.forEach(f => {
-    const base64String = f.buffer.toString('base64');
-    const filename = f.originalname;
-    const contentType = f.mimetype;
-    if (contentType !== 'application/pdf') {
-      logger.error('Wrong attachment mimetype when sending letter, must be application/pdf.');
-    }
-    attachments.push({
-      content: base64String,
-      filename,
-      contentType: 'application/pdf',
-      deliveryMode: 'ANY',
-    } as DigitalMailAttachment);
-  });
 
   const request = {
     subject: subject,
@@ -333,21 +317,6 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body, recipientPersonId: recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
-  const attachments = [];
-  files.forEach(f => {
-    const base64String = f.buffer.toString('base64');
-    const filename = f.originalname;
-    const contentType = f.mimetype;
-    if (contentType !== 'application/pdf') {
-      logger.error('Wrong attachment mimetype when sending a registered letter, must be application/pdf.');
-    }
-    attachments.push({
-      content: base64String,
-      filename,
-      contentType: 'application/pdf',
-      deliveryMode: 'ANY',
-    } as DigitalMailAttachment);
-  });
 
   const request = {
     body: body ?? 'This is the body of the registered letter.',
