@@ -19,14 +19,13 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 import CustomChip from '@components/custom-chip/custom-chip.component';
-import { SMSRequest, SMSStatus } from '@interfaces/sms';
-import { ApiResponse, apiService } from '@services/api-service';
 import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@utils/phone-number.helpers';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { EnumQATags } from 'src/types';
 import { sendSms } from '@services/message-service';
+import { SMSRequest } from '@interfaces/sms';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -144,21 +143,18 @@ export default function SendEmailPage() {
 
     setIsSending(true);
 
-    const data = {
+    const data: SMSRequest = {
       message: formData.message,
       recipients: formData.recipientList,
     };
 
     await sendSms(data)
       .then((res) => {
-        if (res?.batchId) {
-          setSuccess(true);
-          message({ message: t('send-sms:messages.smsSent'), status: 'success' });
-          // NOTE: fix for textarea (message) to update
-          setTimeout(() => {
-            reset(initialValues);
-          }, 1);
-        }
+        setSuccess(true);
+        message({ message: t('send-sms:messages.smsSent'), status: 'success' });
+        setTimeout(() => {
+          reset(initialValues);
+        }, 1);
       })
       .catch((e) => {
         setSuccess(false);

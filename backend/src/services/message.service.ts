@@ -1,4 +1,4 @@
-import { MUNICIPALITY_ID, SMS_SENDER } from '@/config';
+import { MUNICIPALITY_ID } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
 import { logger } from '@/utils/logger';
@@ -194,41 +194,30 @@ interface RecMessage {
 }
 
 export interface SMSDTO {
-  sender: string;
   message: string;
-  parties: { mobileNumber: string }[];
-  priority: 'NORMAL' | 'HIGH';
+  recipients: { phoneNumber: string; partyId: string }[];
 }
-export interface SMSReponse {
-  batchId: string;
-  messages: {
-    messageId: string;
-    deliveries: {
-      deliveryId: string;
-      messageType: string;
-    }[];
-  }[];
-}
-export const sendSmsMessage: (user: User, api: ApiService, recipients: string[], message: string) => Promise<SMSReponse> = async (
+
+export const sendSmsMessage: (user: User, api: ApiService, recipients: string[], message: string) => Promise<string[]> = async (
   user,
   api,
   recipients,
   message,
 ) => {
-  // const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
-  const POSTPORTALSERVICE_PATH = `messaging/7.9`;
+  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
 
   const data: SMSDTO = {
     message,
-    parties: recipients.map(rec => ({ mobileNumber: rec })),
-    sender: SMS_SENDER,
-    priority: 'HIGH',
+    recipients: recipients.map(rec => ({ phoneNumber: rec, partyId: 'aaaaaaaa-bbbb-cccc-dddd-112233445566' })),
   };
-  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/sms/batch`;
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/sms`;
+  const headers = {
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
   return api
-    .post<SMSReponse, SMSDTO>({ url, data }, user)
-    .then(async (res: ApiResponse<SMSReponse>) => {
-      return res.data;
+    .post<any, SMSDTO>({ url, data, headers }, user)
+    .then(async (res: ApiResponse<string[]>) => {
+      return recipients;
     })
     .catch(e => {
       console.log('Error when sending sms:', e);
