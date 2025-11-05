@@ -107,6 +107,11 @@ export interface RecLetterRequest {
   body: string;
   partyId: string;
 }
+export interface csvLetterRequest {
+  subject: string;
+  body: string;
+  contentType: 'text/plain';
+}
 
 export interface EmailMessageAttachment {
   content: string;
@@ -186,6 +191,12 @@ interface Message {
   body: string;
   files: Express.Multer.File[];
 }
+interface CsvMessage {
+  subject: string;
+  body: string;
+  files: Express.Multer.File[];
+  csvFile: Express.Multer.File;
+}
 interface RecMessage {
   subject: string;
   body: string;
@@ -229,7 +240,8 @@ export type MessageResponse =
   | {
       recipients: RecipientWithAddress[];
     }
-  | { recipientPersonId: string };
+  | { recipientPersonId: string }
+  | { csv: boolean };
 
 export const sendLetter: (
   user: User,
@@ -376,6 +388,71 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
     })
     .catch(e => {
       console.log('Error when sending registered letter:', e);
+      throw e;
+    });
+};
+
+export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponse> = async (user, api, message) => {
+  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
+  const { subject, files, body, csvFile } = message;
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
+
+  const requestContentType = 'application/json';
+  const pdfContentType = 'application/pdf';
+  const csvContentType = 'text/csv';
+
+  const request = {
+    subject: subject,
+    contentType: 'text/plain',
+    body: body ?? 'This is the body of the registered letter.',
+  } as csvLetterRequest;
+
+  const form = new FormData();
+  // Append request
+  form.append('request', JSON.stringify(request), {
+    contentType: requestContentType,
+  });
+
+  // Append attachment files
+  if (files?.length) {
+    for (const f of files) {
+      if (f.mimetype !== pdfContentType) {
+        throw new Error('Wrong attachment mimetype; must be application/pdf');
+      }
+      if (!Buffer.isBuffer(f.buffer)) {
+        throw new Error('Attachment buffer missing');
+      }
+      form.append('attachments', f.buffer, {
+        filename: f.originalname,
+        contentType: pdfContentType,
+      });
+    }
+  }
+
+  // Append csv file
+  if (csvFile.mimetype !== csvContentType) {
+    throw new Error('Wrong csv file mimetype; must be text/csv');
+  }
+  if (!Buffer.isBuffer(csvFile.buffer)) {
+    throw new Error('Csv file buffer missing');
+  }
+  form.append('csv-file', csvFile.buffer, {
+    filename: csvFile.originalname,
+    contentType: csvContentType,
+  });
+
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+
+  return api
+    .post<any, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<any>) => {
+      return { csv: true };
+    })
+    .catch(e => {
+      console.log('Error when sending message:', e);
       throw e;
     });
 };

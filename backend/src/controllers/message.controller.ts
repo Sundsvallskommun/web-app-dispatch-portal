@@ -3,7 +3,7 @@ import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { MessageResponse, sendLetter, sendRecLetter, sendSmsMessage } from '@/services/message.service';
+import { MessageResponse, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
@@ -118,6 +118,41 @@ export class MessageController {
       .catch(e => {
         console.log('Error when sending letter:', e);
         throw new Error('Error when sending message');
+      });
+
+    return response
+      .send({ data: res, message: 'success' } as {
+        data: MessageResponse;
+        message: string;
+      })
+      .status(200);
+  }
+
+  @Post('/csv-message/')
+  @OpenAPI({ summary: 'Send attachment to recipients' })
+  @UseBefore(authMiddleware)
+  async sendCsvMessage(
+    @Req() req: RequestWithUser,
+    @Body() body: RequestBodyRecMail,
+    @Res() response: any,
+    @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
+    @UploadedFiles('csv-file', { options: fileUploadOptions, required: false }) csvFile: Express.Multer.File,
+  ): Promise<{
+    data: MessageResponse;
+    message: string;
+  }> {
+    const res = await sendLetterCsv(req.user, this.apiService, {
+      subject: body.subject,
+      body: body.body,
+      files,
+      csvFile,
+    })
+      .then(async res => {
+        return res;
+      })
+      .catch(e => {
+        console.log('Error when sending csv letter:', e);
+        throw new Error('Error when sending csv message');
       });
 
     return response
