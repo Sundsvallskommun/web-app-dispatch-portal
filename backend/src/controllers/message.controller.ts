@@ -113,7 +113,7 @@ export class MessageController {
 
     return response
       .send({ data: res, message: 'success' } as {
-        data: { recipients: RecipientWithAddress[] };
+        data: MessageResponse;
         message: string;
       })
       .status(200);

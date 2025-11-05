@@ -76,7 +76,7 @@ export const sendMessage: (
       messageFormData.append('recipients', JSON.stringify(recipients));
       messageFormData.append('addresses', JSON.stringify(addresses));
       return apiService
-        .post<ApiResponse<{ recipients: RecipientWithAddress[] }>, FormData>(`message`, messageFormData, {
+        .post<ApiResponse<MessageResponse>, FormData>(`message`, messageFormData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .catch((e) => {
@@ -121,7 +121,7 @@ export const sendRecMessage: (formData: FormModel, recipientPersonId: string) =>
       messageFormData.append('subject', data.subject);
       messageFormData.append('recipientPersonId', recipientPersonId);
       return apiService
-        .post<ApiResponse<{ recipientPersonId: string }>, FormData>(`rec-message`, messageFormData, {
+        .post<ApiResponse<MessageResponse>, FormData>(`rec-message`, messageFormData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .catch((e) => {
