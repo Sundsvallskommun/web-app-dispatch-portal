@@ -100,7 +100,12 @@ export interface LetterRequest {
       values: string[];
     },
   ];
-  attachments?: DigitalMailAttachment[];
+}
+export interface RecLetterRequest {
+  subject?: string;
+  contentType: 'text/plain';
+  body: string;
+  partyId: string;
 }
 
 export interface LetterResponse {
@@ -195,6 +200,12 @@ interface Message {
   body: string;
   files: Express.Multer.File[];
 }
+interface RecMessage {
+  subject: string;
+  body: string;
+  recipientPersonId: string;
+  files: Express.Multer.File[];
+}
 
 export const sendLetter: (
   user: User,
@@ -205,7 +216,7 @@ export const sendLetter: (
   addresses: Address[],
 ) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, message, department, addresses) => {
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
-  const { subject, files } = message;
+  const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
   const attachments = [];
   files.forEach(f => {
@@ -244,14 +255,13 @@ export const sendLetter: (
       };
     }),
     addresses: addresses,
-    body: 'This is the body',
+    body: body ?? 'This is the body of the registered letter.',
   } as LetterRequest;
 
   const form = new FormData();
   form.append('request', JSON.stringify(request), {
     contentType: 'application/json',
   });
-  // form.append('request', request);
   if (files?.length) {
     for (const f of files) {
       if (f.mimetype !== 'application/pdf') {
@@ -280,6 +290,72 @@ export const sendLetter: (
     })
     .catch(e => {
       console.log('Error when sending message:', e);
+      throw e;
+    });
+};
+export const sendRecLetter: (
+  user: User,
+  api: ApiService,
+  message: RecMessage,
+) => Promise<{ recipientPersonId: string; response: LetterResponse }> = async (user, api, message) => {
+  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
+  const { subject, files, body, recipientPersonId: recipientPersonId } = message;
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
+  const attachments = [];
+  files.forEach(f => {
+    const base64String = f.buffer.toString('base64');
+    const filename = f.originalname;
+    const contentType = f.mimetype;
+    if (contentType !== 'application/pdf') {
+      logger.error('Wrong attachment mimetype when sending a registered letter, must be application/pdf.');
+    }
+    attachments.push({
+      content: base64String,
+      filename,
+      contentType: 'application/pdf',
+      deliveryMode: 'ANY',
+    } as DigitalMailAttachment);
+  });
+
+  const request = {
+    body: body ?? 'This is the body of the registered letter.',
+    contentType: 'text/plain',
+    subject: subject,
+    partyId: recipientPersonId,
+  } as RecLetterRequest;
+
+  const form = new FormData();
+  form.append('request', JSON.stringify(request), {
+    contentType: 'application/json',
+  });
+  if (files?.length) {
+    for (const f of files) {
+      if (f.mimetype !== 'application/pdf') {
+        throw new Error('Wrong attachment mimetype; must be application/pdf');
+      }
+      if (!Buffer.isBuffer(f.buffer)) {
+        throw new Error('Attachment buffer missing');
+      }
+
+      form.append('attachments', f.buffer, {
+        filename: f.originalname,
+        contentType: 'application/pdf',
+      });
+    }
+  }
+
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+
+  return api
+    .post<LetterResponse, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<LetterResponse>) => {
+      return { recipientPersonId: recipientPersonId, response: res.data };
+    })
+    .catch(e => {
+      console.log('Error when sending registered letter:', e);
       throw e;
     });
 };

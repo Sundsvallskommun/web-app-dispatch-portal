@@ -139,11 +139,13 @@ interface State {
   recipients: RecipientWithAddress[];
   addresses: AddWithAddress[];
   response?: { recipients: RecipientWithAddress[]; response: LetterResponse };
+  recResponse?: { recipientPersonId: string; response: LetterResponse };
 }
 interface Actions {
   setRecipients: (rs: RecipientWithAddress[]) => void;
   setAddresses: (addresses: AddWithAddress[]) => void;
   setResponse: (r: { recipients: RecipientWithAddress[]; response: LetterResponse } | undefined) => void;
+  setRecResponse: (r: { recipientPersonId: string; response: LetterResponse } | undefined) => void;
   reset: () => void;
 }
 
@@ -151,6 +153,7 @@ const initialState: State = {
   recipients: [],
   addresses: [],
   response: undefined,
+  recResponse: undefined,
 };
 
 export const useMessageStore = create<State & Actions>()(
@@ -160,6 +163,7 @@ export const useMessageStore = create<State & Actions>()(
       setRecipients: (recipients) => set(() => ({ recipients })),
       setAddresses: (addresses) => set(() => ({ addresses })),
       setResponse: (response) => set(() => ({ response })),
+      setRecResponse: (recResponse) => set(() => ({ recResponse })),
       reset: () => {
         set(initialState);
       },

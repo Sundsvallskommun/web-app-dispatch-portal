@@ -12,13 +12,14 @@ interface UseSendMailEffectsProps {
 export const useSendMailEffects = ({ setValue, resetAll, setSuccess }: UseSendMailEffectsProps) => {
   const recipients = useMessageStore((state) => state.recipients);
   const response = useMessageStore((state) => state.response);
+  const recResponse = useMessageStore((state) => state.recResponse);
 
   useEffect(() => {
-    if (response) {
+    if (response || recResponse) {
       setSuccess(true);
       resetAll();
     }
-  }, [response, resetAll, setSuccess]);
+  }, [response, recResponse, resetAll, setSuccess]);
 
   useEffect(() => {
     setValue('storeRecipients', recipients ?? [], { shouldValidate: false, shouldDirty: false });

@@ -111,14 +111,9 @@ export const sendMessage: (
 };
 
 export const sendRecMessage: (
-  data: FormModel,
-  recipients: RecipientWithAddress[],
-  addresses: AddWithAddress[]
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (
-  data,
-  recipients,
-  addresses
-) => {
+  formData: FormModel,
+  recipientPersonId: string
+) => Promise<{ recipientPersonId: string; response: LetterResponse }> = async (data, recipientPersonId) => {
   const messageFormData = new FormData();
 
   const attachmentList = data.attachmentList;
@@ -146,13 +141,11 @@ export const sendRecMessage: (
       });
     })
     .then(() => {
-      messageFormData.append('department', data.department);
       messageFormData.append('subject', data.subject);
-      messageFormData.append('recipients', JSON.stringify(recipients));
-      messageFormData.append('addresses', JSON.stringify(addresses));
+      messageFormData.append('recipientPersonId', recipientPersonId);
       return apiService
-        .post<ApiResponse<{ recipients: RecipientWithAddress[]; response: LetterResponse }>, FormData>(
-          `message`,
+        .post<ApiResponse<{ recipientPersonId: string; response: LetterResponse }>, FormData>(
+          `rec-message`,
           messageFormData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },

@@ -3,7 +3,7 @@ import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { LetterResponse, sendLetter } from '@/services/message.service';
+import { LetterResponse, sendLetter, sendRecLetter } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
@@ -21,6 +21,13 @@ class RequestBodyMail {
   subject: string;
   body: string;
   department: string;
+}
+class RequestBodyRecMail {
+  @IsString()
+  recipientPersonId: string;
+  @IsString()
+  subject: string;
+  body: string;
 }
 
 class RequestBodySMS {
@@ -98,11 +105,6 @@ export class MessageController {
 
     const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, body.department, addresses)
       .then(async res => {
-        // TODO do not send status email for now
-        // const emailAddress = DEV ? TEST_EMAIL : req.user.email;
-        // const senderPersonId = req.user.personId;
-        // const emailBody = `Ett meddelande har skickats: ${process.env.SAML_SUCCESS_REDIRECT}status/${res.response.batchId}`;
-        // await sendEmail(this.apiService, senderPersonId, emailAddress, emailBody);
         return res;
       })
       .catch(e => {
@@ -113,6 +115,39 @@ export class MessageController {
     return response
       .send({ data: res, message: 'success' } as {
         data: { recipients: RecipientWithAddress[]; response: LetterResponse };
+        message: string;
+      })
+      .status(200);
+  }
+  @Post('/rec-message/')
+  @OpenAPI({ summary: 'Send attachment to recipients' })
+  @UseBefore(authMiddleware)
+  async sendRecMessage(
+    @Req() req: RequestWithUser,
+    @Body() body: RequestBodyRecMail,
+    @Res() response: any,
+    @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
+  ): Promise<{
+    data: { recipientPersonId: string; response: LetterResponse };
+    message: string;
+  }> {
+    const res = await sendRecLetter(req.user, this.apiService, {
+      recipientPersonId: body.recipientPersonId,
+      subject: body.subject,
+      body: body.body,
+      files,
+    })
+      .then(async res => {
+        return res;
+      })
+      .catch(e => {
+        console.log('Error when sending letter:', e);
+        throw new Error('Error when sending message');
+      });
+
+    return response
+      .send({ data: res, message: 'success' } as {
+        data: { recipientPersonId: string; response: LetterResponse };
         message: string;
       })
       .status(200);

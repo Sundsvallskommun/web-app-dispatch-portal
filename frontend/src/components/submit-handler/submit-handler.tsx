@@ -3,7 +3,7 @@ import { sendMessage, sendRecMessage } from '@services/message-service';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, useSnackbar } from '@sk-web-gui/react';
 import { SendHorizonal } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
@@ -19,11 +19,16 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const setResponse = useMessageStore((state) => state.setResponse);
+  const setRecResponse = useMessageStore((state) => state.setRecResponse);
   const message = useSnackbar();
   const {
     getValues,
     formState: { isValid },
   } = useFormContext<FormModel>();
+
+  const recipientPersonId = useMemo(() => {
+    return recipients.find((r) => !r.error)?.address?.personId;
+  }, [recipients]);
 
   const handleNormalSend = () => {
     setIsSending(true);
@@ -43,15 +48,12 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
       });
   };
   const handleRecSend = () => {
+    if (!recipientPersonId) return;
     setIsSending(true);
-    sendRecMessage(
-      getValues(),
-      recipients.filter((r) => !r.error),
-      addresses
-    )
+    sendRecMessage(getValues(), recipientPersonId)
       .then((res) => {
         setIsSending(false);
-        setResponse(res);
+        setRecResponse(res);
       })
       .catch((e) => {
         console.error(e);
