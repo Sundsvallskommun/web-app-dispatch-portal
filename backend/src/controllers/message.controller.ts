@@ -3,7 +3,7 @@ import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { sendLetter, sendRecLetter } from '@/services/message.service';
+import { MessageResponse, sendLetter, sendRecLetter } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
@@ -91,7 +91,7 @@ export class MessageController {
     @Res() response: any,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
   ): Promise<{
-    data: { recipients: RecipientWithAddress[] };
+    data: MessageResponse;
     message: string;
   }> {
     let recipients: RecipientWithAddress[];
@@ -119,6 +119,7 @@ export class MessageController {
       })
       .status(200);
   }
+
   @Post('/rec-message/')
   @OpenAPI({ summary: 'Send attachment to recipients' })
   @UseBefore(authMiddleware)
@@ -128,7 +129,7 @@ export class MessageController {
     @Res() response: any,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
   ): Promise<{
-    data: { recipientPersonId: string };
+    data: MessageResponse;
     message: string;
   }> {
     const res = await sendRecLetter(req.user, this.apiService, {
@@ -147,7 +148,7 @@ export class MessageController {
 
     return response
       .send({ data: res, message: 'success' } as {
-        data: { recipientPersonId: string };
+        data: MessageResponse;
         message: string;
       })
       .status(200);

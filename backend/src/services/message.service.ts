@@ -193,6 +193,12 @@ interface RecMessage {
   files: Express.Multer.File[];
 }
 
+export type MessageResponse =
+  | {
+      recipients: RecipientWithAddress[];
+    }
+  | { recipientPersonId: string };
+
 export const sendLetter: (
   user: User,
   api: ApiService,
@@ -200,7 +206,7 @@ export const sendLetter: (
   message: Message,
   department: string,
   addresses: Address[],
-) => Promise<{ recipients: RecipientWithAddress[] }> = async (user, api, recipients, message, department, addresses) => {
+) => Promise<MessageResponse> = async (user, api, recipients, message, department, addresses) => {
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
@@ -279,11 +285,8 @@ export const sendLetter: (
       throw e;
     });
 };
-export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<{ recipientPersonId: string }> = async (
-  user,
-  api,
-  message,
-) => {
+
+export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponse> = async (user, api, message) => {
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body, recipientPersonId: recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;

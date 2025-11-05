@@ -19,7 +19,6 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const setResponse = useMessageStore((state) => state.setResponse);
-  const setRecResponse = useMessageStore((state) => state.setRecResponse);
   const message = useSnackbar();
   const {
     getValues,
@@ -53,7 +52,7 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
     sendRecMessage(getValues(), recipientPersonId)
       .then((res) => {
         setIsSending(false);
-        setRecResponse(res);
+        setResponse(res);
       })
       .catch((e) => {
         console.error(e);

@@ -134,17 +134,21 @@ export const getRecipient = async (personnumber: string): Promise<RecipientWithA
     });
 };
 
+export type MessageResponse =
+  | {
+      recipients: RecipientWithAddress[];
+    }
+  | { recipientPersonId: string };
+
 interface State {
   recipients: RecipientWithAddress[];
   addresses: AddWithAddress[];
-  response?: { recipients: RecipientWithAddress[] };
-  recResponse?: { recipientPersonId: string };
+  response?: MessageResponse;
 }
 interface Actions {
   setRecipients: (rs: RecipientWithAddress[]) => void;
   setAddresses: (addresses: AddWithAddress[]) => void;
-  setResponse: (r: { recipients: RecipientWithAddress[] } | undefined) => void;
-  setRecResponse: (r: { recipientPersonId: string } | undefined) => void;
+  setResponse: (r: MessageResponse | undefined) => void;
   reset: () => void;
 }
 
@@ -152,7 +156,6 @@ const initialState: State = {
   recipients: [],
   addresses: [],
   response: undefined,
-  recResponse: undefined,
 };
 
 export const useMessageStore = create<State & Actions>()(
@@ -162,7 +165,6 @@ export const useMessageStore = create<State & Actions>()(
       setRecipients: (recipients) => set(() => ({ recipients })),
       setAddresses: (addresses) => set(() => ({ addresses })),
       setResponse: (response) => set(() => ({ response })),
-      setRecResponse: (recResponse) => set(() => ({ recResponse })),
       reset: () => {
         set(initialState);
       },
