@@ -1,9 +1,9 @@
-import { MUNICIPALITY_ID, SMS_SENDER } from '@/config';
+import { MUNICIPALITY_ID } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { MessageResponse, sendLetter, sendRecLetter } from '@/services/message.service';
+import { MessageResponse, sendLetter, sendRecLetter, sendSmsMessage } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
@@ -38,24 +38,6 @@ class RequestBodySMS {
   message: string;
 }
 
-interface SMSDTO {
-  sender: string;
-  message: string;
-  parties: { mobileNumber: string }[];
-  priority: 'NORMAL' | 'HIGH';
-}
-
-interface SMSReponse {
-  batchId: string;
-  messages: {
-    messageId: string;
-    deliveries: {
-      deliveryId: string;
-      messageType: string;
-    }[];
-  }[];
-}
-
 @Controller()
 export class MessageController {
   private apiService = new ApiService();
@@ -66,19 +48,12 @@ export class MessageController {
   @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
   async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
     const { message, recipients } = body;
-    const data: SMSDTO = {
-      message,
-      parties: recipients.map(rec => ({ mobileNumber: rec })),
-      sender: SMS_SENDER,
-      priority: 'HIGH',
-    };
-    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
-    const res = await this.apiService.post<SMSReponse, SMSDTO>({ url, data }, req.user).catch(e => {
+    const res = await sendSmsMessage(req.user, this.apiService, recipients, message).catch(e => {
       console.log('Error when sending sms:', e);
       throw new Error('Error when sending sms');
     });
 
-    return response.send({ data: res.data, message: 'success' }).status(200);
+    return response.send({ data: res, message: 'success' }).status(200);
   }
 
   @Post('/message/')

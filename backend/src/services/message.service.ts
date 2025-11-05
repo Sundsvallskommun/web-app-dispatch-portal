@@ -1,4 +1,4 @@
-import { MUNICIPALITY_ID } from '@/config';
+import { MUNICIPALITY_ID, SMS_SENDER } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
 import { logger } from '@/utils/logger';
@@ -192,6 +192,49 @@ interface RecMessage {
   recipientPersonId: string;
   files: Express.Multer.File[];
 }
+
+export interface SMSDTO {
+  sender: string;
+  message: string;
+  parties: { mobileNumber: string }[];
+  priority: 'NORMAL' | 'HIGH';
+}
+export interface SMSReponse {
+  batchId: string;
+  messages: {
+    messageId: string;
+    deliveries: {
+      deliveryId: string;
+      messageType: string;
+    }[];
+  }[];
+}
+export const sendSmsMessage: (user: User, api: ApiService, recipients: string[], message: string) => Promise<SMSReponse> = async (
+  user,
+  api,
+  recipients,
+  message,
+) => {
+  // const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
+  const POSTPORTALSERVICE_PATH = `messaging/7.9`;
+
+  const data: SMSDTO = {
+    message,
+    parties: recipients.map(rec => ({ mobileNumber: rec })),
+    sender: SMS_SENDER,
+    priority: 'HIGH',
+  };
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/sms/batch`;
+  return api
+    .post<SMSReponse, SMSDTO>({ url, data }, user)
+    .then(async (res: ApiResponse<SMSReponse>) => {
+      return res.data;
+    })
+    .catch(e => {
+      console.log('Error when sending sms:', e);
+      throw new Error('Error when sending sms');
+    });
+};
 
 export type MessageResponse =
   | {

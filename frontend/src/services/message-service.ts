@@ -2,6 +2,7 @@ import { BatchStatus, DeliveryInformation, MessageInformation } from '@interface
 import { FormModel } from '@pages/send/mail';
 import { ApiResponse, apiService } from './api-service';
 import { AddWithAddress, MessageResponse, RecipientWithAddress, toBase64 } from './recipient-service';
+import { SMSRequest, SMSStatus } from '@interfaces/sms';
 
 export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
 export interface Attachment {
@@ -37,6 +38,15 @@ const file2blob = async (fileItem: File) => {
   const buf = Buffer.from(attachment.file, 'base64');
   const blob = new Blob([new Uint8Array(buf)], { type: attachment.mimeType });
   return { attachment, blob };
+};
+
+export const sendSms: (data: SMSRequest) => Promise<any> = async (data) => {
+  const res = await apiService.post<ApiResponse<SMSStatus>, SMSRequest>(`sms`, data).catch((e) => {
+    console.error('Something went wrong when sending sms:', e);
+    throw e;
+  });
+
+  return res.data.data;
 };
 
 // Use multipart/form-data

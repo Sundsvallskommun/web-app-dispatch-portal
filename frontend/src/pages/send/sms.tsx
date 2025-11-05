@@ -26,6 +26,7 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { EnumQATags } from 'src/types';
+import { sendSms } from '@services/message-service';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -148,21 +149,23 @@ export default function SendEmailPage() {
       recipients: formData.recipientList,
     };
 
-    const res = await apiService.post<ApiResponse<SMSStatus>, SMSRequest>(`sms`, data).catch((e) => {
-      setSuccess(false);
-      message({ message: t('send-sms:messages.somethingWrong'), status: 'error' });
-      console.error(t('send-sms:errors.somethingWrongWhenSendSms'), e);
-      throw e;
-    });
-
-    if (res?.data?.data?.batchId) {
-      setSuccess(true);
-      message({ message: t('send-sms:messages.smsSent'), status: 'success' });
-      // NOTE: fix for textarea (message) to update
-      setTimeout(() => {
-        reset(initialValues);
-      }, 1);
-    }
+    await sendSms(data)
+      .then((res) => {
+        if (res?.batchId) {
+          setSuccess(true);
+          message({ message: t('send-sms:messages.smsSent'), status: 'success' });
+          // NOTE: fix for textarea (message) to update
+          setTimeout(() => {
+            reset(initialValues);
+          }, 1);
+        }
+      })
+      .catch((e) => {
+        setSuccess(false);
+        message({ message: t('send-sms:messages.somethingWrong'), status: 'error' });
+        console.error(t('send-sms:errors.somethingWrongWhenSendSms'), e);
+        throw e;
+      });
 
     setIsSending(false);
   };
