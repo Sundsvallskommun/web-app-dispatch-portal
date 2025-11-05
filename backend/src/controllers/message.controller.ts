@@ -20,7 +20,6 @@ class RequestBodyMail {
   addresses: string;
   subject: string;
   body: string;
-  department: string;
 }
 class RequestBodyRecMail {
   @IsString()
@@ -103,7 +102,7 @@ export class MessageController {
       throw new Error('Could not parse recipient list');
     }
 
-    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, body.department, addresses)
+    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, addresses)
       .then(async res => {
         return res;
       })

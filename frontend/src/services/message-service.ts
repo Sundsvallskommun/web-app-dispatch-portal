@@ -72,7 +72,6 @@ export const sendMessage: (
       });
     })
     .then(() => {
-      messageFormData.append('department', data.department);
       messageFormData.append('subject', data.subject);
       messageFormData.append('recipients', JSON.stringify(recipients));
       messageFormData.append('addresses', JSON.stringify(addresses));

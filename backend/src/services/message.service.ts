@@ -204,9 +204,8 @@ export const sendLetter: (
   api: ApiService,
   recipients: RecipientWithAddress[],
   message: Message,
-  department: string,
   addresses: Address[],
-) => Promise<MessageResponse> = async (user, api, recipients, message, department, addresses) => {
+) => Promise<MessageResponse> = async (user, api, recipients, message, addresses) => {
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
