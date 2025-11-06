@@ -106,7 +106,7 @@ export interface RecLetterRequest {
   body: string;
   partyId: string;
 }
-export interface csvLetterRequest {
+export interface CsvLetterRequest {
   subject: string;
   body: string;
   contentType: 'text/plain';
@@ -242,6 +242,25 @@ export type MessageResponse =
   | { recipientPersonId: string }
   | { csv: boolean };
 
+function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
+  if (!files?.length) return;
+
+  for (const file of files) {
+    if (file.mimetype !== 'application/pdf') {
+      throw new Error(`Invalid mimetype "${file.mimetype}" — only application/pdf is allowed`);
+    }
+
+    if (!Buffer.isBuffer(file.buffer)) {
+      throw new TypeError(`Missing or invalid buffer for file: ${file.originalname}`);
+    }
+
+    form.append('attachments', file.buffer, {
+      filename: file.originalname,
+      contentType: 'application/pdf',
+    });
+  }
+}
+
 export const sendLetter: (
   user: User,
   api: ApiService,
@@ -278,24 +297,12 @@ export const sendLetter: (
   } as LetterRequest;
 
   const form = new FormData();
+
   form.append('request', JSON.stringify(request), {
     contentType: 'application/json',
   });
-  if (files?.length) {
-    for (const f of files) {
-      if (f.mimetype !== 'application/pdf') {
-        throw new Error('Wrong attachment mimetype; must be application/pdf');
-      }
-      if (!Buffer.isBuffer(f.buffer)) {
-        throw new Error('Attachment buffer missing');
-      }
 
-      form.append('attachments', f.buffer, {
-        filename: f.originalname,
-        contentType: 'application/pdf',
-      });
-    }
-  }
+  appendPdfAttachments(form, files);
 
   const headers = {
     ...form.getHeaders(),
@@ -315,7 +322,7 @@ export const sendLetter: (
 
 export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponse> = async (user, api, message) => {
   const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
-  const { subject, files, body, recipientPersonId: recipientPersonId } = message;
+  const { subject, files, body, recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
 
   const request = {
@@ -326,24 +333,12 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
   } as RecLetterRequest;
 
   const form = new FormData();
+
   form.append('request', JSON.stringify(request), {
     contentType: 'application/json',
   });
-  if (files?.length) {
-    for (const f of files) {
-      if (f.mimetype !== 'application/pdf') {
-        throw new Error('Wrong attachment mimetype; must be application/pdf');
-      }
-      if (!Buffer.isBuffer(f.buffer)) {
-        throw new Error('Attachment buffer missing');
-      }
 
-      form.append('attachments', f.buffer, {
-        filename: f.originalname,
-        contentType: 'application/pdf',
-      });
-    }
-  }
+  appendPdfAttachments(form, files);
 
   const headers = {
     ...form.getHeaders(),
@@ -367,14 +362,13 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
 
   const requestContentType = 'application/json';
-  const pdfContentType = 'application/pdf';
   const csvContentType = 'text/csv';
 
   const request = {
     subject: subject,
     contentType: 'text/plain',
     body: body ?? 'This is the body of the registered letter.',
-  } as csvLetterRequest;
+  } as CsvLetterRequest;
 
   const form = new FormData();
   // Append request
@@ -383,27 +377,14 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   });
 
   // Append attachment files
-  if (files?.length) {
-    for (const f of files) {
-      if (f.mimetype !== pdfContentType) {
-        throw new Error('Wrong attachment mimetype; must be application/pdf');
-      }
-      if (!Buffer.isBuffer(f.buffer)) {
-        throw new Error('Attachment buffer missing');
-      }
-      form.append('attachments', f.buffer, {
-        filename: f.originalname,
-        contentType: pdfContentType,
-      });
-    }
-  }
+  appendPdfAttachments(form, files);
 
   // Append csv file
   if (csvFile.mimetype !== csvContentType) {
     throw new Error('Wrong csv file mimetype; must be text/csv');
   }
   if (!Buffer.isBuffer(csvFile.buffer)) {
-    throw new Error('Csv file buffer missing');
+    throw new TypeError('Csv file buffer missing');
   }
   form.append('csv-file', csvFile.buffer, {
     filename: csvFile.originalname,
