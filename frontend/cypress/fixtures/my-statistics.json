@@ -1,0 +1,131 @@
+{
+  "_meta": {
+    "page": 1,
+    "limit": 9000,
+    "count": 40,
+    "totalRecords": 40,
+    "totalPages": 1
+  },
+  "batches": [
+    {
+      "batchId": "00000000-0000-0000-0000-000000000000",
+      "messageType": "LETTER",
+      "subject": "Test test test",
+      "sent": "2025-10-20T14:00:25.862565",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000001",
+      "messageType": "LETTER",
+      "subject": "Glupp",
+      "sent": "2025-10-20T12:58:38.91489",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000002",
+      "messageType": "LETTER",
+      "subject": "erg4tg",
+      "sent": "2025-10-20T12:53:45.014044",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000003",
+      "messageType": "LETTER",
+      "subject": "Meddelande gällande er ansökan om parkeringstillstånd",
+      "sent": "2025-10-14T14:26:34.616131",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 0,
+        "unsuccessful": 1
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000004",
+      "messageType": "LETTER",
+      "subject": "test4",
+      "sent": "2025-10-14T14:07:25.952913",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000005",
+      "messageType": "LETTER",
+      "subject": "test3",
+      "sent": "2025-10-14T14:05:41.677029",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000006",
+      "messageType": "LETTER",
+      "subject": "Test",
+      "sent": "2025-10-14T13:48:15.797932",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000007",
+      "messageType": "SMS",
+      "subject": "",
+      "sent": "2025-10-14T13:15:01.556691",
+      "attachmentCount": 0,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000008",
+      "messageType": "LETTER",
+      "subject": "Test letter",
+      "sent": "2025-10-14T10:43:35.569545",
+      "attachmentCount": 1,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    },
+    {
+      "batchId": "00000000-0000-0000-0000-000000000009",
+      "messageType": "SMS",
+      "subject": "",
+      "sent": "2025-10-14T09:39:35.19762",
+      "attachmentCount": 0,
+      "recipientCount": 1,
+      "status": {
+        "successful": 1,
+        "unsuccessful": 0
+      }
+    }
+  ]
+}
