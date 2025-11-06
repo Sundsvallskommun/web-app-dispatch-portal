@@ -3,9 +3,10 @@ import { FormModel } from '@pages/send/mail';
 import { ApiResponse, apiService } from './api-service';
 import { AddWithAddress, MessageResponse, RecipientWithAddress, toBase64 } from './recipient-service';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
+import { Attachment } from '@components/attachment-handler/attachment-handler';
 
 export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
-export interface Attachment {
+export interface FileInfo {
   name: string;
   extension: string;
   mimeType: string;
@@ -29,7 +30,7 @@ const file2blob = async (fileItem: File) => {
     return Promise.reject();
   }
   const fileData = await toBase64(fileItem);
-  const attachment: Attachment = {
+  const attachment: FileInfo = {
     name: fileItem.name,
     extension: fileItem.name.split('.').pop() || '',
     mimeType: fileItem.type,
@@ -49,6 +50,20 @@ export const sendSms: (data: SMSRequest) => Promise<any> = async (data) => {
   return res.data.data;
 };
 
+const getAttachmentsBlob = async (attachmentList: Attachment[]) => {
+  const attachmentPromises: Promise<{ attachment: FileInfo; blob: Blob }>[] =
+    attachmentList?.map(async (attachmentFile) => {
+      const fileItem = attachmentFile.file;
+      if (!fileItem) {
+        throw new Error('Attachment is missing its file.');
+      }
+      const blobObject = await file2blob(fileItem);
+      return blobObject;
+    }) || [];
+
+  return await Promise.allSettled(attachmentPromises);
+};
+
 // Use multipart/form-data
 export const sendMessage: (
   data: FormModel,
@@ -58,42 +73,31 @@ export const sendMessage: (
   const messageFormData = new FormData();
 
   const attachmentList = data.attachmentList;
-  const attachmentPromises: Promise<{ attachment: Attachment; blob: Blob }>[] =
-    attachmentList?.map(async (f) => {
-      const fileItem = f.file;
-      if (fileItem) {
-        const blobObject = file2blob(fileItem);
-        return Promise.resolve(blobObject);
-      } else {
-        return Promise.reject();
-      }
-    }) || [];
+  const attachmentResults = await getAttachmentsBlob(attachmentList);
 
-  const res = await Promise.allSettled(attachmentPromises)
-    .then((r) => {
-      r.forEach((r) => {
-        if (r.status === 'fulfilled') {
-          const attachment = r.value.attachment;
-          const blob = r.value.blob;
-          messageFormData.append(`files`, blob, attachment.name);
-        } else {
-          console.error(`Error: attachment could not be processed for the following reason: ${r.reason}`);
-        }
-      });
+  for (const result of attachmentResults) {
+    if (result.status === 'fulfilled') {
+      const attachment = result.value.attachment;
+      const blob = result.value.blob;
+      messageFormData.append(`files`, blob, attachment.name);
+    } else {
+      console.error(`Error: attachment could not be processed for the following reason: ${result.reason}`);
+    }
+  }
+
+  messageFormData.append('subject', data.subject);
+  messageFormData.append('recipients', JSON.stringify(recipients));
+  messageFormData.append('addresses', JSON.stringify(addresses));
+
+  const res = await apiService
+    .post<ApiResponse<MessageResponse>, FormData>(`message`, messageFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
-    .then(() => {
-      messageFormData.append('subject', data.subject);
-      messageFormData.append('recipients', JSON.stringify(recipients));
-      messageFormData.append('addresses', JSON.stringify(addresses));
-      return apiService
-        .post<ApiResponse<MessageResponse>, FormData>(`message`, messageFormData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
-        .catch((e) => {
-          console.error('Something went wrong when sending message:', e);
-          throw e;
-        });
+    .catch((e) => {
+      console.error('Something went wrong when sending message:', e);
+      throw e;
     });
+
   return res.data.data;
 };
 
@@ -104,41 +108,30 @@ export const sendRecMessage: (formData: FormModel, recipientPersonId: string) =>
   const messageFormData = new FormData();
 
   const attachmentList = data.attachmentList;
-  const attachmentPromises: Promise<{ attachment: Attachment; blob: Blob }>[] =
-    attachmentList?.map(async (f) => {
-      const fileItem = f.file;
-      if (fileItem) {
-        const blobObject = file2blob(fileItem);
-        return Promise.resolve(blobObject);
-      } else {
-        return Promise.reject();
-      }
-    }) || [];
+  const attachmentResults = await getAttachmentsBlob(attachmentList);
 
-  const res = await Promise.allSettled(attachmentPromises)
-    .then((r) => {
-      r.forEach((r) => {
-        if (r.status === 'fulfilled') {
-          const attachment = r.value.attachment;
-          const blob = r.value.blob;
-          messageFormData.append(`files`, blob, attachment.name);
-        } else {
-          console.error(`Error: attachment could not be processed for the following reason: ${r.reason}`);
-        }
-      });
+  for (const result of attachmentResults) {
+    if (result.status === 'fulfilled') {
+      const attachment = result.value.attachment;
+      const blob = result.value.blob;
+      messageFormData.append(`files`, blob, attachment.name);
+    } else {
+      console.error(`Error: attachment could not be processed for the following reason: ${result.reason}`);
+    }
+  }
+
+  messageFormData.append('subject', data.subject);
+  messageFormData.append('recipientPersonId', recipientPersonId);
+
+  const res = await apiService
+    .post<ApiResponse<MessageResponse>, FormData>(`rec-message`, messageFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
-    .then(() => {
-      messageFormData.append('subject', data.subject);
-      messageFormData.append('recipientPersonId', recipientPersonId);
-      return apiService
-        .post<ApiResponse<MessageResponse>, FormData>(`rec-message`, messageFormData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
-        .catch((e) => {
-          console.error('Something went wrong when sending message:', e);
-          throw e;
-        });
+    .catch((e) => {
+      console.error('Something went wrong when sending message:', e);
+      throw e;
     });
+
   return res.data.data;
 };
 
