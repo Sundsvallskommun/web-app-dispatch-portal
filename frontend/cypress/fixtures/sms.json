@@ -1,12 +1,12 @@
 {
   "data": {
-    "batchId": "c59e1746-6e30-489c-ab05-0b55ce6ae730",
+    "batchId": "00000000-0000-0000-0000-000000000000",
     "messages": [
       {
-        "messageId": "72daeb8c-8c71-467d-b32d-b8bfc577b7ac",
+        "messageId": "00000000-0000-0000-0000-000000000000",
         "deliveries": [
           {
-            "deliveryId": "f003589d-4721-44a8-911b-08d253d8764c",
+            "deliveryId": "00000000-0000-0000-0000-000000000000",
             "messageType": "SMS"
           }
         ]

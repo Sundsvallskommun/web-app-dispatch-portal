@@ -49,15 +49,15 @@ function normalizeDigits(input: string): string {
 // Validate a *sanitized* Swedish mobile input (pre-normalization)
 function isValidMobileSanitized(s: string): boolean {
   // Accept: 07[2-9]xxxxxxx | +467[2-9]xxxxxxx | 00467[2-9]xxxxxxx | 7[2-9]xxxxxxxx
-  return /^(?:07[2-9]\d{7}|\+467[2-9]\d{7}|00467[2-9]\d{7}|7[2-9]\d{8})$/.test(s);
+  return /^(?:07[0-9]\d{7}|\+467[2-9]\d{7}|00467[2-9]\d{7}|7[2-9]\d{8})$/.test(s);
 }
 
 // Normalize a *sanitized* Swedish mobile to +467XXXXXXXX
 function normalizeMobileOrEmpty(s: string): string {
-  if (/^\+467[2-9]\d{7}$/.test(s)) return s;
-  if (/^00467[2-9]\d{7}$/.test(s)) return s.replace(/^0046/, '+46');
-  if (/^07[2-9]\d{7}$/.test(s)) return s.replace(/^0/, '+46');
-  if (/^7[2-9]\d{8}$/.test(s)) return `+46${s}`;
+  if (/^\+467[0-9]\d{7}$/.test(s)) return s;
+  if (/^00467[0-9]\d{7}$/.test(s)) return s.replace(/^0046/, '+46');
+  if (/^07[0-9]\d{7}$/.test(s)) return s.replace(/^0/, '+46');
+  if (/^7[0-9]\d{8}$/.test(s)) return `+46${s}`;
   return '';
 }
 

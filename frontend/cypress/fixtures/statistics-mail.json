@@ -1,0 +1,29 @@
+[
+  {
+    "messageId": "00000000-0000-0000-0000-000000000000",
+    "issuer": "TEST",
+    "sent": "2025-11-04T13:05:37.038844",
+    "subject": "test test test",
+    "recipients": [
+      {
+        "address": {
+          "address": "Norrmalmsgatan 4",
+          "city": "Sundsvall",
+          "country": "Sverige",
+          "firstName": "Test",
+          "lastName": "Testsson",
+          "zipCode": "851 85"
+        },
+        "personId": "199011182475",
+        "messageType": "SNAIL_MAIL",
+        "status": "SENT"
+      }
+    ],
+    "attachments": [
+      {
+        "contentType": "application/pdf",
+        "fileName": "test.pdf"
+      }
+    ]
+  }
+]

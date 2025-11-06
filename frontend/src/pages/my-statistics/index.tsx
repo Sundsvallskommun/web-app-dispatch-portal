@@ -18,7 +18,7 @@ export const StatisticsPage = () => {
         <p className="text-large text-dark-secondary mt-0">{t('statistics:myStatistics.description')}</p>
       </div>
 
-      <div className="max-w-full mb-80">
+      <div data-cy="my-statistics-list" className="max-w-full mb-80">
         {loaded ? (
           batchListItems.map((batchListItem) => {
             return <ListItem data={batchListItem} key={batchListItem?.id} />;

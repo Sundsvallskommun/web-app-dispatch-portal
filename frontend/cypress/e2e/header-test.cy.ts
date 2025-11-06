@@ -1,6 +1,12 @@
 import { Pages } from './types';
 
 const pages = [
+  { description: 'Index', route: '/' },
+  { description: 'My statistics', route: '/my-statistics' },
+  { description: 'Statistics', route: '/statistics' },
+] as Pages[];
+
+const sendTypePages = [
   { description: 'Letter', route: '/send/mail' },
   { description: 'Recommended letter', route: '/send/rek-mail' },
   { description: 'Sms', route: '/send/sms' },
@@ -12,27 +18,35 @@ describe('Header', () => {
     cy.viewport('macbook-16');
   });
 
-  describe('Index', () => {
-    beforeEach(() => {
-      cy.visit('/');
-    });
+  pages.map((page) => {
+    describe(page.description, () => {
+      beforeEach(() => {
+        cy.intercept('GET', '**/api/departments', { fixture: 'departments.json' });
+        cy.intercept('GET', '**/api/statistics/departments*', {
+          fixture: 'departments-from-to.json',
+        });
+        cy.intercept('GET', '**/api/my-statistics', { fixture: 'my-statistics.json' });
+        cy.intercept('GET', '**/api/my-rec-letters', { fixture: 'my-rec-letters.json' });
+        cy.visit(page.route);
+      });
 
-    it('should contain a header with logo, navigation and user menu', () => {
-      cy.get('[data-cy="header"]').should('exist').find('li').should('have.length', 3);
-      cy.get('[data-cy="header"] a.sk-link-primary')
-        .should('exist')
-        .should('have.attr', 'aria-label', 'Postportalen Sundsvalls kommun. Gå till startsidan.');
-      cy.get('[data-cy="usermenu"]').should('exist').find('button').first().click();
-      cy.get('[data-cy="usermenu"] .sk-popup-menu').should('exist').should('have.attr', 'data-open', 'true');
-    });
+      it('should contain a header with logo, navigation and user menu', () => {
+        cy.get('[data-cy="header"]').should('exist').find('li').should('have.length', 3);
+        cy.get('[data-cy="header"] a.sk-link-primary')
+          .should('exist')
+          .should('have.attr', 'aria-label', 'Postportalen Sundsvalls kommun. Gå till startsidan.');
+        cy.get('[data-cy="usermenu"]').should('exist').find('button').first().click();
+        cy.get('[data-cy="usermenu"] .sk-popup-menu').should('exist').should('have.attr', 'data-open', 'true');
+      });
 
-    it('should show a mobile menu', () => {
-      cy.viewport('iphone-6');
-      cy.get('[data-cy="header"]').should('exist').find('[data-cy="mobilemenu"]').click();
+      it('should show a mobile menu', () => {
+        cy.viewport('iphone-6');
+        cy.get('[data-cy="header"]').should('exist').find('[data-cy="mobilemenu"]').click();
+      });
     });
   });
 
-  pages.map((page) => {
+  sendTypePages.map((page) => {
     describe(page.description, () => {
       beforeEach(() => {
         cy.visit(page.route);
