@@ -1,16 +1,7 @@
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Icon,
-  Input,
-  Textarea,
-  useSnackbar,
-} from '@sk-web-gui/react';
-import { BadgeCheck, Info, SendHorizontal, Smartphone } from 'lucide-react';
+import { Button, FormControl, FormLabel, Icon, Input, Textarea, useSnackbar } from '@sk-web-gui/react';
+import { BadgeCheck, SendHorizontal, Smartphone } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextLink from 'next/link';
@@ -26,6 +17,7 @@ import { TFunction } from 'i18next';
 import { EnumQATags } from 'src/types';
 import { sendSms } from '@services/message-service';
 import { SMSRequest } from '@interfaces/sms';
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -232,7 +224,10 @@ export default function SendEmailPage() {
                             <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums w-full">
                               {t('send-sms:addMobileNumber')}
                             </FormLabel>
-                            <div className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full">
+                            <div
+                              data-cy="mobile-number-input"
+                              className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full"
+                            >
                               <Input
                                 className="flex items-center gap-8 flex-1 w-full min-w-249"
                                 {...register('singleRecipient')}
@@ -248,22 +243,10 @@ export default function SendEmailPage() {
                               </Button>
                             </div>
                             {errors?.recipientList && (
-                              <FormErrorMessage
-                                className="text-error-text-primary flex items-center gap-8"
-                                key={`recipientList-errors`}
-                              >
-                                <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
-                                {errors.recipientList.message}
-                              </FormErrorMessage>
+                              <CustomFormErrorMessage padded={false} message={errors.recipientList.message} />
                             )}
                             {errors?.singleRecipient && (
-                              <FormErrorMessage
-                                className="text-error-text-primary flex items-center gap-8"
-                                key={`singleRecipient-errors`}
-                              >
-                                <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
-                                {errors.singleRecipient.message}
-                              </FormErrorMessage>
+                              <CustomFormErrorMessage padded={false} message={errors.singleRecipient.message} />
                             )}
                           </FormControl>
                         </div>
@@ -275,7 +258,7 @@ export default function SendEmailPage() {
                           {t('send-sms:addedRecipients')}
                         </div>
                         {recipientList && recipientList.length > 0 ? (
-                          <div className="flex flex-col justify-center items-start gap-8">
+                          <div data-cy="phone-numbers" className="flex flex-col justify-center items-start gap-8">
                             {recipientList?.map((recipient) => (
                               <CustomChip key={recipient} onRemove={() => handleRemove(recipient)}>
                                 {formatMobileNumberDisplay(recipient)}
@@ -305,24 +288,18 @@ export default function SendEmailPage() {
                         </div>
                       </div>
                       <Textarea
+                        data-cy="sms-message-input"
                         className="flex min-h-182 flex-col items-start gap-8 self-stretch w-full text-dark-placeholder"
                         maxLength={459}
                         {...register('message')}
                       />
-                      {errors.message && (
-                        <FormErrorMessage
-                          className="text-error-text-primary flex items-center gap-8"
-                          key={`message-errors`}
-                        >
-                          <Icon size="1.6rem" icon={<Info />} color="error" className="self-start" />{' '}
-                          {errors.message?.message}
-                        </FormErrorMessage>
-                      )}
+                      {errors.message && <CustomFormErrorMessage padded={false} message={errors.message?.message} />}
                     </FormControl>
                   </div>
                 </div>
                 <div className="flex justify-end items-start gap-80 self-stretch">
                   <Button
+                    data-cy="send-sms-button"
                     type="submit"
                     color="vattjom"
                     className="flex py-8 pr-16 pl-18 justify-center items-center gap-8"

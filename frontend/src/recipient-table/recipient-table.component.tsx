@@ -3,6 +3,7 @@ import { AutoTable, AutoTableHeader, Button, Icon } from '@sk-web-gui/react';
 import { Trash } from 'lucide-react';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
+import React from 'react';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
@@ -37,7 +38,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
           label: 'tabort',
           screenReaderOnly: true,
           columnPosition: 'right',
-          renderColumn: (value, item) => (
+          renderColumn: (_value, item) => (
             <div className="flex flex-1 justify-end text-right">
               <Button
                 data-cy="delete-person-button"
@@ -63,7 +64,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   const AutoTableHeaderRecipient = {
     label: 'Mottagare',
     isColumnSortable: sendType === formSendType.MAIL,
-    renderColumn: (value, item) => {
+    renderColumn: (_value, item) => {
       // Added with address
       if (item?.firstName) {
         return (
@@ -75,16 +76,19 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
       // Added with file or SSN
       return (
-        <>
-          {item?.address?.givenname} {item?.address?.lastname}, {item?.address?.personNumber}
-        </>
+        <div>
+          <p>
+            {item?.address?.givenname} {item?.address?.lastname}
+          </p>
+          <p>{item?.address?.personNumber}</p>
+        </div>
       );
     },
   } as AutoTableHeader;
 
   const AutoTableHeaderAddress = {
     label: 'Adress',
-    renderColumn: (value, item) => {
+    renderColumn: (_value, item) => {
       // Added with address
       if (item?.firstName) {
         const { address, zipCode, city } = item;
@@ -116,9 +120,9 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
   return (
     <AutoTable
+      footer={combinedLength > 16}
+      pageSize={16}
       data-cy="recipient-table"
-      footer={combinedLength >= 12}
-      pageSize={11}
       autodata={[...validRecipients, ...addresses]}
       autoheaders={[...headers, ...removeButton]}
     />

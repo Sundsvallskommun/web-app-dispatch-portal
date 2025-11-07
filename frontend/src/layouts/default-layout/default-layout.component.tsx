@@ -12,7 +12,7 @@ const DefaultLayout = ({ title, pageheader, children, headerMenu }: DefaultLayou
   const initialFocus = useRef<HTMLElement>(null);
 
   return (
-    <div className="DefaultLayout full-page-layout">
+    <div className="DefaultLayout full-page-layout bg-background-100">
       <Head>
         <title>{title}</title>
         <meta name="description" content={title} />

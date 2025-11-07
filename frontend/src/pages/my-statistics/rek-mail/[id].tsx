@@ -128,7 +128,7 @@ const MyStatisticsDetails = () => {
   return (
     <DefaultLayout title={`Postportalen`} pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}>
       {recLoaded ? (
-        <div className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
+        <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">
             {t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
           </h1>
