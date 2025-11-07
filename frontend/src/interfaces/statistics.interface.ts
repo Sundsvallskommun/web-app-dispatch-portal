@@ -47,31 +47,46 @@ export interface PagingMetaData {
   totalPages: number;
 }
 
-export interface UserBatches {
-  _meta: PagingMetaData;
-  batches: Batch[];
+export enum EnumLetterType {
+  SMS = 'SMS',
+  LETTER = 'LETTER',
+  DIGITAL_REGISTERED_LETTER = 'DIGITAL_REGISTERED_LETTER',
 }
-
-export interface Batch {
-  batchId: string;
-  messageType: string;
+export enum EnumLetterState {
+  NEW = 'NEW',
+  SENT = 'SENT',
+  SIGNED = 'SIGNED',
+  EXPIRED = 'EXPIRED',
+  FAILED_Client_Error = 'FAILED - Client Error',
+  FAILED_Server_Error = 'FAILED - Server Error',
+  FAILED_Unknown_Error = 'FAILED - Unknown Error',
+}
+export enum EnumSigningState {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
+export interface Letter {
+  messageId: string;
   subject: string;
-  sent: string;
-  attachmentCount: number;
-  recipientCount: number;
-  status: Status;
+  type: EnumLetterType;
+  sentAt: string;
+  signingStatus: {
+    letterState: EnumLetterState;
+    signingProcessState: EnumSigningState;
+  };
+  numberOfRecipients: number;
+}
+export interface UserLetters {
+  _meta: PagingMetaData;
+  messages: Letter[];
 }
 
-export interface BatchListItem {
+export interface LetterListItem {
   id: string;
   messageType: string;
   subject: string;
   sent: string;
-}
-
-export interface Status {
-  successful: number;
-  unsuccessful: number;
 }
 
 export interface RecAttachment {

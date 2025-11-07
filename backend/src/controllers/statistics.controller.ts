@@ -5,7 +5,7 @@ import ApiService from '@services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { DepartmentStatistics } from '@interfaces/statistics.interface';
 import { MUNICIPALITY_ID } from '@/config';
-import { RecLetter, SigningInfo, UserBatches, UserMessage, UserMessages, UserRecLetters } from '@/interfaces/my-statistics.interface';
+import { RecLetter, SigningInfo, UserLetters, UserMessage, UserMessages, UserRecLetters } from '@/interfaces/my-statistics.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 import { Response } from 'express';
@@ -47,12 +47,12 @@ export class StatisticsController {
   @Get('/my-statistics')
   @OpenAPI({ summary: 'Return my statistics' })
   @UseBefore(authMiddleware)
-  async getMyStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<UserBatches> {
+  async getMyStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<UserLetters> {
     try {
       const { username } = req.user;
-      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/users/${username}/batches`;
-      const params = { limit: 9000 };
-      const result = await this.apiService.get<UserBatches>({ url, params }, req.user);
+      const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/history/users/${username}/messages`;
+      const params = { page: 0, size: 9000, sort: 'subject' };
+      const result = await this.apiService.get<UserLetters>({ url, params }, req.user);
 
       return response.send(result.data);
     } catch (error) {
