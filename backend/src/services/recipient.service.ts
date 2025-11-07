@@ -8,6 +8,7 @@ import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 
 const MAX_RECIPIENT_ROW_SIZE = 250;
+const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
 
 export interface Recipient {
   personnumber: string;
@@ -165,7 +166,7 @@ export const precheckPersonIds = async (user: User, api: ApiService, personIds: 
     .post<
       RecipientDeliveryMethods,
       any
-    >({ url: `postportalservice/1.0/${MUNICIPALITY_ID}/precheck`, data: { partyIds: [...personIds] }, headers: { 'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}` } }, user)
+    >({ url: `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/precheck`, data: { partyIds: [...personIds] }, headers: { 'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}` } }, user)
     .then(res => res.data?.recipients ?? []);
   return deliveryMethods;
 };
@@ -180,7 +181,6 @@ interface EligibilityItemResponseDto {
 
 export const checkEligibilityKivra = async (partyId: string, user: RequestWithUser['user']): Promise<EligibilityItemResponseDto> => {
   const apiService = new ApiService();
-  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const data: EligibilityItemDto = { partyIds: [partyId] };
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/precheck/kivra`;
 

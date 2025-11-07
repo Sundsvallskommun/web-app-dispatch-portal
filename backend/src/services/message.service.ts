@@ -143,6 +143,7 @@ export interface EmailMessageRequest {
 }
 
 const MESSAGING_SERVICE = `messaging/7.9`;
+const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
 
 export const sendEmail: (user: User, api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
   user,
@@ -205,7 +206,7 @@ interface RecMessage {
 
 export interface SMSDTO {
   message: string;
-  recipients: { phoneNumber: string; partyId: string }[];
+  recipients: { phoneNumber: string }[];
 }
 
 export const sendSmsMessage: (user: User, api: ApiService, recipients: string[], message: string) => Promise<string[]> = async (
@@ -214,11 +215,9 @@ export const sendSmsMessage: (user: User, api: ApiService, recipients: string[],
   recipients,
   message,
 ) => {
-  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
-
   const data: SMSDTO = {
     message,
-    recipients: recipients.map(rec => ({ phoneNumber: rec, partyId: 'aaaaaaaa-bbbb-cccc-dddd-112233445566' })),
+    recipients: recipients.map(rec => ({ phoneNumber: rec })),
   };
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/sms`;
   const headers = {
@@ -268,7 +267,6 @@ export const sendLetter: (
   message: Message,
   addresses: Address[],
 ) => Promise<MessageResponse> = async (user, api, recipients, message, addresses) => {
-  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
 
@@ -321,7 +319,6 @@ export const sendLetter: (
 };
 
 export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponse> = async (user, api, message) => {
-  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body, recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
 
@@ -357,7 +354,6 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
 };
 
 export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponse> = async (user, api, message) => {
-  const POSTPORTALSERVICE_PATH = `postportalservice/1.0`;
   const { subject, files, body, csvFile } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
 
