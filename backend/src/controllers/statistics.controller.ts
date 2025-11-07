@@ -15,30 +15,25 @@ export class StatisticsController {
   apiService = new ApiService();
   SERVICE = `messaging/7.9`;
   REC_SERVICE = `digitalregisteredletter/2.4`;
+  POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
 
   @Get('/statistics/departments')
   @OpenAPI({ summary: 'Return department statistics' })
   @UseBefore(authMiddleware)
   async getStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<DepartmentStatistics> {
     try {
-      const { from, to } = req.query;
-      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/statistics/departments`;
-      const result = await this.apiService.get<DepartmentStatistics[]>({ url, params: { from, to } }, req.user);
+      const { year, month } = req.query;
+      const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/statistics/departments`;
+      const result = await this.apiService.get<DepartmentStatistics[]>({ url, params: { year, month } }, req.user);
       const statistics = [];
 
       result.data?.forEach(dep => {
-        dep.DEPARTMENT_STATISTICS.forEach(stats => {
-          statistics.push({
-            department: stats.DEPARTMENT,
-            snailMail: {
-              sent: stats.SNAIL_MAIL?.sent,
-              failed: stats.SNAIL_MAIL?.failed,
-            },
-            digitalMail: {
-              sent: stats.DIGITAL_MAIL?.sent,
-              failed: stats.DIGITAL_MAIL?.failed,
-            },
-          });
+        statistics.push({
+          department: dep.name,
+          snailMail: dep.snailMail,
+          digitalMail: dep.digitalMail,
+          registeredMail: dep.digitalRegisteredLetter,
+          sms: dep.sms,
         });
       });
 
