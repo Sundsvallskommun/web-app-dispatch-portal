@@ -331,7 +331,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
           {current === 0 ? (
             <div className={cx('flex flex-col gap-12', sendType === formSendType.MAIL && 'pt-32')}>
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
-                <div className="flex flex-col w-full gap-8">
+                <div className="flex flex-col w-full gap-8 pb-24">
                   <FormLabel className="text-label-medium">
                     <Trans
                       i18nKey="send-mail:recipientHandler.searchPersonalNumber"
@@ -344,8 +344,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     {...register('singleRecipient')}
                     data-cy="person-search-field"
                     value={recipient}
-                    className="w-full "
-                    showSearchButton={false}
+                    className="w-full"
                     showResetButton={recipient.length > 0}
                     type="text"
                     size="md"
@@ -358,23 +357,38 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                       setFoundPerson(undefined);
                     }}
                     onSearch={() => {
-                      allowSearchFieldOnSearch && handleSubmitSingleRecipient();
+                      if (
+                        sendType !== formSendType.REK_MAIL ||
+                        (sendType === formSendType.REK_MAIL && recipients.length < 1)
+                      )
+                        allowSearchFieldOnSearch && handleSubmitSingleRecipient();
                     }}
-                    disabled={sendType === formSendType.REK_MAIL && recipients.length === 1}
                   />
-                  <p className="text-[14px] m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
 
-                  {foundPerson?.address && (
+                  {errors.storeRecipients?.message ? (
+                    <CustomFormErrorMessage padded={false} message={errors.storeRecipients.message} />
+                  ) : errors.singleRecipient?.message ? (
+                    <CustomFormErrorMessage padded={false} message={errors.singleRecipient.message} />
+                  ) : foundPerson?.address && sendType === formSendType.REK_MAIL && recipients.length === 1 ? (
+                    <CustomFormErrorMessage
+                      padded={false}
+                      message={t('send-mail:recipientHandler.rekMail.multipleRecipientsError')}
+                    />
+                  ) : (
+                    <p className="text-small m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
+                  )}
+
+                  {(foundPerson?.address && sendType !== formSendType.REK_MAIL) ||
+                  (foundPerson?.address && sendType === formSendType.REK_MAIL && recipients.length < 1) ? (
                     <PreviewPerson
                       personId={foundPerson.address.personId}
                       personAdress={foundPerson.address}
                       handleSubmit={handleSubmitSingleRecipient}
                       sendType={sendType}
                     />
-                  )}
+                  ) : null}
                 </div>
-                {errors.storeRecipients?.message && <CustomFormErrorMessage message={errors.storeRecipients.message} />}
-                {errors.singleRecipient?.message && <CustomFormErrorMessage message={errors.singleRecipient.message} />}
+
                 {sendType === formSendType.MAIL && (
                   <div className="my-32">
                     <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
@@ -473,7 +487,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
         {combinedLength < 1 && current === 0 && (
           <div>
             <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedRecipientsTitle')}</h3>
-            <p className="text-base">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
+            <p className="text-secondary">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
           </div>
         )}
         {recipients?.length < 1 && current === 1 && (

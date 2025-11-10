@@ -34,8 +34,8 @@ export const SenderHandler: React.FC = () => {
       </FormControl>
       <Divider className="w-full my-22" />
       <FormControl className="w-full">
-        <h4>{t('send-mail:senderHandler.headerManagement')}</h4>
-        <p>{t('send-mail:senderHandler.managementDescription')}</p>
+        <h4 className="text-h4-md">{t('send-mail:senderHandler.headerManagement')}</h4>
+        <p className="text-secondary">{t('send-mail:senderHandler.managementDescription')}</p>
         <FormLabel className="text-label-medium mt-24">{t('send-mail:senderHandler.managementLabel')}</FormLabel>
         <Select
           invalid={!!errors?.department}

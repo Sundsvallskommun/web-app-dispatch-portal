@@ -4,6 +4,7 @@ import { Trash } from 'lucide-react';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
@@ -14,6 +15,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   showRemoveButton = false,
   sendType = formSendType.MAIL,
 }) => {
+  const { t } = useTranslation('common');
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const validRecipients = recipients.filter((rec) => !rec?.error);
@@ -43,16 +45,17 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
               <Button
                 data-cy="delete-person-button"
                 aria-label="Ta bort mottagare"
-                iconButton
-                variant="secondary"
-                className="max-w-[36px] max-h-[36px] relative border-0"
+                variant="tertiary"
+                className="relative"
                 onClick={() =>
                   item?.firstName
                     ? handleRemoveOneWidthAddress(item as AddWithAddress)
                     : handleRemoveOneRecipient(item?.recipient.personnumber)
                 }
+                leftIcon={<Icon icon={<Trash />} />}
+                showBackground
               >
-                <Icon icon={<Trash />} />
+                {t('common:remove')}
               </Button>
             </div>
           ),
