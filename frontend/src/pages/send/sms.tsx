@@ -213,7 +213,7 @@ export default function SendEmailPage() {
                       <div className="flex max-w-382 flex-col items-start gap-16">
                         <div className="flex flex-col items-start gap-8 self-stretch w-full">
                           <FormControl
-                            invalid={!!errors.singleRecipient?.message}
+                            invalid={!!errors.singleRecipient?.message || !!errors.recipientList}
                             id="recipient"
                             className="flex-grow w-full"
                             size="md"
