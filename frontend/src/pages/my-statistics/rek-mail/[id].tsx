@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnackbar, Divider } from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
-import { useLetter, useSigningInfo, getRecAttachmentFile } from '@services/my-statistics-service';
+import { useSigningInfo, useMessage, getAttachmentFile } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -19,7 +19,7 @@ const MyStatisticsDetails = () => {
 
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
 
-  const { letter, loaded: recLoaded } = useLetter(id ?? '');
+  const { message: letter, loaded: recLoaded } = useMessage(id ?? '');
   const { signingInfo, loaded: signingInfoLoaded } = useSigningInfo(id ?? '');
 
   const headers: Array<AutoTableHeader | string> = [
@@ -74,9 +74,9 @@ const MyStatisticsDetails = () => {
   }
 
   const recAttachments = useMemo<RecAttachment[]>(() => {
-    if (letter?.id) {
+    if (letter) {
       const attachments = letter.attachments.map((a) => {
-        return { contentType: a.contentType, fileName: a.fileName, id: a.id } as RecAttachment;
+        return { contentType: a.contentType, fileName: a.fileName, id: a.attachmentId } as RecAttachment;
       });
 
       return attachments;
@@ -88,7 +88,7 @@ const MyStatisticsDetails = () => {
 
     if (!id) return;
 
-    getRecAttachmentFile(id, attachmentId)
+    getAttachmentFile(attachmentId)
       .then((d) => {
         if (d.error === undefined) {
           const bufferArray = new Uint8Array(d.data).buffer;
@@ -132,7 +132,7 @@ const MyStatisticsDetails = () => {
           <h1 className="text-h4-lg mb-8">
             {t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
           </h1>
-          <p className="mb-40">{letter.created ? dayjs(letter.created).format('YYYY-MM-DD, HH:mm') : ''}</p>
+          <p className="mb-40">{letter.sentAt ? dayjs(letter.sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
           <AutoTable

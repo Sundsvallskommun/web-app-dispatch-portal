@@ -3,7 +3,6 @@ import { apiService } from '@services/api-service';
 import {
   LetterListItem,
   Letter,
-  Message,
   PagingMetaData,
   RecAttachment,
   SigningInfo,
@@ -121,56 +120,12 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
   return { message, loaded };
 };
 
-export const useLetter = (letterId: string): { letter: RecLetter; loaded: boolean } => {
-  const [letter, setLetter] = useState<RecLetter>({
-    id: '',
-    subject: '',
-    municipalityId: '',
-    status: '',
-    body: '',
-    contentType: '',
-    created: '',
-    updated: '',
-    supportInfo: {
-      supportText: '',
-      contactInformationUrl: '',
-      contactInformationPhoneNumber: '',
-      contactInformationEmail: '',
-    },
-    attachments: [
-      {
-        id: '',
-        fileName: '',
-        contentType: '',
-      },
-    ],
-  });
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!letterId) {
-      setLoaded(true);
-      return;
-    }
-    apiService.get<RecLetter>(`my-rec-letters/${letterId}`).then((res) => {
-      const letter = res?.data;
-
-      if (letter) {
-        setLetter(letter);
-      }
-      setLoaded(true);
-    });
-  }, [letterId]);
-
-  return { letter, loaded };
-};
-
 export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; loaded: boolean } => {
   const [signingInfo, setSigningInfo] = useState<SigningInfo>({
     status: '',
-    signed: '',
+    signedAt: '',
     contentKey: '',
-    orderRef: '',
+    orderReference: '',
     user: {
       personalIdentityNumber: '',
       name: '',
@@ -206,14 +161,5 @@ export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResp
 ) =>
   apiService
     .get<ArrayBuffer>(`/my-statistics/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
-    .then((res) => res)
-    .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));
-
-export const getRecAttachmentFile: (
-  messageId: string,
-  fileName: string
-) => Promise<AttachmentResponse | AttachmentError> = (letterId, attachmentId) =>
-  apiService
-    .get<ArrayBuffer>(`/my-rec-letters/attachment/${letterId}/${attachmentId}`, { responseType: 'arraybuffer' })
     .then((res) => res)
     .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));

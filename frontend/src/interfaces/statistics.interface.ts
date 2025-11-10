@@ -105,9 +105,10 @@ export interface RecAttachment {
 
 export interface SigningInfo {
   status: string;
-  signed: string;
+  signedAt: string;
   contentKey: string;
-  orderRef: string;
+  orderReference: string;
+  ocspResponse?: string;
   user: {
     personalIdentityNumber: string;
     name: string;
@@ -116,6 +117,9 @@ export interface SigningInfo {
   };
   device: {
     ipAddress: string;
+  };
+  stepUp?: {
+    mrtd: boolean;
   };
 }
 
