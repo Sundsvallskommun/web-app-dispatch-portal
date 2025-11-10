@@ -12,24 +12,37 @@ export interface UserMessages {
 }
 
 export interface UserMessage {
-  messageId: string;
-  issuer: string;
-  origin: string;
-  sent: string;
-  subject: string;
-  body: string;
-  recipients: Recipient[];
+  subject?: string;
+  sentAt: string;
   attachments: MessageAttachment[];
+  recipients: Recipient[];
+}
+
+export enum EnumMessageType {
+  SNAIL_MAIL = 'SNAIL_MAIL',
+  DIGITAL_MAIL = 'DIGITAL_MAIL',
+  SMS = 'SMS',
+}
+export enum EnumMessageStatus {
+  SENT = 'SENT',
+  NOT_SENT = 'NOT_SENT',
+  FAILED = 'FAILED',
 }
 
 export interface Recipient {
-  personId?: string;
+  name: string;
+  partyId?: string;
   mobileNumber?: string;
-  messageType: string;
-  status: string;
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+  messageType: EnumMessageType;
+  status: EnumMessageStatus;
+  personnummer?: string;
 }
 
 export interface MessageAttachment {
+  attachmentId: string;
   contentType: string;
   fileName: string;
 }

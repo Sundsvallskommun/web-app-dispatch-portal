@@ -8,6 +8,7 @@ import {
   RecAttachment,
   SigningInfo,
   UserLetters,
+  UserMessage,
 } from '@interfaces/statistics.interface';
 
 export interface UserRecLetters {
@@ -94,15 +95,12 @@ export const useMyLetterList = (): {
   return { letters, lettersLoaded };
 };
 
-export const useMessage = (messageId: string): { message: Message; loaded: boolean } => {
-  const [message, setMessage] = useState<Message>({
-    subject: '',
-    body: '',
-    issuer: '',
-    sent: '',
-    messageId: '',
-    recipients: [],
+export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean } => {
+  const [message, setMessage] = useState<UserMessage>({
     attachments: [],
+    recipients: [],
+    sentAt: '',
+    subject: '',
   });
   const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -111,16 +109,11 @@ export const useMessage = (messageId: string): { message: Message; loaded: boole
       setLoaded(true);
       return;
     }
-    apiService.get<Message[]>(`my-statistics/${messageId}`).then((res) => {
-      const filteredMessage = res?.data[0];
+    apiService.get<UserMessage>(`my-statistics/${messageId}`).then((res) => {
+      if (!res.data) return;
 
-      if (filteredMessage) {
-        const recipients = res?.data.map((message) => {
-          return { ...message?.recipients[0] };
-        });
-        filteredMessage.recipients = recipients?.flat();
-        setMessage(filteredMessage);
-      }
+      const message = res.data;
+      setMessage(message);
       setLoaded(true);
     });
   }, [messageId]);
@@ -208,12 +201,11 @@ export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; lo
   return { signingInfo, loaded };
 };
 
-export const getAttachmentFile: (
-  messageId: string,
-  fileName: string
-) => Promise<AttachmentResponse | AttachmentError> = (messageId, fileName) =>
+export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResponse | AttachmentError> = (
+  attachmentId
+) =>
   apiService
-    .get<ArrayBuffer>(`/my-statistics/attachment/${messageId}/${fileName}`, { responseType: 'arraybuffer' })
+    .get<ArrayBuffer>(`/my-statistics/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
     .then((res) => res)
     .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));
 

@@ -9,19 +9,27 @@ export interface Mail {
   failed: number;
 }
 
+export enum EnumMessageType {
+  SNAIL_MAIL = 'SNAIL_MAIL',
+  DIGITAL_MAIL = 'DIGITAL_MAIL',
+  SMS = 'SMS',
+}
+export enum EnumMessageStatus {
+  SENT = 'SENT',
+  NOT_SENT = 'NOT_SENT',
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+}
 export interface Recipient {
-  messageType: string;
-  status: string;
-  personId?: string;
+  name: string;
+  partyId?: string;
   mobileNumber?: string;
-  address?: {
-    address: string;
-    city: string;
-    country: string;
-    firstName: string;
-    lastName: string;
-    zipCode: string;
-  };
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+  messageType: EnumMessageType;
+  status: EnumMessageStatus;
+  personnummer?: string;
 }
 
 export interface Attachment {
@@ -109,4 +117,16 @@ export interface SigningInfo {
   device: {
     ipAddress: string;
   };
+}
+
+export interface MessageAttachment {
+  attachmentId: string;
+  contentType: string;
+  fileName: string;
+}
+export interface UserMessage {
+  subject?: string;
+  sentAt: string;
+  attachments: MessageAttachment[];
+  recipients: Recipient[];
 }

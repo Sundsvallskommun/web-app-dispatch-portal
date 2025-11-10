@@ -17,20 +17,17 @@ import {
 import { File, Download } from 'lucide-react';
 import { getAttachmentFile, useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { Message } from '@interfaces/statistics.interface';
+import { MessageAttachment, UserMessage } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import { isDigitalMessage } from '@utils/statistics-helpers';
 
-const defaultMessageInfo: Message = {
-  sent: '',
+const defaultMessageInfo: UserMessage = {
+  sentAt: '',
   subject: '',
-  body: '',
-  messageId: '',
-  issuer: '',
-  attachments: [],
   recipients: [],
+  attachments: [],
 };
 
 const MyStatisticsDetails = () => {
@@ -41,7 +38,7 @@ const MyStatisticsDetails = () => {
 
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
   const { message, loaded } = useMessage(id ?? '');
-  const { recipients, attachments, sent, subject } = message ?? defaultMessageInfo;
+  const { recipients, attachments, sentAt, subject } = message ?? defaultMessageInfo;
 
   const headers: Array<AutoTableHeader | string> = [
     {
@@ -73,18 +70,11 @@ const MyStatisticsDetails = () => {
   ];
 
   const recipientList = recipients
-    ?.filter((r) => r.status === 'SENT')
+    // ?.filter((r) => r.status === EnumMessageStatus.SENT)
     ?.map((r) => {
-      if (r.address) {
-        return {
-          recipient: `${r?.address?.firstName ?? ''} ${r?.address?.lastName ?? ''}${r?.personId ? ',' : ''} ${r?.personId ?? ''}`,
-          address: `${r?.address?.address}${r?.address?.address ? ',' : ''} ${r?.address?.zipCode} ${r?.address?.city}`,
-          messageType: r.messageType,
-        };
-      }
       return {
-        recipient: r?.personId ? `${r?.personId}` : 'Okänd',
-        address: '',
+        recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${r?.personnummer ?? ''}`,
+        address: `${r?.streetAddress}${r?.streetAddress ? ',' : ''} ${r?.zipCode} ${r?.city}`,
         messageType: r.messageType,
       };
     });
@@ -92,10 +82,10 @@ const MyStatisticsDetails = () => {
   const recipientsSnailMail = recipientList?.filter((r) => !isDigitalMessage(r.messageType));
   const recipientsDigitalMail = recipientList?.filter((r) => isDigitalMessage(r.messageType));
 
-  const getAttachment = (fileName: string, index: number) => {
+  const getAttachment = (file: MessageAttachment, index: number) => {
     setLoadingAttachmentIndex(index);
 
-    getAttachmentFile(id!, fileName)
+    getAttachmentFile(file.attachmentId)
       .then((d) => {
         if (typeof d.error === 'undefined') {
           const bufferArray = new Uint8Array(d.data).buffer;
@@ -105,14 +95,14 @@ const MyStatisticsDetails = () => {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${fileName}.pdf`;
+          a.download = `${file.fileName}`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         } else {
           snackBar({
-            message: `Misslyckades med att hämta filen "${fileName}"`,
+            message: `Misslyckades med att hämta filen "${file.fileName}"`,
             status: 'error',
           });
         }
@@ -140,7 +130,7 @@ const MyStatisticsDetails = () => {
       {loaded ? (
         <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.letterSubject', { subject: subject })}</h1>
-          <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
+          <p className="mb-40">{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <p className="pb-16 font-bold">
             {capitalize(t('statistics:myStatistics.attachments'))} ({attachments?.length})
@@ -158,7 +148,7 @@ const MyStatisticsDetails = () => {
                       <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
                       <Button
                         loading={loadingAttachmentIndex === index}
-                        onClick={() => getAttachment(file.fileName, index)}
+                        onClick={() => getAttachment(file, index)}
                         variant="tertiary"
                         aria-label={capitalize(t('statistics:myStatistics.attachments'))}
                       >

@@ -4,17 +4,14 @@ import { useRouter } from 'next/router';
 import { Breadcrumb, Spinner } from '@sk-web-gui/react';
 import { useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { Message } from '@interfaces/statistics.interface';
+import { Message, UserMessage } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 
-const defaultMessageInfo: Message = {
-  sent: '',
+const defaultMessageInfo: UserMessage = {
+  sentAt: '',
   subject: '',
-  body: '',
-  messageId: '',
-  issuer: '',
   recipients: [],
   attachments: [],
 };
@@ -25,7 +22,7 @@ const MyStatisticsDetails = () => {
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
 
   const { message, loaded } = useMessage(id ?? '');
-  const { recipients, sent } = message ?? defaultMessageInfo;
+  const { recipients, sentAt } = message ?? defaultMessageInfo;
 
   const recipientList = recipients?.filter((r) => r.status === 'SENT');
 
@@ -49,7 +46,7 @@ const MyStatisticsDetails = () => {
       {loaded ? (
         <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.sms')}</h1>
-          <p className="mb-40">{sent ? dayjs(sent).format('YYYY-MM-DD, HH:mm') : ''}</p>
+          <p className="mb-40">{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <h3 className="pb-16 text-label-medium">
             {capitalize(t('statistics:myStatistics.recipient'))} ({recipientList.length})
@@ -66,7 +63,7 @@ const MyStatisticsDetails = () => {
           </div>
 
           <h3 className="pb-4 text-label-medium">{t('statistics:myStatistics.message')}</h3>
-          <div className="border-1 border-divider p-20 rounded-button">{message?.body}</div>
+          <div className="border-1 border-divider p-20 rounded-button">{message?.subject}</div>
         </div>
       ) : (
         <Spinner />

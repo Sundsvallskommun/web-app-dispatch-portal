@@ -5,15 +5,15 @@ import ApiService from '@services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { DepartmentStatistics } from '@interfaces/statistics.interface';
 import { MUNICIPALITY_ID } from '@/config';
-import { RecLetter, SigningInfo, UserLetters, UserMessage, UserMessages, UserRecLetters } from '@/interfaces/my-statistics.interface';
+import { RecLetter, SigningInfo, UserLetters, UserMessage, UserRecLetters } from '@/interfaces/my-statistics.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 import { Response } from 'express';
+import { fetchPersonIdPersonnummerRecord } from '@/services/recipient.service';
 
 @Controller()
 export class StatisticsController {
   apiService = new ApiService();
-  SERVICE = `messaging/7.9`;
   REC_SERVICE = `digitalregisteredletter/2.4`;
   POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
 
@@ -83,11 +83,19 @@ export class StatisticsController {
   async getMyStatisticsMessage(@Req() req: RequestWithUser, @Res() response: any, @Param('id') id: string): Promise<UserMessage> {
     try {
       const { username } = req.user;
-      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/users/${username}/messages`;
-      const params = { limit: 9000, batchId: id };
-      const result = await this.apiService.get<UserMessages>({ url, params }, req.user);
+      const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/history/users/${username}/messages/${id}`;
+      const result = await this.apiService.get<UserMessage>({ url }, req.user);
 
-      return response.send(result.data.messages);
+      const message = result.data;
+      let personnummerRecords = await fetchPersonIdPersonnummerRecord(
+        req.user,
+        this.apiService,
+        message.recipients.map(r => r.partyId),
+      );
+      message.recipients.forEach(recipient => {
+        if (recipient.partyId) recipient.personnummer = personnummerRecords[recipient.partyId];
+      });
+      return response.send(message);
     } catch (error) {
       logger.error('Error getting statistics: ', error);
       throw new HttpException(500, 'Error getting statistics');
@@ -126,20 +134,15 @@ export class StatisticsController {
     }
   }
 
-  @Get('/my-statistics/attachment/:messageId/:fileName')
+  @Get('/my-statistics/attachment/:attachmentId')
   @Header('Cross-Origin-Embedder-Policy', 'require-corp')
   @Header('Cross-Origin-Resource-Policy', 'cross-origin')
   @Header('Content-Type', 'application/pdf')
   @OpenAPI({ summary: 'Return the attachment' })
   @UseBefore(authMiddleware)
-  async getAttachment(
-    @Req() req: RequestWithUser,
-    @Param('messageId') messageId: string,
-    @Param('fileName') fileName: string,
-    @Res() response: any,
-  ): Promise<any> {
+  async getAttachment(@Req() req: RequestWithUser, @Param('attachmentId') attachmentId: string, @Res() response: any): Promise<any> {
     try {
-      const url = `${this.SERVICE}/${MUNICIPALITY_ID}/messages/${messageId}/attachments/${fileName}`;
+      const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/attachments/${attachmentId}`;
       const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);
       // NOTE: send the raw file
       return result.data;
