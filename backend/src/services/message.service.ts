@@ -3,6 +3,7 @@ import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
 import { User } from '@/interfaces/users.interface';
 import FormData from 'form-data';
+import { logger } from '@/utils/logger';
 
 export interface AgnosticMessageResponse {
   messageId: string;
@@ -75,7 +76,7 @@ interface Address {
 }
 
 export interface LetterRequest {
-  subject?: string;
+  subject: string;
   contentType: 'text/plain';
   body: string;
   recipients: {
@@ -309,11 +310,13 @@ export const sendLetter: (
 
   return api
     .post<any, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<any>) => {
+    .then(async (_res: ApiResponse<any>) => {
       return { recipients };
     })
     .catch(e => {
-      console.log('Error when sending message:', e);
+      const errorMessage = 'Error when sending message';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
       throw e;
     });
 };
@@ -348,7 +351,9 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
       return { recipientPersonId: recipientPersonId };
     })
     .catch(e => {
-      console.log('Error when sending registered letter:', e);
+      const errorMessage = 'Error when sending registered letter';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
       throw e;
     });
 };
@@ -398,7 +403,14 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
       return { csv: true };
     })
     .catch(e => {
-      console.log('Error when sending message:', e);
+      const errorMessage = 'Error when sending message';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
       throw e;
     });
+};
+
+export const logError = (errorMessage: string, e: any) => {
+  console.error(`${errorMessage}:`, e);
+  logger.error(`${errorMessage}:`, e);
 };
