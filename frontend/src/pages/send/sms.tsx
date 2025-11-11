@@ -170,7 +170,7 @@ export default function SendEmailPage() {
         />
       }
     >
-      <h1 className="sr-only">Skicka SMS</h1>
+      <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
       <div className="text-lg mb-11 ">
         {success ? (
           <div className="text-center pt-64">
@@ -203,20 +203,16 @@ export default function SendEmailPage() {
             <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col w-full justify-center gap-24">
                 <div className="flex flex-col items-start w-full shadow-50 p-32 rounded-14 gap-40">
-                  <div className="w-full">
-                    <FormControl size="md" className="flex-grow w-full" id="title">
-                      <div className="text-h4-md">{t('send-sms:title')}</div>
-                      <div className="font-normal text-dark-secondary text-label-medium">
-                        {t('send-sms:discription')}
-                      </div>
-                    </FormControl>
+                  <div className="w-full flex flex-col gap-8">
+                    <div className="text-h4-md">{t('send-sms:title')}</div>
+                    <div className="font-normal text-dark-secondary text-label-medium">{t('send-sms:description')}</div>
                   </div>
                   <div className="flex flex-col gap-56 items-start self-stretch">
                     <div>
                       <div className="flex max-w-382 flex-col items-start gap-16">
                         <div className="flex flex-col items-start gap-8 self-stretch w-full">
                           <FormControl
-                            invalid={!!errors.singleRecipient?.message}
+                            invalid={!!errors.singleRecipient?.message || !!errors.recipientList}
                             id="recipient"
                             className="flex-grow w-full"
                             size="md"
