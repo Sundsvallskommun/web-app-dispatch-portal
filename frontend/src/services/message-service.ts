@@ -41,7 +41,7 @@ const file2blob = async (fileItem: File) => {
   return { attachment, blob };
 };
 
-export const sendSms: (data: SMSRequest) => Promise<any> = async (data) => {
+export const sendSms: (data: SMSRequest) => Promise<SMSStatus> = async (data) => {
   const res = await apiService.post<ApiResponse<SMSStatus>, SMSRequest>(`sms`, data).catch((e) => {
     console.error('Something went wrong when sending sms:', e);
     throw e;

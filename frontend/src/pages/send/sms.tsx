@@ -141,7 +141,7 @@ export default function SendEmailPage() {
     };
 
     await sendSms(data)
-      .then((res) => {
+      .then(() => {
         setSuccess(true);
         message({ message: t('send-sms:messages.smsSent'), status: 'success' });
         setTimeout(() => {

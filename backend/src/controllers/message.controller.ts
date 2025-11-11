@@ -49,7 +49,9 @@ export class MessageController {
   async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
     const { message, recipients } = body;
     const res = await sendSmsMessage(req.user, this.apiService, recipients, message).catch(e => {
-      console.log('Error when sending sms:', e);
+      const errorMessage = 'Error when sending sms';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
       throw new Error('Error when sending sms');
     });
 
@@ -82,7 +84,9 @@ export class MessageController {
         return res;
       })
       .catch(e => {
-        console.log('Error when sending letter:', e);
+        const errorMessage = 'Error when sending letter';
+        console.error(`${errorMessage}:`, e);
+        logger.error(`${errorMessage}:`, e);
         throw new Error('Error when sending message');
       });
 
@@ -116,7 +120,9 @@ export class MessageController {
         return res;
       })
       .catch(e => {
-        console.log('Error when sending letter:', e);
+        const errorMessage = 'Error when sending letter';
+        console.error(`${errorMessage}:`, e);
+        logger.error(`${errorMessage}:`, e);
         throw new Error('Error when sending message');
       });
 
@@ -151,7 +157,9 @@ export class MessageController {
         return res;
       })
       .catch(e => {
-        console.log('Error when sending csv letter:', e);
+        const errorMessage = 'Error when sending csv letter';
+        console.error(`${errorMessage}:`, e);
+        logger.error(`${errorMessage}:`, e);
         throw new Error('Error when sending csv message');
       });
 
@@ -205,14 +213,16 @@ export class MessageController {
                   if (partyId) {
                     const citizenUrl = `citizen/3.0/${partyId}`;
                     const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }, req.user).catch(e => {
-                      logger.error('Error when fetching recipient adress:', e);
-                      console.log('Error when fetching recipient adress:', e);
+                      const errorMessage = 'Error when fetching recipient adress';
+                      console.error(`${errorMessage}:`, e);
+                      logger.error(`${errorMessage}:`, e);
                       return undefined;
                     });
                     return { delivery, recipient: person.data };
                   } else {
-                    logger.error('No partyId for reciever, cannot fetch adress.');
-                    console.log('No partyId for reciever, cannot fetch adress.');
+                    const errorMessage = 'No partyId for reciever, cannot fetch adress.';
+                    logger.error(errorMessage);
+                    console.error(errorMessage);
                     return undefined;
                   }
                 }
