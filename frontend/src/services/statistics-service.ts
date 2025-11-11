@@ -18,16 +18,10 @@ export const useStatistics = (): { departmentStatistics: Statistics[]; loaded: b
   return { departmentStatistics: data, loaded };
 };
 
-export const getStatisticsByDate: (
-  year: number | undefined,
-  month: number | undefined
-) => Promise<Statistics[]> = async (year, month) => {
+export const getStatisticsByDate = async (year?: number, month?: number): Promise<Statistics[]> => {
   if (year === undefined && month === undefined) {
-    return Promise.reject(new Error('No "year" and "month" supplied'));
+    throw new Error('No "year" and "month" supplied');
   }
-  const params = { year, month };
-  const res = await apiService.get<Statistics[]>(`statistics/departments`, { params }).catch((e) => {
-    throw e;
-  });
+  const res = await apiService.get<Statistics[]>(`statistics/departments`, { year, month });
   return res.data;
 };

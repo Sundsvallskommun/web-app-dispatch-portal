@@ -75,9 +75,9 @@ export class StatisticsController {
         this.apiService,
         message.recipients.map(r => r.partyId),
       );
-      message.recipients.forEach(recipient => {
+      for (const recipient of message.recipients) {
         if (recipient.partyId) recipient.personnummer = personnummerRecords[recipient.partyId];
-      });
+      }
       return response.send(message);
     } catch (error) {
       logger.error('Error getting statistics: ', error);
