@@ -60,15 +60,7 @@ export enum EnumLetterType {
   LETTER = 'LETTER',
   DIGITAL_REGISTERED_LETTER = 'DIGITAL_REGISTERED_LETTER',
 }
-export enum EnumLetterState {
-  NEW = 'NEW',
-  SENT = 'SENT',
-  SIGNED = 'SIGNED',
-  EXPIRED = 'EXPIRED',
-  FAILED_Client_Error = 'FAILED - Client Error',
-  FAILED_Server_Error = 'FAILED - Server Error',
-  FAILED_Unknown_Error = 'FAILED - Unknown Error',
-}
+
 export enum EnumSigningState {
   PENDING = 'PENDING',
   COMPLETED = 'COMPLETED',
@@ -106,6 +98,15 @@ export interface UserRecLetters {
   letters: RecLetter[];
 }
 
+export enum EnumLetterState {
+  NEW = 'NEW',
+  SENT = 'SENT',
+  SIGNED = 'SIGNED',
+  EXPIRED = 'EXPIRED',
+  FAILED_Client_Error = 'FAILED - Client Error',
+  FAILED_Server_Error = 'FAILED - Server Error',
+  FAILED_Unknown_Error = 'FAILED - Unknown Error',
+}
 export interface RecLetter {
   id: string;
   subject: string;
