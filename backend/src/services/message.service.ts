@@ -180,7 +180,7 @@ export const sendEmail: (user: User, api: ApiService, senderPersonId: string, em
       return true;
     })
     .catch(e => {
-      console.log('Error when sending message:', e);
+      logError('Error when sending message:', e);
       throw e;
     });
 
@@ -230,7 +230,7 @@ export const sendSmsMessage: (user: User, api: ApiService, recipients: string[],
       return recipients;
     })
     .catch(e => {
-      console.log('Error when sending sms:', e);
+      logError('Error when sending sms:', e);
       throw new Error('Error when sending sms');
     });
 };
