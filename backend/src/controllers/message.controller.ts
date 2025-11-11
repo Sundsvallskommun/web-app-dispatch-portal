@@ -3,7 +3,7 @@ import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { MessageResponse, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
+import { logError, MessageResponse, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
@@ -49,9 +49,7 @@ export class MessageController {
   async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
     const { message, recipients } = body;
     const res = await sendSmsMessage(req.user, this.apiService, recipients, message).catch(e => {
-      const errorMessage = 'Error when sending sms';
-      console.error(`${errorMessage}:`, e);
-      logger.error(`${errorMessage}:`, e);
+      logError('Error when sending sms', e);
       throw new Error('Error when sending sms');
     });
 
@@ -84,9 +82,7 @@ export class MessageController {
         return res;
       })
       .catch(e => {
-        const errorMessage = 'Error when sending letter';
-        console.error(`${errorMessage}:`, e);
-        logger.error(`${errorMessage}:`, e);
+        logError('Error when sending letter', e);
         throw new Error('Error when sending message');
       });
 
@@ -120,9 +116,7 @@ export class MessageController {
         return res;
       })
       .catch(e => {
-        const errorMessage = 'Error when sending letter';
-        console.error(`${errorMessage}:`, e);
-        logger.error(`${errorMessage}:`, e);
+        logError('Error when sending letter', e);
         throw new Error('Error when sending message');
       });
 
@@ -157,9 +151,7 @@ export class MessageController {
         return res;
       })
       .catch(e => {
-        const errorMessage = 'Error when sending csv letter';
-        console.error(`${errorMessage}:`, e);
-        logger.error(`${errorMessage}:`, e);
+        logError('Error when sending csv letter', e);
         throw new Error('Error when sending csv message');
       });
 
@@ -213,9 +205,7 @@ export class MessageController {
                   if (partyId) {
                     const citizenUrl = `citizen/3.0/${partyId}`;
                     const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }, req.user).catch(e => {
-                      const errorMessage = 'Error when fetching recipient adress';
-                      console.error(`${errorMessage}:`, e);
-                      logger.error(`${errorMessage}:`, e);
+                      logError('Error when fetching recipient adress', e);
                       return undefined;
                     });
                     return { delivery, recipient: person.data };

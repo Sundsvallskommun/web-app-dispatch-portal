@@ -409,3 +409,8 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
       throw e;
     });
 };
+
+export const logError = (errorMessage: string, e: any) => {
+  console.error(`${errorMessage}:`, e);
+  logger.error(`${errorMessage}:`, e);
+};
