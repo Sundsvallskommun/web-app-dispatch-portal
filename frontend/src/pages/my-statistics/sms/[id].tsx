@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Breadcrumb, Spinner } from '@sk-web-gui/react';
 import { useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { Message, UserMessage } from '@interfaces/statistics.interface';
+import { UserMessage } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';

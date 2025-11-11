@@ -19,8 +19,8 @@ export const useStatistics = (): { departmentStatistics: Statistics[]; loaded: b
 };
 
 export const getStatisticsByDate: (
-  year: Number | undefined,
-  month: Number | undefined
+  year: number | undefined,
+  month: number | undefined
 ) => Promise<Statistics[]> = async (year, month) => {
   if (year === undefined && month === undefined) {
     return Promise.reject(new Error('No "year" and "month" supplied'));

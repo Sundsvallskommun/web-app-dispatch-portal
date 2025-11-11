@@ -35,8 +35,8 @@ const headers: Array<AutoTableHeader | string> = [
 export const StatisticsPage = () => {
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const [departmentStatistics, setDepartmentStatistics] = React.useState<Statistics[]>([]);
-  const [selectedYear, setSelectedYear] = useState<Number | undefined>();
-  const [selectedMonth, setSelectedMonth] = useState<Number | undefined>();
+  const [selectedYear, setSelectedYear] = useState<number | undefined>();
+  const [selectedMonth, setSelectedMonth] = useState<number | undefined>();
   const { t } = useTranslation(['common', 'statistics']);
 
   useEffect(() => {
