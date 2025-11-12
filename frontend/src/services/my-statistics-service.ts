@@ -100,6 +100,7 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
     recipients: [],
     sentAt: '',
     subject: '',
+    body: '',
   });
   const [loaded, setLoaded] = useState<boolean>(false);
 

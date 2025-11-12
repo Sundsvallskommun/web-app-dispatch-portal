@@ -12,6 +12,7 @@ import { capitalize } from '@mui/material';
 const defaultMessageInfo: UserMessage = {
   sentAt: '',
   subject: '',
+  body: '',
   recipients: [],
   attachments: [],
 };
@@ -63,7 +64,7 @@ const MyStatisticsDetails = () => {
           </div>
 
           <h3 className="pb-4 text-label-medium">{t('statistics:myStatistics.message')}</h3>
-          <div className="border-1 border-divider p-20 rounded-button">{message?.subject}</div>
+          <div className="border-1 border-divider p-20 rounded-button">{message?.body}</div>
         </div>
       ) : (
         <Spinner />

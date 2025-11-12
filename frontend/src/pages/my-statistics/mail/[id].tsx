@@ -26,6 +26,7 @@ import { isDigitalMessage } from '@utils/statistics-helpers';
 const defaultMessageInfo: UserMessage = {
   sentAt: '',
   subject: '',
+  body: '',
   recipients: [],
   attachments: [],
 };
