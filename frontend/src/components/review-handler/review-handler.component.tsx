@@ -2,7 +2,7 @@ import React from 'react';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 import { FormModel } from '@pages/send/mail';
 import { useMessageStore } from '@services/recipient-service';
-import { AutoTable, AutoTableHeader, cx, Divider, Icon } from '@sk-web-gui/react';
+import { AutoTable, AutoTableHeader, cx, Divider, Icon, Label } from '@sk-web-gui/react';
 import { File } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -52,8 +52,30 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     },
   };
 
+  const columnDeliveryMethod: AutoTableHeader = {
+    label: t('send-mail:reviewHandler.deliveryMethod'),
+    isColumnSortable: false,
+    renderColumn: (_value, item) => {
+      const deliveryMethodMap: Record<string, string> = {
+        SNAIL_MAIL: t('send-mail:mail'),
+        DIGITAL_MAIL: t('send-mail:digital'),
+      };
+      const deliveryMethodColorMap: Record<string, string> = {
+        SNAIL_MAIL: 'tertiary',
+        DIGITAL_MAIL: 'vattjom',
+      };
+      const deliveryMethod = item?.address?.deliveryMethod;
+
+      return (
+        <Label rounded={true} color={deliveryMethodColorMap[deliveryMethod]} inverted={true}>
+          {deliveryMethodMap[deliveryMethod]}
+        </Label>
+      );
+    },
+  };
+
   const columnsWithHeaders: AutoTableHeader[] =
-    sendType === formSendType.MAIL ? [columnRecipent, columnAddress] : [columnRecipent];
+    sendType === formSendType.MAIL ? [columnRecipent, columnAddress, columnDeliveryMethod] : [columnRecipent];
 
   const recipentsTable = (
     <div className={cx(contentClass, 'mb-16')}>

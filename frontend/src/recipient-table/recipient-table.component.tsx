@@ -1,9 +1,10 @@
 import { AddWithAddress, useMessageStore } from '@services/recipient-service';
-import { AutoTable, AutoTableHeader, Button, Icon } from '@sk-web-gui/react';
+import { AutoTable, AutoTableHeader, Button, Icon, Label } from '@sk-web-gui/react';
 import { Trash } from 'lucide-react';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
@@ -14,6 +15,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   showRemoveButton = false,
   sendType = formSendType.MAIL,
 }) => {
+  const { t } = useTranslation(['common', 'send-mail']);
+
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const validRecipients = recipients.filter((rec) => !rec?.error);
@@ -62,7 +65,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     : [];
 
   const AutoTableHeaderRecipient = {
-    label: 'Mottagare',
+    label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: sendType === formSendType.MAIL,
     renderColumn: (_value, item) => {
       // Added with address
@@ -87,7 +90,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   } as AutoTableHeader;
 
   const AutoTableHeaderAddress = {
-    label: 'Adress',
+    label: t('send-mail:reviewHandler.address'),
     renderColumn: (_value, item) => {
       // Added with address
       if (item?.firstName) {
@@ -114,10 +117,23 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   } as AutoTableHeader;
 
   const AutoTableHeaderDeliveryMethod: AutoTableHeader = {
-    label: 'Leveranssätt',
+    label: t('send-mail:reviewHandler.deliveryMethod'),
     isColumnSortable: true,
     renderColumn: (_value, item) => {
-      const deliveryMethod = item.return(<></>);
+      const deliveryMethodMap: Record<string, string> = {
+        SNAIL_MAIL: 'Post',
+        DIGITAL_MAIL: 'Digitalt',
+      };
+      const deliveryMethodColorMap: Record<string, string> = {
+        SNAIL_MAIL: 'tertiary',
+        DIGITAL_MAIL: 'vattjom',
+      };
+      const deliveryMethod = item?.address?.deliveryMethod;
+      return (
+        <Label rounded={true} color={deliveryMethodColorMap[deliveryMethod]} inverted={true}>
+          {deliveryMethodMap[deliveryMethod]}
+        </Label>
+      );
     },
   };
 

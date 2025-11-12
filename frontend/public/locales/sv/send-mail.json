@@ -103,21 +103,21 @@
       "success": "Har digital brevlåda hos Kivra",
       "error": "Har inte digital brevlåda hos Kivra"
     },
-    "addWithAddress" : {
-      "title" : "Lägg till mottagare med adress",
+    "addWithAddress": {
+      "title": "Lägg till mottagare med adress",
       "description": "När du lägger till en mottagare med adress skickas brevet som vanlig papperspost.",
-      "firstName" : "Förnamn",
-      "lastName" : "Efternamn",
-      "address" : "Adress",
-      "careOf" : "C/o adress (valfri)",
-      "zipCode" : "Postnummer",
-      "city" : "Ort",
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "address": "Adress",
+      "careOf": "C/o adress (valfri)",
+      "zipCode": "Postnummer",
+      "city": "Ort",
       "error": {
-        "firstName" : "Förnamn måste anges",
-        "lastName" : "Efternamn måste anges",
-        "address" : "Adress måste anges",
-        "zipCode" : "Postnummer måste anges",
-        "city" : "Ort måste anges"
+        "firstName": "Förnamn måste anges",
+        "lastName": "Efternamn måste anges",
+        "address": "Adress måste anges",
+        "zipCode": "Postnummer måste anges",
+        "city": "Ort måste anges"
       }
     }
   },
@@ -130,5 +130,7 @@
     "address": "Adress",
     "deliveryMethod": "Leveranssätt",
     "error": "Något gick fel"
-  }
+  },
+  "mail": "Post",
+  "digital": "Digitalt"
 }
