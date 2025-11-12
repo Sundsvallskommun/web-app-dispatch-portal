@@ -73,6 +73,16 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   } = useFormContext<RecipientListFormModel>();
   const [recipientList, recipient] = watch(['recipientList', 'singleRecipient']);
 
+  const renderFormMessage = () => {
+    if (errors.storeRecipients?.message) {
+      return <CustomFormErrorMessage padded={false} message={errors.storeRecipients.message} />;
+    } else if (errors.singleRecipient?.message) {
+      return <CustomFormErrorMessage padded={false} message={errors.singleRecipient.message} />;
+    } else {
+      return <p className="text-small">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>;
+    }
+  };
+
   const fetchRecipients = () => {
     setIsLoadingRecipients(true);
     setError(undefined);
@@ -374,14 +384,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                       allowSearchFieldOnSearch && handleSubmitSingleRecipient();
                     }}
                   />
-
-                  {errors.storeRecipients?.message ? (
-                    <CustomFormErrorMessage padded={false} message={errors.storeRecipients.message} />
-                  ) : errors.singleRecipient?.message ? (
-                    <CustomFormErrorMessage padded={false} message={errors.singleRecipient.message} />
-                  ) : (
-                    <p className="text-small m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
-                  )}
+                  {renderFormMessage()}
 
                   {foundPerson?.address && (
                     <PreviewPerson
