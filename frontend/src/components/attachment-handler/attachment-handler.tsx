@@ -82,7 +82,7 @@ const AttachmentHandler: React.FC = () => {
       description={t('send-mail:attachmentHandler.description')}
     >
       <input type="hidden" {...register('message')} value="hiddenmessage" />
-      <FormControl id="attachment" className="w-full gap-8">
+      <FormControl id="attachment" className="w-full pb-24">
         <FileUpload
           label="Dokument"
           fieldName={'attachmentList'}
@@ -97,24 +97,17 @@ const AttachmentHandler: React.FC = () => {
       <div className="flex flex-col gap-8 w-full">
         <p className="text-small">
           {t('send-mail:attachmentHandler.progressStepper', {
-            files: fileStorageLimit,
-            limit: MAX_ATTACHMENT_FILE_SIZE_MB,
+            files: fileStorageLimit.replace('.', ','),
+            limit: MAX_ATTACHMENT_FILE_SIZE_MB.toString().replace('.', ','),
           })}
         </p>
         <ProgressBar steps={progressBarValues.steps} current={progressBarValues.current} />
       </div>
       <div className="w-full">
-        {attachmentList.length === 0 && (
-          <div>
-            <h3 className="text-label-medium">{t('send-mail:attachmentHandler.addedFilesHeader')}</h3>
-            <p className="text-base">{`${t('send-mail:attachmentHandler:noFiles')}`}</p>
-          </div>
-        )}
-        {attachmentList.length > 0 && (
+        <h3 className="text-label-medium font-sans">{t('send-mail:attachmentHandler.addedFilesHeader')}</h3>
+
+        {attachmentList.length > 0 ? (
           <div className="w-full" data-cy="attachments">
-            <h4 className="pb-8 text-label-medium">
-              {t('send-mail:attachmentHandler.addedFiles', { num: attachmentList.length })}
-            </h4>
             <p className="text-base">{`${t('send-mail:attachmentHandler.sort')}.`}</p>
             <div className="flex flex-col gap-12" data-cy="file-list">
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -135,6 +128,8 @@ const AttachmentHandler: React.FC = () => {
               </DndContext>
             </div>
           </div>
+        ) : (
+          <p className="text-secondary">{`${t('send-mail:attachmentHandler:noFiles')}`}</p>
         )}
       </div>
     </HandlerWrapper>
