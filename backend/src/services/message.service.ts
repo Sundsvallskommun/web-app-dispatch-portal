@@ -226,7 +226,7 @@ export const sendSmsMessage: (user: User, api: ApiService, recipients: string[],
   };
   return api
     .post<any, SMSDTO>({ url, data, headers }, user)
-    .then(async (res: ApiResponse<string[]>) => {
+    .then(async (_res: ApiResponse<string[]>) => {
       return recipients;
     })
     .catch(e => {

@@ -130,6 +130,7 @@ export interface MessageAttachment {
 }
 export interface UserMessage {
   subject?: string;
+  body: string;
   sentAt: string;
   attachments: MessageAttachment[];
   recipients: Recipient[];
