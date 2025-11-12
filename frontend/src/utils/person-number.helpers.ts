@@ -141,7 +141,6 @@ export function tryNormalizePersonnummer(
   const yyyy = Number(twelve.slice(0, 4));
   const mm = Number(twelve.slice(4, 6));
   const dd = Number(twelve.slice(6, 8));
-  const xxxx = twelve.slice(8); // last 4
 
   // Validate date (supports samordningsnummer day+60 if enabled)
   if (!isValidDateYMD(yyyy, mm, dd, supportSamordning)) {
