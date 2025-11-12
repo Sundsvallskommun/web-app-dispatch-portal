@@ -5,6 +5,9 @@ import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
+import { tryNormalizeAddressLine } from '@utils/address.helpers';
+import { formatPostalLineDisplay } from '@utils/postal.helpers';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
@@ -83,7 +86,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
           <p>
             {item?.address?.givenname} {item?.address?.lastname}
           </p>
-          <p>{item?.address?.personNumber}</p>
+          <p>{formatPersonnummerDisplay(item?.address?.personNumber)}</p>
         </div>
       );
     },
@@ -98,7 +101,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
         return (
           <>
-            {address}, {zipCode} {city}
+            <span>{tryNormalizeAddressLine(address).value},</span>
+            <span>{formatPostalLineDisplay([zipCode, city].join(' '))}</span>
           </>
         );
       }
@@ -109,9 +113,10 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
       const { address, postalCode, city } = adress;
 
       return (
-        <>
-          {address}, {postalCode} {city}
-        </>
+        <div>
+          <p>{tryNormalizeAddressLine(address).value},</p>
+          <p>{formatPostalLineDisplay([postalCode, city].join(' '))}</p>
+        </div>
       );
     },
   } as AutoTableHeader;

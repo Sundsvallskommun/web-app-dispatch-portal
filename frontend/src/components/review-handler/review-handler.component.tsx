@@ -8,6 +8,9 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
+import { formatPostalLineDisplay } from '@utils/postal.helpers';
+import { tryNormalizeAddressLine } from '@utils/address.helpers';
+import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
 
 interface ReviewHandlerProps {
   sendType: SendType;
@@ -33,7 +36,7 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
       return (
         <p className="flex flex-col">
           <span>{`${item?.address?.givenname} ${item?.address?.lastname}${sendType === formSendType.REK_MAIL ? personalNumber : ''}`}</span>
-          {sendType === formSendType.MAIL && <span>{item?.address?.personNumber}</span>}
+          {sendType === formSendType.MAIL && <span>{formatPersonnummerDisplay(item?.address?.personNumber)}</span>}
         </p>
       );
     },
@@ -45,8 +48,12 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     renderColumn: (_value, item) => {
       return (
         <p className="flex flex-col">
-          <span>{`${item?.address?.addresses[0].address},`}</span>
-          <span>{`${item?.address?.addresses[0].postalCode} ${item?.address?.addresses[0].city}`}</span>
+          <span>{tryNormalizeAddressLine(item?.address?.addresses[0].address).value},</span>
+          <span>
+            {formatPostalLineDisplay(
+              [item?.address?.addresses[0].postalCode, item?.address?.addresses[0].city].join(' ')
+            )}
+          </span>
         </p>
       );
     },
