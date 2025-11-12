@@ -22,6 +22,7 @@ import {
   cx,
   Modal,
   Icon,
+  useConfirm,
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -52,10 +53,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>();
   const [current, setCurrent] = React.useState<number | undefined>(0);
   const [isAddWithAddressOpen, setIsAddWithAddressOpen] = useState(false);
-  const setRecipients = useMessageStore((state) => state.setRecipients);
-  const setAddresses = useMessageStore((state) => state.setAddresses);
-  const recipients = useMessageStore((state) => state.recipients);
-  const addresses = useMessageStore((state) => state.addresses);
+  const { recipients, setRecipients, setAddresses, addresses } = useMessageStore();
   const allowReplace = true;
   const validRecipientLength = recipients.filter((rec) => !rec?.error).length;
   const invalidRecipient = recipients.filter((rec) => rec?.error);
@@ -63,6 +61,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   const { isEligible } = useKivraEligibility(foundPerson?.address?.personId, sendType);
   const allowSearchFieldOnSearch = sendType === formSendType.MAIL || (isEligible && sendType === formSendType.REK_MAIL);
   const { t } = useTranslation(['send-mail', 'common', 'accessibility']);
+  const confirm = useConfirm();
 
   const {
     watch,
@@ -72,8 +71,17 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
     register,
     formState: { errors },
   } = useFormContext<RecipientListFormModel>();
-  const recipientList = watch('recipientList');
-  const recipient = watch('singleRecipient');
+  const [recipientList, recipient] = watch(['recipientList', 'singleRecipient']);
+
+  const renderFormMessage = () => {
+    if (errors.storeRecipients?.message) {
+      return <CustomFormErrorMessage padded={false} message={errors.storeRecipients.message} />;
+    } else if (errors.singleRecipient?.message) {
+      return <CustomFormErrorMessage padded={false} message={errors.singleRecipient.message} />;
+    } else {
+      return <p className="text-small">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>;
+    }
+  };
 
   const fetchRecipients = () => {
     setIsLoadingRecipients(true);
@@ -123,7 +131,11 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
           return;
         }
 
-        setRecipients(recipients.concat(res));
+        if (sendType === formSendType.REK_MAIL) {
+          setRecipients(res);
+        } else {
+          setRecipients(recipients.concat(res));
+        }
         setIsLoadingRecipients(false);
         setFoundPerson(undefined);
         clearErrors('singleRecipient');
@@ -197,15 +209,35 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   };
 
   const handleSubmitSingleRecipient = () => {
-    clearErrors(['singleRecipient', 'storeRecipients']);
-    if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
-      fetchRecipient();
-      setValue('singleRecipient', '');
-      setFoundPerson(undefined);
-    } else if (recipient.length < 12) {
-      setFormError('singleRecipient', { message: t('send-mail:recipientHandler.personalNumberError.fewNumber') });
-    } else if (recipient.length > 13) {
-      setFormError('singleRecipient', { message: t('send-mail:recipientHandler.personalNumberError.tooManyNumbers') });
+    if (sendType === formSendType.REK_MAIL && recipients.length > 0) {
+      confirm
+        .showConfirmation(
+          t('send-mail:recipientHandler.rekMail.replaceRecipientConfirm.title'),
+          t('send-mail:recipientHandler.rekMail.replaceRecipientConfirm.message'),
+          t('send-mail:recipientHandler.rekMail.replaceRecipientConfirm.confirm'),
+          t('send-mail:recipientHandler.rekMail.replaceRecipientConfirm.dismiss'),
+          'info'
+        )
+        .then((confirm: boolean) => {
+          if (confirm) {
+            fetchRecipient();
+          }
+          setFoundPerson(undefined);
+          setValue('singleRecipient', '');
+        });
+    } else {
+      clearErrors(['singleRecipient', 'storeRecipients']);
+      if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
+        fetchRecipient();
+        setValue('singleRecipient', '');
+        setFoundPerson(undefined);
+      } else if (recipient.length < 12) {
+        setFormError('singleRecipient', { message: t('send-mail:recipientHandler.personalNumberError.fewNumber') });
+      } else if (recipient.length > 13) {
+        setFormError('singleRecipient', {
+          message: t('send-mail:recipientHandler.personalNumberError.tooManyNumbers'),
+        });
+      }
     }
   };
 
@@ -331,28 +363,19 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
           {current === 0 ? (
             <div className={cx('flex flex-col gap-12', sendType === formSendType.MAIL && 'pt-32')}>
               <FormControl className="w-full medium-device:w-[365px]" invalid={!!errors.singleRecipient}>
-                <div className="flex flex-col w-full gap-8">
-                  <FormLabel className="text-label-medium">
-                    <Trans
-                      i18nKey="send-mail:recipientHandler.searchPersonalNumber"
-                      components={{
-                        span: <span className="font-normal" />,
-                      }}
-                    />
-                  </FormLabel>
+                <div className="flex flex-col w-full gap-8 pb-24">
+                  <FormLabel>{t('send-mail:recipientHandler.searchPersonalNumber')}</FormLabel>
                   <SearchField
                     {...register('singleRecipient')}
                     data-cy="person-search-field"
                     value={recipient}
-                    className="w-full "
-                    showSearchButton={false}
+                    className="w-full"
                     showResetButton={recipient.length > 0}
                     type="text"
                     size="md"
                     maxLength={13}
                     minLength={12}
                     placeholder="Sök"
-                    hideExtra
                     onReset={() => {
                       setValue('singleRecipient', '');
                       setFoundPerson(undefined);
@@ -360,9 +383,8 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     onSearch={() => {
                       allowSearchFieldOnSearch && handleSubmitSingleRecipient();
                     }}
-                    disabled={sendType === formSendType.REK_MAIL && recipients.length === 1}
                   />
-                  <p className="text-[14px] m-0">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>
+                  {renderFormMessage()}
 
                   {foundPerson?.address && (
                     <PreviewPerson
@@ -373,8 +395,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     />
                   )}
                 </div>
-                {errors.storeRecipients?.message && <CustomFormErrorMessage message={errors.storeRecipients.message} />}
-                {errors.singleRecipient?.message && <CustomFormErrorMessage message={errors.singleRecipient.message} />}
+
                 {sendType === formSendType.MAIL && (
                   <div className="my-32">
                     <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
@@ -423,7 +444,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <div className="my-lg flex flex-col items-center justify-center gap-sm">
               <>
                 <div>
-                  <Spinner className="h-32 w-32"></Spinner>
+                  <Spinner className="h-32 w-32" />
                 </div>
                 <div>{t('send-mail:recipientHandler.fetchingRecipient')}</div>
               </>
@@ -473,7 +494,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
         {combinedLength < 1 && current === 0 && (
           <div>
             <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedRecipientsTitle')}</h3>
-            <p className="text-base">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
+            <p className="text-secondary">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
           </div>
         )}
         {recipients?.length < 1 && current === 1 && (

@@ -49,16 +49,17 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
               <Button
                 data-cy="delete-person-button"
                 aria-label="Ta bort mottagare"
-                iconButton
-                variant="secondary"
-                className="max-w-[36px] max-h-[36px] relative border-0"
+                variant="tertiary"
+                className="relative"
                 onClick={() =>
                   item?.firstName
                     ? handleRemoveOneWidthAddress(item as AddWithAddress)
                     : handleRemoveOneRecipient(item?.recipient.personnumber)
                 }
+                leftIcon={<Icon icon={<Trash />} />}
+                showBackground
               >
-                <Icon icon={<Trash />} />
+                {t('common:remove')}
               </Button>
             </div>
           ),

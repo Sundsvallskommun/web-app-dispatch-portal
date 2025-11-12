@@ -10,6 +10,7 @@ import { RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
+import HeaderMenu from '@components/header-menu/header-menu.component';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -126,7 +127,11 @@ const MyStatisticsDetails = () => {
   );
 
   return (
-    <DefaultLayout title={`Postportalen`} pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}>
+    <DefaultLayout
+      title={`Postportalen`}
+      headerMenu={<HeaderMenu />}
+      pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}
+    >
       {recLoaded ? (
         <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">

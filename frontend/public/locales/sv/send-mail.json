@@ -42,7 +42,6 @@
     "helperText": "Tillåtna filtyper: PDF",
     "addedFilesHeader": "Bifogade filer",
     "noFiles": "Du har inte bifogat några filer än",
-    "addedFiles": "Bifogade filer ({num})",
     "sort": "Sortera filerna i den ordning du vill att dom ska synas i utskicket",
     "progressStepper": "Använt utrymme: {files} MB av {limit} MB",
     "uploadHelperSingle": "<span>Välj fil</span> eller dra och släpp den här",
@@ -78,10 +77,10 @@
       "default": "Något gick fel när mottagarlistan hanterades",
       "invalidRecipient": "Ogiltiga mottagare ({num})",
       "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
-      "singleRecipientError": "Lägg till minst en mottagare för att fortsätta."
+      "singleRecipientError": "Du måste lägga till en mottagare."
     },
     "fetchRecipientError": {
-      "alreadyExists": "Personen är readan tillagd",
+      "alreadyExists": "Personen är redan tillagd",
       "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?"
     },
     "personalNumberError": {
@@ -99,9 +98,15 @@
     "addedRecipientNum": "Tillagda mottagare ({num})",
     "addedFromFileNum": "Tillagda mottagare från fil ({num})",
     "rekMail": {
-      "content": "Lägg till mottagare av ditt rekommenderade brev. Rekommenderat brev går bara att skicka till mottagare som har en digital brevlåda hos Kivra.",
-      "success": "Har digital brevlåda hos Kivra",
-      "error": "Har inte digital brevlåda hos Kivra"
+      "content": "Det går bara att lägga till en mottagare per rekommenderat brev. Mottagaren måste ha en digital brevlåda hos Kivra. ",
+      "success": "Kan ta emot via Kivra",
+      "error": "Kan inte ta emot via Kivra",
+      "replaceRecipientConfirm" : {
+        "title": "Ersätt mottagare?",
+        "message": "Du kan bara lägga till en mottagare per rekommenderat brev. Vill du ersätta den nuvarande?",
+        "confirm": "Ja, ersätt",
+        "dismiss": "Nej, avbryt"
+      }
     },
     "addWithAddress": {
       "title": "Lägg till mottagare med adress",

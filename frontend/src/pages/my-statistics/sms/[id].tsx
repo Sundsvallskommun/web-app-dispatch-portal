@@ -8,6 +8,7 @@ import { UserMessage } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
+import HeaderMenu from '@components/header-menu/header-menu.component';
 
 const defaultMessageInfo: UserMessage = {
   sentAt: '',
@@ -30,6 +31,7 @@ const MyStatisticsDetails = () => {
   return (
     <DefaultLayout
       title={t('common:appTitle')}
+      headerMenu={<HeaderMenu />}
       pageheader={
         <PageHeader color="transparent">
           <Breadcrumb>
