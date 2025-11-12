@@ -20,6 +20,13 @@ describe('Send SMS flow', () => {
     cy.get('[data-cy="phone-numbers"]').should('not.exist');
   });
 
+  it('should show a validation message if no phone number is added', () => {
+    cy.get('[data-cy="mobile-number-input"]').should('exist').find('button').click({ force: true });
+    cy.get('[data-cy="form-error-message"]')
+      .should('be.visible')
+      .and('contain.text', 'Ange ett mobilnummer med 10 siffror, till exempel 0701234567.');
+  });
+
   it('should show validation error if the phone number format is incorrect', () => {
     addPhoneNumber('070174063');
     cy.get('[data-cy="form-error-message"]')

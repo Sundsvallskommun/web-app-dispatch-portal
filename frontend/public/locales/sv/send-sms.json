@@ -1,7 +1,7 @@
 {
   "send": "Skicka",
-  "title": "Rubrik",
-  "discription": "Beskrivning",
+  "title": "Lägg till mottagare och meddelande",
+  "description": "Organisationens namn visas som avsändare. Om mottagaren behöver veta vilken del av organisationen som skickar, kan du lägga till din enhet, förvaltning eller avdelning i meddelandet.",
   "addMobileNumber": "Lägg till mottagaren (mobilnummer)",
   "add": "Lägg till",
   "addedRecipients": "Tillagda mottagare",
