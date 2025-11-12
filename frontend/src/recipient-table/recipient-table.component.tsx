@@ -113,10 +113,18 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     },
   } as AutoTableHeader;
 
+  const AutoTableHeaderDeliveryMethod: AutoTableHeader = {
+    label: 'Leveranssätt',
+    isColumnSortable: true,
+    renderColumn: (_value, item) => {
+      const deliveryMethod = item.return(<></>);
+    },
+  };
+
   const headers: Array<AutoTableHeader | string> =
     sendType === formSendType.REK_MAIL
       ? [AutoTableHeaderRecipient]
-      : [AutoTableHeaderRecipient, AutoTableHeaderAddress];
+      : [AutoTableHeaderRecipient, AutoTableHeaderAddress, AutoTableHeaderDeliveryMethod];
 
   return (
     <AutoTable
