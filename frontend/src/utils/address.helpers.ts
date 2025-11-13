@@ -79,7 +79,7 @@ export function tryNormalizeAddressLine(raw: string | undefined): IAddressTryRes
   }
 
   const cleaned = collapseSpaces(normalizeDigits(raw));
-  const m = cleaned.match(/^(.*?)\s+(\d{1,4})\s*([A-Za-zÅÄÖåäö])?$/);
+  const m = cleaned.match(/^([^\d]+?)\s+(\d{1,4})([A-Za-zÅÄÖåäö])?$/);
   if (!m) return { ok: false, error: AddressError.BAD_FORMAT };
 
   const street = collapseSpaces(m[1]);
@@ -110,7 +110,7 @@ export function toAddressStorage(raw: string): string | undefined {
 export function trySplitAddress(raw: string): IAddressTryResult<{ street: string; building: string }> {
   const r = tryNormalizeAddressLine(raw);
   if (!r.ok || !r.value) return { ok: false, error: r.error };
-  const m = r.value.match(/^(.*)\s+(\d+[A-ZÅÄÖ]?)$/);
+  const m = r.value.match(/^([^\d]{1,100})\s+(\d{1,6}[A-ZÅÄÖ]?)$/);
   if (!m) return { ok: false, error: AddressError.BAD_FORMAT };
   return { ok: true, value: { street: m[1], building: m[2] } };
 }

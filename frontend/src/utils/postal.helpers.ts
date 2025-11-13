@@ -99,7 +99,7 @@ export function tryNormalizePostalLine(raw: string | undefined): ITryResult<{ po
 
   // Split by first space after something that looks like a postal code
   // We’ll pull a 5-digit group out of the start, then treat the rest as city.
-  const m = cleaned.match(/^\s*(?:SE[-\s]?)?(\d{3}[\s-]?\d{2})\s+(.+)$/i);
+  const m = cleaned.match(/^\s*(?:SE[-\s]?)?(\d{3}[\s-]?\d{2})\s+(.{1,100})$/);
   if (!m) return { ok: false, error: PostalError.BAD_FORMAT };
 
   const postalRaw = m[1];
