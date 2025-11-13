@@ -72,7 +72,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: sendType === formSendType.MAIL,
     renderColumn: (_value, item) => {
-      let toReturn = <></>;
+      let toReturn = null;
       if (item?.firstName) {
         toReturn = (
           <>

@@ -16,7 +16,6 @@ import {
   FormErrorMessage,
   FormLabel,
   SearchField,
-  Link,
   Spinner,
   RadioButton,
   cx,
@@ -26,7 +25,7 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Trans, useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import { Plus } from 'lucide-react';
 import { RecipientTable } from 'src/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';

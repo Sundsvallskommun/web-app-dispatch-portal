@@ -33,7 +33,7 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     isColumnSortable: false,
     renderColumn: (_value, item) => {
       const formatedPersonnummer = formatPersonnummerDisplay(item?.address?.personNumber);
-      let toReturn = <></>;
+      let toReturn = null;
       if (sendType === formSendType.REK_MAIL) {
         toReturn = (
           <p className="flex flex-col">
