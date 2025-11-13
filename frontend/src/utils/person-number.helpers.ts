@@ -24,9 +24,9 @@ export interface ITryResult {
 // ── Private config ─────────────────────────────────────────────────────────────
 
 // Accept common separators: spaces, dots, parentheses, dash/–— and the '+' century separator.
-const TRIVIAL_CHARS_REGEX = /[.\s()\-\+\u00A0\u2010-\u2015]/g;
+const TRIVIAL_CHARS_REGEX = /[.\s()-+\u00A0\u2010-\u2015]/g;
 // Reject anything outside digits and trivial separators (so letters, punctuation, etc.)
-const ILLEGAL_CHARS_REGEX = /[^0-9.\s()\-\+\u00A0\u2010-\u2015]/;
+const ILLEGAL_CHARS_REGEX = /[^0-9.\s()-+\u00A0\u2010-\u2015]/;
 
 // Luhn on YYMMDDNNN + check digit (10-digit form)
 function luhn10Check(tenDigits: string): boolean {
