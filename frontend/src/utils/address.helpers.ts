@@ -79,7 +79,7 @@ export function tryNormalizeAddressLine(raw: string | undefined): IAddressTryRes
   }
 
   const cleaned = collapseSpaces(normalizeDigits(raw));
-  const m = cleaned.match(/^([^\d]+?)\s+(\d{1,4})([A-Za-zÅÄÖåäö])?$/);
+  const m = cleaned.match(/^([^\d]{1,100})\s+(\d{1,4})([A-Za-zÅÄÖåäö])?$/);
   if (!m) return { ok: false, error: AddressError.BAD_FORMAT };
 
   const street = collapseSpaces(m[1]);
