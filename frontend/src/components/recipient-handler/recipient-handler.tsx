@@ -313,21 +313,9 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
       <HandlerWrapper
         title={t('send-mail:recipientHandler.title')}
         description={
-          sendType === formSendType.MAIL ? (
-            <>
-              <span>
-                <Trans
-                  i18nKey="send-mail:recipientHandler.contentFirstRow"
-                  components={{
-                    Link: <Link href="/files/example.csv" />,
-                  }}
-                />
-              </span>
-              <span>{t('send-mail:recipientHandler.contentSecondRow')}</span>
-            </>
-          ) : (
-            t('send-mail:recipientHandler.rekMail.content')
-          )
+          sendType === formSendType.MAIL
+            ? t('send-mail:recipientHandler.contentFirstRow')
+            : t('send-mail:recipientHandler.rekMail.content')
         }
       >
         <div className="w-full gap-32">
