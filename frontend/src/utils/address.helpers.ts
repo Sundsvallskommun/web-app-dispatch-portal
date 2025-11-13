@@ -1,6 +1,8 @@
 // address.service.ts
 // Handles both address lines (street + number) and city capitalization.
 
+import { capitalizeWord, collapseSpaces, normalizeDigits } from './helpers';
+
 export enum AddressError {
   EMPTY_INPUT = 'EMPTY_INPUT',
   INVALID_CHAR = 'INVALID_CHAR',
@@ -16,34 +18,6 @@ export interface IAddressTryResult<T = string> {
 
 const STREET_ALLOWED_REGEX = /^[A-Za-zÅÄÖåäö0-9'.\-\s]+$/;
 const CITY_ALLOWED_REGEX = /^[A-Za-zÅÄÖåäö'.\-\s]+$/;
-
-function normalizeDigits(input: string): string {
-  if (!input) return input;
-  let out = '';
-  for (const ch of input) {
-    const code = ch.codePointAt(0);
-    if (code === undefined) continue;
-    if (code >= 0x0660 && code <= 0x0669) {
-      out += String.fromCodePoint(48 + (code - 0x0660));
-      continue;
-    }
-    if (code >= 0x06f0 && code <= 0x06f9) {
-      out += String.fromCodePoint(48 + (code - 0x06f0));
-      continue;
-    }
-    out += ch;
-  }
-  return out;
-}
-
-function collapseSpaces(s: string): string {
-  return s.replace(/[\s\u00A0]+/g, ' ').trim();
-}
-
-function capitalizeWord(word: string): string {
-  const lower = word.toLocaleLowerCase('sv-SE');
-  return lower ? lower[0].toLocaleUpperCase('sv-SE') + lower.slice(1) : lower;
-}
 
 function capitalizeStreet(street: string): string {
   return capitalizeWord(street);

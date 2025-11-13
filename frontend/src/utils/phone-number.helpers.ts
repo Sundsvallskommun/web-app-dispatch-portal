@@ -2,6 +2,8 @@
 // Utilities for Swedish SMS-capable mobile numbers.
 // Canonical storage format: +467XXXXXXXX (e.g. +46762358914)
 
+import { normalizeDigits } from './helpers';
+
 export enum MobileNumberError {
   EMPTY_INPUT = 'EMPTY_INPUT',
   INVALID_CHAR = 'INVALID_CHAR',
@@ -25,26 +27,6 @@ const TRIVIAL_CHARS_REGEX = /[.\s()\-\u00A0\u2010-\u2015]/g;
 const ILLEGAL_CHARS_REGEX = /[^0-9+\s().\-\u00A0\u2010-\u2015]/;
 
 // ── Private helpers ────────────────────────────────────────────────────────────
-
-// Convert Arabic-Indic (٠–٩) and Eastern Arabic-Indic (۰–۹) numerals to ASCII
-function normalizeDigits(input: string): string {
-  if (!input) return input;
-  let out = '';
-  for (const ch of input) {
-    const code = ch.codePointAt(0);
-    if (code === undefined) continue;
-    if (code >= 0x0660 && code <= 0x0669) {
-      out += String.fromCodePoint(48 + (code - 0x0660));
-      continue;
-    }
-    if (code >= 0x06f0 && code <= 0x06f9) {
-      out += String.fromCodePoint(48 + (code - 0x06f0));
-      continue;
-    }
-    out += ch;
-  }
-  return out;
-}
 
 // Validate a *sanitized* Swedish mobile input (pre-normalization)
 function isValidMobileSanitized(s: string): boolean {

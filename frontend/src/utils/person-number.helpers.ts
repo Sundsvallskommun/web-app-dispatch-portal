@@ -3,6 +3,8 @@
 // Canonical display format: YYYYMMDD-XXXX
 // *Samordningsnummer uses day+60; validation supports this by default.
 
+import { normalizeDigits } from './helpers';
+
 export enum PersonnummerError {
   EMPTY_INPUT = 'EMPTY_INPUT',
   INVALID_CHAR = 'INVALID_CHAR',
@@ -25,26 +27,6 @@ export interface ITryResult {
 const TRIVIAL_CHARS_REGEX = /[.\s()\-\+\u00A0\u2010-\u2015]/g;
 // Reject anything outside digits and trivial separators (so letters, punctuation, etc.)
 const ILLEGAL_CHARS_REGEX = /[^0-9.\s()\-\+\u00A0\u2010-\u2015]/;
-
-// Arabic-Indic digits → ASCII (same as your mobile utils)
-function normalizeDigits(input: string): string {
-  if (!input) return input;
-  let out = '';
-  for (const ch of input) {
-    const code = ch.codePointAt(0);
-    if (code === undefined) continue;
-    if (code >= 0x0660 && code <= 0x0669) {
-      out += String.fromCodePoint(48 + (code - 0x0660));
-      continue;
-    }
-    if (code >= 0x06f0 && code <= 0x06f9) {
-      out += String.fromCodePoint(48 + (code - 0x06f0));
-      continue;
-    }
-    out += ch;
-  }
-  return out;
-}
 
 // Luhn on YYMMDDNNN + check digit (10-digit form)
 function luhn10Check(tenDigits: string): boolean {

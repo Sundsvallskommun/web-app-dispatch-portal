@@ -1,5 +1,7 @@
 // Swedish postal code + "postal line" (postal code + city) utilities.
 
+import { capitalizeWord, collapseSpaces, normalizeDigits } from './helpers';
+
 export enum PostalError {
   EMPTY_INPUT = 'EMPTY_INPUT',
   INVALID_CHAR = 'INVALID_CHAR',
@@ -11,35 +13,6 @@ export interface ITryResult<T = string> {
   ok: boolean;
   value?: T;
   error?: PostalError;
-}
-
-// Reuse from your other utils if you have it
-function normalizeDigits(input: string): string {
-  if (!input) return input;
-  let out = '';
-  for (const ch of input) {
-    const code = ch.codePointAt(0);
-    if (code === undefined) continue;
-    if (code >= 0x0660 && code <= 0x0669) {
-      out += String.fromCodePoint(48 + (code - 0x0660));
-      continue;
-    }
-    if (code >= 0x06f0 && code <= 0x06f9) {
-      out += String.fromCodePoint(48 + (code - 0x06f0));
-      continue;
-    }
-    out += ch;
-  }
-  return out;
-}
-
-function collapseSpaces(s: string): string {
-  return s.replace(/[\s\u00A0]+/g, ' ').trim();
-}
-
-function capitalizeWord(word: string): string {
-  const lower = word.toLocaleLowerCase('sv-SE');
-  return lower ? lower[0].toLocaleUpperCase('sv-SE') + lower.slice(1) : lower;
 }
 
 function capitalizeCity(city: string): string {
@@ -60,8 +33,8 @@ export function tryNormalizePostalCode(raw: string | undefined): ITryResult<stri
 
   // Normalize digits and collapse spaces
   let s = normalizeDigits(raw);
-  s = s.replace(/SE/gi, ''); // drop country code prefix if present
-  s = s.replace(/[-\s\u00A0]/g, ''); // remove dashes/spaces
+  s = s.replaceAll(/SE/gi, ''); // drop country code prefix if present
+  s = s.replaceAll(/[-\s\u00A0]/g, ''); // remove dashes/spaces
   s = s.trim();
 
   if (!/^\d+$/.test(s)) return { ok: false, error: PostalError.INVALID_CHAR };
@@ -81,7 +54,7 @@ export function toPostalStorage(raw: string): string | undefined {
 export function formatPostalDisplay(raw: string): string {
   const r = tryNormalizePostalCode(raw);
   if (!r.ok || !r.value) return raw;
-  return r.value.replace(/^(\d{3})(\d{2})$/, '$1 $2');
+  return r.value.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2');
 }
 
 /**
@@ -122,5 +95,5 @@ export function tryNormalizePostalLine(raw: string | undefined): ITryResult<{ po
 export function formatPostalLineDisplay(raw: string): string {
   const r = tryNormalizePostalLine(raw);
   if (!r.ok || !r.value) return raw;
-  return `${r.value.postalCode.replace(/^(\d{3})(\d{2})$/, '$1 $2')} ${r.value.city}`;
+  return `${r.value.postalCode.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2')} ${r.value.city}`;
 }
