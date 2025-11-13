@@ -32,15 +32,15 @@ const ILLEGAL_CHARS_REGEX = /[^0-9.\s()-+\u00A0\u2010-\u2015]/;
 function luhn10Check(tenDigits: string): boolean {
   if (!/^\d{10}$/.test(tenDigits)) return false;
   const digits = tenDigits.split('').map(Number);
-  const checksum = digits[9];
+  const actualLastDigit = digits[9];
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    let val = digits[i] * (i % 2 === 0 ? 2 : 1);
-    if (val > 9) val -= 9;
-    sum += val;
+    let value = digits[i] * (i % 2 === 0 ? 2 : 1);
+    if (value > 9) value -= 9;
+    sum += value;
   }
-  const calc = (10 - (sum % 10)) % 10;
-  return calc === checksum;
+  const calculatedLastDigit = (10 - (sum % 10)) % 10;
+  return calculatedLastDigit === actualLastDigit;
 }
 
 // Date validation with optional samordningsnummer support (day may be +60)
@@ -54,10 +54,10 @@ function isValidDateYMD(year: number, month: number, day: number, supportSamordn
 // Infer century for YY based on separator and a reference date.
 // '-' or none → choose century that yields age 0–99 relative to refDate.
 // '+' → 100+ years old, i.e., subtract 100 years from '-' case.
-function inferCentury(yy: number, sep: '-' | '+' | '', refDate = new Date()): number {
+function inferCentury(yy: number, separator: '-' | '+' | '', refDate = new Date()): number {
   const refYY = refDate.getFullYear() % 100;
   let base = yy <= refYY ? 2000 : 1900;
-  if (sep === '+') base -= 100;
+  if (separator === '+') base -= 100;
   return base;
 }
 
@@ -76,7 +76,7 @@ export function trySanitizePersonnummer(raw: string | undefined): ITryResult {
   }
 
   // Keep a note whether '+' appeared, to help century inference later if only 10 digits provided.
-  const hadPlus = /[+]/.test(trimmed);
+  const hasPlus = /[+]/.test(trimmed);
 
   // Remove all trivial separators (including '+' and '-')
   const digitsOnly = trimmed.replaceAll(TRIVIAL_CHARS_REGEX, '');
@@ -86,7 +86,7 @@ export function trySanitizePersonnummer(raw: string | undefined): ITryResult {
 
   // Encode '+' presence by prefixing a marker we can read later (without exposing outside).
   // We won't persist this marker—only used in normalize.
-  const value = (hadPlus ? 'P' : '') + digitsOnly;
+  const value = (hasPlus ? 'P' : '') + digitsOnly;
 
   return { ok: true, value };
 }
@@ -99,14 +99,14 @@ export function tryNormalizePersonnummer(
   raw: string | undefined,
   opts?: { supportSamordning?: boolean; refDate?: Date }
 ): ITryResult {
-  const san = trySanitizePersonnummer(raw);
-  if (!san.ok || !san.value) return { ok: false, error: san.error ?? PersonnummerError.INVALID_CHAR };
+  const sanitized = trySanitizePersonnummer(raw);
+  if (!sanitized.ok || !sanitized.value) return { ok: false, error: sanitized.error ?? PersonnummerError.INVALID_CHAR };
 
   const supportSamordning = opts?.supportSamordning ?? true;
   const refDate = opts?.refDate;
 
-  const hadPlus = san.value.startsWith('P');
-  const digits = hadPlus ? san.value.slice(1) : san.value;
+  const hasPlus = sanitized.value.startsWith('P');
+  const digits = hasPlus ? sanitized.value.slice(1) : sanitized.value;
 
   let twelve = '';
   if (digits.length === 12) {
@@ -115,7 +115,7 @@ export function tryNormalizePersonnummer(
     // 10 digits → need century inference
     // The 10-digit form is YYMMDDXXXX (with XXXX including the check digit).
     const yy = Number(digits.slice(0, 2));
-    const century = inferCentury(yy, hadPlus ? '+' : '-', refDate);
+    const century = inferCentury(yy, hasPlus ? '+' : '-', refDate);
     twelve = `${century + yy}${digits}`;
   }
 
@@ -144,8 +144,8 @@ export function tryNormalizePersonnummer(
  * Quick validator for raw input.
  */
 export function isValidPersonnummer(raw: string, opts?: { supportSamordning?: boolean; refDate?: Date }): boolean {
-  const r = tryNormalizePersonnummer(raw, opts);
-  return !!(r.ok && r.value);
+  const normalized = tryNormalizePersonnummer(raw, opts);
+  return !!(normalized.ok && normalized.value);
 }
 
 /**
@@ -154,10 +154,10 @@ export function isValidPersonnummer(raw: string, opts?: { supportSamordning?: bo
  * - Otherwise returns raw unchanged.
  */
 export function formatPersonnummerDisplay(raw: string, opts?: { supportSamordning?: boolean; refDate?: Date }): string {
-  const r = tryNormalizePersonnummer(raw, opts);
-  if (!r.ok || !r.value) return raw;
-  const yyyyMMdd = r.value.slice(0, 8);
-  const xxxx = r.value.slice(8);
+  const normalized = tryNormalizePersonnummer(raw, opts);
+  if (!normalized.ok || !normalized.value) return raw;
+  const yyyyMMdd = normalized.value.slice(0, 8);
+  const xxxx = normalized.value.slice(8);
   return `${yyyyMMdd}-${xxxx}`;
 }
 
@@ -169,6 +169,6 @@ export function toPersonnummerStorage(
   raw: string,
   opts?: { supportSamordning?: boolean; refDate?: Date }
 ): string | undefined {
-  const r = tryNormalizePersonnummer(raw, opts);
-  return r.ok ? r.value : undefined;
+  const normalized = tryNormalizePersonnummer(raw, opts);
+  return normalized.ok ? normalized.value : undefined;
 }

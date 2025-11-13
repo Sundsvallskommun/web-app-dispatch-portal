@@ -22,8 +22,8 @@ export const formatPersonNumber = (ssn: string) => {
 export function normalizeDigits(input: string): string {
   if (!input) return input;
   let out = '';
-  for (const ch of input) {
-    const code = ch.codePointAt(0);
+  for (const charcter of input) {
+    const code = charcter.codePointAt(0);
     if (code === undefined) continue;
     if (code >= 0x0660 && code <= 0x0669) {
       out += String.fromCodePoint(48 + (code - 0x0660));
@@ -33,13 +33,13 @@ export function normalizeDigits(input: string): string {
       out += String.fromCodePoint(48 + (code - 0x06f0));
       continue;
     }
-    out += ch;
+    out += charcter;
   }
   return out;
 }
 
-export function collapseSpaces(s: string): string {
-  return s.replaceAll(/[\s\u00A0]+/g, ' ').trim();
+export function collapseSpaces(text: string): string {
+  return text.replaceAll(/[\s\u00A0]+/g, ' ').trim();
 }
 
 export function capitalizeWord(word: string): string {

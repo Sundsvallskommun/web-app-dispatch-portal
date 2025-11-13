@@ -32,29 +32,29 @@ export function tryNormalizePostalCode(raw: string | undefined): ITryResult<stri
   }
 
   // Normalize digits and collapse spaces
-  let s = normalizeDigits(raw);
-  s = s.replaceAll(/SE/gi, ''); // drop country code prefix if present
-  s = s.replaceAll(/[-\s\u00A0]/g, ''); // remove dashes/spaces
-  s = s.trim();
+  let postal = normalizeDigits(raw);
+  postal = postal.replaceAll(/SE/gi, ''); // drop country code prefix if present
+  postal = postal.replaceAll(/[-\s\u00A0]/g, ''); // remove dashes/spaces
+  postal = postal.trim();
 
-  if (!/^\d+$/.test(s)) return { ok: false, error: PostalError.INVALID_CHAR };
-  if (s.length !== 5) return { ok: false, error: PostalError.WRONG_LENGTH };
+  if (!/^\d+$/.test(postal)) return { ok: false, error: PostalError.INVALID_CHAR };
+  if (postal.length !== 5) return { ok: false, error: PostalError.WRONG_LENGTH };
 
   // Optionally, you could block "00000" if you want.
-  return { ok: true, value: s };
+  return { ok: true, value: postal };
 }
 
 /** Storage form: "NNNNN" or undefined if invalid */
 export function toPostalStorage(raw: string): string | undefined {
-  const r = tryNormalizePostalCode(raw);
-  return r.ok ? r.value : undefined;
+  const postal = tryNormalizePostalCode(raw);
+  return postal.ok ? postal.value : undefined;
 }
 
 /** Display form: "NNN NN" if valid; otherwise returns raw unchanged */
 export function formatPostalDisplay(raw: string): string {
-  const r = tryNormalizePostalCode(raw);
-  if (!r.ok || !r.value) return raw;
-  return r.value.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2');
+  const postal = tryNormalizePostalCode(raw);
+  if (!postal.ok || !postal.value) return raw;
+  return postal.value.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2');
 }
 
 /**
@@ -72,14 +72,15 @@ export function tryNormalizePostalLine(raw: string | undefined): ITryResult<{ po
 
   // Split by first space after something that looks like a postal code
   // We’ll pull a 5-digit group out of the start, then treat the rest as city.
-  const m = cleaned.match(/^\s*(?:SE[-\s]?)?(\d{3}[\s-]?\d{2})\s+(.{1,100})$/);
+  const postalLineRegex = /^\s*(?:SE[-\s]?)?(\d{3}[\s-]?\d{2})\s+(.{1,100})$/;
+  const m = postalLineRegex.exec(cleaned);
   if (!m) return { ok: false, error: PostalError.BAD_FORMAT };
 
   const postalRaw = m[1];
   const cityRaw = m[2];
 
-  const p = tryNormalizePostalCode(postalRaw);
-  if (!p.ok || !p.value) return { ok: false, error: p.error };
+  const postal = tryNormalizePostalCode(postalRaw);
+  if (!postal.ok || !postal.value) return { ok: false, error: postal.error };
 
   // Validate city: basic Swedish letters + common separators
   const cityTrim = collapseSpaces(cityRaw);
@@ -88,12 +89,12 @@ export function tryNormalizePostalLine(raw: string | undefined): ITryResult<{ po
   }
 
   const city = capitalizeCity(cityTrim);
-  return { ok: true, value: { postalCode: p.value, city } };
+  return { ok: true, value: { postalCode: postal.value, city } };
 }
 
 /** Convenience: returns display line "NNN NN City" or raw if invalid */
 export function formatPostalLineDisplay(raw: string): string {
-  const r = tryNormalizePostalLine(raw);
-  if (!r.ok || !r.value) return raw;
-  return `${r.value.postalCode.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2')} ${r.value.city}`;
+  const postalLine = tryNormalizePostalLine(raw);
+  if (!postalLine.ok || !postalLine.value) return raw;
+  return `${postalLine.value.postalCode.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2')} ${postalLine.value.city}`;
 }
