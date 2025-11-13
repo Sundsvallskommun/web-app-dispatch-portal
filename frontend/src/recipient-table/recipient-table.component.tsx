@@ -72,24 +72,31 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: sendType === formSendType.MAIL,
     renderColumn: (_value, item) => {
-      // Added with address
+      let toReturn = <></>;
       if (item?.firstName) {
-        return (
+        toReturn = (
           <>
             {item?.firstName} {item?.lastName}
           </>
         );
+      } else if (sendType === formSendType.REK_MAIL) {
+        toReturn = (
+          <div>
+            {item?.address?.givenname} {item?.address?.lastname},{' '}
+            {formatPersonnummerDisplay(item?.address?.personNumber)}
+          </div>
+        );
+      } else {
+        toReturn = (
+          <div>
+            <p>
+              {item?.address?.givenname} {item?.address?.lastname}
+            </p>
+            <p>{formatPersonnummerDisplay(item?.address?.personNumber)}</p>
+          </div>
+        );
       }
-
-      // Added with file or SSN
-      return (
-        <div>
-          <p>
-            {item?.address?.givenname} {item?.address?.lastname}
-          </p>
-          <p>{formatPersonnummerDisplay(item?.address?.personNumber)}</p>
-        </div>
-      );
+      return toReturn;
     },
   } as AutoTableHeader;
 

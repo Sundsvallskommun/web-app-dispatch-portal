@@ -32,13 +32,24 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: false,
     renderColumn: (_value, item) => {
-      const personalNumber = `, ${item?.address?.personNumber}`;
-      return (
-        <p className="flex flex-col">
-          <span>{`${item?.address?.givenname} ${item?.address?.lastname}${sendType === formSendType.REK_MAIL ? personalNumber : ''}`}</span>
-          {sendType === formSendType.MAIL && <span>{formatPersonnummerDisplay(item?.address?.personNumber)}</span>}
-        </p>
-      );
+      const formatedPersonnummer = formatPersonnummerDisplay(item?.address?.personNumber);
+      let toReturn = <></>;
+      if (sendType === formSendType.REK_MAIL) {
+        toReturn = (
+          <p className="flex flex-col">
+            <span>{`${item?.address?.givenname} ${item?.address?.lastname}, ${formatedPersonnummer}`}</span>
+          </p>
+        );
+      } else {
+        toReturn = (
+          <p className="flex flex-col">
+            <span>{`${item?.address?.givenname} ${item?.address?.lastname}`}</span>
+            <span>{formatedPersonnummer}</span>
+          </p>
+        );
+      }
+
+      return toReturn;
     },
   };
 
