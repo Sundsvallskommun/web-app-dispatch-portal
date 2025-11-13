@@ -96,5 +96,5 @@ export function tryNormalizePostalLine(raw: string | undefined): ITryResult<{ po
 export function formatPostalLineDisplay(raw: string): string {
   const postalLine = tryNormalizePostalLine(raw);
   if (!postalLine.ok || !postalLine.value) return raw;
-  return `${postalLine.value.postalCode.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2')} ${postalLine.value.city}`;
+  return `${postalLine.value.postalCode.replace(/^(\d{3})(\d{2})$/, '$1 $2')} ${postalLine.value.city}`;
 }
