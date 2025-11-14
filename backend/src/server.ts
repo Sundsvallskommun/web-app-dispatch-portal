@@ -20,6 +20,9 @@ const app = new App([
   DepartmentsController,
   StatisticsController,
   DigitalRegisteredletterController,
+  AdminLogotypeController,
+  AdminMunicipalityController,
+  AdminOrganizationController,
 ]);
 
 app.listen();

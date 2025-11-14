@@ -1,5 +1,5 @@
 import { AUTHORIZED_GROUPS } from '@config';
-import { InternalRole, Permissions } from '@interfaces/users.interface';
+import { InternalRole, InternalRoleEnum, Permissions } from '@interfaces/users.interface';
 import { roleADMapping } from './ad-role.service';
 
 export function authorizeGroups(groups) {
@@ -19,9 +19,9 @@ enum RoleOrderEnum {
   'sms',
 }
 
-const roles = new Map<InternalRole, Partial<Permissions>>([
+const roles = new Map<InternalRoleEnum, Partial<Permissions>>([
   [
-    'sms',
+    InternalRoleEnum.SMS,
     {
       canSendSMS: true,
     },
@@ -34,11 +34,11 @@ const roles = new Map<InternalRole, Partial<Permissions>>([
  * @param internalGroups Whether to use internal groups or external group-mappings
  * @returns collected permissions for all matching role groups
  */
-export const getPermissions = (groups: InternalRole[] | string[], internalGroups = false): Permissions => {
+export const getPermissions = (groups: InternalRoleEnum[] | string[], internalGroups = false): Permissions => {
   const permissions: Permissions = defaultPermissions();
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
-    const role = internalGroups ? (groupLower as InternalRole) : (roleADMapping[groupLower] as InternalRole);
+    const role = internalGroups ? (groupLower as InternalRoleEnum) : (roleADMapping[groupLower] as InternalRoleEnum);
     if (roles.has(role)) {
       const groupPermissions = roles.get(role);
       Object.keys(groupPermissions).forEach(permission => {
@@ -56,7 +56,7 @@ export const getPermissions = (groups: InternalRole[] | string[], internalGroups
  * @param groups List of AD roles
  * @returns role with most permissions
  */
-export const getRole = (groups: string[]) => {
+export const getRole = (groups: string[]): InternalRole => {
   if (groups.length == 1) return roleADMapping[groups[0]];
 
   const roles: InternalRole[] = [];
@@ -69,4 +69,22 @@ export const getRole = (groups: string[]) => {
   });
 
   return roles.sort((a, b) => RoleOrderEnum[a] - RoleOrderEnum[b])[0];
+};
+
+/**
+ * Returns all roles
+ * @param groups List of AD groups
+ * @returns roles
+ */
+export const getRoles = (groups: string[]): InternalRole[] => {
+  const roles: InternalRole[] = [];
+  groups.forEach(group => {
+    const groupLower = group.toLowerCase();
+    const role = roleADMapping[groupLower];
+    if (role) {
+      roles.push(role);
+    }
+  });
+
+  return roles;
 };

@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+export { APIS, getApiBase } from './api-config';
 config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
 
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';
@@ -34,4 +35,6 @@ export const {
   AUTHORIZED_GROUPS,
   SMS_SENDER,
   COMPANY_IDS,
+  SMS_GROUP,
+  ADMIN_GROUP,
 } = process.env;

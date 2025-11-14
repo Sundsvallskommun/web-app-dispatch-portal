@@ -51,6 +51,7 @@ import ApiService from './services/api.service';
 import { User } from './interfaces/users.interface';
 import { getPermissions, getRole } from '@/services/authorization.service';
 
+import { dataDir, dataPath } from './utils/util';
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
 const sessionTTL = 4 * 24 * 60 * 60;
@@ -164,6 +165,7 @@ const samlStrategy = new Strategy(
         orgTree,
         groups: appGroups,
         role: getRole(appGroups),
+        roles: getRoles(appGroups),
         permissions: getPermissions(appGroups),
       };
 
@@ -227,6 +229,8 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+
+    this.app.use(`${BASE_URL_PREFIX}${dataPath()}`, express.static(dataDir('uploads')));
 
     this.app.use(
       session({
@@ -343,6 +347,10 @@ class App {
           url: BASE_URL_PREFIX,
         },
       ],
+    });
+
+    this.app.use(`${BASE_URL_PREFIX}/swagger.json`, (req: express.Request, res: express.Response) => {
+      res.json(spec);
     });
 
     this.app.use(`${BASE_URL_PREFIX}/api-docs`, swaggerUi.serve, swaggerUi.setup(spec));
