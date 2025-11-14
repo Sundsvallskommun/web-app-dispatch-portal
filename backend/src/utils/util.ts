@@ -59,3 +59,12 @@ export const isPersonNumber = (input: string): boolean => {
   const regex = /^(?:\d{8}-?\d{4}|\d{12})$/;
   return regex.test(input);
 };
+
+export const dataPath = (path?: string): string => {
+  const fullpath = path ? `/${path}` : '';
+  return '/files' + fullpath;
+};
+
+export const dataDir = (path: string): string => {
+  return __dirname + '/../../data/' + path;
+};
