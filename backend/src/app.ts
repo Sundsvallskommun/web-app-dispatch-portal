@@ -1,3 +1,4 @@
+import { getPermissions, getRole, getRoles } from '@/services/authorization.service';
 import {
   BASE_URL_PREFIX,
   CREDENTIALS,
@@ -24,12 +25,14 @@ import {
   TEST_USERNAME,
 } from '@config';
 import errorMiddleware from '@middlewares/error.middleware';
+import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import { existsSync, mkdirSync } from 'fs';
@@ -38,7 +41,6 @@ import hpp from 'hpp';
 import createMemoryStore from 'memorystore';
 import morgan from 'morgan';
 import passport from 'passport';
-import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { join } from 'path';
 import 'reflect-metadata';
 import { getMetadataArgsStorage, useExpressServer } from 'routing-controllers';
@@ -47,16 +49,26 @@ import createFileStore from 'session-file-store';
 import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
-import ApiService from './services/api.service';
 import { User } from './interfaces/users.interface';
-import { getPermissions, getRole } from '@/services/authorization.service';
-
+import ApiService from './services/api.service';
+import { getRelayState } from './utils/getRelayState';
+import { getRedirects } from './utils/getRedirects';
+import rateLimit from 'express-rate-limit';
 import { dataDir, dataPath } from './utils/util';
+
+const corsWhitelist = ORIGIN?.split(',');
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
 const sessionTTL = 4 * 24 * 60 * 60;
 // NOTE: memory uses ms while file uses seconds
 const sessionStore = new SessionStoreCreate(SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { ttl: sessionTTL, path: './data/sessions' });
+
+// Rate limiter for sensitive endpoints, e.g., SAML login callback
+const samlLoginRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: 'Too many login attempts from this IP, please try again after a minute',
+});
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -116,19 +128,6 @@ const samlStrategy = new Strategy(
       });
     }
 
-    // --------------------------------------
-    // Disable group authorization for now
-    // All groups are allowed in Postportalen
-    //
-    // if (!authorizeGroups(groups)) {
-    //   logger.error('Group authorization failed. Is the user a member of the authorized groups?');
-    //   return done(null, null, {
-    //     name: 'SAML_MISSING_GROUP',
-    //     message: 'SAML_MISSING_GROUP',
-    //   });
-    // }
-    // --------------------------------------
-
     const groupList: string[] = groups !== undefined ? (groups.split(',').map(x => x.toLowerCase()) as string[]) : [];
 
     const appGroups: string[] = groupList.length > 0 ? groupList : [];
@@ -152,6 +151,7 @@ const samlStrategy = new Strategy(
           canSendSMS: false,
         },
       };
+
       const employeeDetails = await apiService.get<any>({ url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` }, dummyUser);
       const { personid, orgTree } = employeeDetails.data;
 
@@ -245,12 +245,27 @@ class App {
     this.app.use(passport.session());
     passport.use('saml', samlStrategy as any);
 
+    this.app.use(
+      cors({
+        credentials: CREDENTIALS,
+        origin: function (origin, callback) {
+          if (origin === undefined || corsWhitelist?.indexOf(origin) !== -1 || corsWhitelist?.indexOf('*') !== -1) {
+            callback(null, true);
+          } else {
+            if (NODE_ENV == 'development') {
+              callback(null, true);
+            } else {
+              callback(new Error('Not allowed by CORS'));
+            }
+          }
+        },
+      }),
+    );
+
     this.app.get(
       `${BASE_URL_PREFIX}/saml/login`,
       (req, _res, next) => {
-        if (req.session.returnTo) {
-          req.query.RelayState = req.session.returnTo;
-        }
+        req.url = `${req.path}?RelayState=${getRelayState(req)}`;
         next();
       },
       (req, res, next) => {
@@ -266,51 +281,83 @@ class App {
       res.status(200).send(metadata);
     });
 
-    this.app.get(`${BASE_URL_PREFIX}/saml/logout`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
-      samlStrategy.logout(req as any, () => {
-        req.logout(err => {
-          if (err) {
-            return next(err);
-          }
-          // FIXME: should we redirect here or should client do it?
-          res.redirect(SAML_LOGOUT_REDIRECT);
+    this.app.get(
+      `${BASE_URL_PREFIX}/saml/logout`,
+      bodyParser.urlencoded({ extended: false }),
+      (req, res, next) => {
+        req.url = `${req.path}?RelayState=${getRelayState(req)}`;
+        next();
+      },
+      (req, res, next) => {
+        samlStrategy.logout(req as any, () => {
+          req.logout(err => {
+            if (err) {
+              return next(err);
+            }
+            // FIXME: should we redirect here or should client do it?
+            res.redirect(SAML_LOGOUT_REDIRECT);
+          });
         });
-      });
-    });
+      },
+    );
 
     this.app.get(`${BASE_URL_PREFIX}/saml/logout/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
-      // FIXME: is this enough or do we need to do something more?
       req.logout(err => {
         if (err) {
           return next(err);
         }
-        // FIXME: should we redirect here or should client do it?
-        res.redirect(SAML_LOGOUT_REDIRECT);
+
+        const { successRedirect, failureRedirect } = getRedirects(req);
+
+        const queries = new URLSearchParams(failureRedirect.searchParams);
+
+        if (req.session.messages?.length > 0) {
+          queries.append('failMessage', req.session.messages[0]);
+        } else {
+          queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
+        }
+
+        if (failureRedirect) {
+          res.redirect(failureRedirect.toString());
+        } else {
+          res.redirect(successRedirect.toString());
+        }
       });
     });
 
-    this.app.post(
-      `${BASE_URL_PREFIX}/saml/login/callback`,
-      bodyParser.urlencoded({ extended: false }),
-      (req, res, next) => {
-        passport.authenticate('saml', {
-          failureRedirect: SAML_FAILURE_REDIRECT,
-        })(req, res, next);
-      },
-      (_req, res, _next) => {
-        res.redirect(SAML_SUCCESS_REDIRECT);
-      },
-    );
+    this.app.post(`${BASE_URL_PREFIX}/saml/login/callback`, bodyParser.urlencoded({ extended: false }), samlLoginRateLimiter, (req, res, next) => {
+      const { successRedirect, failureRedirect } = getRedirects(req);
+      passport.authenticate('saml', (err, user) => {
+        console.log(err);
+        if (err) {
+          const queries = new URLSearchParams(failureRedirect.searchParams);
+          if (err?.name) {
+            queries.append('failMessage', err.name);
+          } else {
+            queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
+          }
+          failureRedirect.search = queries.toString();
+          res.redirect(failureRedirect.toString());
+        } else if (!user) {
+          res.redirect('/saml/login');
+        } else {
+          req.login(user, loginErr => {
+            if (loginErr) {
+              const failMessage = new URLSearchParams(failureRedirect.searchParams);
+              failMessage.append('failMessage', 'SAML_UNKNOWN_ERROR');
+              failureRedirect.search = failMessage.toString();
+              res.redirect(failureRedirect.toString());
+            }
+            return res.redirect(successRedirect.toString());
+          });
+        }
+      })(req, res, next);
+    });
   }
 
   private initializeRoutes(controllers: Function[]) {
     useExpressServer(this.app, {
       routePrefix: BASE_URL_PREFIX,
-      cors: {
-        origin: ORIGIN,
-        credentials: CREDENTIALS,
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      },
       controllers: controllers,
       defaultErrorHandler: false,
     });
@@ -329,7 +376,7 @@ class App {
     const storage = getMetadataArgsStorage();
     const spec = routingControllersToSpec(storage, routingControllersOptions, {
       components: {
-        schemas: schemas as { [schema: string]: unknown },
+        schemas: schemas,
         securitySchemes: {
           basicAuth: {
             scheme: 'basic',
