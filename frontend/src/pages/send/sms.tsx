@@ -10,13 +10,13 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 import CustomChip from '@components/custom-chip/custom-chip.component';
-import { SMSRequest, SMSStatus } from '@interfaces/sms';
-import { ApiResponse, apiService } from '@services/api-service';
 import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@utils/phone-number.helpers';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { EnumQATags } from 'src/types';
+import { sendSms } from '@services/message-service';
+import { SMSRequest } from '@interfaces/sms';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 
 const createFormSchema = (t: TFunction) => {
@@ -135,26 +135,25 @@ export default function SendEmailPage() {
 
     setIsSending(true);
 
-    const data = {
+    const data: SMSRequest = {
       message: formData.message,
       recipients: formData.recipientList,
     };
 
-    const res = await apiService.post<ApiResponse<SMSStatus>, SMSRequest>(`sms`, data).catch((e) => {
-      setSuccess(false);
-      message({ message: t('send-sms:messages.somethingWrong'), status: 'error' });
-      console.error(t('send-sms:errors.somethingWrongWhenSendSms'), e);
-      throw e;
-    });
-
-    if (res?.data?.data?.batchId) {
-      setSuccess(true);
-      message({ message: t('send-sms:messages.smsSent'), status: 'success' });
-      // NOTE: fix for textarea (message) to update
-      setTimeout(() => {
-        reset(initialValues);
-      }, 1);
-    }
+    await sendSms(data)
+      .then(() => {
+        setSuccess(true);
+        message({ message: t('send-sms:messages.smsSent'), status: 'success' });
+        setTimeout(() => {
+          reset(initialValues);
+        }, 1);
+      })
+      .catch((e) => {
+        setSuccess(false);
+        message({ message: t('send-sms:messages.somethingWrong'), status: 'error' });
+        console.error(t('send-sms:errors.somethingWrongWhenSendSms'), e);
+        throw e;
+      });
 
     setIsSending(false);
   };

@@ -1,4 +1,4 @@
-import { getEligibilityKivra } from '@services/digital-registered-letter-service';
+import { getEligibilityKivra } from '@services/recipient-service';
 import { useEffect, useState } from 'react';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';

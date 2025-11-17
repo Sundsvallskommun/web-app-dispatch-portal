@@ -1,8 +1,9 @@
 import { MUNICIPALITY_ID } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
-import { logger } from '@/utils/logger';
 import { User } from '@/interfaces/users.interface';
+import FormData from 'form-data';
+import { logger } from '@/utils/logger';
 
 export interface AgnosticMessageResponse {
   messageId: string;
@@ -75,45 +76,41 @@ interface Address {
 }
 
 export interface LetterRequest {
-  party?: {
-    partyIds: string[];
-    addresses: Address[];
-    externalReferences?: { [key: string]: string }[];
-  };
+  subject: string;
+  contentType: 'text/plain';
+  body: string;
+  recipients: {
+    partyId: string;
+    deliveryMethod: string;
+    address: {
+      firstName: string;
+      lastName: string;
+      street: string;
+      apartmentNumber: string;
+      careOf: string;
+      zipCode: string;
+      city: string;
+      country: string;
+    };
+  }[];
+  addresses: Address[];
   headers?: [
     {
       name: string;
       values: string[];
     },
   ];
+}
+export interface RecLetterRequest {
   subject?: string;
-  sender: {
-    supportInfo: {
-      text: string;
-      emailAddress: string;
-      phoneNumber: string;
-      url: string;
-    };
-  };
   contentType: 'text/plain';
   body: string;
-  department: string;
-  deviation?: string;
-  attachments?: DigitalMailAttachment[];
+  partyId: string;
 }
-
-export interface LetterResponse {
-  batchId: string;
-  messages: [
-    {
-      messageId: string;
-      deliveries: {
-        deliveryId: string;
-        messageType: 'DIGITAL_MAIL' | 'SNAIL_MAIL';
-        status: string;
-      }[];
-    },
-  ];
+export interface CsvLetterRequest {
+  subject: string;
+  body: string;
+  contentType: 'text/plain';
 }
 
 export interface EmailMessageAttachment {
@@ -146,7 +143,8 @@ export interface EmailMessageRequest {
   attachments?: EmailMessageAttachment[];
 }
 
-const MESSAGING_SERVICE = `messaging/7.7`;
+const MESSAGING_SERVICE = `messaging/7.9`;
+const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
 
 export const sendEmail: (user: User, api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
   user,
@@ -194,59 +192,225 @@ interface Message {
   body: string;
   files: Express.Multer.File[];
 }
+interface CsvMessage {
+  subject: string;
+  body: string;
+  files: Express.Multer.File[];
+  csvFile: Express.Multer.File;
+}
+interface RecMessage {
+  subject: string;
+  body: string;
+  recipientPersonId: string;
+  files: Express.Multer.File[];
+}
+
+export interface SMSDTO {
+  message: string;
+  recipients: { phoneNumber: string }[];
+}
+
+export const sendSmsMessage: (user: User, api: ApiService, recipients: string[], message: string) => Promise<string[]> = async (
+  user,
+  api,
+  recipients,
+  message,
+) => {
+  const data: SMSDTO = {
+    message,
+    recipients: recipients.map(rec => ({ phoneNumber: rec })),
+  };
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/sms`;
+  const headers = {
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+  return api
+    .post<any, SMSDTO>({ url, data, headers }, user)
+    .then(async (_res: ApiResponse<string[]>) => {
+      return recipients;
+    })
+    .catch(e => {
+      logError('Error when sending sms:', e);
+      throw new Error('Error when sending sms');
+    });
+};
+
+export type MessageResponse =
+  | {
+      recipients: RecipientWithAddress[];
+    }
+  | { recipientPersonId: string }
+  | { csv: boolean };
+
+function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
+  if (!files?.length) return;
+
+  for (const file of files) {
+    if (file.mimetype !== 'application/pdf') {
+      throw new Error(`Invalid mimetype "${file.mimetype}" — only application/pdf is allowed`);
+    }
+
+    if (!Buffer.isBuffer(file.buffer)) {
+      throw new TypeError(`Missing or invalid buffer for file: ${file.originalname}`);
+    }
+
+    form.append('attachments', file.buffer, {
+      filename: file.originalname,
+      contentType: 'application/pdf',
+    });
+  }
+}
 
 export const sendLetter: (
   user: User,
   api: ApiService,
   recipients: RecipientWithAddress[],
   message: Message,
-  department: string,
   addresses: Address[],
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (user, api, recipients, message, department, addresses) => {
-  const { subject, files } = message;
-  const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/letter?async=true`;
-  const attachments = [];
-  files.forEach(f => {
-    const base64String = f.buffer.toString('base64');
-    const filename = f.originalname;
-    const contentType = f.mimetype;
-    if (contentType !== 'application/pdf') {
-      logger.error('Wrong attachment mimetype when sending letter, must be application/pdf.');
-    }
-    attachments.push({
-      content: base64String,
-      filename,
-      contentType: 'application/pdf',
-      deliveryMode: 'ANY',
-    } as DigitalMailAttachment);
-  });
+) => Promise<MessageResponse> = async (user, api, recipients, message, addresses) => {
+  const { subject, files, body } = message;
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
 
   const request = {
-    party: {
-      partyIds: recipients.map(r => r.address.personId),
-      addresses,
-    },
     subject: subject,
     contentType: 'text/plain',
-    department: department,
-    sender: {
-      supportInfo: {
-        text: 'Vänd dig till Sundsvalls kommun om du har frågor angående detta meddelande.',
-        url: 'https://www.sundsvall.se',
-      },
-    },
+    recipients: recipients.map(r => {
+      const currAddress = r.address.addresses?.length > 0 ? r.address.addresses[0] : undefined;
+      return {
+        partyId: r.address.personId,
+        deliveryMethod: r.address.deliveryMethod,
+        address: {
+          firstName: r.address.givenname,
+          lastName: r.address.lastname,
+          street: currAddress.address,
+          apartmentNumber: currAddress.appartmentNumber,
+          careOf: currAddress.co,
+          zipCode: currAddress.postalCode,
+          city: currAddress.city,
+          country: currAddress.country,
+        },
+      };
+    }),
+    addresses: addresses,
+    body: body ?? 'This is the body of the registered letter.',
   } as LetterRequest;
-  if (attachments.length > 0) {
-    request.attachments = attachments;
-  }
+
+  const form = new FormData();
+
+  form.append('request', JSON.stringify(request), {
+    contentType: 'application/json',
+  });
+
+  appendPdfAttachments(form, files);
+
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
 
   return api
-    .post<LetterResponse, LetterRequest>({ url, data: request }, user)
-    .then(async (res: ApiResponse<LetterResponse>) => {
-      return { recipients, response: res.data };
+    .post<any, FormData>({ url, data: form, headers }, user)
+    .then(async (_res: ApiResponse<any>) => {
+      return { recipients };
     })
     .catch(e => {
-      console.log('Error when sending message:', e);
+      const errorMessage = 'Error when sending message';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
       throw e;
     });
+};
+
+export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponse> = async (user, api, message) => {
+  const { subject, files, body, recipientPersonId } = message;
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
+
+  const request = {
+    body: body ?? 'This is the body of the registered letter.',
+    contentType: 'text/plain',
+    subject: subject,
+    partyId: recipientPersonId,
+  } as RecLetterRequest;
+
+  const form = new FormData();
+
+  form.append('request', JSON.stringify(request), {
+    contentType: 'application/json',
+  });
+
+  appendPdfAttachments(form, files);
+
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+
+  return api
+    .post<any, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<any>) => {
+      return { recipientPersonId: recipientPersonId };
+    })
+    .catch(e => {
+      const errorMessage = 'Error when sending registered letter';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
+      throw e;
+    });
+};
+
+export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponse> = async (user, api, message) => {
+  const { subject, files, body, csvFile } = message;
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
+
+  const requestContentType = 'application/json';
+  const csvContentType = 'text/csv';
+
+  const request = {
+    subject: subject,
+    contentType: 'text/plain',
+    body: body ?? 'This is the body of the registered letter.',
+  } as CsvLetterRequest;
+
+  const form = new FormData();
+  // Append request
+  form.append('request', JSON.stringify(request), {
+    contentType: requestContentType,
+  });
+
+  // Append attachment files
+  appendPdfAttachments(form, files);
+
+  // Append csv file
+  if (csvFile.mimetype !== csvContentType) {
+    throw new Error('Wrong csv file mimetype; must be text/csv');
+  }
+  if (!Buffer.isBuffer(csvFile.buffer)) {
+    throw new TypeError('Csv file buffer missing');
+  }
+  form.append('csv-file', csvFile.buffer, {
+    filename: csvFile.originalname,
+    contentType: csvContentType,
+  });
+
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+
+  return api
+    .post<any, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<any>) => {
+      return { csv: true };
+    })
+    .catch(e => {
+      const errorMessage = 'Error when sending message';
+      console.error(`${errorMessage}:`, e);
+      logger.error(`${errorMessage}:`, e);
+      throw e;
+    });
+};
+
+export const logError = (errorMessage: string, e: any) => {
+  console.error(`${errorMessage}:`, e);
+  logger.error(`${errorMessage}:`, e);
 };

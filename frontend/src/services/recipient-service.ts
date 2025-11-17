@@ -2,7 +2,6 @@ import { apiService } from '@services/api-service';
 import { __DEV__ } from '@sk-web-gui/react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { LetterResponse } from './message-service';
 
 export const MAX_RECIPIENT_FILE_SIZE_MB = 50;
 export const MAX_RECIPIENT_ROW_SIZE = 250;
@@ -135,15 +134,21 @@ export const getRecipient = async (personnumber: string): Promise<RecipientWithA
     });
 };
 
+export type MessageResponse =
+  | {
+      recipients: RecipientWithAddress[];
+    }
+  | { recipientPersonId: string };
+
 interface State {
   recipients: RecipientWithAddress[];
   addresses: AddWithAddress[];
-  response?: { recipients: RecipientWithAddress[]; response: LetterResponse };
+  response?: MessageResponse;
 }
 interface Actions {
   setRecipients: (rs: RecipientWithAddress[]) => void;
   setAddresses: (addresses: AddWithAddress[]) => void;
-  setResponse: (r: { recipients: RecipientWithAddress[]; response: LetterResponse } | undefined) => void;
+  setResponse: (r: MessageResponse | undefined) => void;
   reset: () => void;
 }
 
@@ -167,3 +172,18 @@ export const useMessageStore = create<State & Actions>()(
     { enabled: __DEV__ }
   )
 );
+
+interface EligibilityItemResponseDto {
+  partyId: string;
+  hasKivra: boolean;
+}
+
+export const getEligibilityKivra = async (partyId: string): Promise<EligibilityItemResponseDto> => {
+  return apiService
+    .post<{ data: EligibilityItemResponseDto }, { partyId: string }>('eligibility-kivra', { partyId })
+    .then((r) => r.data.data)
+    .catch((e) => {
+      console.error('Something went wrong when requesting eligibilty.');
+      throw e;
+    });
+};

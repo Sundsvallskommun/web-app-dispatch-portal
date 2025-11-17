@@ -13,7 +13,7 @@ import { Response } from 'express';
 @Controller()
 export class StatisticsController {
   apiService = new ApiService();
-  SERVICE = `messaging/7.7`;
+  SERVICE = `messaging/7.9`;
   REC_SERVICE = `digitalregisteredletter/2.4`;
 
   @Get('/statistics/departments')
