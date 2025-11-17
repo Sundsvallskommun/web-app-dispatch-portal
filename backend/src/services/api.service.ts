@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
 import ApiTokenService from './api-token.service';
 import { HttpException } from '@/exceptions/HttpException';
@@ -22,19 +22,17 @@ class ApiService {
       async request => {
         if (request.url === apiURL('token')) return request;
 
-        request.headers = AxiosHeaders.from(request.headers);
-
-        const currentContentType = request.headers.get('Content-Type');
-        const resolvedContentType = currentContentType?.toString().toLowerCase().startsWith('multipart/form-data')
-          ? currentContentType
-          : 'application/json';
-
         const token = await apiTokenService.getToken();
 
-        request.headers = request.headers.set({
+        const defaultHeaders: Partial<AxiosRequestHeaders> = {
           Authorization: `Bearer ${token}`,
-          'Content-Type': resolvedContentType,
+          'Content-Type': 'application/json',
           'X-Request-Id': uuidv4(),
+        };
+
+        request.headers = AxiosHeaders.from({
+          ...defaultHeaders,
+          ...request.headers,
         });
 
         return request;
