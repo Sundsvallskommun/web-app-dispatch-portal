@@ -13,7 +13,7 @@ import HeaderMenu from '@components/header-menu/header-menu.component';
 const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
   const user = useUserStore((state) => state.user);
-  const { canSendLetter, canSendRegisteredLetter, canSendSMS } = user?.permissions;
+  const { canSendLetter, canSendRegisteredLetter, canSendSMS } = user?.permissions ?? {};
   const router = useRouter();
   const { t } = useTranslation(['common', 'start-page']);
 
