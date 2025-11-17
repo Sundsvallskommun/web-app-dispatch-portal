@@ -12,7 +12,9 @@ export function authorizeGroups(groups) {
 }
 
 export const defaultPermissions: () => Permissions = () => ({
-  canSendSMS: true, // NOTE: everyone can send SMS by default
+  canSendSMS: false, // NOTE: everyone can send SMS by default
+  canSendLetter: true,
+  canSendRegisteredLetter: false,
 });
 
 enum RoleOrderEnum {

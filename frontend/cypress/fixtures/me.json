@@ -5,7 +5,9 @@
     "givenName": "Darth",
     "surname": "Vader",
     "permissions": {
-      "canSendSMS": true
+      "canSendSMS": false,
+      "canSendLetter": true,
+      "canSendRegisteredLetter": false
     },
     "email": "darth.vadeer@sundsvall.se",
     "orgTree": "2|26|Stadsbyggnadskontoret¤3|714|SBK Gatuavdelning¤4|720|SBK GA Gatuavdelning¤5|699|SBK GA Gatuavdelning¤6|656|SBK GA Gatuavdelning"
