@@ -21,6 +21,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
 import ReviewHandler from '@components/review-handler/review-handler.component';
 import { EnumQATags } from 'src/types';
+import { useRouter } from 'next/router';
+import { useUserStore } from '@services/user-service/user-service';
 
 export type SendRekMailForm = yup.InferType<typeof formSchema>;
 
@@ -54,6 +56,8 @@ const SendRekMail = () => {
   const hasDepartment = watch('department').length > 0;
   const hasAtLeastOneAttachment = (watchAttachmentList?.length ?? 0) > 0;
   const { t } = useTranslation(['common', 'send-mail']);
+const router = useRouter();
+  const { user } = useUserStore();
 
   const stepTexts: Record<number, string> = {
     0: t('common:screenReader.postStepper.stepOne'),
@@ -67,6 +71,10 @@ const SendRekMail = () => {
     reset({ ...initialValues, department: '', subject: '' });
     setResponse(undefined);
   }, [setRecipients, setAddresses, reset, setResponse]);
+
+  useEffect(() => {
+    if (!user.permissions.canSendRegisteredLetter) router.replace('/');
+  }, [user.permissions.canSendRegisteredLetter, router]);
 
   useSendMailEffects({ setValue, resetAll, setSuccess });
 
