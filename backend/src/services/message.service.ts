@@ -225,8 +225,8 @@ export const sendSmsMessage: (user: User, api: ApiService, recipients: string[],
     'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
   };
   return api
-    .post<any, SMSDTO>({ url, data, headers }, user)
-    .then(async (_res: ApiResponse<string[]>) => {
+    .post<string, SMSDTO>({ url, data, headers }, user)
+    .then(async (_res: ApiResponse<string>) => {
       return recipients;
     })
     .catch(e => {
@@ -235,12 +235,14 @@ export const sendSmsMessage: (user: User, api: ApiService, recipients: string[],
     });
 };
 
-export type MessageResponse =
+export type MessageResponseData =
   | {
       recipients: RecipientWithAddress[];
     }
   | { recipientPersonId: string }
   | { csv: boolean };
+
+export type MessageResponse = ApiResponse<MessageResponseData>;
 
 function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
   if (!files?.length) return;
@@ -267,7 +269,7 @@ export const sendLetter: (
   recipients: RecipientWithAddress[],
   message: Message,
   addresses: Address[],
-) => Promise<MessageResponse> = async (user, api, recipients, message, addresses) => {
+) => Promise<MessageResponseData> = async (user, api, recipients, message, addresses) => {
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
 
@@ -309,8 +311,8 @@ export const sendLetter: (
   };
 
   return api
-    .post<any, FormData>({ url, data: form, headers }, user)
-    .then(async (_res: ApiResponse<any>) => {
+    .post<string, FormData>({ url, data: form, headers }, user)
+    .then(async (_res: ApiResponse<string>) => {
       return { recipients };
     })
     .catch(e => {
@@ -321,7 +323,7 @@ export const sendLetter: (
     });
 };
 
-export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponse> = async (user, api, message) => {
+export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponseData> = async (user, api, message) => {
   const { subject, files, body, recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
 
@@ -346,8 +348,8 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
   };
 
   return api
-    .post<any, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<any>) => {
+    .post<string, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<string>) => {
       return { recipientPersonId: recipientPersonId };
     })
     .catch(e => {
@@ -358,7 +360,7 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
     });
 };
 
-export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponse> = async (user, api, message) => {
+export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponseData> = async (user, api, message) => {
   const { subject, files, body, csvFile } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
 
@@ -398,8 +400,8 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   };
 
   return api
-    .post<any, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<any>) => {
+    .post<string, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<string>) => {
       return { csv: true };
     })
     .catch(e => {

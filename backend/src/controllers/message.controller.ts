@@ -62,12 +62,9 @@ export class MessageController {
   async recipients(
     @Req() req: RequestWithUser,
     @Body() body: RequestBodyMail,
-    @Res() response: any,
+    @Res() response: Response<MessageResponse>,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
-  ): Promise<{
-    data: MessageResponse;
-    message: string;
-  }> {
+  ): Promise<Response<MessageResponse>> {
     let recipients: RecipientWithAddress[];
     let addresses;
     try {
@@ -86,12 +83,7 @@ export class MessageController {
         throw new Error('Error when sending message');
       });
 
-    return response
-      .send({ data: res, message: 'success' } as {
-        data: MessageResponse;
-        message: string;
-      })
-      .status(200);
+    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
   }
 
   @Post('/rec-message/')
@@ -100,12 +92,9 @@ export class MessageController {
   async sendRecMessage(
     @Req() req: RequestWithUser,
     @Body() body: RequestBodyRecMail,
-    @Res() response: any,
+    @Res() response: Response<MessageResponse>,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
-  ): Promise<{
-    data: MessageResponse;
-    message: string;
-  }> {
+  ): Promise<Response<MessageResponse>> {
     const res = await sendRecLetter(req.user, this.apiService, {
       recipientPersonId: body.recipientPersonId,
       subject: body.subject,
@@ -120,12 +109,7 @@ export class MessageController {
         throw new Error('Error when sending message');
       });
 
-    return response
-      .send({ data: res, message: 'success' } as {
-        data: MessageResponse;
-        message: string;
-      })
-      .status(200);
+    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
   }
 
   @Post('/csv-message/')
@@ -134,13 +118,10 @@ export class MessageController {
   async sendCsvMessage(
     @Req() req: RequestWithUser,
     @Body() body: RequestBodyRecMail,
-    @Res() response: any,
+    @Res() response: Response<MessageResponse>,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
     @UploadedFiles('csv-file', { options: fileUploadOptions, required: false }) csvFile: Express.Multer.File,
-  ): Promise<{
-    data: MessageResponse;
-    message: string;
-  }> {
+  ): Promise<Response<MessageResponse>> {
     const res = await sendLetterCsv(req.user, this.apiService, {
       subject: body.subject,
       body: body.body,
@@ -155,12 +136,7 @@ export class MessageController {
         throw new Error('Error when sending csv message');
       });
 
-    return response
-      .send({ data: res, message: 'success' } as {
-        data: MessageResponse;
-        message: string;
-      })
-      .status(200);
+    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
   }
 
   @Get('/batchstatus/:id')
