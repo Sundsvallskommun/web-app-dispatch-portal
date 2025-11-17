@@ -156,6 +156,11 @@ const samlStrategy = new Strategy(
       const employeeDetails = await apiService.get<any>({ url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` }, dummyUser);
       const { personid, orgTree } = employeeDetails.data;
 
+      // Get permissions of the user
+      let permissionsUser: User = { ...dummyUser };
+      permissionsUser.username = DEV ? TEST_USERNAME : username;
+      let permissions = await getPermissions(appGroups, permissionsUser, apiService);
+
       const findUser = {
         name: `${givenName} ${sn}`,
         givenName: givenName,
@@ -166,7 +171,7 @@ const samlStrategy = new Strategy(
         orgTree,
         groups: appGroups,
         role: getRole(appGroups),
-        permissions: getPermissions(appGroups),
+        permissions,
       };
 
       logger.info('Found user:', findUser);

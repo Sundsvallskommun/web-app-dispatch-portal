@@ -1,6 +1,11 @@
 import { AUTHORIZED_GROUPS } from '@config';
-import { InternalRole, Permissions } from '@interfaces/users.interface';
+import { InternalRole, Permissions, User } from '@interfaces/users.interface';
 import { roleADMapping } from './ad-role.service';
+import ApiService, { ApiResponse } from './api.service';
+import { logError } from './message.service';
+
+const MESSAGING_SETTINGS_PATH = `messaging-settings/2.0`;
+const MUNICIPALITY_ID = '2281';
 
 export function authorizeGroups(groups) {
   console.log('authorizing groups', groups);
@@ -36,7 +41,12 @@ const roles = new Map<InternalRole, Partial<Permissions>>([
  * @param internalGroups Whether to use internal groups or external group-mappings
  * @returns collected permissions for all matching role groups
  */
-export const getPermissions = (groups: InternalRole[] | string[], internalGroups = false): Permissions => {
+export const getPermissions = async (
+  groups: InternalRole[] | string[],
+  user: User,
+  apiService: ApiService,
+  internalGroups = false,
+): Promise<Permissions> => {
   const permissions: Permissions = defaultPermissions();
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
@@ -50,6 +60,13 @@ export const getPermissions = (groups: InternalRole[] | string[], internalGroups
       });
     }
   });
+
+  const messagingSettings = await getMessagingUserSettings(user, apiService);
+  const messagingSettingValues = messagingSettings?.[0]?.values || [];
+  const flag = (key: string) => messagingSettingValues.find(v => v.key === key)?.value?.toLowerCase() === 'true';
+  permissions.canSendSMS = flag('sms_enabled');
+  permissions.canSendRegisteredLetter = flag('rek_enabled');
+
   return permissions;
 };
 
@@ -72,3 +89,33 @@ export const getRole = (groups: string[]) => {
 
   return roles.sort((a, b) => RoleOrderEnum[a] - RoleOrderEnum[b])[0];
 };
+
+export const getMessagingUserSettings: (user: User, api: ApiService) => Promise<MessagingSettings[]> = async (user, api) => {
+  const url = `${MESSAGING_SETTINGS_PATH}/${MUNICIPALITY_ID}/user`;
+  const headers = {
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+  return api
+    .get<any>({ url, headers }, user)
+    .then(async (_res: ApiResponse<MessagingSettings[]>) => {
+      return _res.data;
+    })
+    .catch(e => {
+      logError('Error when getting messaging settings:', e);
+      throw new Error('Error when getting messaging settings');
+    });
+};
+
+export interface MessagingSettings {
+  id: string;
+  municipalityId: string;
+  created: string;
+  updated: string;
+  values: MessagingSettingsValue[];
+}
+
+export interface MessagingSettingsValue {
+  key: string;
+  value: string;
+  type: string;
+}
