@@ -2,12 +2,15 @@ import React from 'react';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 import { FormModel } from '@pages/send/mail';
 import { useMessageStore } from '@services/recipient-service';
-import { AutoTable, AutoTableHeader, cx, Divider, Icon } from '@sk-web-gui/react';
+import { AutoTable, AutoTableHeader, cx, Divider, Icon, Label } from '@sk-web-gui/react';
 import { File } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
+import { formatPostalLineDisplay } from '@utils/postal.helpers';
+import { tryNormalizeAddressLine } from '@utils/address.helpers';
+import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
 
 interface ReviewHandlerProps {
   sendType: SendType;
@@ -29,13 +32,24 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: false,
     renderColumn: (_value, item) => {
-      const personalNumber = `, ${item?.address?.personNumber}`;
-      return (
-        <p className="flex flex-col">
-          <span>{`${item?.address?.givenname} ${item?.address?.lastname}${sendType === formSendType.REK_MAIL ? personalNumber : ''}`}</span>
-          {sendType === formSendType.MAIL && <span>{item?.address?.personNumber}</span>}
-        </p>
-      );
+      const formatedPersonnummer = formatPersonnummerDisplay(item?.address?.personNumber);
+      let toReturn = null;
+      if (sendType === formSendType.REK_MAIL) {
+        toReturn = (
+          <p className="flex flex-col">
+            <span>{`${item?.address?.givenname} ${item?.address?.lastname}, ${formatedPersonnummer}`}</span>
+          </p>
+        );
+      } else {
+        toReturn = (
+          <p className="flex flex-col">
+            <span>{`${item?.address?.givenname} ${item?.address?.lastname}`}</span>
+            <span>{formatedPersonnummer}</span>
+          </p>
+        );
+      }
+
+      return toReturn;
     },
   };
 
@@ -45,15 +59,41 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     renderColumn: (_value, item) => {
       return (
         <p className="flex flex-col">
-          <span>{`${item?.address?.addresses[0].address},`}</span>
-          <span>{`${item?.address?.addresses[0].postalCode} ${item?.address?.addresses[0].city}`}</span>
+          <span>{tryNormalizeAddressLine(item?.address?.addresses[0].address).value},</span>
+          <span>
+            {formatPostalLineDisplay(
+              [item?.address?.addresses[0].postalCode, item?.address?.addresses[0].city].join(' ')
+            )}
+          </span>
         </p>
       );
     },
   };
 
+  const columnDeliveryMethod: AutoTableHeader = {
+    label: t('send-mail:reviewHandler.deliveryMethod'),
+    isColumnSortable: false,
+    renderColumn: (_value, item) => {
+      const deliveryMethodMap: Record<string, string> = {
+        SNAIL_MAIL: t('send-mail:mail'),
+        DIGITAL_MAIL: t('send-mail:digital'),
+      };
+      const deliveryMethodColorMap: Record<string, string> = {
+        SNAIL_MAIL: 'tertiary',
+        DIGITAL_MAIL: 'vattjom',
+      };
+      const deliveryMethod = item?.address?.deliveryMethod;
+
+      return (
+        <Label rounded={true} color={deliveryMethodColorMap[deliveryMethod]} inverted={true}>
+          {deliveryMethodMap[deliveryMethod]}
+        </Label>
+      );
+    },
+  };
+
   const columnsWithHeaders: AutoTableHeader[] =
-    sendType === formSendType.MAIL ? [columnRecipent, columnAddress] : [columnRecipent];
+    sendType === formSendType.MAIL ? [columnRecipent, columnAddress, columnDeliveryMethod] : [columnRecipent];
 
   const recipentsTable = (
     <div className={cx(contentClass, 'mb-16')}>

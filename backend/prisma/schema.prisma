@@ -7,7 +7,39 @@ datasource db {
   url      = "file:../data/database/database.db"
 }
 
-model UserSettings {
-  id     Int    @id @default(autoincrement())
-  userId String @unique
+
+model Municipality {
+  id                Int             @id @default(autoincrement())
+  municipalityId    Int             @unique
+  name              String?         
+  logotypeId        Int?
+  logotype          Logotype?       @relation(fields: [logotypeId], references: [id])
+  organizations     Organization[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+model Organization { 
+  id                Int             @id @default(autoincrement())
+  host              String          @unique
+  orgId             Int          
+  name              String?
+  logotypeId        Int?
+  logotype          Logotype?       @relation(fields: [logotypeId], references: [id])
+  municipalityId    Int
+  municipality      Municipality    @relation(fields: [municipalityId], references: [municipalityId])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model Logotype {
+  id                  Int             @id @default(autoincrement())
+  name                String
+  filenameLightMode   String
+  urlLightMode        String
+  filenameDarkMode    String?
+  urlDarkMode         String?
+  municipalities      Municipality[]
+  organizations       Organization[]
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
 }

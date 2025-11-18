@@ -13,12 +13,13 @@ import HeaderMenu from '@components/header-menu/header-menu.component';
 const Index = () => {
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
   const user = useUserStore((state) => state.user);
+  const { canSendLetter, canSendRegisteredLetter, canSendSMS } = user?.permissions ?? {};
   const router = useRouter();
   const { t } = useTranslation(['common', 'start-page']);
 
   useEffect(() => {
     setIsCheckingPermissions(false);
-  }, [user.permissions.canSendSMS, router]);
+  }, [canSendSMS, canSendLetter, canSendRegisteredLetter, router]);
 
   return (
     <DefaultLayout title={t('start-page:appTitle')} headerMenu={<HeaderMenu />}>
@@ -31,23 +32,27 @@ const Index = () => {
               <div className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</div>
             </div>
             <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
-              <Link href={'/send/mail'} className="start-link flex-1 w-full">
-                <MainCard
-                  icon={<Mail />}
-                  title={t('start-page:letter')}
-                  contentText={t('start-page:sendLetterDigitally')}
-                  subContentText={t('start-page:priceHalfKr')}
-                />
-              </Link>
-              <Link href={'/send/rek-mail'} className="start-link flex-1 w-full">
-                <MainCard
-                  icon={<MailCheck />}
-                  title={t('start-page:recLetter')}
-                  contentText={t('start-page:sendImportantDoc')}
-                  subContentText={t('start-page:price20kr')}
-                />
-              </Link>
-              {user.permissions.canSendSMS && (
+              {canSendLetter && (
+                <Link href={'/send/mail'} className="start-link flex-1 w-full">
+                  <MainCard
+                    icon={<Mail />}
+                    title={t('start-page:letter')}
+                    contentText={t('start-page:sendLetterDigitally')}
+                    subContentText={t('start-page:priceHalfKr')}
+                  />
+                </Link>
+              )}
+              {canSendRegisteredLetter && (
+                <Link href={'/send/rek-mail'} className="start-link flex-1 w-full">
+                  <MainCard
+                    icon={<MailCheck />}
+                    title={t('start-page:recLetter')}
+                    contentText={t('start-page:sendImportantDoc')}
+                    subContentText={t('start-page:price20kr')}
+                  />
+                </Link>
+              )}
+              {canSendSMS && (
                 <Link href="/send/sms" className="start-link flex-1 w-full">
                   <MainCard
                     icon={<Smartphone />}

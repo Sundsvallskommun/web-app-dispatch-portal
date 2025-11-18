@@ -1,10 +1,13 @@
 import { AddWithAddress, useMessageStore } from '@services/recipient-service';
-import { AutoTable, AutoTableHeader, Button, Icon } from '@sk-web-gui/react';
+import { AutoTable, AutoTableHeader, Button, Icon, Label } from '@sk-web-gui/react';
 import { Trash } from 'lucide-react';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
+import { tryNormalizeAddressLine } from '@utils/address.helpers';
+import { formatPostalLineDisplay } from '@utils/postal.helpers';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
@@ -15,7 +18,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   showRemoveButton = false,
   sendType = formSendType.MAIL,
 }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'send-mail']);
+
   const recipients = useMessageStore((state) => state.recipients);
   const addresses = useMessageStore((state) => state.addresses);
   const validRecipients = recipients.filter((rec) => !rec?.error);
@@ -65,32 +69,39 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     : [];
 
   const AutoTableHeaderRecipient = {
-    label: 'Mottagare',
+    label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: sendType === formSendType.MAIL,
     renderColumn: (_value, item) => {
-      // Added with address
+      let toReturn = null;
       if (item?.firstName) {
-        return (
+        toReturn = (
           <>
             {item?.firstName} {item?.lastName}
           </>
         );
+      } else if (sendType === formSendType.REK_MAIL) {
+        toReturn = (
+          <div>
+            {item?.address?.givenname} {item?.address?.lastname},{' '}
+            {formatPersonnummerDisplay(item?.address?.personNumber)}
+          </div>
+        );
+      } else {
+        toReturn = (
+          <div>
+            <p>
+              {item?.address?.givenname} {item?.address?.lastname}
+            </p>
+            <p>{formatPersonnummerDisplay(item?.address?.personNumber)}</p>
+          </div>
+        );
       }
-
-      // Added with file or SSN
-      return (
-        <div>
-          <p>
-            {item?.address?.givenname} {item?.address?.lastname}
-          </p>
-          <p>{item?.address?.personNumber}</p>
-        </div>
-      );
+      return toReturn;
     },
   } as AutoTableHeader;
 
   const AutoTableHeaderAddress = {
-    label: 'Adress',
+    label: t('send-mail:reviewHandler.address'),
     renderColumn: (_value, item) => {
       // Added with address
       if (item?.firstName) {
@@ -98,7 +109,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
         return (
           <>
-            {address}, {zipCode} {city}
+            <span>{tryNormalizeAddressLine(address).value},</span>
+            <span>{formatPostalLineDisplay([zipCode, city].join(' '))}</span>
           </>
         );
       }
@@ -109,17 +121,39 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
       const { address, postalCode, city } = adress;
 
       return (
-        <>
-          {address}, {postalCode} {city}
-        </>
+        <div>
+          <p>{tryNormalizeAddressLine(address).value},</p>
+          <p>{formatPostalLineDisplay([postalCode, city].join(' '))}</p>
+        </div>
       );
     },
   } as AutoTableHeader;
 
+  const AutoTableHeaderDeliveryMethod: AutoTableHeader = {
+    label: t('send-mail:reviewHandler.deliveryMethod'),
+    isColumnSortable: true,
+    renderColumn: (_value, item) => {
+      const deliveryMethodMap: Record<string, string> = {
+        SNAIL_MAIL: 'Post',
+        DIGITAL_MAIL: 'Digitalt',
+      };
+      const deliveryMethodColorMap: Record<string, string> = {
+        SNAIL_MAIL: 'tertiary',
+        DIGITAL_MAIL: 'vattjom',
+      };
+      const deliveryMethod = item?.address?.deliveryMethod;
+      return (
+        <Label rounded={true} color={deliveryMethodColorMap[deliveryMethod]} inverted={true}>
+          {deliveryMethodMap[deliveryMethod]}
+        </Label>
+      );
+    },
+  };
+
   const headers: Array<AutoTableHeader | string> =
     sendType === formSendType.REK_MAIL
       ? [AutoTableHeaderRecipient]
-      : [AutoTableHeaderRecipient, AutoTableHeaderAddress];
+      : [AutoTableHeaderRecipient, AutoTableHeaderAddress, AutoTableHeaderDeliveryMethod];
 
   return (
     <AutoTable
