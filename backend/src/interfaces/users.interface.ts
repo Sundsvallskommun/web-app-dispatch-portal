@@ -8,6 +8,7 @@ export interface User {
   username: string;
   groups: string;
   permissions: Permissions;
+  roles?: InternalRoleEnum[];
   personId: string;
   orgTree?: string;
 }
@@ -18,9 +19,10 @@ export interface Permissions {
 }
 
 /** Internal roles */
-export type InternalRole = 'sms';
+export type InternalRole = 'admin' | 'sms';
 export enum InternalRoleEnum {
-  'sms',
+  Admin = 'admin',
+  SMS = 'sms',
 }
 
 export type InternalRoleMap = Map<InternalRole, Partial<Permissions>>;

@@ -1,5 +1,5 @@
 import { AUTHORIZED_GROUPS } from '@config';
-import { InternalRole, Permissions, User } from '@interfaces/users.interface';
+import { InternalRole, InternalRoleEnum, Permissions, User } from '@interfaces/users.interface';
 import { roleADMapping } from './ad-role.service';
 import ApiService, { ApiResponse } from './api.service';
 import { logError } from './message.service';
@@ -26,9 +26,9 @@ enum RoleOrderEnum {
   'sms',
 }
 
-const roles = new Map<InternalRole, Partial<Permissions>>([
+const roles = new Map<InternalRoleEnum, Partial<Permissions>>([
   [
-    'sms',
+    InternalRoleEnum.SMS,
     {
       canSendSMS: true,
     },
@@ -50,7 +50,7 @@ export const getPermissions = async (
   const permissions: Permissions = defaultPermissions();
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
-    const role = internalGroups ? (groupLower as InternalRole) : (roleADMapping[groupLower] as InternalRole);
+    const role = internalGroups ? (groupLower as InternalRoleEnum) : roleADMapping[groupLower];
     if (roles.has(role)) {
       const groupPermissions = roles.get(role);
       Object.keys(groupPermissions).forEach(permission => {
@@ -75,7 +75,7 @@ export const getPermissions = async (
  * @param groups List of AD roles
  * @returns role with most permissions
  */
-export const getRole = (groups: string[]) => {
+export const getRole = (groups: string[]): InternalRole => {
   if (groups.length == 1) return roleADMapping[groups[0]];
 
   const roles: InternalRole[] = [];
@@ -90,7 +90,10 @@ export const getRole = (groups: string[]) => {
   return roles.sort((a, b) => RoleOrderEnum[a] - RoleOrderEnum[b])[0];
 };
 
-export const getMessagingUserSettings: (user: User, api: ApiService) => Promise<MessagingSettings[]> = async (user, api) => {
+export const getMessagingUserSettings: (user: User, api: ApiService) => Promise<MessagingSettings[]> = async (
+  user,
+  api,
+) => {
   const url = `${MESSAGING_SETTINGS_PATH}/${MUNICIPALITY_ID}/user`;
   const headers = {
     'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
