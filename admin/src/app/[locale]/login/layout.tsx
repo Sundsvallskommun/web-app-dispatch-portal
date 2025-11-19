@@ -13,4 +13,6 @@ export const generateMetadata = async ({ params }: LocalizationLayoutProps) => {
   };
 };
 
-export default ({ children }: LocalizationLayoutProps) => <EmptyLayout>{children}</EmptyLayout>;
+export default function Layout({ children }: Readonly<LocalizationLayoutProps>) {
+  return <EmptyLayout>{children}</EmptyLayout>;
+}

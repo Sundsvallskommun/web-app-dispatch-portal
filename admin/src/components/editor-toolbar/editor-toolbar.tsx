@@ -3,8 +3,7 @@ import { ResourceName } from '@interfaces/resource-name';
 import { Button, Icon, useConfirm } from '@sk-web-gui/react';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { Save, Trash } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
@@ -12,17 +11,19 @@ import { capitalize } from 'underscore.string';
 interface ToolbarProps {
   resource: ResourceName;
   id?: number;
-  isDirty?: boolean;
 }
 
-export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, isDirty, id }) => {
+export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
   const router = useRouter();
   const pathname = usePathname();
   const parentPath = resource ? `/${resource}` : pathname.split('/[')[0].replace('/new', '');
   const { remove } = resources[resource];
   const { handleRemove } = useCrudHelper(resource);
   const confirm = useConfirm();
-  const { reset } = useFormContext();
+  const {
+    reset,
+    formState: { isDirty },
+  } = useFormContext();
 
   const onRemove = () => {
     if (remove && id) {

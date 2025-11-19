@@ -14,7 +14,7 @@ interface DefaultLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DefaultLayout({ children }: DefaultLayoutProps) {
+export default function DefaultLayout({ children }: Readonly<DefaultLayoutProps>) {
   const [colorScheme, setColorScheme] = useLocalStorage(
     useShallow((state) => [state.colorScheme, state.setColorScheme])
   );
@@ -39,7 +39,7 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
       </NextLink>
 
       <div className="flex w-full min-h-screen h-full">
-        <nav className="flex flex-col justify-between p-24 shadow-100 bg-background-content min-h-full">
+        <nav className="flex flex-col justify-between p-24 shadow-100 bg-background-content min-h-full min-w-[30rem]">
           <div className="flex flex-col gap-24">
             <NextLink href="/">
               <Logo title={process.env.NEXT_PUBLIC_APP_NAME} className="rounded-button" />

@@ -14,9 +14,19 @@ export interface RecipientBody {
   personnumber: string;
 }
 
+export interface RequestBodyEligibility {
+  /** @minLength 1 */
+  partyId: string;
+}
+
 export interface RequestBodyMail {
   recipients: string;
   addresses: string;
+}
+
+export interface RequestBodyRecMail {
+  recipientPersonId: string;
+  subject: string;
 }
 
 export interface RequestBodySMS {
@@ -25,21 +35,9 @@ export interface RequestBodySMS {
   message: string;
 }
 
-export interface RequestBodyEligibility {
-  /** @minLength 1 */
-  partyId: string;
-}
-
 export interface UpdateLogotypeDto {
   name?: string;
-  removeDarkMode?: boolean;
-  logotypeLightMode?: object;
-  logotypeDarkMode?: object;
-}
-
-export interface CreateLogotypeDto {
-  logotypeLightMode: object;
-  logotypeDarkMode?: object;
+  removeDarkMode?: 'true' | 'false';
 }
 
 export interface Municipality {

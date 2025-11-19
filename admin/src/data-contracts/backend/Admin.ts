@@ -12,7 +12,6 @@
 
 import {
   AdminUserApiResponse,
-  CreateLogotypeDto,
   CreateMunicipalityDto,
   CreateOrganizationDto,
   LogotypeApiResponse,
@@ -52,15 +51,10 @@ export class Admin<
    * @summary Create logotype
    * @request POST:/admin/logotypes
    */
-  adminLogotypeControllerCreateLogotype = (
-    data?: CreateLogotypeDto,
-    params: RequestParams = {},
-  ) =>
+  adminLogotypeControllerCreateLogotype = (params: RequestParams = {}) =>
     this.request<LogotypeApiResponse, any>({
       path: `/admin/logotypes`,
       method: "POST",
-      body: data,
-      type: ContentType.Json,
       ...params,
     });
   /**

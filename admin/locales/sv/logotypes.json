@@ -8,7 +8,8 @@
     "name": "Namn",
     "filenameLightMode": "Logotyp (Light mode)",
     "filenameDarkMode": "Logotyp (Dark mode)",
-    "url": "Relativ sökväg"
+    "urlLightMode": "Relativ sökväg (Light mode)",
+    "urlDarkMode": "Relativ sökväg (Dark mode)"
   },
   "errors": {
     "logotypeLightMode": {

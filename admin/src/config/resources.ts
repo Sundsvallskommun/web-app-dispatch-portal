@@ -3,8 +3,8 @@ import {
   CreateMunicipalityDto,
   CreateOrganizationDto,
   Logotype,
-  Municipality,
-  Organization,
+  MunicipalityExtended,
+  OrganizationExtended,
   UpdateLogotypeDto,
   UpdateMunicipalityDto,
   UpdateOrganizationDto,
@@ -21,7 +21,7 @@ const logoApiService = new LogotypeApi({
   withCredentials: true,
 });
 
-interface LogotypeFiles {
+export interface LogotypeFiles {
   logotypeLightMode: File;
   logotypeDarkMode?: File;
 }
@@ -40,7 +40,7 @@ const logotypes: Resource<Logotype, LogotypeFiles, UpdateLogotypeDto & LogotypeF
   requiredFields: ['logotypeLightMode'],
 };
 
-const municipalities: Resource<Municipality, CreateMunicipalityDto, UpdateMunicipalityDto> = {
+const municipalities: Resource<MunicipalityExtended, CreateMunicipalityDto, UpdateMunicipalityDto> = {
   name: 'municipalities',
   getOne: apiService.adminMunicipalityControllerGetMunicipality,
   getMany: apiService.adminMunicipalityControllerGetMunicipalities,
@@ -49,12 +49,14 @@ const municipalities: Resource<Municipality, CreateMunicipalityDto, UpdateMunici
   remove: apiService.adminMunicipalityControllerDeleteMunicipality,
 
   defaultValues: {
+    name: '',
     municipalityId: 0,
   },
-  requiredFields: ['municipalityId'],
+  requiredFields: ['name', 'municipalityId'],
+  hiddenFields: ['logotypeId', 'logotype'],
 };
 
-const organizations: Resource<Organization, CreateOrganizationDto, UpdateOrganizationDto> = {
+const organizations: Resource<OrganizationExtended, CreateOrganizationDto, UpdateOrganizationDto> = {
   name: 'organizations',
   getOne: apiService.adminOrganizationControllerGetOrganization,
   getMany: apiService.adminOrganizationControllerGetOrganizations,
@@ -63,13 +65,15 @@ const organizations: Resource<Organization, CreateOrganizationDto, UpdateOrganiz
   remove: apiService.adminOrganizationControllerDeleteOrganization,
 
   defaultValues: {
+    name: '',
     orgId: 0,
     host: '',
     municipalityId: 0,
   },
-  requiredFields: ['orgId', 'host', 'municipalityId'],
+  requiredFields: ['name', 'orgId', 'host', 'municipalityId'],
+  hiddenFields: ['logotypeId', 'logotype', 'municipality', 'municipalityId'],
 };
 
-const resources = { municipalities, logotypes, organizations };
+const resources = { logotypes, municipalities, organizations };
 
 export default resources;

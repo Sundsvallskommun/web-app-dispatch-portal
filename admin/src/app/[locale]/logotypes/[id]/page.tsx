@@ -1,10 +1,12 @@
-import { EditResourceLayoutProps } from '@app/[locale]/[resource]/[id]/layout';
-import { EditView } from './client';
+import { EditResourceLayoutParams } from '@app/[locale]/[resource]/[id]/layout';
+import { EditLogotypeView } from 'src/views/edit-logotype-view.component';
 
-export const EditResourcePage: React.FC<EditResourceLayoutProps> = async ({ params }) => {
+interface EditLogotypePageProps {
+  params: Promise<EditResourceLayoutParams>;
+}
+
+export default async function EditLogotypePage({ params }: Readonly<EditLogotypePageProps>) {
   const { id } = await params;
 
-  return <EditView id={id} />;
-};
-
-export default EditResourcePage;
+  return <EditLogotypeView id={id} />;
+}

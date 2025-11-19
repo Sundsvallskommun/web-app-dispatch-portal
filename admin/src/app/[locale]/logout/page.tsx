@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-const Logout: React.FC = () => {
+export default function Logout() {
   const router = useRouter();
 
   const resetUser = useUserStore(useShallow((s) => s.reset));
@@ -26,6 +26,4 @@ const Logout: React.FC = () => {
   }, []);
 
   return <></>;
-};
-
-export default Logout;
+}

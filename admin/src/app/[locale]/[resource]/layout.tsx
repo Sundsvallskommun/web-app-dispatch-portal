@@ -1,20 +1,18 @@
+import initLocalization, { namespaces } from '@app/i18n';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { stringToResourceName } from '@utils/stringToResourceName';
-import { capitalize } from 'underscore.string';
-import { LocalizationLayoutParams, LocalizationLayoutProps } from '../layout';
-import initLocalization, { namespaces } from '@app/i18n';
 import { redirect } from 'next/navigation';
+import { capitalize } from 'underscore.string';
+import { LocalizationLayoutParams } from '../layout';
 
 export interface ResourceLayoutParams extends LocalizationLayoutParams {
   resource: string;
+  id?: string;
 }
-export interface ResourceLayoutProps extends Omit<LocalizationLayoutProps, 'params'> {
+export interface ResourceLayoutProps {
+  children: React.ReactNode;
   params: Promise<ResourceLayoutParams>;
 }
-
-export const ResourceLayout: React.FC<ResourceLayoutProps> = ({ children }) => {
-  return <DefaultLayout>{children}</DefaultLayout>;
-};
 
 export const generateMetadata = async ({ params }: ResourceLayoutProps) => {
   const { resource: _resource, locale } = await params;
@@ -26,13 +24,14 @@ export const generateMetadata = async ({ params }: ResourceLayoutProps) => {
   if (!resource) {
     redirect('/');
   }
-
+  const title = capitalize(t(`${resource}:name_many`));
   return {
     title: {
-      default: capitalize(t(`${resource}:name_many`)),
-      template: `%s - ${capitalize(t(`${resource}:name_many`))}`,
+      default: title,
+      template: `%s - ${title}`,
     },
   };
 };
-
-export default ResourceLayout;
+export default function ResourceLayout({ children }: Readonly<ResourceLayoutProps>) {
+  return <DefaultLayout>{children}</DefaultLayout>;
+}

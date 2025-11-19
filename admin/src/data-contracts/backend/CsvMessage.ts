@@ -10,29 +10,32 @@
  * ---------------------------------------------------------------
  */
 
-import { RequestBodyEligibility } from "./data-contracts";
+import { RequestBodyRecMail } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class EligibilityKivra<
+export class CsvMessage<
   SecurityDataType = unknown,
 > extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
-   * @tags Recipient
-   * @name RecipientControllerCheckEligibilityKivra
-   * @summary Checks if the recipients are eligible for Kivra
-   * @request POST:/eligibility-kivra
+   * @tags Message
+   * @name MessageControllerSendCsvMessage
+   * @summary Send attachment to recipients
+   * @request POST:/csv-message/
    */
-  recipientControllerCheckEligibilityKivra = (
-    data?: RequestBodyEligibility,
+  messageControllerSendCsvMessage = (
+    data?: RequestBodyRecMail & {
+      files?: File[];
+      "csv-file"?: File[];
+    },
     params: RequestParams = {},
   ) =>
     this.request<void, any>({
-      path: `/eligibility-kivra`,
+      path: `/csv-message/`,
       method: "POST",
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       ...params,
     });
 }

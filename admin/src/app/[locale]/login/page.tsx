@@ -13,14 +13,14 @@ import { capitalize } from 'underscore.string';
 // Turn on/off automatic login
 const autoLogin = true;
 
-const Login: React.FC = () => {
+export default function Login() {
   const searchParams = useSearchParams();
 
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation(['common', 'login']);
 
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(globalThis.location.search);
   const isLoggedOut = params.get('loggedout') === '';
   const failMessage = params.get('failMessage');
 
@@ -41,24 +41,23 @@ const Login: React.FC = () => {
     });
     url.search = queries.toString();
     // NOTE: send user to login with SSO
-    window.location.href = url.toString();
+    globalThis.location.href = url.toString();
   };
 
   useEffect(() => {
     setInitalFocus();
     if (isLoggedOut) {
       redirect('/login');
+    } else if (failMessage === 'NOT_AUTHORIZED' && autoLogin) {
+      // autologin
+      onLogin();
+    } else if (failMessage) {
+      setErrorMessage(t(`login:errors.${failMessage}`));
+      setIsLoading(false);
     } else {
-      if (failMessage === 'NOT_AUTHORIZED' && autoLogin) {
-        // autologin
-        onLogin();
-      } else if (failMessage) {
-        setErrorMessage(t(`login:errors.${failMessage}`));
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -86,6 +85,4 @@ const Login: React.FC = () => {
       </div>
     </Main>
   );
-};
-
-export default Login;
+}

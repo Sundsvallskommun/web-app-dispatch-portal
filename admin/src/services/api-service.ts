@@ -7,8 +7,8 @@ export interface ApiResponse<T = unknown> {
 }
 
 export const handleError = (error: AxiosError<ApiResponse>) => {
-  if (error?.response?.status === 401 && !window?.location.pathname.includes('login')) {
-    window.location.href = `/login?path=${window.location.pathname}&failMessage=${error.response.data.message}`;
+  if (error?.response?.status === 401 && !globalThis?.location.pathname.includes('login')) {
+    globalThis.location.href = `/login?path=${globalThis.location.pathname}&failMessage=${error.response.data.message}`;
   }
 
   throw error;

@@ -20,6 +20,7 @@
   "resources": "resurser",
   "required": "{{resource}} krävs",
   "save": "spara",
+  "select_resource": "välj {{resource}}",
   "welcome": "välkommen",
   "unsaved_changes": "Du har osparade ändringar",
   "do_you_want_to_leave": "Är du säker på att du vill lämna den här sidan?",

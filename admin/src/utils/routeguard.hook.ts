@@ -3,28 +3,23 @@ import router from 'next/router';
 import { useConfirm } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
 
+interface ConfirmOptions {
+  warningTitle: string;
+  warningText: string;
+  confirmLabel?: string;
+  dismissLabel?: string;
+}
+
 export function useRouteGuard(
   showWarning: boolean,
-  options?: {
-    warningTitle?: string;
-    warningText?: string;
-    confirmLabel?: string;
-    dismissLabel?: string;
-  }
+  options?: ConfirmOptions
 ): {
-  confirm: (options?: {
-    warningTitle: string;
-    warningText: string;
-    confirmLabel?: string;
-    dismissLabel?: string;
-  }) => Promise<boolean>;
+  confirm: (options?: ConfirmOptions) => Promise<boolean>;
 } {
   const { t } = useTranslation();
   const [active, setActive] = useState<boolean>(false);
   const title = options?.warningTitle || t('common:unsaved_changes');
   const text = options?.warningText || t('common:do_you_want_to_leave');
-  const confirmLabel = options?.confirmLabel || undefined;
-  const dismissLabel = options?.dismissLabel || undefined;
   const { showConfirmation } = useConfirm();
 
   useEffect(() => {
@@ -33,7 +28,7 @@ export function useRouteGuard(
 
   useEffect(() => {
     const confirmRouterChange = async (url: string) => {
-      const confirm = await showConfirmation(title, text, confirmLabel, dismissLabel, 'info');
+      const confirm = await showConfirmation(title, text, options?.confirmLabel, options?.dismissLabel, 'info');
       if (confirm) {
         setActive(false);
         router.push(url);
@@ -43,14 +38,14 @@ export function useRouteGuard(
     const handleWindowClose = (e: BeforeUnloadEvent) => {
       if (!active) return;
       e.preventDefault();
-      return (e.returnValue = `${title} ${text}`);
+      return `${title} ${text}`;
     };
 
     const handleBrowseAway = (url: string) => {
       if (!active) return;
       confirmRouterChange(url);
       router.events.emit('routeChangeError');
-      throw 'routing cancelled. Confirm to continue.';
+      throw new Error('routing cancelled. Confirm to continue.');
     };
 
     window.addEventListener('beforeunload', handleWindowClose);
@@ -59,31 +54,19 @@ export function useRouteGuard(
       window.removeEventListener('beforeunload', handleWindowClose);
       router.events.off('routeChangeStart', handleBrowseAway);
     };
-  }, [active, showConfirmation, text, title, confirmLabel, dismissLabel]);
+  }, [active, showConfirmation, text, title, options?.confirmLabel, options?.dismissLabel]);
 
-  async function confirmer(
-    options: {
-      warningTitle: string;
-      warningText: string;
-      confirmLabel?: string;
-      dismissLabel?: string;
-    } = {
-      warningTitle: title,
-      warningText: text,
-      confirmLabel: confirmLabel,
-      dismissLabel: dismissLabel,
-    }
-  ) {
+  const confirmer: (options: ConfirmOptions) => Promise<boolean> = async ({
+    warningTitle = title,
+    warningText = text,
+    confirmLabel = options?.confirmLabel,
+    dismissLabel = options?.dismissLabel,
+  }) => {
     if (!active) return true;
-    const confirm = await showConfirmation(
-      options.warningTitle,
-      options.warningText,
-      options.confirmLabel,
-      options.dismissLabel
-    );
+    const confirm = await showConfirmation(warningTitle, warningText, confirmLabel, dismissLabel);
 
     return confirm;
-  }
+  };
 
   return { confirm: confirmer };
 }

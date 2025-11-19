@@ -1,10 +1,12 @@
-import { EditView } from './client';
-import { EditResourceLayoutProps } from './layout';
+import { EditResourceView } from 'src/views/edit-resource-view.component';
+import { EditResourceLayoutParams } from './layout';
 
-export const EditResourcePage: React.FC<EditResourceLayoutProps> = async ({ params }) => {
+interface EditResourcePageProps {
+  params: Promise<EditResourceLayoutParams>;
+}
+
+export default async function EditResourcePage({ params }: Readonly<EditResourcePageProps>) {
   const { resource, id } = await params;
 
-  return <EditView resource={resource} id={id} />;
-};
-
-export default EditResourcePage;
+  return <EditResourceView resource={resource} id={id} />;
+}

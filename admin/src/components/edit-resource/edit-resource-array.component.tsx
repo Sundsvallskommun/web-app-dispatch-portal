@@ -24,7 +24,7 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
   level: _level = 2,
 }) => {
   const { defaultValues, requiredFields } = resources[resource];
-  const level = _level > 6 ? 6 : _level;
+  const level = Math.min(_level, 6);
 
   const { t } = useTranslation();
 
@@ -44,7 +44,7 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
     formState: { errors },
   } = useFormContext<DataType>();
 
-  const formdata = watch(dataTypeKey as keyof DataType) as DataType;
+  const formdata = watch(dataTypeKey);
 
   const addEntry = () => {
     if (Array.isArray(formdata)) {
@@ -54,7 +54,7 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
         return entries?.[property] || defaultValues?.[property as keyof typeof defaultValues];
       }, {} as DataType);
       const entries = [...formdata, ...(Array.isArray(newEntry) ? newEntry : [newEntry])];
-      setValue(dataTypeKey as keyof DataType, entries as typeof formdata);
+      setValue(dataTypeKey, entries);
     }
   };
 
@@ -62,16 +62,16 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
     if (Array.isArray(formdata)) {
       const entries = [...formdata];
       entries.splice(index, 1);
-      setValue(dataTypeKey as keyof DataType, entries as typeof formdata);
+      setValue(dataTypeKey, entries);
     }
   };
 
   useEffect(() => {
     if (requiredFields && fieldpathWithoutIndex(requiredFields)?.includes(i18nKey)) {
       if (Array.isArray(formdata) && formdata.length > 0) {
-        clearErrors(dataTypeKey as keyof DataType);
+        clearErrors(dataTypeKey);
       } else {
-        setError(dataTypeKey as keyof DataType, {
+        setError(dataTypeKey, {
           message: t('common:required', { resource: capitalize(t(`${resource}:properties.${i18nKey}.DEFAULT_many`)) }),
         });
       }
@@ -89,7 +89,7 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
           | undefined;
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return errors?.[key] as FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
+      return errors?.[key];
     }, undefined);
 
   const Headercomp: React.ElementType = `h${level}` as React.ElementType;
@@ -113,13 +113,10 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
           const isRequired = requiredFields ? fieldpathWithoutIndex(requiredFields)?.includes(i18nKey) : false;
           if (type === 'string' || type === 'number') {
             return (
-              <div key={`res-array-${index}`} className="flex justify-between items-start">
-                <FormControl key={`formc-${index}`} required={isRequired}>
+              <div key={`res-array-${index}-${property}`} className="flex justify-between items-start">
+                <FormControl key={`formc-${index}-${property}`} required={isRequired}>
                   <FormLabel>{capitalize(t(`${resource}:properties.${i18nKey}`))}</FormLabel>
-                  <Input
-                    type={type === 'number' ? 'number' : 'text'}
-                    {...register(`${dataTypeKey}.${index}` as keyof DataType)}
-                  />
+                  <Input type={type === 'number' ? 'number' : 'text'} {...register(`${dataTypeKey}.${index}`)} />
                 </FormControl>
                 <Button
                   size="sm"
@@ -141,14 +138,14 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
           if (type === 'object') {
             return Array.isArray(item) ?
                 <EditResourceArray
-                  key={`res-array-${index}`}
+                  key={`res-array-array-${index}-${property}`}
                   resource={resource}
                   parents={parents ? `${parents}.${property}` : property}
                   level={level + 1}
                   property={index.toString()}
                 />
               : <EditResourceObject
-                  key={`res-array-${index}`}
+                  key={`res-array-object-${index}-${property}`}
                   resource={resource}
                   parents={parents ? `${parents}.${property}` : property}
                   level={level + 1}

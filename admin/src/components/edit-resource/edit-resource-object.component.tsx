@@ -30,7 +30,7 @@ export const EditResourceObject: React.FC<EditResourceObjectProps> = ({
   onRemove,
 }) => {
   const { requiredFields } = resources[resource] || {};
-  const level = _level > 6 ? 6 : _level;
+  const level = Math.min(_level, 6);
 
   const { t } = useTranslation();
 
@@ -42,7 +42,7 @@ export const EditResourceObject: React.FC<EditResourceObjectProps> = ({
   const i18nKey = fieldpathWithoutIndex(dataTypeKey);
 
   const { register, watch } = useFormContext<DataType>();
-  const formdata = watch(dataTypeKey as keyof DataType) as DataType;
+  const formdata = watch(dataTypeKey);
 
   const Headercomp: React.ElementType = `h${level}` as React.ElementType;
 
@@ -68,7 +68,7 @@ export const EditResourceObject: React.FC<EditResourceObjectProps> = ({
                 resource: t(`${resource}:properties.${i18nKey}.DEFAULT`),
               })
             )}
-            onClick={() => onRemove && onRemove()}
+            onClick={() => onRemove?.()}
           >
             <Minus />
           </Button>
@@ -83,7 +83,7 @@ export const EditResourceObject: React.FC<EditResourceObjectProps> = ({
               requiredFields ? fieldpathWithoutIndex(requiredFields)?.includes(`${i18nKey}.${key}`) : false;
             if (type === 'string' || type === 'number') {
               return (
-                <FormControl key={`res-object-${index}`} required={isRequired}>
+                <FormControl key={`res-object-${index}-${property}`} required={isRequired}>
                   <FormLabel>{capitalize(t(`${resource}:properties.${i18nKey}.${key}`))}</FormLabel>
                   <Input
                     type={type === 'number' ? 'number' : 'text'}
@@ -95,14 +95,14 @@ export const EditResourceObject: React.FC<EditResourceObjectProps> = ({
             if (type === 'object') {
               return Array.isArray(formdata[key as keyof DataType]) ?
                   <EditResourceArray
-                    key={`res-object-${index}`}
+                    key={`res-object-array-${index}-${property}`}
                     resource={resource}
                     parents={dataTypeKey}
                     level={level + 1}
                     property={key}
                   />
                 : <EditResourceObject
-                    key={`res-object-${index}`}
+                    key={`res-object-object-${index}-${property}`}
                     resource={resource}
                     parents={dataTypeKey}
                     level={level + 1}

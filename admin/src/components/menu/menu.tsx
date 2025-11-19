@@ -10,7 +10,7 @@ export const Menu = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const path = window.location.pathname;
+    const path = globalThis.location.pathname;
     const resource = Object.keys(resources).find((resource) => {
       return path.startsWith(`${process.env.NEXT_PUBLIC_BASE_PATH}/${resource}`);
     });
@@ -20,7 +20,7 @@ export const Menu = () => {
       setCurrent('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window]);
+  }, [globalThis]);
 
   useEffect(() => {
     if (current.includes('-parent')) {
@@ -40,7 +40,7 @@ export const Menu = () => {
           {...Object.keys(resources).map((resourcename, index) => {
             const resource = resources[resourcename as keyof typeof resources];
             return (
-              <MenuVertical.Item key={`mainmenu-${index}`} menuIndex={`${resource.name}-parent`}>
+              <MenuVertical.Item key={`mainmenu-${index}-${resource.name}`} menuIndex={`${resource.name}-parent`}>
                 <MenuVertical>
                   <MenuVertical.SubmenuButton>
                     <NextLink href={`/${resource.name}`}>{capitalize(t(`${resource.name}:name_many`))}</NextLink>

@@ -8,6 +8,6 @@ module.exports = {
   fallbackLng: {
     default: ['sv'],
   },
-  debug: process.env.NODE_ENV === 'production' ? false : true,
+  debug: process.env.NODE_ENV !== 'production',
   react: { useSuspense: false },
 };

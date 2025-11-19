@@ -23,18 +23,20 @@ export const LogoPreview: React.FC<LogoPreviewInterface> = ({ logotype, name, mo
   const mode = _mode ?? currentColorScheme;
 
   const property = `url${capitalize(mode)}Mode` as 'urlLightMode' | 'urlDarkMode';
-  const url = logotype?.[property] ?? logotype.urlLightMode;
+  const url = logotype?.[property] ?? logotype?.urlLightMode;
 
   return (
-    <Logo
-      inverted={_mode && currentColorScheme !== _mode}
-      symbol={
-        <div className="h-full w-full flex items-center justify-center">
-          <Image src={url.startsWith('blob') ? url : apiURL(url)} width="75" height="75" className="h-auto" alt="" />
-        </div>
-      }
-      title={appName()}
-      subtitle={name ?? t('common:preview')}
-    />
+    logotype && (
+      <Logo
+        inverted={_mode && currentColorScheme !== _mode}
+        symbol={
+          <div className="h-full w-full flex items-center justify-center">
+            <Image src={url.startsWith('blob') ? url : apiURL(url)} width="75" height="75" className="h-auto" alt="" />
+          </div>
+        }
+        title={appName()}
+        subtitle={name ?? t('common:preview')}
+      />
+    )
   );
 };

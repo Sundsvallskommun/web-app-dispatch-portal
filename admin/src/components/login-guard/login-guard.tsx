@@ -21,7 +21,7 @@ export const LoginGuard: React.FC<{ children?: React.ReactNode }> = ({ children 
   }, []);
 
   if (!isLoading && !user.name && !pathname.startsWith('/login')) {
-    const path = !window.location.pathname.startsWith('/logout') ? window.location.pathname : '/';
+    const path = globalThis.location.pathname.startsWith('/logout') ? '/' : globalThis.location.pathname;
     router.push(`/login?path=${path}`);
   }
 

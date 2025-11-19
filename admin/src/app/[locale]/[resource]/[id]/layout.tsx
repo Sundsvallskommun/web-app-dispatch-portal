@@ -7,11 +7,12 @@ import { ResourceLayoutParams } from '../layout';
 export interface EditResourceLayoutParams extends ResourceLayoutParams {
   id: string;
 }
-export interface EditResourceLayoutProps extends Omit<LocalizationLayoutProps, 'params'> {
+export interface EditResourceLayoutProps {
+  children: React.ReactNode;
   params: Promise<EditResourceLayoutParams>;
 }
 
-export const generateMetadata = async ({ params }: EditResourceLayoutProps) => {
+export const generateMetadata = async ({ params }: Readonly<EditResourceLayoutProps>) => {
   const { resource: _resource, id, locale } = await params;
   const { t } = await initLocalization(locale ?? 'sv', namespaces);
   const resource = stringToResourceName(typeof _resource === 'object' ? _resource[0] : _resource);
@@ -26,8 +27,7 @@ export const generateMetadata = async ({ params }: EditResourceLayoutProps) => {
     title,
   };
 };
-export const EditResourceLayout: React.FC<EditResourceLayoutProps> = ({ children }) => {
-  return children;
-};
 
-export default EditResourceLayout;
+export default function EditResourceLayout({ children }: Readonly<EditResourceLayoutProps>) {
+  return children;
+}

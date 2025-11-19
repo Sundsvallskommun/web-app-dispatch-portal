@@ -54,9 +54,7 @@ import { getRedirects } from './utils/getRedirects';
 import { getRelayState } from './utils/getRelayState';
 import { dataDir, dataPath } from './utils/util';
 import { isAllowedOrigin } from './utils/isAllowedOrigin';
-import rateLimit from 'express-rate-limit';
 
-const corsWhitelist = ORIGIN?.split(',');
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
 const sessionTTL = 4 * 24 * 60 * 60;

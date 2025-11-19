@@ -22,4 +22,5 @@ export type Resource<
   remove?: Remove;
   defaultValues?: Partial<TCreate>;
   requiredFields?: Array<FieldPath<TCreate & TUpdate>>;
+  hiddenFields?: Array<FieldPath<T & TCreate & TUpdate>>;
 };

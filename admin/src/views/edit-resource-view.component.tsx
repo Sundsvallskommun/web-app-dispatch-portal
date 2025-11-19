@@ -3,9 +3,8 @@
 import { EditResource } from '@components/edit-resource/edit-resource.component';
 import { EditorToolbar } from '@components/editor-toolbar/editor-toolbar';
 import LoaderFullScreen from '@components/loader/loader-fullscreen';
-import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
-import { Resource, ResourceResponse } from '@interfaces/resource';
+import { Resource } from '@interfaces/resource';
 import { ResourceName } from '@interfaces/resource-name';
 import EditLayout from '@layouts/edit-layout/edit-layout.component';
 import { getFormattedFields } from '@utils/formatted-field';
@@ -13,19 +12,16 @@ import { useRouteGuard } from '@utils/routeguard.hook';
 import { stringToResourceName } from '@utils/stringToResourceName';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { useResource } from '@utils/use-resource';
-import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
-import { capitalize } from 'underscore.string';
 
-interface EditViewProps {
+interface EditResourceViewProps {
   resource: string;
   id: string;
 }
 
-export const EditView: React.FC<EditViewProps> = ({ resource: _resource, id: _id }) => {
-  const { t } = useTranslation();
+export const EditResourceView: React.FC<EditResourceViewProps> = ({ resource: _resource, id: _id }) => {
   const router = useRouter();
 
   const resource = stringToResourceName(typeof _resource === 'object' ? _resource[0] : _resource) as ResourceName;
@@ -49,7 +45,7 @@ export const EditView: React.FC<EditViewProps> = ({ resource: _resource, id: _id
     formState: { isDirty },
   } = form;
 
-  const id = _id === 'new' ? undefined : parseInt(_id as string, 10);
+  const id = _id === 'new' ? undefined : Number.parseInt(_id as string, 10);
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isNew, setIsNew] = useState<boolean>(!id);
@@ -69,7 +65,10 @@ export const EditView: React.FC<EditViewProps> = ({ resource: _resource, id: _id
   useEffect(() => {
     if (id) {
       handleGetOne(() => (getOne as NonNullable<Resource<FieldValues>['getOne']>)(id)).then((res) => {
-        reset(res);
+        const mappedRes = Object.keys(res).reduce((data, key) => {
+          return { ...data, [key]: res?.[key] ?? (defaultValues as any)?.[key] };
+        }, {});
+        reset(mappedRes);
         setIsNew(false);
         setLoaded(true);
       });
@@ -99,9 +98,15 @@ export const EditView: React.FC<EditViewProps> = ({ resource: _resource, id: _id
       create as NonNullable<Resource<FieldValues>['create']>;
     const updateFunc: (id: number, data: DataType) => ReturnType<NonNullable<Resource<FieldValues>['update']>> =
       update as NonNullable<Resource<FieldValues>['update']>;
+    const newData = Object.keys(data)?.reduce((_data, key) => {
+      if (data[key] === 'undefined' || data[key] === '' || data[key] === 'null') return { ..._data };
+      if (new RegExp(/^\d+$/).test(data[key]) && key.toLowerCase().includes('id'))
+        return { ..._data, [key]: Number.parseInt(data[key]) };
+      return { ..._data, [key]: data[key] };
+    }, {});
     switch (isNew) {
       case true:
-        handleCreate(() => createFunc(data as CreateType)).then((res) => {
+        handleCreate(() => createFunc(newData as CreateType)).then((res) => {
           if (res) {
             reset(res);
             refresh();
@@ -111,7 +116,7 @@ export const EditView: React.FC<EditViewProps> = ({ resource: _resource, id: _id
         break;
       case false:
         if (id) {
-          handleUpdate(() => updateFunc?.(id, data) as ResourceResponse<Partial<FieldValues>>).then((res) => {
+          handleUpdate(() => updateFunc?.(id, newData)).then((res) => {
             reset(res);
             refresh();
           });
@@ -122,31 +127,14 @@ export const EditView: React.FC<EditViewProps> = ({ resource: _resource, id: _id
 
   return !loaded ?
       <LoaderFullScreen />
-    : <EditLayout
-        headerInfo={
-          !isNew ?
-            <ul className="text-small flex gap-16">
-              {defaultInformationFields.map((field, index) => (
-                <li key={index + field}>
-                  <strong>{capitalize(t(`common:properties.${field}`))}: </strong>
-                  {formdata?.[field]}
-                </li>
-              ))}
-            </ul>
-          : undefined
-        }
-        title={
-          isNew ?
-            capitalize(t('common:create_new', { resource: t(`${resource}:name`, { count: 1 }) }))
-          : capitalize(t('common:edit', { resource: t(`${resource}:name_one`) }))
-        }
-        backLink={`/${resource}`}
-      >
-        <FormProvider {...form}>
-          <form className="flex flex-row gap-32 justify-between grow flex-wrap" onSubmit={handleSubmit(onSubmit)}>
-            <EditorToolbar resource={resource} isDirty={isDirty} id={id} />
-            <EditResource resource={resource} isNew={isNew} />
-          </form>
-        </FormProvider>
-      </EditLayout>;
+    : <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <EditLayout resource={resource}>
+            <div className="flex flex-row gap-32 justify-between grow flex-wrap">
+              <EditorToolbar resource={resource} id={id} />
+              <EditResource resource={resource} />
+            </div>
+          </EditLayout>
+        </form>
+      </FormProvider>;
 };

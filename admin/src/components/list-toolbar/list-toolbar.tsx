@@ -1,4 +1,3 @@
-import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
 import { ResourceName } from '@interfaces/resource-name';
 import { Button, Checkbox, Icon, PopupMenu } from '@sk-web-gui/react';
@@ -80,10 +79,10 @@ export const ListToolbar: React.FC<ListToolbarProps> = ({ resource, properties }
             <PopupMenu.Panel>
               <PopupMenu.Items>
                 {properties.map((prop, index) => (
-                  <PopupMenu.Item key={`tab-prop-${index}`}>
+                  <PopupMenu.Item key={`tab-prop-${index}-${prop}`}>
                     <Checkbox labelPosition="left" value={prop} {...register('headers')}>
                       {capitalize(
-                        t(`${defaultInformationFields.includes(prop) ? 'common:' : `${resource}:properties.`}${prop}`)
+                        t(`${resource}:properties.${prop}`, { defaultValue: t(`common:properties.${prop}`) })
                       )}
                     </Checkbox>
                   </PopupMenu.Item>

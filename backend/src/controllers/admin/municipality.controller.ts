@@ -17,7 +17,9 @@ export class AdminMunicipalityController {
   @Get('/admin/municipalities')
   @OpenAPI({ summary: 'Get all municipalities' })
   @ResponseSchema(MunicipalitiesApiResponse)
-  async getMunicipalities(@Res() res: Response<MunicipalitiesApiResponse>): Promise<Response<MunicipalitiesApiResponse>> {
+  async getMunicipalities(
+    @Res() res: Response<MunicipalitiesApiResponse>,
+  ): Promise<Response<MunicipalitiesApiResponse>> {
     try {
       const municipalities = await prisma.municipality.findMany({ include: { logotype: true } });
       return res.send({ message: 'success', data: municipalities ?? [] });
@@ -30,7 +32,10 @@ export class AdminMunicipalityController {
   @Get('/admin/municipalities/:id')
   @OpenAPI({ summary: 'Get municipality by id' })
   @ResponseSchema(MunicipalityApiResponse)
-  async getMunicipality(@Param('id') id: number, @Res() res: Response<MunicipalityApiResponse>): Promise<Response<MunicipalityApiResponse>> {
+  async getMunicipality(
+    @Param('id') id: number,
+    @Res() res: Response<MunicipalityApiResponse>,
+  ): Promise<Response<MunicipalityApiResponse>> {
     try {
       const municipality = await prisma.municipality.findFirst({ where: { id }, include: { logotype: true } });
 
@@ -53,7 +58,11 @@ export class AdminMunicipalityController {
     @Res() res: Response<MunicipalityApiResponse>,
   ): Promise<Response<MunicipalityApiResponse>> {
     try {
-      const municipality = await prisma.municipality.create({ data: body, include: { logotype: true } });
+      const { municipalityId, name, logotypeId } = body;
+      const municipality = await prisma.municipality.create({
+        data: { municipalityId, name, logotypeId },
+        include: { logotype: true },
+      });
       return res.send({ message: 'success', data: municipality });
     } catch (error) {
       logger.error('Error creating municipality', error);
@@ -70,7 +79,12 @@ export class AdminMunicipalityController {
     @Res() res: Response<MunicipalityApiResponse>,
   ): Promise<Response<MunicipalityApiResponse>> {
     try {
-      const municipality = await prisma.municipality.update({ where: { id }, data: body, include: { logotype: true } });
+      const { municipalityId, name, logotypeId } = body;
+      const municipality = await prisma.municipality.update({
+        where: { id },
+        data: { municipalityId, name, logotypeId },
+        include: { logotype: true },
+      });
       return res.send({ message: 'success', data: municipality });
     } catch (error) {
       logger.error('Error updating municipality', error);
@@ -80,7 +94,10 @@ export class AdminMunicipalityController {
   @Delete('/admin/municipalities/:id')
   @OpenAPI({ summary: 'Delete a municipality' })
   @ResponseSchema(ApiResponse<null>)
-  async deleteMunicipality(@Param('id') id: number, @Res() res: Response<ApiResponse<null>>): Promise<Response<ApiResponse<null>>> {
+  async deleteMunicipality(
+    @Param('id') id: number,
+    @Res() res: Response<ApiResponse<null>>,
+  ): Promise<Response<ApiResponse<null>>> {
     try {
       await prisma.municipality.delete({ where: { id } });
       return res.send({ message: 'success', data: null });

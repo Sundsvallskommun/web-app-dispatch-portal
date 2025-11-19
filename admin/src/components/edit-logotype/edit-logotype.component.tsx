@@ -1,10 +1,11 @@
-import resources from '@config/resources';
 import { FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
 
-import { Resource } from '@interfaces/resource';
 import { EditResourceInput } from '@components/edit-resource/edit-resource-input.component';
+import { LogoPreview } from '@components/logo-preview/logo-preview.component';
+import { Logotype } from '@data-contracts/backend/data-contracts';
+import { Resource } from '@interfaces/resource';
 import {
   Button,
   CustomOnChangeEventUploadFile,
@@ -13,14 +14,8 @@ import {
   FormErrorMessage,
   FormLabel,
 } from '@sk-web-gui/react';
-import { LogoPreview } from '@components/logo-preview/logo-preview.component';
-import { Logotype } from '@data-contracts/backend/data-contracts';
 
-interface EditLogotypeProps {
-  isNew: boolean;
-}
-
-export const EditLogotype: React.FC<EditLogotypeProps> = ({ isNew }) => {
+export const EditLogotype: React.FC = () => {
   const { t } = useTranslation();
   const resource = 'logotypes';
 
@@ -34,7 +29,8 @@ export const EditLogotype: React.FC<EditLogotypeProps> = ({ isNew }) => {
     register,
     formState: { errors },
   } = useFormContext<DataType>();
-  const formdata = watch() as DataType;
+  const formdata = watch();
+  const isNew = !watch('id') || watch('id') === 'new';
 
   const resetLogo = (mode: 'LightMode' | 'DarkMode') => {
     setValue(`url${mode}`, '', { shouldDirty: true });

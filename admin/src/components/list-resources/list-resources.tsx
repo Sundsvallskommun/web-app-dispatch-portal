@@ -3,15 +3,11 @@
 import { LogoPreview } from '@components/logo-preview/logo-preview.component';
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
-import { Logotype } from '@data-contracts/backend/data-contracts';
 import { ResourceName } from '@interfaces/resource-name';
-import { AutoTable, AutoTableHeader, Icon, Logo } from '@sk-web-gui/react';
-import { apiURL } from '@utils/api-url';
-import { appName } from '@utils/app-name';
+import { AutoTable, AutoTableHeader, Icon } from '@sk-web-gui/react';
 import { getFormattedFields } from '@utils/formatted-field';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { Check, Pencil } from 'lucide-react';
-import Image from 'next/image';
 import NextLink from 'next/link';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,38 +60,29 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
             ];
           }
           const type = typeof data?.[0]?.[key];
-          switch (type) {
-            case 'string':
-              return [
-                ...headers,
-                {
-                  label: getHeader(key),
-                  property: key,
-                },
-              ];
-            case 'number':
-              return [
-                ...headers,
-                {
-                  label: getHeader(key),
-                  property: key,
-                },
-              ];
-            case 'boolean':
-              return [
-                ...headers,
-                {
-                  label: getHeader(key),
-                  property: key,
-                  renderColumn: (value) => (
-                    <span>{value && <Icon.Padded rounded color="success" icon={<Check />} />}</span>
-                  ),
-                  isColumnSortable: false,
-                },
-              ];
-            default:
-              return headers;
+          if (type === 'string' || type === 'number') {
+            return [
+              ...headers,
+              {
+                label: getHeader(key),
+                property: key,
+              },
+            ];
+          } else if (type === 'boolean') {
+            return [
+              ...headers,
+              {
+                label: getHeader(key),
+                property: key,
+                renderColumn: (value) => (
+                  <span>{value && <Icon.Padded rounded color="success" icon={<Check />} />}</span>
+                ),
+                isColumnSortable: false,
+              },
+            ];
           }
+
+          return headers;
         } else {
           return headers;
         }
@@ -120,7 +107,9 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
   };
 
   const filteredHeaders: AutoTableHeader[] =
-    headers?.filter((header, index, arr) => arr.map((item) => item.label).indexOf(header.label) === index) || [];
+    headers
+      ?.filter((header) => storeHeaders?.includes(header?.property ?? ''))
+      ?.filter((header, index, arr) => arr.map((item) => item.label).indexOf(header.label) === index) || [];
 
   const formattedData = useMemo(() => data?.map((row) => getFormattedFields(row)), [data]);
 
