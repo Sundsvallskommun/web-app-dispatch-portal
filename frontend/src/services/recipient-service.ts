@@ -1,5 +1,6 @@
 import { apiService } from '@services/api-service';
 import { __DEV__ } from '@sk-web-gui/react';
+import { AxiosResponse } from 'axios';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
@@ -186,4 +187,16 @@ export const getEligibilityKivra = async (partyId: string): Promise<EligibilityI
       console.error('Something went wrong when requesting eligibilty.');
       throw e;
     });
+};
+
+export const getCitizen = async (personId: string): Promise<Citizenaddress> => {
+  const result = await apiService
+    .get<AxiosResponse<Citizenaddress>>(`citizen/${personId}`)
+    .then((res) => res.data)
+    .catch((e) => {
+      console.error('Something went wrong when getting citizen.');
+      throw e;
+    });
+
+  return result.data;
 };

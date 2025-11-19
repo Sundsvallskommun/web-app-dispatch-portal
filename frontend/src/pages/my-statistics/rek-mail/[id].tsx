@@ -1,16 +1,18 @@
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnackbar, Divider } from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
-import { useSigningInfo, useMessage, getAttachmentFile } from '@services/my-statistics-service';
+import { useMessage, getAttachmentFile } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
+import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
+import { getCitizen } from '@services/recipient-service';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -20,8 +22,8 @@ const MyStatisticsDetails = () => {
 
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
 
-  const { message: letter, loaded: recLoaded } = useMessage(id ?? '');
-  const { signingInfo, loaded: signingInfoLoaded } = useSigningInfo(id ?? '');
+  const { message, loaded: messageLoaded } = useMessage(id ?? '');
+  const [recipientName, setRecipientName] = useState('');
 
   const headers: Array<AutoTableHeader | string> = [
     {
@@ -61,28 +63,49 @@ const MyStatisticsDetails = () => {
     },
   ];
 
-  let recipient = undefined;
-  if (signingInfo.user && signingInfoLoaded) {
-    recipient = {
-      recipient: `${signingInfo.user?.name ?? ''} ${signingInfo.user?.surname ?? ''}${signingInfo.user?.personalIdentityNumber ? ',' : ''} ${signingInfo.user?.personalIdentityNumber ?? ''}`,
-      status: signingInfo.status,
+  const recipient = useMemo(() => {
+    return message?.recipients?.[0];
+  }, [message]);
+
+  useEffect(() => {
+    let personId = recipient?.partyId;
+    if (personId) {
+      getCitizen(personId).then((citizen) => {
+        if (citizen) {
+          setRecipientName([citizen?.givenname, citizen?.lastname].join(' '));
+        }
+      });
+    }
+  }, [recipient]);
+
+  // Define the data of the table
+  let recipientInfo = undefined;
+  if (recipient) {
+    const recipientPersonnummer = formatPersonnummerDisplay(recipient.personnummer?.toString() ?? '') ?? '';
+
+    recipientInfo = {
+      recipient:
+        recipientName && recipientPersonnummer
+          ? `${recipientName}, ${recipientPersonnummer}`
+          : recipientName || recipientPersonnummer,
+      status: recipient.status,
     };
   } else {
-    recipient = {
+    recipientInfo = {
       recipient: 'Okänd',
-      status: signingInfo.status,
+      status: message.signingStatus?.letterState,
     };
   }
 
   const recAttachments = useMemo<RecAttachment[]>(() => {
-    if (letter) {
-      const attachments = letter.attachments.map((a) => {
+    if (message) {
+      const attachments = message.attachments.map((a) => {
         return { contentType: a.contentType, fileName: a.fileName, id: a.attachmentId } as RecAttachment;
       });
 
       return attachments;
     } else return [];
-  }, [letter]);
+  }, [message]);
 
   const getRecAttachment = (fileName: string, attachmentId: string, index: number) => {
     setLoadingAttachmentIndex(index);
@@ -121,7 +144,7 @@ const MyStatisticsDetails = () => {
       </Breadcrumb.Item>
 
       <Breadcrumb.Item currentPage>
-        <Breadcrumb.Link>{t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}</Breadcrumb.Link>
+        <Breadcrumb.Link>{t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}</Breadcrumb.Link>
       </Breadcrumb.Item>
     </Breadcrumb>
   );
@@ -132,18 +155,18 @@ const MyStatisticsDetails = () => {
       headerMenu={<HeaderMenu />}
       pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}
     >
-      {recLoaded ? (
+      {messageLoaded ? (
         <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">
-            {t('statistics:myStatistics.recLetterSubject', { subject: letter.subject })}
+            {t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}
           </h1>
-          <p className="mb-40">{letter.sentAt ? dayjs(letter.sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
+          <p className="mb-40">{message.sentAt ? dayjs(message.sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
 
           <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
           <AutoTable
             className="mt-16"
             pageSize={11}
-            autodata={[recipient]}
+            autodata={[recipientInfo]}
             autoheaders={headers}
             footer={false}
             tableSortable={false}

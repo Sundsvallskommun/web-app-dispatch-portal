@@ -96,4 +96,20 @@ export class RecipientController {
     const result = await checkEligibilityKivra(partyId, req.user);
     return response.status(200).send({ data: result, message: 'success' });
   }
+
+  @Get('/citizen/:personId')
+  @OpenAPI({ summary: 'Return person address by personId' })
+  @UseBefore(authMiddleware)
+  async getCitizen(
+    @Req() req: RequestWithUser,
+    @Param('personId') personId: string,
+    @Res() response: Response<ApiResponse<Citizenaddress>>,
+  ): Promise<Response<ApiResponse<Citizenaddress>>> {
+    const citizenaddress = await fetchCitizen(req.user, this.apiService, personId);
+
+    return response.status(200).send({
+      data: citizenaddress,
+      message: 'success',
+    });
+  }
 }
