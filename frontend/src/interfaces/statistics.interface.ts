@@ -134,4 +134,24 @@ export interface UserMessage {
   sentAt: string;
   attachments: MessageAttachment[];
   recipients: Recipient[];
+  signingStatus?: SigningStatus;
+}
+
+export interface SigningStatus {
+  letterState: string;
+  signingProcessState: string;
+}
+
+export function createEmptyUserMessage(): UserMessage {
+  return {
+    attachments: [],
+    recipients: [],
+    sentAt: '',
+    subject: '',
+    body: '',
+    signingStatus: {
+      letterState: '',
+      signingProcessState: '',
+    },
+  };
 }
