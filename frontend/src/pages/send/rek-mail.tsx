@@ -114,7 +114,7 @@ const SendRekMail = () => {
             },
           ]}
           onChangeStep={setStep}
-          submitButton={<SubmitHandler />}
+          submitButton={<SubmitHandler sendType={formSendType.REK_MAIL} />}
           getScreenReaderStepperText={getScreenReaderStepperText}
           controls={controls}
           success={success}

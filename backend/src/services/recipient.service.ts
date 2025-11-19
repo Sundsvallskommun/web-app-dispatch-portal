@@ -4,8 +4,11 @@ import ApiService from './api.service';
 import { parseCsv } from './csv-service/csv-service';
 import { MUNICIPALITY_ID } from '@/config';
 import { User } from '@/interfaces/users.interface';
+import { RequestWithUser } from '@/interfaces/auth.interface';
+import { logger } from '@/utils/logger';
 
 const MAX_RECIPIENT_ROW_SIZE = 250;
+const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
 
 export interface Recipient {
   personnumber: string;
@@ -16,6 +19,13 @@ export interface CitizenId {
   personId: string;
   success: boolean;
   errorMessage: string;
+}
+export interface RecipientDeliveryMethods {
+  recipients: RecipientDeliveryMethod[];
+}
+export interface RecipientDeliveryMethod {
+  partyId: string;
+  deliveryMethod: string;
 }
 
 export interface Citizenaddress {
@@ -37,6 +47,7 @@ export interface Citizenaddress {
       country: string;
     },
   ];
+  deliveryMethod: string;
   errorMessage?: string;
 }
 
@@ -65,8 +76,8 @@ export const buildRecipientListFromPersonnumber: (user: User, api: ApiService, p
     return [{ recipient: { personnumber }, error: 'INVALID_SSN' }];
   } else {
     try {
-      const address = await fetchAddressesForSsn(user, api, [personnumber]);
-      return [{ recipient: { personnumber }, error: address[0]?.errorMessage ? 'MISSING' : undefined, address: address[0] }];
+      const citizenInfo = await fetchCitizensInfos(user, api, [personnumber]);
+      return [{ recipient: { personnumber }, error: citizenInfo[0]?.errorMessage ? 'MISSING' : undefined, address: citizenInfo[0] }];
     } catch (error) {
       console.error('Error occurred while fetching addresses:', error);
       throw error;
@@ -102,7 +113,7 @@ export const buildRecipientsList: (user: User, api: ApiService, csvString: strin
   );
 
   try {
-    const addresses = await fetchAddressesForSsn(
+    const addresses = await fetchCitizensInfos(
       user,
       api,
       validRecipients.map(recipient => recipient.personnumber),
@@ -121,15 +132,66 @@ export const buildRecipientsList: (user: User, api: ApiService, csvString: strin
   }
 };
 
-export const fetchAddressesForSsn = async (user: User, api: ApiService, identifiers: string[]): Promise<Citizenaddress[]> => {
-  const citizens = await api.post<CitizenId[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/guid/batch`, data: identifiers }, user).then(res => res.data);
-  const validCitizens = citizens.filter(citizen => citizen.personId);
+export const fetchCitizensInfos = async (user: User, api: ApiService, personalSecurityNumbers: string[]): Promise<Citizenaddress[]> => {
+  const citizens = await fetchCitizens(user, api, personalSecurityNumbers);
+  const personIds = citizens.map(citizen => citizen.personId);
   const addresses = await api
-    .post<Citizenaddress[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/batch`, data: validCitizens.map(citizen => citizen.personId) }, user)
+    .post<Citizenaddress[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/batch`, data: personIds }, user)
     .then(res => res.data);
+  const deliveryMethods = await precheckPersonIds(user, api, personIds);
 
   if (!addresses || addresses.length === 0) {
     throw new Error('NO_VALID_ADDRESSES');
   }
-  return citizens.map(citizen => ({ ...citizen, ...addresses.find(address => address.personId === citizen.personId) }));
+  return citizens.map(citizen => ({
+    ...citizen,
+    ...addresses.find(address => address.personId === citizen.personId),
+    deliveryMethod: deliveryMethods.find(d => d.partyId === citizen.personId)?.deliveryMethod,
+  }));
+};
+export const fetchCitizens = async (user: User, api: ApiService, personalSecurityNumbers: string[]): Promise<CitizenId[]> => {
+  const citizens = await api
+    .post<CitizenId[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/guid/batch`, data: personalSecurityNumbers }, user)
+    .then(res => res.data);
+  const validCitizens = citizens.filter(citizen => citizen.personId);
+
+  return validCitizens;
+};
+export const fetchPersonId = async (user: User, api: ApiService, personalSecurityNumber: string[]): Promise<string> => {
+  const personId = await api.post<string, any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personalSecurityNumber}/guid` }, user).then(res => res.data);
+  return personId;
+};
+export const precheckPersonIds = async (user: User, api: ApiService, personIds: string[]): Promise<RecipientDeliveryMethod[]> => {
+  const deliveryMethods = await api
+    .post<
+      RecipientDeliveryMethods,
+      any
+    >({ url: `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/precheck`, data: { partyIds: [...personIds] }, headers: { 'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}` } }, user)
+    .then(res => res.data?.recipients ?? []);
+  return deliveryMethods;
+};
+
+interface EligibilityItemDto {
+  partyIds: string[];
+}
+interface EligibilityItemResponseDto {
+  partyId: string;
+  hasKivra: boolean;
+}
+
+export const checkEligibilityKivra = async (partyId: string, user: RequestWithUser['user']): Promise<EligibilityItemResponseDto> => {
+  const apiService = new ApiService();
+  const data: EligibilityItemDto = { partyIds: [partyId] };
+  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/precheck/kivra`;
+
+  try {
+    const res = await apiService.post<string[], EligibilityItemDto>({ url, data }, user);
+    const hasKivra = res.data.includes(partyId);
+    return { partyId, hasKivra };
+  } catch (e) {
+    const errorMessage = 'Error when checking eligibility';
+    console.error(`${errorMessage}:`, e);
+    logger.error(`${errorMessage}:`, e);
+    throw new Error(errorMessage);
+  }
 };

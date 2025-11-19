@@ -6,7 +6,6 @@ import {
   LOG_FORMAT,
   MUNICIPALITY_ID,
   NODE_ENV,
-  ORIGIN,
   PORT,
   SAML_CALLBACK_URL,
   SAML_ENTRY_SSO,
@@ -17,7 +16,6 @@ import {
   SAML_LOGOUT_REDIRECT,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
-  SAML_SUCCESS_REDIRECT,
   SECRET_KEY,
   SESSION_MEMORY,
   SWAGGER_ENABLED,
@@ -34,6 +32,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import session from 'express-session';
 import { existsSync, mkdirSync } from 'fs';
 import helmet from 'helmet';
@@ -51,17 +50,20 @@ import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import ApiService from './services/api.service';
-import { getRelayState } from './utils/getRelayState';
 import { getRedirects } from './utils/getRedirects';
-import rateLimit from 'express-rate-limit';
+import { getRelayState } from './utils/getRelayState';
 import { dataDir, dataPath } from './utils/util';
+import { isAllowedOrigin } from './utils/isAllowedOrigin';
+import rateLimit from 'express-rate-limit';
 
 const corsWhitelist = ORIGIN?.split(',');
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
 const sessionTTL = 4 * 24 * 60 * 60;
 // NOTE: memory uses ms while file uses seconds
-const sessionStore = new SessionStoreCreate(SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { ttl: sessionTTL, path: './data/sessions' });
+const sessionStore = new SessionStoreCreate(
+  SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { ttl: sessionTTL, path: './data/sessions' },
+);
 
 // Rate limiter for sensitive endpoints, e.g., SAML login callback
 const samlLoginRateLimiter = rateLimit({
@@ -115,7 +117,8 @@ const samlStrategy = new Strategy(
     // (A switch from Onegate to ADFS was done on august 6 2023 due to problems in MobilityGuard.)
     //
 
-    const givenName = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ?? profile['givenName'];
+    const givenName =
+      profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ?? profile['givenName'];
     const sn = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] ?? profile['sn'];
     const email = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ?? profile['email'];
     const groups = profile['http://schemas.xmlsoap.org/claims/Group']?.join(',') ?? profile['groups'];
@@ -152,7 +155,10 @@ const samlStrategy = new Strategy(
         },
       };
 
-      const employeeDetails = await apiService.get<any>({ url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` }, dummyUser);
+      const employeeDetails = await apiService.get<any>(
+        { url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
+        dummyUser,
+      );
       const { personid, orgTree } = employeeDetails.data;
 
       const findUser = {
@@ -223,7 +229,7 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    this.app.use(hpp() as any);
+    this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression() as any);
     this.app.use(express.json());
@@ -238,25 +244,21 @@ class App {
         resave: false,
         saveUninitialized: false,
         store: sessionStore,
-      }) as any,
+      }),
     );
 
     this.app.use(passport.initialize() as any);
     this.app.use(passport.session());
-    passport.use('saml', samlStrategy as any);
+    passport.use('saml', samlStrategy);
 
     this.app.use(
       cors({
         credentials: CREDENTIALS,
         origin: function (origin, callback) {
-          if (origin === undefined || corsWhitelist?.indexOf(origin) !== -1 || corsWhitelist?.indexOf('*') !== -1) {
+          if (isAllowedOrigin(origin) || NODE_ENV == 'development') {
             callback(null, true);
           } else {
-            if (NODE_ENV == 'development') {
-              callback(null, true);
-            } else {
-              callback(new Error('Not allowed by CORS'));
-            }
+            callback(new Error('Not allowed by CORS'));
           }
         },
       }),
@@ -301,58 +303,62 @@ class App {
       },
     );
 
-    this.app.get(`${BASE_URL_PREFIX}/saml/logout/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
-      req.logout(err => {
-        if (err) {
-          return next(err);
-        }
+    this.app.get(
+      `${BASE_URL_PREFIX}/saml/logout/callback`,
+      bodyParser.urlencoded({ extended: false }),
+      (req, res, next) => {
+        req.logout(err => {
+          if (err) {
+            return next(err);
+          }
 
-        const { successRedirect, failureRedirect } = getRedirects(req);
+          const { successRedirect, failureRedirect } = getRedirects(req);
 
-        const queries = new URLSearchParams(failureRedirect.searchParams);
-
-        if (req.session.messages?.length > 0) {
-          queries.append('failMessage', req.session.messages[0]);
-        } else {
-          queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
-        }
-
-        if (failureRedirect) {
-          res.redirect(failureRedirect.toString());
-        } else {
-          res.redirect(successRedirect.toString());
-        }
-      });
-    });
-
-    this.app.post(`${BASE_URL_PREFIX}/saml/login/callback`, bodyParser.urlencoded({ extended: false }), samlLoginRateLimiter, (req, res, next) => {
-      const { successRedirect, failureRedirect } = getRedirects(req);
-      passport.authenticate('saml', (err, user) => {
-        console.log(err);
-        if (err) {
           const queries = new URLSearchParams(failureRedirect.searchParams);
-          if (err?.name) {
-            queries.append('failMessage', err.name);
+
+          if (req.session.messages?.length > 0) {
+            queries.append('failMessage', req.session.messages[0]);
           } else {
             queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
           }
-          failureRedirect.search = queries.toString();
-          res.redirect(failureRedirect.toString());
-        } else if (!user) {
-          res.redirect('/saml/login');
-        } else {
+
+          if (failureRedirect) {
+            res.redirect(failureRedirect.toString());
+          } else {
+            res.redirect(successRedirect.toString());
+          }
+        });
+      },
+    );
+
+    this.app.post(
+      `${BASE_URL_PREFIX}/saml/login/callback`,
+      bodyParser.urlencoded({ extended: false }),
+      samlLoginRateLimiter,
+      (req, res, next) => {
+        const { successRedirect, failureRedirect } = getRedirects(req);
+
+        const redirectWithFailure = (message: string) => {
+          const params = new URLSearchParams(failureRedirect.searchParams);
+          params.append('failMessage', message || 'SAML_UNKNOWN_ERROR');
+          failureRedirect.search = params.toString();
+          return res.redirect(failureRedirect.toString());
+        };
+
+        const handleLogin = (err, user) => {
+          if (err) return redirectWithFailure(err.name);
+
+          if (!user) return res.redirect('/saml/login');
+
           req.login(user, loginErr => {
-            if (loginErr) {
-              const failMessage = new URLSearchParams(failureRedirect.searchParams);
-              failMessage.append('failMessage', 'SAML_UNKNOWN_ERROR');
-              failureRedirect.search = failMessage.toString();
-              res.redirect(failureRedirect.toString());
-            }
+            if (loginErr) return redirectWithFailure('SAML_UNKNOWN_ERROR');
             return res.redirect(successRedirect.toString());
           });
-        }
-      })(req, res, next);
-    });
+        };
+
+        passport.authenticate('saml', handleLogin)(req, res, next);
+      },
+    );
   }
 
   private initializeRoutes(controllers: Function[]) {

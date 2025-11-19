@@ -38,7 +38,7 @@ export const getPermissions = (groups: InternalRoleEnum[] | string[], internalGr
   const permissions: Permissions = defaultPermissions();
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
-    const role = internalGroups ? (groupLower as InternalRoleEnum) : (roleADMapping[groupLower] as InternalRoleEnum);
+    const role = internalGroups ? (groupLower as InternalRoleEnum) : roleADMapping[groupLower];
     if (roles.has(role)) {
       const groupPermissions = roles.get(role);
       Object.keys(groupPermissions).forEach(permission => {
@@ -78,13 +78,13 @@ export const getRole = (groups: string[]): InternalRole => {
  */
 export const getRoles = (groups: string[]): InternalRole[] => {
   const roles: InternalRole[] = [];
-  groups.forEach(group => {
+  for (let group of groups) {
     const groupLower = group.toLowerCase();
     const role = roleADMapping[groupLower];
     if (role) {
       roles.push(role);
     }
-  });
+  }
 
   return roles;
 };

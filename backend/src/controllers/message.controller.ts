@@ -1,9 +1,9 @@
-import { MUNICIPALITY_ID, SMS_SENDER } from '@/config';
+import { MUNICIPALITY_ID } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { LetterResponse, sendLetter } from '@/services/message.service';
+import { logError, MessageResponse, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
@@ -20,7 +20,13 @@ class RequestBodyMail {
   addresses: string;
   subject: string;
   body: string;
-  department: string;
+}
+class RequestBodyRecMail {
+  @IsString()
+  recipientPersonId: string;
+  @IsString()
+  subject: string;
+  body: string;
 }
 
 class RequestBodySMS {
@@ -32,47 +38,22 @@ class RequestBodySMS {
   message: string;
 }
 
-interface SMSDTO {
-  sender: string;
-  message: string;
-  parties: { mobileNumber: string }[];
-  priority: 'NORMAL' | 'HIGH';
-}
-
-interface SMSReponse {
-  batchId: string;
-  messages: {
-    messageId: string;
-    deliveries: {
-      deliveryId: string;
-      messageType: string;
-    }[];
-  }[];
-}
-
 @Controller()
 export class MessageController {
   private apiService = new ApiService();
-  SERVICE = `messaging/7.7`;
+  SERVICE = `messaging/7.9`;
 
   @Post('/sms')
   @OpenAPI({ summary: 'Send SMS to recipients' })
   @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
   async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
     const { message, recipients } = body;
-    const data: SMSDTO = {
-      message,
-      parties: recipients.map(rec => ({ mobileNumber: rec })),
-      sender: SMS_SENDER,
-      priority: 'HIGH',
-    };
-    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/sms/batch`;
-    const res = await this.apiService.post<SMSReponse, SMSDTO>({ url, data }, req.user).catch(e => {
-      console.log('Error when sending sms:', e);
+    const res = await sendSmsMessage(req.user, this.apiService, recipients, message).catch(e => {
+      logError('Error when sending sms', e);
       throw new Error('Error when sending sms');
     });
 
-    return response.send({ data: res.data, message: 'success' }).status(200);
+    return response.send({ data: res, message: 'success' }).status(200);
   }
 
   @Post('/message/')
@@ -84,7 +65,7 @@ export class MessageController {
     @Res() response: any,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
   ): Promise<{
-    data: { recipients: RecipientWithAddress[]; response: LetterResponse };
+    data: MessageResponse;
     message: string;
   }> {
     let recipients: RecipientWithAddress[];
@@ -96,23 +77,87 @@ export class MessageController {
       throw new Error('Could not parse recipient list');
     }
 
-    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, body.department, addresses)
+    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, addresses)
       .then(async res => {
-        // TODO do not send status email for now
-        // const emailAddress = DEV ? TEST_EMAIL : req.user.email;
-        // const senderPersonId = req.user.personId;
-        // const emailBody = `Ett meddelande har skickats: ${process.env.SAML_SUCCESS_REDIRECT}status/${res.response.batchId}`;
-        // await sendEmail(this.apiService, senderPersonId, emailAddress, emailBody);
         return res;
       })
       .catch(e => {
-        console.log('Error when sending letter:', e);
+        logError('Error when sending letter', e);
         throw new Error('Error when sending message');
       });
 
     return response
       .send({ data: res, message: 'success' } as {
-        data: { recipients: RecipientWithAddress[]; response: LetterResponse };
+        data: MessageResponse;
+        message: string;
+      })
+      .status(200);
+  }
+
+  @Post('/rec-message/')
+  @OpenAPI({ summary: 'Send attachment to recipients' })
+  @UseBefore(authMiddleware)
+  async sendRecMessage(
+    @Req() req: RequestWithUser,
+    @Body() body: RequestBodyRecMail,
+    @Res() response: any,
+    @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
+  ): Promise<{
+    data: MessageResponse;
+    message: string;
+  }> {
+    const res = await sendRecLetter(req.user, this.apiService, {
+      recipientPersonId: body.recipientPersonId,
+      subject: body.subject,
+      body: body.body,
+      files,
+    })
+      .then(async res => {
+        return res;
+      })
+      .catch(e => {
+        logError('Error when sending letter', e);
+        throw new Error('Error when sending message');
+      });
+
+    return response
+      .send({ data: res, message: 'success' } as {
+        data: MessageResponse;
+        message: string;
+      })
+      .status(200);
+  }
+
+  @Post('/csv-message/')
+  @OpenAPI({ summary: 'Send attachment to recipients' })
+  @UseBefore(authMiddleware)
+  async sendCsvMessage(
+    @Req() req: RequestWithUser,
+    @Body() body: RequestBodyRecMail,
+    @Res() response: any,
+    @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
+    @UploadedFiles('csv-file', { options: fileUploadOptions, required: false }) csvFile: Express.Multer.File,
+  ): Promise<{
+    data: MessageResponse;
+    message: string;
+  }> {
+    const res = await sendLetterCsv(req.user, this.apiService, {
+      subject: body.subject,
+      body: body.body,
+      files,
+      csvFile,
+    })
+      .then(async res => {
+        return res;
+      })
+      .catch(e => {
+        logError('Error when sending csv letter', e);
+        throw new Error('Error when sending csv message');
+      });
+
+    return response
+      .send({ data: res, message: 'success' } as {
+        data: MessageResponse;
         message: string;
       })
       .status(200);
@@ -160,14 +205,14 @@ export class MessageController {
                   if (partyId) {
                     const citizenUrl = `citizen/3.0/${partyId}`;
                     const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }, req.user).catch(e => {
-                      logger.error('Error when fetching recipient adress:', e);
-                      console.log('Error when fetching recipient adress:', e);
+                      logError('Error when fetching recipient adress', e);
                       return undefined;
                     });
                     return { delivery, recipient: person.data };
                   } else {
-                    logger.error('No partyId for reciever, cannot fetch adress.');
-                    console.log('No partyId for reciever, cannot fetch adress.');
+                    const errorMessage = 'No partyId for reciever, cannot fetch adress.';
+                    logger.error(errorMessage);
+                    console.error(errorMessage);
                     return undefined;
                   }
                 }

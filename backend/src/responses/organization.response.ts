@@ -1,9 +1,9 @@
+import { ApiResponse } from '@/services/api.service';
 import { Organization as OrganizationModel } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsDateString, IsInt, IsOptional, IsString, Validate, ValidateNested } from 'class-validator';
-import { Municipality } from './municipality.response';
+import { IsDateString, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Logotype } from './logotype.response';
-import { ApiResponse } from '@/services/api.service';
+import { Municipality } from './municipality.response';
 
 export class Organization implements OrganizationModel {
   @IsInt()

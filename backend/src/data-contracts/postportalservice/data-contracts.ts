@@ -476,6 +476,8 @@ export interface MessageDetails {
    * @format date-time
    */
   sentAt?: string;
+  /** Signing status model */
+  signingStatus?: SigningStatus;
   attachments?: AttachmentDetails[];
   recipients?: RecipientDetails[];
 }

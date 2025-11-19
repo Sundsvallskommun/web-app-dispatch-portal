@@ -11,7 +11,7 @@ import { logger } from '@/utils/logger';
 import prisma from '@/utils/prisma';
 import { dataDir, dataPath } from '@/utils/util';
 import { Response } from 'express';
-import { unlink } from 'fs';
+import { unlink } from 'node:fs';
 import multer from 'multer';
 import { Body, Controller, Delete, Get, Header, Param, Patch, Post, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
@@ -128,6 +128,7 @@ export class AdminLogotypeController {
       const logotypeDarkMode: Express.Multer.File = req.files?.['logotypeDarkMode']?.[0];
 
       const oldData = await prisma.logotype.findFirst({ where: { id } });
+      const urlDarkMode = logotypeDarkMode?.filename ? `${dataPath(logotypeDarkMode?.filename)}` : undefined;
       const data = await prisma.logotype.update({
         where: { id },
         data: {
@@ -135,7 +136,7 @@ export class AdminLogotypeController {
           filenameLightMode: logotypeLightMode?.filename,
           urlLightMode: logotypeLightMode?.filename ? `${dataPath(logotypeLightMode?.filename)}` : undefined,
           filenameDarkMode: removeDarkMode ? null : logotypeDarkMode?.filename,
-          urlDarkMode: removeDarkMode ? null : logotypeDarkMode?.filename ? `${dataPath(logotypeDarkMode?.filename)}` : undefined,
+          urlDarkMode: removeDarkMode ? null : urlDarkMode,
         },
       });
 

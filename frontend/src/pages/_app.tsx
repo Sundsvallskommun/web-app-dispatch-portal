@@ -1,6 +1,6 @@
 import { FileUploadWrapper } from '@components/file-upload/file-upload.context';
 import LoginGuard from '@components/login-guard/login-guard';
-import { GuiProvider, defaultTheme, extendTheme } from '@sk-web-gui/react';
+import { GuiProvider, defaultTheme, extendTheme, ConfirmationDialogContextProvider } from '@sk-web-gui/react';
 import '@styles/tailwind.scss';
 import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
@@ -46,13 +46,15 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <GuiProvider theme={theme}>
-      <AppWrapper>
-        <LoginGuard>
-          <FileUploadWrapper>
-            <Component {...pageProps} />
-          </FileUploadWrapper>
-        </LoginGuard>
-      </AppWrapper>
+      <ConfirmationDialogContextProvider>
+        <AppWrapper>
+          <LoginGuard>
+            <FileUploadWrapper>
+              <Component {...pageProps} />
+            </FileUploadWrapper>
+          </LoginGuard>
+        </AppWrapper>
+      </ConfirmationDialogContextProvider>
     </GuiProvider>
   );
 }
