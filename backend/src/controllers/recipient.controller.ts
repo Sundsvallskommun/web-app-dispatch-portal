@@ -1,12 +1,19 @@
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
-import ApiService from '@/services/api.service';
-import { buildRecipientListFromPersonnumber, buildRecipientsList, checkEligibilityKivra, RecipientWithAddress } from '@/services/recipient.service';
+import ApiService, { ApiResponse } from '@/services/api.service';
+import {
+  buildRecipientListFromPersonnumber,
+  buildRecipientsList,
+  checkEligibilityKivra,
+  Citizenaddress,
+  fetchCitizen,
+  RecipientWithAddress,
+} from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import authMiddleware from '@middlewares/auth.middleware';
 import { plainToInstance } from 'class-transformer';
 import { IsNotEmpty, IsString, validate } from 'class-validator';
-import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
+import { Body, Controller, Get, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { Response } from 'express';
 
@@ -65,7 +72,11 @@ export class RecipientController {
     data: RecipientWithAddress[];
     message: string;
   }> {
-    const recipientWithAddresses = await buildRecipientListFromPersonnumber(req.user, this.apiService, body.personnumber);
+    const recipientWithAddresses = await buildRecipientListFromPersonnumber(
+      req.user,
+      this.apiService,
+      body.personnumber,
+    );
     return response
       .send({ data: recipientWithAddresses, message: 'success' } as {
         data: RecipientWithAddress[];
@@ -76,7 +87,11 @@ export class RecipientController {
 
   @Post('/eligibility-kivra')
   @OpenAPI({ summary: 'Checks if the recipients are eligible for Kivra' })
-  async checkEligibilityKivra(@Body() body: RequestBodyEligibility, @Req() req: RequestWithUser, @Res() response: Response) {
+  async checkEligibilityKivra(
+    @Body() body: RequestBodyEligibility,
+    @Req() req: RequestWithUser,
+    @Res() response: Response,
+  ) {
     const requestBody = plainToInstance(RequestBodyEligibility, body);
     const errors = await validate(requestBody);
 
