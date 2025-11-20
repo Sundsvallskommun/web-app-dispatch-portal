@@ -68,7 +68,7 @@ const MyStatisticsDetails = () => {
   }, [message]);
 
   useEffect(() => {
-    let personId = recipient?.partyId;
+    const personId = recipient?.partyId;
     if (personId) {
       getCitizen(personId).then((citizen) => {
         if (citizen) {
