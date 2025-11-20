@@ -1,3 +1,5 @@
+import { Message } from '@/data-contracts/messaging/data-contracts';
+
 interface PagingMetaData {
   page: number;
   limit: number;
@@ -54,29 +56,7 @@ export interface UserBatches {
 }
 export interface UserLetters {
   _meta: PagingMetaData;
-  messages: Letter[];
-}
-export enum EnumLetterType {
-  SMS = 'SMS',
-  LETTER = 'LETTER',
-  DIGITAL_REGISTERED_LETTER = 'DIGITAL_REGISTERED_LETTER',
-}
-
-export enum EnumSigningState {
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-}
-export interface Letter {
-  messageId: string;
-  subject: string;
-  type: EnumLetterType;
-  sentAt: string;
-  signingStatus: {
-    letterState: EnumLetterState;
-    signingProcessState: EnumSigningState;
-  };
-  numberOfRecipients: number;
+  messages: Message[];
 }
 
 export interface Batch {
@@ -99,15 +79,6 @@ export interface UserRecLetters {
   letters: RecLetter[];
 }
 
-export enum EnumLetterState {
-  NEW = 'NEW',
-  SENT = 'SENT',
-  SIGNED = 'SIGNED',
-  EXPIRED = 'EXPIRED',
-  FAILED_Client_Error = 'FAILED - Client Error',
-  FAILED_Server_Error = 'FAILED - Server Error',
-  FAILED_Unknown_Error = 'FAILED - Unknown Error',
-}
 export interface RecLetter {
   id: string;
   subject: string;

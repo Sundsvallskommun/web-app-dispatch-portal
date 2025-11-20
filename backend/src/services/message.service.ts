@@ -1,9 +1,11 @@
-import { MUNICIPALITY_ID } from '@/config';
+import { getApiBase, MUNICIPALITY_ID } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
-import { RecipientWithAddress } from './recipient.service';
+import { Citizenaddress, RecipientWithAddress } from './recipient.service';
 import { User } from '@/interfaces/users.interface';
 import FormData from 'form-data';
 import { logger } from '@/utils/logger';
+import { RequestWithUser } from '@/interfaces/auth.interface';
+import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 
 export interface AgnosticMessageResponse {
   messageId: string;
@@ -144,15 +146,15 @@ export interface EmailMessageRequest {
 }
 
 const MESSAGING_SERVICE = `messaging/7.9`;
-const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
+const POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
 
-export const sendEmail: (user: User, api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
-  user,
-  api,
-  senderPersonId,
-  emailAddress,
-  messageBody,
-) => {
+export const sendEmail: (
+  user: User,
+  api: ApiService,
+  senderPersonId: string,
+  emailAddress: string,
+  messageBody: string,
+) => Promise<boolean> = (user, api, senderPersonId, emailAddress, messageBody) => {
   console.log(`Composing email message for ${senderPersonId} ${emailAddress}`);
   if (!emailAddress || !senderPersonId) {
     return Promise.resolve(false);
@@ -210,12 +212,12 @@ export interface SMSDTO {
   recipients: { phoneNumber: string }[];
 }
 
-export const sendSmsMessage: (user: User, api: ApiService, recipients: string[], message: string) => Promise<string[]> = async (
-  user,
-  api,
-  recipients,
-  message,
-) => {
+export const sendSmsMessage: (
+  user: User,
+  api: ApiService,
+  recipients: string[],
+  message: string,
+) => Promise<string[]> = async (user, api, recipients, message) => {
   const data: SMSDTO = {
     message,
     recipients: recipients.map(rec => ({ phoneNumber: rec })),
@@ -225,8 +227,8 @@ export const sendSmsMessage: (user: User, api: ApiService, recipients: string[],
     'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
   };
   return api
-    .post<any, SMSDTO>({ url, data, headers }, user)
-    .then(async (_res: ApiResponse<string[]>) => {
+    .post<string, SMSDTO>({ url, data, headers }, user)
+    .then(async (_res: ApiResponse<string>) => {
       return recipients;
     })
     .catch(e => {
@@ -235,12 +237,14 @@ export const sendSmsMessage: (user: User, api: ApiService, recipients: string[],
     });
 };
 
-export type MessageResponse =
+export type MessageResponseData =
   | {
       recipients: RecipientWithAddress[];
     }
   | { recipientPersonId: string }
   | { csv: boolean };
+
+export type MessageResponse = ApiResponse<MessageResponseData>;
 
 function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
   if (!files?.length) return;
@@ -267,7 +271,7 @@ export const sendLetter: (
   recipients: RecipientWithAddress[],
   message: Message,
   addresses: Address[],
-) => Promise<MessageResponse> = async (user, api, recipients, message, addresses) => {
+) => Promise<MessageResponseData> = async (user, api, recipients, message, addresses) => {
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
 
@@ -309,8 +313,8 @@ export const sendLetter: (
   };
 
   return api
-    .post<any, FormData>({ url, data: form, headers }, user)
-    .then(async (_res: ApiResponse<any>) => {
+    .post<string, FormData>({ url, data: form, headers }, user)
+    .then(async (_res: ApiResponse<string>) => {
       return { recipients };
     })
     .catch(e => {
@@ -321,7 +325,11 @@ export const sendLetter: (
     });
 };
 
-export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponse> = async (user, api, message) => {
+export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponseData> = async (
+  user,
+  api,
+  message,
+) => {
   const { subject, files, body, recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
 
@@ -346,8 +354,8 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
   };
 
   return api
-    .post<any, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<any>) => {
+    .post<string, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<string>) => {
       return { recipientPersonId: recipientPersonId };
     })
     .catch(e => {
@@ -358,7 +366,11 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
     });
 };
 
-export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponse> = async (user, api, message) => {
+export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponseData> = async (
+  user,
+  api,
+  message,
+) => {
   const { subject, files, body, csvFile } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
 
@@ -398,8 +410,8 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   };
 
   return api
-    .post<any, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<any>) => {
+    .post<string, FormData>({ url, data: form, headers }, user)
+    .then(async (res: ApiResponse<string>) => {
       return { csv: true };
     })
     .catch(e => {
@@ -413,4 +425,95 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
 export const logError = (errorMessage: string, e: any) => {
   console.error(`${errorMessage}:`, e);
   logger.error(`${errorMessage}:`, e);
+};
+
+export const fetchBatchStatus = async (
+  user: RequestWithUser['user'],
+  batchId: string,
+  api: ApiService,
+): Promise<BatchStatus> => {
+  const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/status/batch/${batchId}`;
+  const response = await api.get<BatchStatus>({ url }, user);
+  return response.data;
+};
+
+export const fetchMessageInformation = async (
+  user: RequestWithUser['user'],
+  messageId: string,
+  api: ApiService,
+): Promise<MessageInformation> => {
+  const messageUrl = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/message/${messageId}`;
+
+  try {
+    const res = await api.get<DeliveryInformation[]>({ url: messageUrl }, user);
+    const deliveries = await buildDeliveriesWithRecipients(user, res.data, api);
+
+    return {
+      messageId,
+      deliveries,
+    };
+  } catch (e) {
+    logger.error('Error when fetching message information:', e);
+    // keep same behavior as original (return error instead of throwing)
+    return e as unknown as MessageInformation;
+  }
+};
+
+const buildDeliveriesWithRecipients = async (
+  user: RequestWithUser['user'],
+  deliveries: DeliveryInformation[],
+  api: ApiService,
+): Promise<{ delivery: DeliveryInformation; recipient: Citizenaddress }[]> => {
+  const deliveryPromises = deliveries.map(delivery => attachRecipientToDelivery(user, delivery, api));
+
+  const results = await Promise.allSettled(deliveryPromises);
+
+  // Filter out rejected + undefined values
+  return results
+    .filter(r => r.status === 'fulfilled' && r.value !== undefined)
+    .map(
+      r =>
+        (
+          r as PromiseFulfilledResult<{
+            delivery: DeliveryInformation;
+            recipient: Citizenaddress;
+          }>
+        ).value,
+    );
+};
+
+const attachRecipientToDelivery = async (
+  user: RequestWithUser['user'],
+  delivery: DeliveryInformation,
+  api: ApiService,
+): Promise<{ delivery: DeliveryInformation; recipient: Citizenaddress } | undefined> => {
+  // no "party" key – nothing to do
+  if (!Object.prototype.hasOwnProperty.call(delivery.content, 'party')) {
+    return undefined;
+  }
+
+  const party = delivery.content['party'] as { partyIds?: string; partyId?: string };
+  const partyId = party.partyIds || party.partyId;
+
+  if (!partyId) {
+    const errorMessage = 'No partyId for reciever, cannot fetch adress.';
+    logger.error(errorMessage);
+    console.error(errorMessage);
+    return undefined;
+  }
+
+  try {
+    const citizenUrl = `citizen/3.0/${partyId}`;
+    const person = await api.get<Citizenaddress>({ url: citizenUrl }, user).catch(e => {
+      logError('Error when fetching recipient adress', e);
+      return undefined;
+    });
+
+    if (!person) return undefined;
+
+    return { delivery, recipient: person.data };
+  } catch (e) {
+    logError('Error when fetching recipient adress', e);
+    return undefined;
+  }
 };
