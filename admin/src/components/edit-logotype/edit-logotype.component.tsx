@@ -46,9 +46,9 @@ export const EditLogotype: React.FC = () => {
     if (event.target.value[0].file) {
       const url = URL.createObjectURL(event.target.value[0].file);
       setValue(event.target.name, event.target.value[0].file, { shouldDirty: true });
-      setValue(`filename${mode}`, event.target.value[0].file.name);
-      setValue(`url${mode}`, url);
-      setValue(`url${mode}`, url);
+      setValue(`filename${mode}`, event.target.value[0].file.name, { shouldDirty: true });
+      setValue(`url${mode}`, url, { shouldDirty: true });
+      setValue(`url${mode}`, url, { shouldDirty: true });
     }
   };
 

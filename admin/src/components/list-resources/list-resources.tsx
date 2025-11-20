@@ -117,6 +117,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
     <div>
       {formattedData && formattedData?.length > 0 ?
         <AutoTable
+          data-cy="resource-table"
           pageSize={15}
           autodata={formattedData}
           autoheaders={[...filteredHeaders, ...(update ? [editHeader] : [])]}

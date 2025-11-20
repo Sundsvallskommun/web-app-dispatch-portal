@@ -1,0 +1,47 @@
+name: Cypress Tests Admin
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "develop"
+      - "main"
+    paths:
+      - admin/src/**
+      - admin/cypress/**
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin
+    name: E2E in Chrome on ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run
+        uses: cypress-io/github-action@6c143abc292aa835d827652c2ea025d098311070
+        with:
+          working-directory: admin
+          install-command: yarn --frozen-lockfile --silent --network-timeout 1000000
+          browser: chrome
+          build: yarn build
+          start: yarn start
+          wait-on: "http://localhost:3002"
+          spec: cypress/e2e/**/*.cy.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEXT_PUBLIC_APP_NAME: PortportalenAdmin
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+          NEXT_PUBLIC_API_PATH: /api
+          DOMAIN_NAME: localhost
+          BASE_PATH: ""
+          NEXT_PUBLIC_BASE_PATH: ""
+          HEALTH_AUTH: false
+          HEALTH_USERNAME: ""
+          HEALTH_PASSWORD: ""
+          PORT: 3002

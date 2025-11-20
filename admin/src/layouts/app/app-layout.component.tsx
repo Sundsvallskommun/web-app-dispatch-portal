@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import utc from 'dayjs/plugin/utc';
+import { NavigationGuardProvider } from 'next-navigation-guard';
 import { useShallow } from 'zustand/react/shallow';
 
 dayjs.extend(utc);
@@ -42,11 +43,13 @@ export const MyAppLayout: React.FC<AppLayoutProps> = ({ locale, children }) => {
   return (
     <html lang={locale}>
       <body>
-        <GuiProvider colorScheme={colorScheme}>
-          <ConfirmationDialogContextProvider>
-            <LoginGuard>{children}</LoginGuard>
-          </ConfirmationDialogContextProvider>
-        </GuiProvider>
+        <NavigationGuardProvider>
+          <GuiProvider colorScheme={colorScheme}>
+            <ConfirmationDialogContextProvider>
+              <LoginGuard>{children}</LoginGuard>
+            </ConfirmationDialogContextProvider>
+          </GuiProvider>
+        </NavigationGuardProvider>
       </body>
     </html>
   );

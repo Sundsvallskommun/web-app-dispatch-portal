@@ -1,6 +1,7 @@
 import resources from '@config/resources';
 import { ResourceName } from '@interfaces/resource-name';
 import { Button, Icon, useConfirm } from '@sk-web-gui/react';
+import { useRouteGuard } from '@utils/routeguard.hook';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { Save, Trash } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -20,6 +21,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
   const { remove } = resources[resource];
   const { handleRemove } = useCrudHelper(resource);
   const confirm = useConfirm();
+
   const {
     reset,
     formState: { isDirty },
@@ -52,6 +54,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
   return (
     <Button.Group className="absolute top-40 right-48 w-fit">
       <Button
+        data-cy="edit-toolbar-save"
         type="submit"
         color="vattjom"
         size="sm"
@@ -64,6 +67,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
 
       {((!!remove && id) || !id) && (
         <Button
+          data-cy="edit-toolbar-delete"
           variant="tertiary"
           color="error"
           showBackground={false}
