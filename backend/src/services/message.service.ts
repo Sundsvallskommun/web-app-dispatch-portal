@@ -1,4 +1,4 @@
-import { MUNICIPALITY_ID } from '@/config';
+import { getApiBase, MUNICIPALITY_ID } from '@/config';
 import ApiService, { ApiResponse } from './api.service';
 import { RecipientWithAddress } from './recipient.service';
 import { User } from '@/interfaces/users.interface';
@@ -144,15 +144,15 @@ export interface EmailMessageRequest {
 }
 
 const MESSAGING_SERVICE = `messaging/7.9`;
-const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
+const POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
 
-export const sendEmail: (user: User, api: ApiService, senderPersonId: string, emailAddress: string, messageBody: string) => Promise<boolean> = (
-  user,
-  api,
-  senderPersonId,
-  emailAddress,
-  messageBody,
-) => {
+export const sendEmail: (
+  user: User,
+  api: ApiService,
+  senderPersonId: string,
+  emailAddress: string,
+  messageBody: string,
+) => Promise<boolean> = (user, api, senderPersonId, emailAddress, messageBody) => {
   console.log(`Composing email message for ${senderPersonId} ${emailAddress}`);
   if (!emailAddress || !senderPersonId) {
     return Promise.resolve(false);
@@ -210,12 +210,12 @@ export interface SMSDTO {
   recipients: { phoneNumber: string }[];
 }
 
-export const sendSmsMessage: (user: User, api: ApiService, recipients: string[], message: string) => Promise<string[]> = async (
-  user,
-  api,
-  recipients,
-  message,
-) => {
+export const sendSmsMessage: (
+  user: User,
+  api: ApiService,
+  recipients: string[],
+  message: string,
+) => Promise<string[]> = async (user, api, recipients, message) => {
   const data: SMSDTO = {
     message,
     recipients: recipients.map(rec => ({ phoneNumber: rec })),
@@ -323,7 +323,11 @@ export const sendLetter: (
     });
 };
 
-export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponseData> = async (user, api, message) => {
+export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponseData> = async (
+  user,
+  api,
+  message,
+) => {
   const { subject, files, body, recipientPersonId } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
 
@@ -360,7 +364,11 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
     });
 };
 
-export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponseData> = async (user, api, message) => {
+export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponseData> = async (
+  user,
+  api,
+  message,
+) => {
   const { subject, files, body, csvFile } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
 

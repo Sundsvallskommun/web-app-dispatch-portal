@@ -1,7 +1,12 @@
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import ApiService from '@/services/api.service';
-import { buildRecipientListFromPersonnumber, buildRecipientsList, checkEligibilityKivra, RecipientWithAddress } from '@/services/recipient.service';
+import {
+  buildRecipientListFromPersonnumber,
+  buildRecipientsList,
+  checkEligibilityKivra,
+  RecipientWithAddress,
+} from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import authMiddleware from '@middlewares/auth.middleware';
 import { plainToInstance } from 'class-transformer';
@@ -23,7 +28,7 @@ class RequestBodyEligibility {
 
 @Controller()
 export class RecipientController {
-  private apiService = new ApiService();
+  private readonly apiService = new ApiService();
 
   @Post('/recipients/')
   @OpenAPI({ summary: 'Build list of recipients from CSV file' })
@@ -65,7 +70,11 @@ export class RecipientController {
     data: RecipientWithAddress[];
     message: string;
   }> {
-    const recipientWithAddresses = await buildRecipientListFromPersonnumber(req.user, this.apiService, body.personnumber);
+    const recipientWithAddresses = await buildRecipientListFromPersonnumber(
+      req.user,
+      this.apiService,
+      body.personnumber,
+    );
     return response
       .send({ data: recipientWithAddresses, message: 'success' } as {
         data: RecipientWithAddress[];
@@ -76,7 +85,11 @@ export class RecipientController {
 
   @Post('/eligibility-kivra')
   @OpenAPI({ summary: 'Checks if the recipients are eligible for Kivra' })
-  async checkEligibilityKivra(@Body() body: RequestBodyEligibility, @Req() req: RequestWithUser, @Res() response: Response) {
+  async checkEligibilityKivra(
+    @Body() body: RequestBodyEligibility,
+    @Req() req: RequestWithUser,
+    @Res() response: Response,
+  ) {
     const requestBody = plainToInstance(RequestBodyEligibility, body);
     const errors = await validate(requestBody);
 

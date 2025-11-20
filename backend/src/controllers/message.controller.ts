@@ -3,7 +3,14 @@ import { RequestWithUser } from '@/interfaces/auth.interface';
 import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { logError, MessageResponse, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
+import {
+  logError,
+  MessageResponse,
+  sendLetter,
+  sendLetterCsv,
+  sendRecLetter,
+  sendSmsMessage,
+} from '@/services/message.service';
 import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
@@ -40,7 +47,7 @@ class RequestBodySMS {
 
 @Controller()
 export class MessageController {
-  private apiService = new ApiService();
+  private readonly apiService = new ApiService();
   SERVICE = `messaging/7.9`;
 
   @Post('/sms')
@@ -74,7 +81,13 @@ export class MessageController {
       throw new Error('Could not parse recipient list');
     }
 
-    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, addresses)
+    const res = await sendLetter(
+      req.user,
+      this.apiService,
+      recipients,
+      { subject: body.subject, body: body.body, files },
+      addresses,
+    )
       .then(async res => {
         return res;
       })
@@ -83,7 +96,7 @@ export class MessageController {
         throw new Error('Error when sending message');
       });
 
-    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
+    return response.status(200).send({ data: res, message: 'success' });
   }
 
   @Post('/rec-message/')
@@ -109,7 +122,7 @@ export class MessageController {
         throw new Error('Error when sending message');
       });
 
-    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
+    return response.status(200).send({ data: res, message: 'success' });
   }
 
   @Post('/csv-message/')
@@ -136,7 +149,7 @@ export class MessageController {
         throw new Error('Error when sending csv message');
       });
 
-    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
+    return response.status(200).send({ data: res, message: 'success' });
   }
 
   @Get('/batchstatus/:id')
@@ -193,9 +206,10 @@ export class MessageController {
                   }
                 }
               });
-              const deliveries: { delivery: DeliveryInformation; recipient: Citizenaddress }[] = await Promise.allSettled(deliveryPromises).then(s =>
-                s.map(ss => (ss.status === 'fulfilled' ? ss.value : ss.reason)),
-              );
+              const deliveries: { delivery: DeliveryInformation; recipient: Citizenaddress }[] =
+                await Promise.allSettled(deliveryPromises).then(s =>
+                  s.map(ss => (ss.status === 'fulfilled' ? ss.value : ss.reason)),
+                );
               return {
                 messageId: m.messageId,
                 deliveries: deliveries,
