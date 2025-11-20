@@ -148,47 +148,6 @@ export interface EmailMessageRequest {
 const MESSAGING_SERVICE = `messaging/7.9`;
 const POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
 
-export const sendEmail: (
-  user: User,
-  api: ApiService,
-  senderPersonId: string,
-  emailAddress: string,
-  messageBody: string,
-) => Promise<boolean> = (user, api, senderPersonId, emailAddress, messageBody) => {
-  console.log(`Composing email message for ${senderPersonId} ${emailAddress}`);
-  if (!emailAddress || !senderPersonId) {
-    return Promise.resolve(false);
-  }
-  const url = `${MESSAGING_SERVICE}/${MUNICIPALITY_ID}/email?async=false`;
-
-  const req: EmailRequest = {
-    party: {
-      partyId: senderPersonId,
-    },
-    emailAddress: emailAddress,
-    sender: {
-      name: 'Postportalen',
-      address: 'no-reply@postportal.sundsvall.se',
-      replyTo: 'no-reply@postportal.sundsvall.se',
-    },
-    subject: 'Status för utskick',
-    message: messageBody,
-    htmlMessage: btoa(messageBody),
-  };
-
-  const res = api
-    .post<any, EmailRequest>({ url, data: req }, user)
-    .then(async (res: ApiResponse<any>) => {
-      return true;
-    })
-    .catch(e => {
-      logError('Error when sending message:', e);
-      throw e;
-    });
-
-  return res;
-};
-
 interface Message {
   subject: string;
   body: string;
