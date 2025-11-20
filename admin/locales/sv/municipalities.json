@@ -1,0 +1,12 @@
+{
+  "name_zero": "kommuner",
+  "name_one": "kommun",
+  "name_many": "kommuner",
+  "name_other": "kommuner",
+  "properties": {
+    "municipalityId": "Kommunkod",
+    "name": "Namn",
+    "logotypeId": "LogotypId",
+    "logotype": "Logotyp"
+  }
+}
