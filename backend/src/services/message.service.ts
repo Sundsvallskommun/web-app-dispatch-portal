@@ -488,7 +488,7 @@ const attachRecipientToDelivery = async (
   api: ApiService,
 ): Promise<{ delivery: DeliveryInformation; recipient: Citizenaddress } | undefined> => {
   // no "party" key – nothing to do
-  if (!Object.prototype.hasOwnProperty.call(delivery.content, 'party')) {
+  if (!Object.keys(delivery.content).includes('party')) {
     return undefined;
   }
 
