@@ -7,7 +7,7 @@ const pages = [
 
 const personalNumber = { isEligible: '199011182475', isNotEligible: '192301010159' } as PersonNumber;
 
-pages.map((p) => {
+pages.forEach((p) => {
   describe(p.description, () => {
     beforeEach(() => {
       cy.intercept('GET', '**/api/me', { fixture: 'me.json' });
@@ -44,12 +44,12 @@ pages.map((p) => {
       } else {
         it('should show validation error if test person does not have Kivra', () => {
           addRecipient(personalNumber.isNotEligible, false);
-          cy.get('[data-cy="preview-person"]').should('contain.text', 'Har inte digital brevlåda hos Kivra');
+          cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan inte ta emot via Kivra');
         });
 
         it('should show success message if test person has Kivra', () => {
           addAndCheckEligibility(eligiblePn);
-          cy.get('[data-cy="preview-person"]').should('contain.text', 'Har digital brevlåda hos Kivra');
+          cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan ta emot via Kivra');
         });
 
         it('should remove the added person', () => {
