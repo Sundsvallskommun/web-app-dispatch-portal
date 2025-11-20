@@ -65,11 +65,11 @@ const isMinor: (ssn: string) => boolean = ssn => {
   return lessThanEighteenYearsOld;
 };
 
-export const buildRecipientListFromPersonnumber: (user: User, api: ApiService, personnumber: string) => Promise<RecipientWithAddress[]> = async (
-  user,
-  api,
-  personnumber,
-) => {
+export const buildRecipientListFromPersonnumber: (
+  user: User,
+  api: ApiService,
+  personnumber: string,
+) => Promise<RecipientWithAddress[]> = async (user, api, personnumber) => {
   if (isMinor(personnumber)) {
     return [{ recipient: { personnumber }, error: 'MINOR' }];
   } else if (!luhnCheck(personnumber)) {
@@ -77,7 +77,13 @@ export const buildRecipientListFromPersonnumber: (user: User, api: ApiService, p
   } else {
     try {
       const citizenInfo = await fetchCitizensInfos(user, api, [personnumber]);
-      return [{ recipient: { personnumber }, error: citizenInfo[0]?.errorMessage ? 'MISSING' : undefined, address: citizenInfo[0] }];
+      return [
+        {
+          recipient: { personnumber },
+          error: citizenInfo[0]?.errorMessage ? 'MISSING' : undefined,
+          address: citizenInfo[0],
+        },
+      ];
     } catch (error) {
       console.error('Error occurred while fetching addresses:', error);
       throw error;
@@ -85,11 +91,11 @@ export const buildRecipientListFromPersonnumber: (user: User, api: ApiService, p
   }
 };
 
-export const buildRecipientsList: (user: User, api: ApiService, csvString: string) => Promise<RecipientWithAddress[]> = async (
-  user,
-  api,
-  csvString,
-) => {
+export const buildRecipientsList: (
+  user: User,
+  api: ApiService,
+  csvString: string,
+) => Promise<RecipientWithAddress[]> = async (user, api, csvString) => {
   const recipients: Recipient[] = parseCsv(csvString);
 
   if (recipients.length > MAX_RECIPIENT_ROW_SIZE) {
@@ -120,9 +126,8 @@ export const buildRecipientsList: (user: User, api: ApiService, csvString: strin
     );
     const recipientsWithAddresses: RecipientWithAddress[] = validRecipients.map(recipient => {
       const address = addresses.find(address => address.personNumber === recipient.personnumber);
-      const error = address.errorMessage ? 'MISSING' : undefined;
 
-      return { recipient, error, address };
+      return { recipient, address };
     });
 
     return [...recipientsWithAddresses, ...invalidRecipients];
@@ -132,7 +137,11 @@ export const buildRecipientsList: (user: User, api: ApiService, csvString: strin
   }
 };
 
-export const fetchCitizensInfos = async (user: User, api: ApiService, personalSecurityNumbers: string[]): Promise<Citizenaddress[]> => {
+export const fetchCitizensInfos = async (
+  user: User,
+  api: ApiService,
+  personalSecurityNumbers: string[],
+): Promise<Citizenaddress[]> => {
   const citizens = await fetchCitizens(user, api, personalSecurityNumbers);
   const personIds = citizens.map(citizen => citizen.personId);
   const addresses = await api
@@ -149,7 +158,11 @@ export const fetchCitizensInfos = async (user: User, api: ApiService, personalSe
     deliveryMethod: deliveryMethods.find(d => d.partyId === citizen.personId)?.deliveryMethod,
   }));
 };
-export const fetchCitizens = async (user: User, api: ApiService, personalSecurityNumbers: string[]): Promise<CitizenId[]> => {
+export const fetchCitizens = async (
+  user: User,
+  api: ApiService,
+  personalSecurityNumbers: string[],
+): Promise<CitizenId[]> => {
   const citizens = await api
     .post<CitizenId[], any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/guid/batch`, data: personalSecurityNumbers }, user)
     .then(res => res.data);
@@ -158,10 +171,16 @@ export const fetchCitizens = async (user: User, api: ApiService, personalSecurit
   return validCitizens;
 };
 export const fetchPersonId = async (user: User, api: ApiService, personalSecurityNumber: string[]): Promise<string> => {
-  const personId = await api.post<string, any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personalSecurityNumber}/guid` }, user).then(res => res.data);
+  const personId = await api
+    .post<string, any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personalSecurityNumber}/guid` }, user)
+    .then(res => res.data);
   return personId;
 };
-export const precheckPersonIds = async (user: User, api: ApiService, personIds: string[]): Promise<RecipientDeliveryMethod[]> => {
+export const precheckPersonIds = async (
+  user: User,
+  api: ApiService,
+  personIds: string[],
+): Promise<RecipientDeliveryMethod[]> => {
   const deliveryMethods = await api
     .post<
       RecipientDeliveryMethods,
@@ -179,7 +198,10 @@ interface EligibilityItemResponseDto {
   hasKivra: boolean;
 }
 
-export const checkEligibilityKivra = async (partyId: string, user: RequestWithUser['user']): Promise<EligibilityItemResponseDto> => {
+export const checkEligibilityKivra = async (
+  partyId: string,
+  user: RequestWithUser['user'],
+): Promise<EligibilityItemResponseDto> => {
   const apiService = new ApiService();
   const data: EligibilityItemDto = { partyIds: [partyId] };
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/precheck/kivra`;
