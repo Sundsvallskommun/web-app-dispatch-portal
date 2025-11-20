@@ -1,11 +1,7 @@
-import { MUNICIPALITY_ID } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
-import { BatchStatus, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
 import {
-  fetchBatchStatus,
-  fetchMessageInformation,
   logError,
   MessageResponse,
   sendLetter,
@@ -15,11 +11,10 @@ import {
 } from '@/services/message.service';
 import { RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
-import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
 import { ArrayMinSize, IsArray, IsString } from 'class-validator';
 import { Response } from 'express';
-import { Body, Controller, Get, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
+import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
 class RequestBodyMail {
@@ -50,7 +45,6 @@ class RequestBodySMS {
 @Controller()
 export class MessageController {
   private readonly apiService = new ApiService();
-  SERVICE = `messaging/7.9`;
 
   @Post('/sms')
   @OpenAPI({ summary: 'Send SMS to recipients' })
@@ -152,46 +146,5 @@ export class MessageController {
       });
 
     return response.status(200).send({ data: res, message: 'success' });
-  }
-
-  @Get('/batchstatus/:id')
-  @OpenAPI({ summary: 'Return batch status' })
-  async status(@Req() req: RequestWithUser, @Param('id') id: string) {
-    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/status/batch/${id}`;
-    const res = await this.apiService.get<BatchStatus>({ url }, req.user).catch(e => {
-      logger.error('Error when fetching batch status:', e);
-      return e;
-    });
-
-    return res.data;
-  }
-
-  @Get('/message/:id')
-  @OpenAPI({ summary: 'Return message information' })
-  async messageInfo(@Req() req: RequestWithUser, @Param('id') id: string) {
-    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/message/${id}`;
-    const res = await this.apiService.get<MessageInformation>({ url }, req.user).catch(e => {
-      logger.error('Error when fetching message information:', e);
-      return e;
-    });
-
-    return res.data;
-  }
-
-  @Get('/batchmessages/:id')
-  @OpenAPI({ summary: 'Return messages information for batch' })
-  async batchMessagesInfo(@Req() req: RequestWithUser, @Param('id') id: string) {
-    try {
-      const batchStatus = await fetchBatchStatus(req.user, id, this.apiService);
-
-      const messagePromises = batchStatus.messages.map(m =>
-        fetchMessageInformation(req.user, m.messageId, this.apiService),
-      );
-
-      return await Promise.all(messagePromises);
-    } catch (e) {
-      logger.error('Error when fetching batch status:', e);
-      return e;
-    }
   }
 }
