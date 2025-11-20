@@ -2,7 +2,6 @@ import initLocalization, { namespaces } from '@app/i18n';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { capitalize } from 'underscore.string';
 import { LocalizationLayoutParams } from '../layout';
-import { EditLogotypeLayoutProps } from './[id]/layout';
 
 export interface LogotypeLayoutParams extends LocalizationLayoutParams {
   resource: string;
@@ -26,6 +25,6 @@ export const generateMetadata = async ({ params }: LogotypeLayoutProps) => {
   };
 };
 
-export default function LogotypesLayout({ children }: LogotypeLayoutProps) {
+export default function LogotypesLayout({ children }: Readonly<LogotypeLayoutProps>) {
   return <DefaultLayout>{children}</DefaultLayout>;
 }

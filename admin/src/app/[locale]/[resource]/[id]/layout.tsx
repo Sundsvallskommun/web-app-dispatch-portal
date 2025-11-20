@@ -1,4 +1,3 @@
-import { LocalizationLayoutProps } from '@app/[locale]/layout';
 import initLocalization, { namespaces } from '@app/i18n';
 import { stringToResourceName } from '@utils/stringToResourceName';
 import { capitalize } from 'underscore.string';
