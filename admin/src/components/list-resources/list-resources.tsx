@@ -99,7 +99,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
     sticky: true,
     renderColumn: (value) => (
       <div className="text-right w-full">
-        <NextLink href={`/${resource}/${value}`} aria-label="Redigera">
+        <NextLink data-cy="edit-resource" href={`/${resource}/${value}`} aria-label="Redigera">
           <Icon.Padded icon={<Pencil />} variant="tertiary" className="link-btn" />
         </NextLink>
       </div>

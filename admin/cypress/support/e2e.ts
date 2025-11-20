@@ -3,7 +3,7 @@ import '@cypress/code-coverage/support';
 import { CookieConsentUtils } from '@sk-web-gui/react';
 import me from '../fixtures/me';
 import { logotypes } from 'cypress/fixtures/logotypes';
-import { organizations } from 'cypress/fixtures/organisation';
+import { organizations } from 'cypress/fixtures/organizations';
 import { municipalities } from 'cypress/fixtures/municipalities';
 
 export const DEFAULT_COOKIE_VALUE = 'necessary%2Cstats';

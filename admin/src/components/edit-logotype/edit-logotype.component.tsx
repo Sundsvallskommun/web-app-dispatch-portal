@@ -59,6 +59,7 @@ export const EditLogotype: React.FC = () => {
       <div className="flex flex-col gap-32 grow mb-32">
         {!isNew && (
           <EditResourceInput
+            data-cy="edit-logotypes-name"
             property={'name'}
             index={0}
             required={!isNew}

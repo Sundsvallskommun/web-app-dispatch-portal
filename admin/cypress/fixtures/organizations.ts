@@ -42,12 +42,32 @@ export const org3: OrganizationExtended = {
   createdAt: '2025-09-10T14:24:46.527Z',
   updatedAt: '2025-09-20T14:24:46.527Z',
 };
+export const org4: OrganizationExtended = {
+  id: 4,
+  host: 'mytest.this',
+  orgId: 23,
+  name: 'Bolag 4',
+  logotypeId: logotype1.id,
+  logotype: logotype1,
+  municipalityId: municipality2.municipalityId,
+  municipality: municipality2,
+  createdAt: '2025-09-10T14:24:46.527Z',
+  updatedAt: '2025-09-20T14:24:46.527Z',
+};
 
 export const organizations: OrganizationsApiResponse = {
   message: 'success',
   data: [org1, org2, org3],
 };
+export const organizationsWithNew: OrganizationsApiResponse = {
+  message: 'success',
+  data: [org1, org2, org3, org4],
+};
 export const organization: OrganizationApiResponse = {
   message: 'success',
   data: org1,
+};
+export const newOrganization: OrganizationApiResponse = {
+  message: 'success',
+  data: org4,
 };

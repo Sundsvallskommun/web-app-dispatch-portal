@@ -1,4 +1,4 @@
-import { logotypesWithNew, newLogotype } from 'cypress/fixtures/logotypes';
+import { logotype, logotypesWithNew, newLogotype } from 'cypress/fixtures/logotypes';
 
 describe('Logotypes', () => {
   it('lists logotypes on front page', () => {
@@ -31,7 +31,7 @@ describe('Logotypes', () => {
     cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Relativ sökväg');
   });
 
-  it.only('creates a new image', () => {
+  it('creates a new logotyp', () => {
     cy.intercept('GET', '**/api/admin/logotypes', logotypesWithNew);
     cy.intercept('GET', '**/api/admin/logotypes/4', newLogotype);
     cy.intercept('POST', '**/api/admin/logotypes', newLogotype).as('save');
@@ -69,20 +69,19 @@ describe('Logotypes', () => {
     });
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.wait('@save');
-    cy.get('h1').should('have.text', 'Redigera bild');
+    cy.get('h1').should('have.text', 'Redigera logotyp');
     cy.get('header').should('include.text', 'Id: 4');
     cy.get('[data-cy="goback"]').click();
     cy.get('[data-cy="resource-table"]').eq(0).find('tbody').children().should('have.length', 4);
   });
 
-  it('edits an image', () => {
-    cy.intercept('GET', '**/api/admin/images/1', oneImage);
-    cy.intercept('GET', '**/api/admin/scenarios/1', oneScenario);
-    cy.intercept('PATCH', '**/api/admin/images/1', {
-      ...oneImage,
-      data: { ...oneImage?.data, name: 'Nytt namn' },
+  it('edits a logotype', () => {
+    cy.intercept('GET', '**/api/admin/logotypes/1', logotype);
+    cy.intercept('PATCH', '**/api/admin/logotypes/1', {
+      ...logotype,
+      data: { ...logotype?.data, name: 'Nytt namn' },
     });
-    cy.get('[data-cy="mainmenu-resource-images"]>span>a').click();
+    cy.get('[data-cy="mainmenu-resource-logotypes"]>span>a').click();
     cy.get('[data-cy="resource-table"]')
       .eq(0)
       .find('tbody')
@@ -90,18 +89,14 @@ describe('Logotypes', () => {
       .eq(0)
       .find('a[data-cy="edit-resource"]')
       .click();
-    cy.get('h1').should('have.text', 'Redigera bild');
+    cy.get('h1').should('have.text', 'Redigera logotyp');
     cy.get('header').should('include.text', 'Id: 1');
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="edit-images-name"]').should('have.value', 'image1.png');
-    cy.get('[data-cy="edit-images-name"]').clear();
-    cy.get('[data-cy="edit-images-name"]').type('Nytt namn');
+    cy.get('[data-cy="edit-logotypes-name"]').should('have.value', 'image1.png');
+    cy.get('[data-cy="edit-logotypes-name"]').clear();
+    cy.get('[data-cy="edit-logotypes-name"]').type('Nytt namn');
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="image-scenario-list"]').children().should('have.length', 2);
-    cy.get('[data-cy="image-scenario-list"]').children().eq(0).find('a').click();
-    cy.get('h1').should('have.text', 'Redigera scenario');
-    cy.get('[data-cy="edit-scenarios-name"]').should('have.value', 'Scenario 1');
   });
 });

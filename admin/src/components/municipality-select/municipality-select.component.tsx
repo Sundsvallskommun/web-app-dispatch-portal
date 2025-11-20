@@ -14,7 +14,7 @@ export const MunicipalitySelect: React.FC = () => {
     loaded && (
       <FormControl>
         <FormLabel>{capitalize(t('municipalities:name_one'))}</FormLabel>
-        <Select {...register('municipalityId')}>
+        <Select data-cy="select-municipality" {...register('municipalityId')}>
           {data.map((mun: Municipality) => (
             <Select.Option key={mun.municipalityId} value={mun.municipalityId}>
               ({mun.municipalityId}) {mun.name}

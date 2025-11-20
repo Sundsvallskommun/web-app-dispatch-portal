@@ -2,15 +2,7 @@ name: Cypress Tests Admin
 permissions:
   contents: read
 
-on:
-  workflow_dispatch:
-  pull_request:
-    branches:
-      - "develop"
-      - "main"
-    paths:
-      - admin/src/**
-      - admin/cypress/**
+on: [workflow_dispatch, pull_request]
 
 jobs:
   install:
