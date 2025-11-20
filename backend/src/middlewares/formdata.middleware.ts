@@ -15,7 +15,7 @@ const formDataMiddleware = async (req: RequestWithUser, res: Response, next: Nex
     }
     next();
   } catch (error) {
-    logger.error('Error in logotype middleware', error);
+    logger.error('Error in formdata middleware', error);
     next(new HttpException(500, 'Server error'));
   }
 };

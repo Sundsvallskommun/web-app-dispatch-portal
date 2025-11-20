@@ -1,7 +1,6 @@
 import initLocalization, { namespaces } from '@app/i18n';
 import { capitalize } from 'underscore.string';
 import { LogotypeLayoutParams } from '../layout';
-import { LocalizationLayoutProps } from '@app/[locale]/layout';
 
 export interface EditLogotypeLayoutParams extends LogotypeLayoutParams {
   id: string;
