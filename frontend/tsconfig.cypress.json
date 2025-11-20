@@ -1,12 +1,17 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "isolatedModules": false,
-    "baseUrl": ".",
-    "types": ["cypress", "node"]
+    "types": ["cypress"]
   },
-  "include": ["cypress.config.ts", "cypress/**/*.ts"]
+  "include": [
+    "cypress.config.ts",
+    "cypress/**/*.d.ts",
+    "**/*.cy.ts",
+    "**/*.cy.tsx",
+    "cypress/**/*.ts",
+    "src/components/**/*.tsx",
+    "src/interface/**/*.ts",
+    "src/data-contracts/**/*.ts",
+    "src/services/**/*.ts"
+  ]
 }
