@@ -4,7 +4,7 @@ import { HttpException } from '@exceptions/HttpException';
 import ApiService from '@services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { DepartmentStatistics } from '@interfaces/statistics.interface';
-import { MUNICIPALITY_ID } from '@/config';
+import { getApiBase, MUNICIPALITY_ID } from '@/config';
 import { SigningInfo, UserLetters, UserMessage } from '@/interfaces/my-statistics.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
@@ -13,8 +13,8 @@ import { fetchPersonIdPersonnummerRecord } from '@/services/recipient.service';
 
 @Controller()
 export class StatisticsController {
-  apiService = new ApiService();
-  POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
+  private readonly apiService = new ApiService();
+  POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
 
   @Get('/statistics/departments')
   @OpenAPI({ summary: 'Return department statistics' })
@@ -46,7 +46,10 @@ export class StatisticsController {
   @Get('/my-statistics')
   @OpenAPI({ summary: 'Return my statistics' })
   @UseBefore(authMiddleware)
-  async getMyStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<UserLetters> {
+  async getMyStatistics(
+    @Req() req: RequestWithUser,
+    @Res() response: Response<UserLetters>,
+  ): Promise<Response<UserLetters>> {
     try {
       const { username } = req.user;
       const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/history/users/${username}/messages`;
@@ -63,7 +66,11 @@ export class StatisticsController {
   @Get('/my-statistics/:id')
   @OpenAPI({ summary: 'Return my statistics' })
   @UseBefore(authMiddleware)
-  async getMyStatisticsMessage(@Req() req: RequestWithUser, @Res() response: any, @Param('id') id: string): Promise<UserMessage> {
+  async getMyStatisticsMessage(
+    @Req() req: RequestWithUser,
+    @Res() response: any,
+    @Param('id') id: string,
+  ): Promise<UserMessage> {
     try {
       const { username } = req.user;
       const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/history/users/${username}/messages/${id}`;
@@ -88,7 +95,11 @@ export class StatisticsController {
   @Get('/signing-info/:id')
   @OpenAPI({ summary: 'Return signing info' })
   @UseBefore(authMiddleware)
-  async getSigningInfo(@Req() req: RequestWithUser, @Res() response: Response, @Param('id') id: string): Promise<Response> {
+  async getSigningInfo(
+    @Req() req: RequestWithUser,
+    @Res() response: Response,
+    @Param('id') id: string,
+  ): Promise<Response> {
     try {
       const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/history/messages/${id}/signinginfo`;
       const params = { limit: 9000 };
@@ -107,7 +118,7 @@ export class StatisticsController {
   @Header('Content-Type', 'application/pdf')
   @OpenAPI({ summary: 'Return the attachment' })
   @UseBefore(authMiddleware)
-  async getAttachment(@Req() req: RequestWithUser, @Param('attachmentId') attachmentId: string, @Res() response: any): Promise<any> {
+  async getAttachment(@Req() req: RequestWithUser, @Param('attachmentId') attachmentId: string): Promise<any> {
     try {
       const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/attachments/${attachmentId}`;
       const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);

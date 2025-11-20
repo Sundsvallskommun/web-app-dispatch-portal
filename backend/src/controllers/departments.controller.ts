@@ -19,7 +19,7 @@ const findDepartments = (org: Organization): Organization[] => {
 
 @Controller()
 export class DepartmentsController {
-  apiService = new ApiService();
+  private readonly apiService = new ApiService();
   SERVICE = 'company/1.0';
 
   @Get('/departments')
@@ -35,7 +35,9 @@ export class DepartmentsController {
       const departments = findDepartments(departmentsResult.data);
       const companyIds = parseEnvIds(COMPANY_IDS);
       const filteredCompanies = companiesResult.data.filter(org => companyIds.includes(org.orgId));
-      const mergedSortedResult = [...departments, ...filteredCompanies].sort((a, b) => a.orgName.localeCompare(b.orgName));
+      const mergedSortedResult = [...departments, ...filteredCompanies].sort((a, b) =>
+        a.orgName.localeCompare(b.orgName),
+      );
 
       return response.send(mergedSortedResult);
     } catch (error) {
