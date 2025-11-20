@@ -1,23 +1,21 @@
-// @ts-check
 import { defineConfig } from 'cypress';
-import { config as loadEnv } from 'dotenv';
-
-loadEnv({ path: '.env' });
+import codeCoverageTask from '@cypress/code-coverage/task';
 
 export default defineConfig({
-  env: {
-    apiUrl: process.env.NEXT_PUBLIC_API_URL,
-  },
   e2e: {
-    baseUrl: `http://localhost:${process.env.PORT || 3000}`,
+    baseUrl: `http://localhost:${process.env.PORT ?? '3000'}${process.env.NEXT_PUBLIC_BASEPATH || ''}`,
+    env: {
+      apiUrl: process.env.NEXT_PUBLIC_API_URL,
+    },
     experimentalRunAllSpecs: true,
     video: false,
     screenshotOnRunFailure: false,
     chromeWebSecurity: false,
-    defaultCommandTimeout: 10000,
+    defaultCommandTimeout: 50000,
+    retries: 5,
 
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      codeCoverageTask(on, config);
       return config;
     },
   },

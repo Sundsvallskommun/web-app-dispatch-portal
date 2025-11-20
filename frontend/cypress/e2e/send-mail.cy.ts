@@ -7,7 +7,7 @@ const pages = [
 
 const personalNumber = { isEligible: '199011182475', isNotEligible: '192301010159' } as PersonNumber;
 
-pages.map((p) => {
+pages.forEach((p) => {
   describe(p.description, () => {
     beforeEach(() => {
       cy.intercept('GET', '**/api/me', { fixture: 'me.json' });
