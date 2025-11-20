@@ -1,0 +1,32 @@
+{
+  "app_description": "Administrera Postportalen",
+  "add": "lägg till",
+  "admin_for": "Administration för",
+  "can_not_be_undone": "handlingen kan ej ångras",
+  "close": "stäng",
+  "create_new": "skapa ny {{resource}}",
+  "edit": "redigera {{resource}}",
+  "go_back": "gå tillbaks",
+  "info": "Information",
+  "keep_edit": "fortsätt redigera",
+  "list_all": "lista alla {{resource}}",
+  "login": "logga in",
+  "logout": "logga ut",
+  "no_resources": "inga {{resources}} hittades",
+  "preview": "Förhandsgranskning",
+  "refresh": "ladda om",
+  "remove": "ta bort",
+  "remove_resource": "ta bort {{resource}}",
+  "resources": "resurser",
+  "required": "{{resource}} krävs",
+  "save": "spara",
+  "select_resource": "välj {{resource}}",
+  "welcome": "välkommen",
+  "unsaved_changes": "Du har osparade ändringar",
+  "do_you_want_to_leave": "Är du säker på att du vill lämna den här sidan?",
+  "properties": {
+    "id": "id",
+    "createdAt": "Skapad",
+    "updatedAt": "senast uppdaterad"
+  }
+}
