@@ -30,7 +30,7 @@ class RequestBodyEligibility {
 
 @Controller()
 export class RecipientController {
-  private apiService = new ApiService();
+  private readonly apiService = new ApiService();
 
   @Post('/recipients/')
   @OpenAPI({ summary: 'Build list of recipients from CSV file' })

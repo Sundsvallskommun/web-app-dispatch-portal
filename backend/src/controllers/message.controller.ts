@@ -1,10 +1,19 @@
 import { MUNICIPALITY_ID } from '@/config';
 import { RequestWithUser } from '@/interfaces/auth.interface';
-import { BatchStatus, DeliveryInformation, MessageInformation } from '@/interfaces/batch-status.interface';
+import { BatchStatus, MessageInformation } from '@/interfaces/batch-status.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import ApiService from '@/services/api.service';
-import { logError, MessageResponse, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
-import { Citizenaddress, RecipientWithAddress } from '@/services/recipient.service';
+import {
+  fetchBatchStatus,
+  fetchMessageInformation,
+  logError,
+  MessageResponse,
+  sendLetter,
+  sendLetterCsv,
+  sendRecLetter,
+  sendSmsMessage,
+} from '@/services/message.service';
+import { RecipientWithAddress } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
@@ -40,7 +49,7 @@ class RequestBodySMS {
 
 @Controller()
 export class MessageController {
-  private apiService = new ApiService();
+  private readonly apiService = new ApiService();
   SERVICE = `messaging/7.9`;
 
   @Post('/sms')
@@ -74,7 +83,13 @@ export class MessageController {
       throw new Error('Could not parse recipient list');
     }
 
-    const res = await sendLetter(req.user, this.apiService, recipients, { subject: body.subject, body: body.body, files }, addresses)
+    const res = await sendLetter(
+      req.user,
+      this.apiService,
+      recipients,
+      { subject: body.subject, body: body.body, files },
+      addresses,
+    )
       .then(async res => {
         return res;
       })
@@ -83,7 +98,7 @@ export class MessageController {
         throw new Error('Error when sending message');
       });
 
-    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
+    return response.status(200).send({ data: res, message: 'success' });
   }
 
   @Post('/rec-message/')
@@ -109,7 +124,7 @@ export class MessageController {
         throw new Error('Error when sending message');
       });
 
-    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
+    return response.status(200).send({ data: res, message: 'success' });
   }
 
   @Post('/csv-message/')
@@ -136,7 +151,7 @@ export class MessageController {
         throw new Error('Error when sending csv message');
       });
 
-    return response.status(200).send({ data: res, message: 'success' } as MessageResponse);
+    return response.status(200).send({ data: res, message: 'success' });
   }
 
   @Get('/batchstatus/:id')
@@ -166,52 +181,17 @@ export class MessageController {
   @Get('/batchmessages/:id')
   @OpenAPI({ summary: 'Return messages information for batch' })
   async batchMessagesInfo(@Req() req: RequestWithUser, @Param('id') id: string) {
-    const url = `${this.SERVICE}/${MUNICIPALITY_ID}/status/batch/${id}`;
-    const messagePromises: Promise<MessageInformation>[] = await this.apiService
-      .get<BatchStatus>({ url }, req.user)
-      .then(b => {
-        return b.data.messages.map(m => {
-          const messageUrl = `${this.SERVICE}/${MUNICIPALITY_ID}/message/${m.messageId}`;
-          return this.apiService
-            .get<DeliveryInformation[]>({ url: messageUrl }, req.user)
-            .then(async res => {
-              const deliveryPromises = res.data.map(async delivery => {
-                if (Object.keys(delivery.content).includes('party')) {
-                  const partyId = delivery.content['party']['partyIds'] || delivery.content['party']['partyId'];
-                  if (partyId) {
-                    const citizenUrl = `citizen/3.0/${partyId}`;
-                    const person = await this.apiService.get<Citizenaddress>({ url: citizenUrl }, req.user).catch(e => {
-                      logError('Error when fetching recipient adress', e);
-                      return undefined;
-                    });
-                    return { delivery, recipient: person.data };
-                  } else {
-                    const errorMessage = 'No partyId for reciever, cannot fetch adress.';
-                    logger.error(errorMessage);
-                    console.error(errorMessage);
-                    return undefined;
-                  }
-                }
-              });
-              const deliveries: { delivery: DeliveryInformation; recipient: Citizenaddress }[] = await Promise.allSettled(deliveryPromises).then(s =>
-                s.map(ss => (ss.status === 'fulfilled' ? ss.value : ss.reason)),
-              );
-              return {
-                messageId: m.messageId,
-                deliveries: deliveries,
-              } as MessageInformation;
-            })
-            .catch(e => {
-              logger.error('Error when fetching message information:', e);
-              return e;
-            });
-        });
-      })
-      .catch(e => {
-        logger.error('Error when fetching batch status:', e);
-        return e;
-      });
+    try {
+      const batchStatus = await fetchBatchStatus(req.user, id, this.apiService);
 
-    return await Promise.all(messagePromises);
+      const messagePromises = batchStatus.messages.map(m =>
+        fetchMessageInformation(req.user, m.messageId, this.apiService),
+      );
+
+      return await Promise.all(messagePromises);
+    } catch (e) {
+      logger.error('Error when fetching batch status:', e);
+      return e;
+    }
   }
 }

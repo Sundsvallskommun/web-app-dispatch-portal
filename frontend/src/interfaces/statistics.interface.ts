@@ -32,21 +32,6 @@ export interface Recipient {
   personnummer?: string;
 }
 
-export interface Attachment {
-  contentType: string;
-  fileName: string;
-}
-
-export interface Message {
-  messageId: string;
-  issuer: string;
-  sent: string;
-  subject: string;
-  body: string;
-  recipients: Recipient[];
-  attachments: Attachment[];
-}
-
 export interface PagingMetaData {
   page: number;
   limit: number;

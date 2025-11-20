@@ -2,13 +2,13 @@ import { luhnCheck } from '@/utils/util';
 import dayjs from 'dayjs';
 import ApiService from './api.service';
 import { parseCsv } from './csv-service/csv-service';
-import { MUNICIPALITY_ID } from '@/config';
+import { getApiBase, MUNICIPALITY_ID } from '@/config';
 import { User } from '@/interfaces/users.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 
 const MAX_RECIPIENT_ROW_SIZE = 250;
-const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
+const POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
 
 export interface Recipient {
   personnumber: string;
