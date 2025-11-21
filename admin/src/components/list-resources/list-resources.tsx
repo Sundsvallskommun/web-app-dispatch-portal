@@ -54,6 +54,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
               ...headers,
               {
                 label: capitalize(t(`logotypes:name_one`)),
+                property: 'logotype',
                 renderColumn: (_value, item) => <LogoPreview logotype={item.logotype} name={item?.name} />,
                 isColumnSortable: false,
               },
