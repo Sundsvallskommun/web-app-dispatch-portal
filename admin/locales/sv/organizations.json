@@ -1,0 +1,15 @@
+{
+  "name_zero": "organisationer",
+  "name_one": "organisation",
+  "name_many": "organisationer",
+  "name_other": "organisationer",
+  "properties": {
+    "id": "Id",
+    "host": "Värd (domän)",
+    "orgId": "OrganisationsId",
+    "name": "Namn",
+    "logotypeId": "LogotypId",
+    "logotype": "Logotyp",
+    "municipalityId": "Kommun"
+  }
+}
