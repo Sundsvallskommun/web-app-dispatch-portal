@@ -30,9 +30,15 @@ export class AdminOrganizationController {
   @Get('/admin/organizations/:id')
   @OpenAPI({ summary: 'Get organization by id' })
   @ResponseSchema(OrganizationApiResponse)
-  async getOrganization(@Param('id') id: number, @Res() res: Response<OrganizationApiResponse>): Promise<Response<OrganizationApiResponse>> {
+  async getOrganization(
+    @Param('id') id: number,
+    @Res() res: Response<OrganizationApiResponse>,
+  ): Promise<Response<OrganizationApiResponse>> {
     try {
-      const organization = await prisma.organization.findFirst({ where: { id }, include: { logotype: true, municipality: true } });
+      const organization = await prisma.organization.findFirst({
+        where: { id },
+        include: { logotype: true, municipality: true },
+      });
 
       if (organization) {
         return res.send({ message: 'success', data: organization });
@@ -53,7 +59,11 @@ export class AdminOrganizationController {
     @Res() res: Response<OrganizationApiResponse>,
   ): Promise<Response<OrganizationApiResponse>> {
     try {
-      const organization = await prisma.organization.create({ data: body, include: { logotype: true, municipality: true } });
+      const { orgId, host, name, logotypeId, municipalityId } = body;
+      const organization = await prisma.organization.create({
+        data: { orgId, host, name, logotypeId, municipalityId },
+        include: { logotype: true, municipality: true },
+      });
       return res.send({ message: 'success', data: organization });
     } catch (error) {
       logger.error('Error creating organization', error);
@@ -70,7 +80,13 @@ export class AdminOrganizationController {
     @Res() res: Response<OrganizationApiResponse>,
   ): Promise<Response<OrganizationApiResponse>> {
     try {
-      const organization = await prisma.organization.update({ where: { id }, data: body, include: { logotype: true, municipality: true } });
+      const { orgId, host, name, logotypeId, municipalityId } = body;
+
+      const organization = await prisma.organization.update({
+        where: { id },
+        data: { orgId, host, name, logotypeId, municipalityId },
+        include: { logotype: true, municipality: true },
+      });
       return res.send({ message: 'success', data: organization });
     } catch (error) {
       logger.error('Error updating organization', error);
@@ -81,7 +97,10 @@ export class AdminOrganizationController {
   @Delete('/admin/organizations/:id')
   @OpenAPI({ summary: 'Delete a organization' })
   @ResponseSchema(ApiResponse<null>)
-  async deleteOrganization(@Param('id') id: number, @Res() res: Response<ApiResponse<null>>): Promise<Response<ApiResponse<null>>> {
+  async deleteOrganization(
+    @Param('id') id: number,
+    @Res() res: Response<ApiResponse<null>>,
+  ): Promise<Response<ApiResponse<null>>> {
     try {
       await prisma.organization.delete({ where: { id } });
       return res.send({ message: 'success', data: null });

@@ -5,15 +5,17 @@ import { NextFunction, Response } from 'express';
 
 const formDataMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
-    const keys = Object.keys(req?.body);
-    const newBody = keys?.reduce((data, key) => {
-      if (req.body[key] === 'undefined' || req.body[key] === '' || req.body[key] === 'null') return { ...data };
-      return { ...data, [key]: req.body[key] };
-    }, {});
-    req.body = newBody;
+    if (req?.body) {
+      const keys = Object.keys(req.body);
+      const newBody = keys?.reduce((data, key) => {
+        if (req.body[key] === 'undefined' || req.body[key] === '' || req.body[key] === 'null') return { ...data };
+        return { ...data, [key]: req.body[key] };
+      }, {});
+      req.body = newBody;
+    }
     next();
   } catch (error) {
-    logger.error('Error in logotype middleware', error);
+    logger.error('Error in formdata middleware', error);
     next(new HttpException(500, 'Server error'));
   }
 };

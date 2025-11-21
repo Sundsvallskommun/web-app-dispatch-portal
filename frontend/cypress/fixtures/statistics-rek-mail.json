@@ -1,23 +1,21 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
   "subject": "Another Test Letter",
-  "municipalityId": "2281",
-  "status": "SIGNED",
   "body": "This is the content of the second letter. Plain-text body",
-  "contentType": "text/plain",
-  "created": "2025-10-08T10:41:21+02:00",
-  "updated": "2025-10-10T13:00:01+02:00",
-  "supportInfo": {
-    "supportText": "For support, please contact us at the information below.",
-    "contactInformationUrl": "https://example.com/support",
-    "contactInformationPhoneNumber": "+46123456789",
-    "contactInformationEmail": "support@email.com"
-  },
+  "sentAt": "2025-10-08T10:41:21+02:00",
   "attachments": [
     {
-      "id": "00000000-0000-0000-0000-000000000000",
+      "attachmentId": "00000000-0000-0000-0000-000000000000",
       "fileName": "Test Letter2.pdf",
       "contentType": "application/pdf"
+    }
+  ],
+  "recipients": [
+    {
+      "name": "John Joe",
+      "partyId": "00000000-0000-0000-0000-000000000000",
+      "messageType": "DIGITAL_MAIL",
+      "status": "SENT",
+      "personnummer": "199011182475"
     }
   ]
 }
