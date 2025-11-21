@@ -11,10 +11,10 @@ describe('My statistics page', () => {
     cy.intercept('GET', '**/api/my-statistics/00000000-0000-0000-0000-000000000000', {
       fixture: 'statistics-mail.json',
     });
-    cy.intercept('GET', '**/api/my-rec-letters/00000000-0000-0000-0000-000000000000', {
+    cy.intercept('GET', '**/api/my-statistics/00000000-0000-0000-0000-000000000002', {
       fixture: 'statistics-rek-mail.json',
     });
-    cy.intercept('GET', '**/api/signing-info/00000000-0000-0000-0000-000000000000', {
+    cy.intercept('GET', '**/api/signing-info/00000000-0000-0000-0000-000000000002', {
       fixture: 'statistics-signing-info.json',
     });
     cy.viewport('macbook-16');
