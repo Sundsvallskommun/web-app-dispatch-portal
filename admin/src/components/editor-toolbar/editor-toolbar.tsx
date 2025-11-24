@@ -1,7 +1,6 @@
 import resources from '@config/resources';
 import { ResourceName } from '@interfaces/resource-name';
 import { Button, Icon, useConfirm } from '@sk-web-gui/react';
-import { useRouteGuard } from '@utils/routeguard.hook';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { Save, Trash } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
