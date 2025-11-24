@@ -444,7 +444,6 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
               <h4 className="text-label-medium">
                 {t('send-mail:recipientHandler.errorHandler.invalidRecipient', { num: invalidRecipient.length })}
               </h4>
-              <p className="text-small text-secondary">{`${t('send-mail:recipientHandler.errorHandler.invalidRecipient')}.`}</p>
               <div className="mt-12 border-1 rounded-groups border-error-surface-primary">
                 {invalidRecipient.map((rec, index) => (
                   <div

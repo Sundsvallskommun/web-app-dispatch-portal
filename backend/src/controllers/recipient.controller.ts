@@ -87,6 +87,7 @@ export class RecipientController {
 
   @Post('/eligibility-kivra')
   @OpenAPI({ summary: 'Checks if the recipients are eligible for Kivra' })
+  @UseBefore(authMiddleware)
   async checkEligibilityKivra(
     @Body() body: RequestBodyEligibility,
     @Req() req: RequestWithUser,
