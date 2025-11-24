@@ -3,6 +3,7 @@ module.exports = {
   i18n: {
     defaultLocale: 'sv',
     locales: ['sv'],
+    basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   },
   defaultNS: 'common',
   fallbackLng: {

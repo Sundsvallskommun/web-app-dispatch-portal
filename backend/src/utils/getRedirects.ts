@@ -3,7 +3,7 @@ import { isValidUrl } from './isValidUrl';
 import { isValidOrigin } from './isValidOrigin';
 import { SAML_SUCCESS_REDIRECT } from '@/config';
 
-export const getRedirects = (req: Request): { successRedirect: URL; failureRedirect: URL } => {
+export const getRedirects = (req: Request): { successRedirect: URL; failureRedirect: URL; host: string } => {
   let successRedirect: URL, failureRedirect: URL;
   const urls = req?.body?.RelayState.split(',');
 
@@ -18,5 +18,5 @@ export const getRedirects = (req: Request): { successRedirect: URL; failureRedir
   } else {
     failureRedirect = successRedirect;
   }
-  return { successRedirect, failureRedirect };
+  return { successRedirect, failureRedirect, host: urls?.[2] ?? successRedirect.host };
 };

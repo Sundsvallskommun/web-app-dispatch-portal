@@ -2,10 +2,10 @@ import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { Permissions } from '@/interfaces/users.interface';
 import ApiService from '@/services/api.service';
+import { getOrganization } from '@/utils/getOrganization';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Controller, Get, Header, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
-import { MUNICIPALITY_ID } from '@/config';
 
 interface UserData {
   name: string;
@@ -52,12 +52,13 @@ export class UserController {
   @Header('Cross-Origin-Resource-Policy', 'cross-origin')
   async getMyEmployeeImage(@Req() req: RequestWithUser, @QueryParam('width') width): Promise<any> {
     const { personId } = req.user;
+    const { municipalityId } = await getOrganization(req);
 
     if (!personId) {
       throw new HttpException(400, 'Bad Request');
     }
 
-    const url = `employee/2.0/${MUNICIPALITY_ID}/${personId}/personimage`;
+    const url = `employee/2.0/${municipalityId}/${personId}/personimage`;
     const res = await this.apiService.get<any>(
       {
         url,

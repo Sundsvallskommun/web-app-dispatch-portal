@@ -18,6 +18,7 @@ const authDependent = envalid.makeValidator((x) => {
 envalid.cleanEnv(process.env, {
   NEXT_PUBLIC_API_URL: envalid.str(),
   HEALTH_AUTH: envalid.bool(),
+
   HEALTH_USERNAME: authDependent(),
   HEALTH_PASSWORD: authDependent(),
 });
@@ -31,18 +32,11 @@ module.exports = withBundleAnalyzer({
   },
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   sassOptions: {
-    functions: {
-      'env($variable)': (variable) => {
-        const value = variable.getValue();
-        const envValue = process.env[value];
-        const sassValue = new nodeSass.SassString(envValue);
-        return sassValue;
-      },
-    },
+    prependData: `$basePath: '${process.env.NEXT_PUBLIC_BASE_PATH}';`,
   },
   transpilePackages: ['lucide-react'],
   experimental: {
-    swcPlugins: process.env.TEST === 'true' ? [['swc-plugin-coverage-instrument', {}]] : [],
+    // forceSwcTransforms: process.env.TEST === 'true' ? false : true,
     optimizePackageImports: ['@sk-web-gui'],
   },
   async rewrites() {

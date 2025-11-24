@@ -19,9 +19,8 @@ export interface Permissions {
 }
 
 /** Internal roles */
-export type InternalRole = 'admin' | 'sms';
 export enum InternalRoleEnum {
   Admin = 'admin',
 }
 
-export type InternalRoleMap = Map<InternalRole, Partial<Permissions>>;
+export type InternalRoleMap = Record<string, InternalRoleEnum>;

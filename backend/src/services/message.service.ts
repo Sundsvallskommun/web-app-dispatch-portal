@@ -1,7 +1,8 @@
-import { getApiBase, MUNICIPALITY_ID } from '@/config';
+import { getApiBase } from '@/config';
 import { Address, Recipient } from '@/data-contracts/postportalservice/data-contracts';
+import { RequestWithUser } from '@/interfaces/auth.interface';
 import { MessageResponseData } from '@/interfaces/message.interface';
-import { User } from '@/interfaces/users.interface';
+import { getOrganization } from '@/utils/getOrganization';
 import { logger } from '@/utils/logger';
 import FormData from 'form-data';
 import ApiService, { ApiResponse } from './api.service';
@@ -87,16 +88,18 @@ export interface SMSDTO {
 }
 
 export const sendSmsMessage: (
-  user: User,
+  req: RequestWithUser,
   api: ApiService,
   recipients: string[],
   message: string,
-) => Promise<string[]> = async (user, api, recipients, message) => {
+) => Promise<string[]> = async (req, api, recipients, message) => {
   const data: SMSDTO = {
     message,
     recipients: recipients.map(rec => ({ phoneNumber: rec })),
   };
-  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/sms`;
+  const { user } = req;
+  const { municipalityId } = await getOrganization(req);
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/sms`;
   const headers = {
     'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
   };
@@ -131,14 +134,16 @@ function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): vo
 }
 
 export const sendLetter: (
-  user: User,
+  req: RequestWithUser,
   api: ApiService,
   recipients: Recipient[],
   message: Message,
   addresses: Address[],
-) => Promise<MessageResponseData> = async (user, api, recipients, message, addresses) => {
+) => Promise<MessageResponseData> = async (req, api, recipients, message, addresses) => {
   const { subject, files, body } = message;
-  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
+  const { user } = req;
+  const { municipalityId } = await getOrganization(req);
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/letter`;
 
   const request: LetterRequest = {
     subject: subject,
@@ -174,13 +179,15 @@ export const sendLetter: (
     });
 };
 
-export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) => Promise<MessageResponseData> = async (
-  user,
-  api,
-  message,
-) => {
+export const sendRecLetter: (
+  req: RequestWithUser,
+  api: ApiService,
+  message: RecMessage,
+) => Promise<MessageResponseData> = async (req, api, message) => {
+  const { user } = req;
+  const { municipalityId } = await getOrganization(req);
   const { subject, files, body, recipientPersonId } = message;
-  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/registered-letter`;
 
   const request = {
     body: body ?? '-',
@@ -215,13 +222,15 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
     });
 };
 
-export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) => Promise<MessageResponseData> = async (
-  user,
-  api,
-  message,
-) => {
+export const sendLetterCsv: (
+  req: RequestWithUser,
+  api: ApiService,
+  message: CsvMessage,
+) => Promise<MessageResponseData> = async (req, api, message) => {
   const { subject, files, body, csvFile } = message;
-  const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
+  const { user } = req;
+  const { municipalityId } = await getOrganization(req);
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/letter/csv`;
 
   const requestContentType = 'application/json';
   const csvContentType = 'text/csv';

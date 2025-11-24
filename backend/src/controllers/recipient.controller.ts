@@ -1,4 +1,4 @@
-import { getApiBase, MUNICIPALITY_ID } from '@/config';
+import { getApiBase } from '@/config';
 import { CitizenExtended } from '@/data-contracts/citizen/data-contracts';
 import {
   KivraEligibilityRequest,
@@ -14,6 +14,7 @@ import { CsvApiResponse, RecipientApiResponse, RecipientNameApiResponse } from '
 import ApiService from '@/services/api.service';
 import { checkCsv } from '@/utils/csv-service/csv-service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
+import { getOrganization } from '@/utils/getOrganization';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Response } from 'express';
@@ -38,16 +39,17 @@ export class RecipientController {
     @Res() response: Response<RecipientApiResponse>,
   ): Promise<Response<RecipientApiResponse>> {
     try {
-      const partyIdUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${body.personNumber}/guid`;
+      const { municipalityId } = await getOrganization(req);
+      const partyIdUrl = `${this.citizenApi}/${municipalityId}/${body.personNumber}/guid`;
       const { data: partyId } = await this.apiService.get<string>({ url: partyIdUrl }, req.user);
-      const citizenUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${partyId}`;
+      const citizenUrl = `${this.citizenApi}/${municipalityId}/${partyId}`;
       const { data: citizen } = await this.apiService.get<CitizenExtended>({ url: citizenUrl }, req.user);
 
       if (!citizen) {
         throw new HttpException(404, 'Citizen not found');
       }
 
-      const precheckUrl = `${this.postportalApi}/${MUNICIPALITY_ID}/precheck`;
+      const precheckUrl = `${this.postportalApi}/${municipalityId}/precheck`;
       const {
         data: { recipients },
       } = await this.apiService.post<PrecheckResponse, PrecheckRequest>(
@@ -106,7 +108,8 @@ export class RecipientController {
     @Res() response: Response<RecipientNameApiResponse>,
   ): Promise<Response<RecipientNameApiResponse>> {
     try {
-      const citizenUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${personId}`;
+      const { municipalityId } = await getOrganization(req);
+      const citizenUrl = `${this.citizenApi}/${municipalityId}/${personId}`;
       const { data: citizen } = await this.apiService.get<CitizenExtended>({ url: citizenUrl }, req.user);
 
       return response.send({

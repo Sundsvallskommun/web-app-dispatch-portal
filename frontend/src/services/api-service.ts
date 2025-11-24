@@ -12,19 +12,18 @@ export interface ApiResponse<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-let isRedirectingToLogin = false;
+// let isRedirectingToLogin = false;
 
-Router.events.on('routeChangeComplete', (route) => {
-  isRedirectingToLogin = false;
-  if (route === '/login') {
-    isRedirectingToLogin = false;
-  }
-});
+// Router.events.on('routeChangeComplete', (route) => {
+//   isRedirectingToLogin = false;
+//   if (route === '/login') {
+//     isRedirectingToLogin = false;
+//   }
+// });
 
-export const handleError = (error: AxiosError) => {
-  if (error.response?.status === 401 && Router.pathname !== '/login' && !isRedirectingToLogin) {
-    isRedirectingToLogin = true;
-    Router.push(`${process.env.NEXT_PUBLIC_API_URL}/saml/login`);
+export const handleError = (error: AxiosError<ApiResponse<unknown>>) => {
+  if (error?.response?.status === 401 && !globalThis?.location.pathname.includes('login')) {
+    globalThis.location.href = `/login?path=${globalThis.location.pathname}&failMessage=${error.response.data.message}`;
   }
 
   throw error;

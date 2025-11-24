@@ -36,7 +36,7 @@ export default function Login() {
 
     const url = new URL(apiURL('/saml/login'));
     const queries = new URLSearchParams({
-      successRedirect: `${appURL(path as string)}`,
+      successRedirect: `${appURL(path as string)}/`,
       failureRedirect: `${appURL()}/login`,
     });
     url.search = queries.toString();

@@ -1,5 +1,6 @@
-import { getPermissions } from '@/services/authorization.service';
+import { getPermissions, getRoles } from '@/services/authorization.service';
 import {
+  ADMIN_URL,
   BASE_URL_PREFIX,
   CREDENTIALS,
   DEV,
@@ -23,7 +24,7 @@ import {
   TEST_USERNAME,
 } from '@config';
 import errorMiddleware from '@middlewares/error.middleware';
-import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
+import { Strategy, VerifiedCallback, VerifyWithRequest } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
@@ -50,10 +51,11 @@ import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import ApiService from './services/api.service';
+import { getOrganization } from './utils/getOrganization';
 import { getRedirects } from './utils/getRedirects';
 import { getRelayState } from './utils/getRelayState';
-import { dataDir, dataPath } from './utils/util';
 import { isAllowedOrigin } from './utils/isAllowedOrigin';
+import { dataDir, dataPath } from './utils/util';
 
 const apiService = new ApiService();
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
@@ -79,6 +81,7 @@ passport.deserializeUser(function (user, done) {
 
 const samlStrategy = new Strategy(
   {
+    passReqToCallback: true,
     disableRequestedAuthnContext: true,
     //attributeConsumingServiceIndex: '2',
     //xmlSignatureTransforms: ['test'],
@@ -103,7 +106,8 @@ const samlStrategy = new Strategy(
     wantAuthnResponseSigned: false,
     audience: false,
   },
-  async function (profile: Profile, done: VerifiedCallback) {
+  async function (req: Parameters<VerifyWithRequest>[0], profile: Profile, done: VerifiedCallback) {
+    console.log('🚀 ~ profile:', profile);
     if (!profile) {
       return done({
         name: 'SAML_MISSING_PROFILE',
@@ -148,6 +152,7 @@ const samlStrategy = new Strategy(
         password: '',
         username: '',
         groups: '',
+        roles: [],
         permissions: {
           canSendSMS: false,
           canSendLetter: true,
@@ -155,8 +160,20 @@ const samlStrategy = new Strategy(
         },
       };
 
+      const adminOrigin = new URL(ADMIN_URL).origin;
+      console.log('🚀 ~ adminOrigin:', adminOrigin);
+      const { host: _host } = getRedirects(req);
+
+      if (_host !== adminOrigin) {
+        await getOrganization(req, _host);
+      } else {
+        req.session.municipalityId = parseInt(MUNICIPALITY_ID, 10);
+      }
+
+      const { municipalityId } = req.session;
+
       const employeeDetails = await apiService.get<any>(
-        { url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
+        { url: `employee/2.0/${municipalityId}/portalpersondata/PERSONAL/${employee}` },
         dummyUser,
       );
       const { personid, orgTree } = employeeDetails.data;
@@ -164,7 +181,8 @@ const samlStrategy = new Strategy(
       // Get permissions of the user
       const permissionsUser: User = { ...dummyUser };
       permissionsUser.username = DEV ? TEST_USERNAME : username;
-      const permissions = await getPermissions(permissionsUser, apiService);
+      const permissions = await getPermissions(permissionsUser, req.session, apiService);
+      const roles = getRoles(appGroups);
 
       const findUser = {
         name: `${givenName} ${sn}`,
@@ -175,6 +193,7 @@ const samlStrategy = new Strategy(
         personId: personid,
         orgTree,
         groups: appGroups,
+        roles,
         permissions,
       };
 
@@ -189,7 +208,8 @@ const samlStrategy = new Strategy(
       }
       done(err);
     }
-  },
+    // eslint-disable-next-line no-explicit-any - Strategy wont recognize its own type.
+  } as any,
   async function (_profile: Profile, done: VerifiedCallback) {
     return done(null, {});
   },
@@ -250,7 +270,9 @@ class App {
       }),
     );
 
+    this.app.set('trust proxy', 1);
     this.app.use(passport.initialize() as any);
+
     this.app.use(passport.session());
     passport.use('saml', samlStrategy);
 
@@ -338,7 +360,7 @@ class App {
       `${BASE_URL_PREFIX}/saml/login/callback`,
       bodyParser.urlencoded({ extended: false }),
       samlLoginRateLimiter,
-      (req, res, next) => {
+      async (req, res, next) => {
         const { successRedirect, failureRedirect } = getRedirects(req);
 
         const redirectWithFailure = (message: string) => {
@@ -350,11 +372,25 @@ class App {
 
         const handleLogin = (err, user) => {
           if (err) return redirectWithFailure(err.name);
+          if (!user) return redirectWithFailure('NO_USER');
 
-          if (!user) return res.redirect('/saml/login');
-
-          req.login(user, loginErr => {
+          req.login(user, async loginErr => {
             if (loginErr) return redirectWithFailure('SAML_UNKNOWN_ERROR');
+            const { host: _host } = getRedirects(req);
+            if (_host !== new URL(ADMIN_URL).origin) {
+              // NOTE: Get org after login to set session after being reset while logging in.
+              try {
+                const { municipalityId, organization, origin } = await getOrganization(req, _host);
+                req.session.origin = origin;
+                req.session.municipalityId = municipalityId;
+                req.session.organization = organization;
+              } catch {
+                return redirectWithFailure('NO_ORGANIZATION');
+              }
+            } else {
+              req.session.municipalityId = parseInt(MUNICIPALITY_ID, 10);
+            }
+
             return res.redirect(successRedirect.toString());
           });
         };

@@ -28,14 +28,25 @@ async function main() {
     where: { host: 'postportal.sundsvall.se' },
     update: {},
     create: {
-      host: 'postportal.sundsvall.se',
+      host: 'https://postportal.sundsvall.se',
       name: 'Sundsvalls kommun',
       orgId: 13,
       municipalityId: 2281,
       logotypeId: 1,
     },
   });
-  console.log(logotype, kommun, org);
+  const localhost = await prisma.organization.upsert({
+    where: { host: 'localhost' },
+    update: {},
+    create: {
+      host: 'http://localhost:3000',
+      name: 'Utvecklingskommun',
+      orgId: 13,
+      municipalityId: 2281,
+      logotypeId: 1,
+    },
+  });
+  console.log(logotype, kommun, org, localhost);
 }
 
 main()
