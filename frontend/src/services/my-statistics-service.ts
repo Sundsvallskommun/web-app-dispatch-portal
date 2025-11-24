@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { apiService } from '@services/api-service';
 import {
-  Batch,
-  BatchListItem,
-  Message,
+  LetterListItem,
+  Letter,
   PagingMetaData,
   RecAttachment,
   SigningInfo,
-  UserBatches,
+  UserLetters,
+  UserMessage,
 } from '@interfaces/statistics.interface';
-import { formSendType } from 'src/constants';
 
 export interface UserRecLetters {
   _meta: PagingMetaData;
@@ -46,95 +45,62 @@ export interface AttachmentError {
 }
 
 export const useMyStatistics = (): {
-  batchListItems: BatchListItem[];
+  letterListItems: LetterListItem[];
   loaded: boolean;
 } => {
-  const { batches, batchesLoaded } = useMyMessages();
-  const { recLetters, recLoaded } = useMyLetters();
+  const { letters, lettersLoaded } = useMyLetterList();
 
-  const loaded = batchesLoaded && recLoaded;
+  const letterListItems = useMemo<LetterListItem[]>(() => {
+    if (!lettersLoaded) return [];
 
-  const batchListItems = useMemo<BatchListItem[]>(() => {
-    if (!loaded) return [];
-
-    const itemsFromBatches = batches.map<BatchListItem>((batch) => ({
-      id: batch.batchId,
-      messageType: batch.messageType,
-      sent: batch.sent,
-      subject: batch.subject,
-    }));
-
-    const itemsFromLetters = recLetters.map<BatchListItem>((letter) => ({
-      id: letter.id,
-      messageType: formSendType.REK_MAIL,
-      sent: letter.created,
+    const items = letters.map<LetterListItem>((letter) => ({
+      id: letter.messageId,
+      messageType: letter.type,
+      sent: letter.sentAt,
       subject: letter.subject,
     }));
 
-    return [...itemsFromBatches, ...itemsFromLetters].sort((a, b) => {
+    return items.sort((a, b) => {
       const ta = typeof a.sent === 'string' ? new Date(a.sent).getTime() : (a.sent as Date).getTime();
       const tb = typeof b.sent === 'string' ? new Date(b.sent).getTime() : (b.sent as Date).getTime();
       return tb - ta;
     });
-  }, [loaded, batches, recLetters]);
+  }, [lettersLoaded, letters]);
 
   return {
-    batchListItems,
-    loaded,
+    letterListItems: letterListItems,
+    loaded: lettersLoaded,
   };
 };
 
-export const useMyMessages = (): {
-  batches: Batch[];
-  batchesLoaded: boolean;
+export const useMyLetterList = (): {
+  letters: Letter[];
+  lettersLoaded: boolean;
 } => {
-  const [batches, setBatches] = useState<Batch[]>([]);
-  const [batchesLoaded, setBatchesLoaded] = useState<boolean>(false);
+  const [letters, setLetters] = useState<Letter[]>([]);
+  const [lettersLoaded, setLettersLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    apiService.get<UserBatches>(`my-statistics`).then((res) => {
-      const batches = res?.data?.batches;
-
-      if (batches) {
-        setBatches(batches);
-      }
-      setBatchesLoaded(true);
-    });
-  }, []);
-
-  return { batches, batchesLoaded };
-};
-
-export const useMyLetters = (): {
-  recLetters: RecLetter[];
-  recLoaded: boolean;
-} => {
-  const [recLetters, setRecLetters] = useState<RecLetter[]>([]);
-  const [recLoaded, setRecLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    apiService.get<UserRecLetters>(`my-rec-letters`).then((res) => {
-      const letters = res?.data?.letters;
+    apiService.get<UserLetters>(`my-statistics`).then((res) => {
+      const letters = res?.data?.messages;
 
       if (letters) {
-        setRecLetters(letters);
+        setLetters(letters);
       }
-      setRecLoaded(true);
+      setLettersLoaded(true);
     });
   }, []);
 
-  return { recLetters, recLoaded };
+  return { letters, lettersLoaded };
 };
 
-export const useMessage = (messageId: string): { message: Message; loaded: boolean } => {
-  const [message, setMessage] = useState<Message>({
+export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean } => {
+  const [message, setMessage] = useState<UserMessage>({
+    attachments: [],
+    recipients: [],
+    sentAt: '',
     subject: '',
     body: '',
-    issuer: '',
-    sent: '',
-    messageId: '',
-    recipients: [],
-    attachments: [],
   });
   const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -143,16 +109,11 @@ export const useMessage = (messageId: string): { message: Message; loaded: boole
       setLoaded(true);
       return;
     }
-    apiService.get<Message[]>(`my-statistics/${messageId}`).then((res) => {
-      const filteredMessage = res?.data[0];
+    apiService.get<UserMessage>(`my-statistics/${messageId}`).then((res) => {
+      if (!res.data) return;
 
-      if (filteredMessage) {
-        const recipients = res?.data.map((message) => {
-          return { ...message?.recipients[0] };
-        });
-        filteredMessage.recipients = recipients?.flat();
-        setMessage(filteredMessage);
-      }
+      const message = res.data;
+      setMessage(message);
       setLoaded(true);
     });
   }, [messageId]);
@@ -160,56 +121,12 @@ export const useMessage = (messageId: string): { message: Message; loaded: boole
   return { message, loaded };
 };
 
-export const useLetter = (letterId: string): { letter: RecLetter; loaded: boolean } => {
-  const [letter, setLetter] = useState<RecLetter>({
-    id: '',
-    subject: '',
-    municipalityId: '',
-    status: '',
-    body: '',
-    contentType: '',
-    created: '',
-    updated: '',
-    supportInfo: {
-      supportText: '',
-      contactInformationUrl: '',
-      contactInformationPhoneNumber: '',
-      contactInformationEmail: '',
-    },
-    attachments: [
-      {
-        id: '',
-        fileName: '',
-        contentType: '',
-      },
-    ],
-  });
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!letterId) {
-      setLoaded(true);
-      return;
-    }
-    apiService.get<RecLetter>(`my-rec-letters/${letterId}`).then((res) => {
-      const letter = res?.data;
-
-      if (letter) {
-        setLetter(letter);
-      }
-      setLoaded(true);
-    });
-  }, [letterId]);
-
-  return { letter, loaded };
-};
-
 export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; loaded: boolean } => {
   const [signingInfo, setSigningInfo] = useState<SigningInfo>({
     status: '',
-    signed: '',
+    signedAt: '',
     contentKey: '',
-    orderRef: '',
+    orderReference: '',
     user: {
       personalIdentityNumber: '',
       name: '',
@@ -240,20 +157,10 @@ export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; lo
   return { signingInfo, loaded };
 };
 
-export const getAttachmentFile: (
-  messageId: string,
-  fileName: string
-) => Promise<AttachmentResponse | AttachmentError> = (messageId, fileName) =>
+export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResponse | AttachmentError> = (
+  attachmentId
+) =>
   apiService
-    .get<ArrayBuffer>(`/my-statistics/attachment/${messageId}/${fileName}`, { responseType: 'arraybuffer' })
-    .then((res) => res)
-    .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));
-
-export const getRecAttachmentFile: (
-  messageId: string,
-  fileName: string
-) => Promise<AttachmentResponse | AttachmentError> = (letterId, attachmentId) =>
-  apiService
-    .get<ArrayBuffer>(`/my-rec-letters/attachment/${letterId}/${attachmentId}`, { responseType: 'arraybuffer' })
+    .get<ArrayBuffer>(`/my-statistics/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
     .then((res) => res)
     .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));

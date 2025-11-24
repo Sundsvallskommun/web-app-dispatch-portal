@@ -8,17 +8,17 @@ type ColorName = NonNullable<React.ComponentProps<typeof Icon>['color']>;
 const icons: Record<string, React.ReactElement> = {
   [formSendType.LETTER]: <Mail />,
   [formSendType.SMS]: <Smartphone />,
-  [formSendType.REK_MAIL]: <MailCheck />,
+  [formSendType.DIGITAL_REGISTERED_LETTER]: <MailCheck />,
 };
 const colors: Record<string, ColorName> = {
   [formSendType.LETTER]: 'vattjom',
   [formSendType.SMS]: 'gronsta',
-  [formSendType.REK_MAIL]: 'bjornstigen',
+  [formSendType.DIGITAL_REGISTERED_LETTER]: 'bjornstigen',
 };
 const bgClasses: Record<string, string> = {
   [formSendType.LETTER]: 'bg-vattjom-surface-accent',
   [formSendType.SMS]: 'bg-gronsta-surface-accent',
-  [formSendType.REK_MAIL]: 'bg-bjornstigen-surface-accent',
+  [formSendType.DIGITAL_REGISTERED_LETTER]: 'bg-bjornstigen-surface-accent',
 };
 
 interface PaddedListItemComponentProps {
