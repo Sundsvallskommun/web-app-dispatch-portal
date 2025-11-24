@@ -20,7 +20,7 @@ interface UserData {
 
 @Controller()
 export class UserController {
-  apiService = new ApiService();
+  private readonly apiService = new ApiService();
 
   @Get('/me')
   @OpenAPI({ summary: 'Return current user' })

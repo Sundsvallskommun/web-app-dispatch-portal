@@ -2,13 +2,13 @@ import { luhnCheck } from '@/utils/util';
 import dayjs from 'dayjs';
 import ApiService from './api.service';
 import { parseCsv } from './csv-service/csv-service';
-import { MUNICIPALITY_ID } from '@/config';
+import { getApiBase, MUNICIPALITY_ID } from '@/config';
 import { User } from '@/interfaces/users.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 
 const MAX_RECIPIENT_ROW_SIZE = 250;
-const POSTPORTALSERVICE_PATH = `postportalservice/1.1`;
+const POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
 
 export interface Recipient {
   personnumber: string;
@@ -176,6 +176,38 @@ export const fetchPersonId = async (user: User, api: ApiService, personalSecurit
     .post<string, any>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personalSecurityNumber}/guid` }, user)
     .then(res => res.data);
   return personId;
+};
+export const fetchPersonnummer = async (user: User, api: ApiService, personId: string): Promise<string> => {
+  const personnummer = await api
+    .get<string>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personId}/personnumber` }, user)
+    .then(res => res.data);
+  return personnummer;
+};
+export const fetchPersonIdPersonnummerRecord = async (
+  user: User,
+  api: ApiService,
+  personIds: string[],
+): Promise<Record<string, string>> => {
+  let personIdPersonnummerPars: Record<string, string> = {};
+
+  const results = await Promise.allSettled(
+    personIds.map(async personId => {
+      const personnummer = await api.get<string>(
+        { url: `citizen/3.0/${MUNICIPALITY_ID}/${personId}/personnumber` },
+        user,
+      );
+      return { personId, personnummer: personnummer.data };
+    }),
+  );
+
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      const { personId, personnummer } = result.value;
+      personIdPersonnummerPars[personId] = personnummer;
+    }
+  }
+
+  return personIdPersonnummerPars;
 };
 export const precheckPersonIds = async (
   user: User,

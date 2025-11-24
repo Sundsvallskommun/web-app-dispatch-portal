@@ -1,7 +1,7 @@
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Spinner, Select, AutoTableHeader, AutoTable } from '@sk-web-gui/react';
 import { getStatisticsByDate } from '@services/statistics-service';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Statistics } from '@interfaces/statistics.interface';
 import dayjs from 'dayjs';
 import { GetServerSideProps } from 'next';
@@ -15,32 +15,32 @@ const headers: Array<AutoTableHeader | string> = [
     label: 'Förvaltning',
   },
   {
-    property: 'snailMail.sent',
-    label: 'Fysiska brev (antal)',
+    property: 'snailMail',
+    label: 'Fysiska brev',
   },
   {
-    property: 'digitalMail.sent',
-    label: 'Digitala brev (antal)',
+    property: 'digitalMail',
+    label: 'Digitala brev',
   },
-  // NOTE: To be implemented in the future
-  /* {
-    property: 'sms.sent',
-    label: 'Sms (antal)',
-  }, */
+  {
+    property: 'registeredMail',
+    label: 'Rek brev',
+  },
+  {
+    property: 'sms',
+    label: 'Sms',
+  },
 ];
 
 export const StatisticsPage = () => {
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const [departmentStatistics, setDepartmentStatistics] = React.useState<Statistics[]>([]);
-  const [fromDate, setFromDate] = React.useState<string>();
-  const [toDate, setToDate] = React.useState<string>();
+  const [selectedYear, setSelectedYear] = useState<number | undefined>();
+  const [selectedMonth, setSelectedMonth] = useState<number | undefined>();
   const { t } = useTranslation(['common', 'statistics']);
 
   useEffect(() => {
-    const from = fromDate ?? dayjs(0).format('YYYY-MM-DD');
-    const to = toDate ?? dayjs().format('YYYY-MM-DD');
-
-    getStatisticsByDate(from, to)
+    getStatisticsByDate(selectedYear, selectedMonth)
       .then((res) => {
         setDepartmentStatistics(res);
       })
@@ -52,22 +52,19 @@ export const StatisticsPage = () => {
           setLoaded(true);
         }
       });
-  }, [fromDate, loaded, toDate]);
+  }, [loaded, selectedMonth, selectedYear]);
 
   const handleDateChange = (date: string) => {
     setLoaded(false);
     if (!date) {
-      setFromDate(undefined);
-      setToDate(undefined);
+      setSelectedYear(undefined);
+      setSelectedMonth(undefined);
       return;
     }
 
     const [year, month] = date.split('-').map(Number);
-    const from = dayjs(`${year}-${month}-01`).format('YYYY-MM-DD');
-    const to = dayjs(`${year}-${month}-01`).endOf('month').format('YYYY-MM-DD');
-
-    setFromDate(from);
-    setToDate(to);
+    setSelectedYear(year);
+    setSelectedMonth(month);
   };
 
   const generateMonthOptions = () => {

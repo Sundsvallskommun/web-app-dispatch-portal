@@ -9,34 +9,27 @@ export interface Mail {
   failed: number;
 }
 
+export enum EnumMessageType {
+  SNAIL_MAIL = 'SNAIL_MAIL',
+  DIGITAL_MAIL = 'DIGITAL_MAIL',
+  SMS = 'SMS',
+}
+export enum EnumMessageStatus {
+  SENT = 'SENT',
+  NOT_SENT = 'NOT_SENT',
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+}
 export interface Recipient {
-  messageType: string;
-  status: string;
-  personId?: string;
+  name: string;
+  partyId?: string;
   mobileNumber?: string;
-  address?: {
-    address: string;
-    city: string;
-    country: string;
-    firstName: string;
-    lastName: string;
-    zipCode: string;
-  };
-}
-
-export interface Attachment {
-  contentType: string;
-  fileName: string;
-}
-
-export interface Message {
-  messageId: string;
-  issuer: string;
-  sent: string;
-  subject: string;
-  body: string;
-  recipients: Recipient[];
-  attachments: Attachment[];
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+  messageType: EnumMessageType;
+  status: EnumMessageStatus;
+  personnummer?: string;
 }
 
 export interface PagingMetaData {
@@ -47,31 +40,46 @@ export interface PagingMetaData {
   totalPages: number;
 }
 
-export interface UserBatches {
-  _meta: PagingMetaData;
-  batches: Batch[];
+export enum EnumLetterType {
+  SMS = 'SMS',
+  LETTER = 'LETTER',
+  DIGITAL_REGISTERED_LETTER = 'DIGITAL_REGISTERED_LETTER',
 }
-
-export interface Batch {
-  batchId: string;
-  messageType: string;
+export enum EnumLetterState {
+  NEW = 'NEW',
+  SENT = 'SENT',
+  SIGNED = 'SIGNED',
+  EXPIRED = 'EXPIRED',
+  FAILED_Client_Error = 'FAILED - Client Error',
+  FAILED_Server_Error = 'FAILED - Server Error',
+  FAILED_Unknown_Error = 'FAILED - Unknown Error',
+}
+export enum EnumSigningState {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
+export interface Letter {
+  messageId: string;
   subject: string;
-  sent: string;
-  attachmentCount: number;
-  recipientCount: number;
-  status: Status;
+  type: EnumLetterType;
+  sentAt: string;
+  signingStatus: {
+    letterState: EnumLetterState;
+    signingProcessState: EnumSigningState;
+  };
+  numberOfRecipients: number;
+}
+export interface UserLetters {
+  _meta: PagingMetaData;
+  messages: Letter[];
 }
 
-export interface BatchListItem {
+export interface LetterListItem {
   id: string;
   messageType: string;
   subject: string;
   sent: string;
-}
-
-export interface Status {
-  successful: number;
-  unsuccessful: number;
 }
 
 export interface RecAttachment {
@@ -82,9 +90,10 @@ export interface RecAttachment {
 
 export interface SigningInfo {
   status: string;
-  signed: string;
+  signedAt: string;
   contentKey: string;
-  orderRef: string;
+  orderReference: string;
+  ocspResponse?: string;
   user: {
     personalIdentityNumber: string;
     name: string;
@@ -94,4 +103,20 @@ export interface SigningInfo {
   device: {
     ipAddress: string;
   };
+  stepUp?: {
+    mrtd: boolean;
+  };
+}
+
+export interface MessageAttachment {
+  attachmentId: string;
+  contentType: string;
+  fileName: string;
+}
+export interface UserMessage {
+  subject?: string;
+  body: string;
+  sentAt: string;
+  attachments: MessageAttachment[];
+  recipients: Recipient[];
 }

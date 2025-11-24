@@ -1,5 +1,5 @@
 import React from 'react';
-import { BatchListItem } from '@interfaces/statistics.interface';
+import { LetterListItem } from '@interfaces/statistics.interface';
 import { PaddedListIcon } from '@components/list-item/padded-list-icon.component';
 import { Icon } from '@sk-web-gui/react';
 import { ChevronRight } from 'lucide-react';
@@ -10,14 +10,14 @@ import Link from 'next/link';
 import { formSendType } from 'src/constants';
 
 interface ListItemComponentProps {
-  data: BatchListItem;
+  data: LetterListItem;
 }
 
 export const getMessagePrefixUrl = (type: string) => {
   switch (type) {
     case formSendType.SMS:
       return '/my-statistics/sms';
-    case formSendType.REK_MAIL:
+    case formSendType.DIGITAL_REGISTERED_LETTER:
       return '/my-statistics/rek-mail';
     default:
       return '/my-statistics/mail';
@@ -33,7 +33,7 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
     switch (type) {
       case formSendType.SMS:
         return t('common:textMessage');
-      case formSendType.REK_MAIL:
+      case formSendType.DIGITAL_REGISTERED_LETTER:
         return t('common:recLetter');
       case formSendType.SNAIL_MAIL:
       case formSendType.DIGITAL_MAIL:

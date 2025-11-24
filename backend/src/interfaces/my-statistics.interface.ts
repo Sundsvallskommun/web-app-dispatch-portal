@@ -1,3 +1,5 @@
+import { Message } from '@/data-contracts/messaging/data-contracts';
+
 interface PagingMetaData {
   page: number;
   limit: number;
@@ -12,24 +14,38 @@ export interface UserMessages {
 }
 
 export interface UserMessage {
-  messageId: string;
-  issuer: string;
-  origin: string;
-  sent: string;
-  subject: string;
+  subject?: string;
   body: string;
-  recipients: Recipient[];
+  sentAt: string;
   attachments: MessageAttachment[];
+  recipients: Recipient[];
+}
+
+export enum EnumMessageType {
+  SNAIL_MAIL = 'SNAIL_MAIL',
+  DIGITAL_MAIL = 'DIGITAL_MAIL',
+  SMS = 'SMS',
+}
+export enum EnumMessageStatus {
+  SENT = 'SENT',
+  NOT_SENT = 'NOT_SENT',
+  FAILED = 'FAILED',
 }
 
 export interface Recipient {
-  personId?: string;
+  name: string;
+  partyId?: string;
   mobileNumber?: string;
-  messageType: string;
-  status: string;
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+  messageType: EnumMessageType;
+  status: EnumMessageStatus;
+  personnummer?: string;
 }
 
 export interface MessageAttachment {
+  attachmentId: string;
   contentType: string;
   fileName: string;
 }
@@ -37,6 +53,10 @@ export interface MessageAttachment {
 export interface UserBatches {
   _meta: PagingMetaData;
   batches: Batch[];
+}
+export interface UserLetters {
+  _meta: PagingMetaData;
+  messages: Message[];
 }
 
 export interface Batch {
@@ -87,9 +107,10 @@ export interface RecSupportInfo {
 
 export interface SigningInfo {
   status: string;
-  signed: string;
+  signedAt: string;
   contentKey: string;
-  orderRef: string;
+  orderReference: string;
+  ocspResponse?: string;
   user: {
     personalIdentityNumber: string;
     name: string;
@@ -98,5 +119,8 @@ export interface SigningInfo {
   };
   device: {
     ipAddress: string;
+  };
+  stepUp?: {
+    mrtd: boolean;
   };
 }

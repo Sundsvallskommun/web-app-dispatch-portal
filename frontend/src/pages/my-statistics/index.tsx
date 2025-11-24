@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 
 export const StatisticsPage = () => {
-  const { batchListItems, loaded } = useMyStatistics();
+  const { letterListItems, loaded } = useMyStatistics();
   const { t } = useTranslation();
 
   return (
@@ -20,8 +20,8 @@ export const StatisticsPage = () => {
 
       <div data-cy="my-statistics-list" className="max-w-full mb-80">
         {loaded ? (
-          batchListItems.map((batchListItem) => {
-            return <ListItem data={batchListItem} key={batchListItem?.id} />;
+          letterListItems.map((letterListItem) => {
+            return <ListItem data={letterListItem} key={letterListItem?.id} />;
           })
         ) : (
           <Spinner />
