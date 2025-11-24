@@ -71,15 +71,13 @@ const MyStatisticsDetails = () => {
     },
   ];
 
-  const recipientList = recipients
-    // ?.filter((r) => r.status === EnumMessageStatus.SENT)
-    ?.map((r) => {
-      return {
-        recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${r?.personnummer ?? ''}`,
-        address: `${r?.streetAddress}${r?.streetAddress ? ',' : ''} ${r?.zipCode} ${r?.city}`,
-        messageType: r.messageType,
-      };
-    });
+  const recipientList = recipients?.map((r) => {
+    return {
+      recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${r?.personnummer ?? ''}`,
+      address: `${r?.streetAddress}${r?.streetAddress ? ',' : ''} ${r?.zipCode} ${r?.city}`,
+      messageType: r.messageType,
+    };
+  });
 
   const recipientsSnailMail = recipientList?.filter((r) => !isDigitalMessage(r.messageType));
   const recipientsDigitalMail = recipientList?.filter((r) => isDigitalMessage(r.messageType));
