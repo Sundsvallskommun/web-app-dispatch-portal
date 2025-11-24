@@ -126,7 +126,7 @@ export const buildRecipientsList: (
     );
     const recipientsWithAddresses: RecipientWithAddress[] = validRecipients.map(recipient => {
       const address = addresses.find(address => address.personNumber === recipient.personnumber);
-      const error = address.errorMessage ? 'MISSING' : undefined;
+      const error = !address || address?.errorMessage ? 'MISSING' : undefined;
 
       return { recipient, error, address };
     });
