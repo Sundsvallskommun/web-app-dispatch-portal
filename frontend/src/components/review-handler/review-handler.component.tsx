@@ -70,18 +70,20 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     },
   };
 
+  const createDeliveryMethodMap = (snailMail: string, digitalMail: string): Record<string, string> => {
+    return {
+      SNAIL_MAIL: snailMail,
+      DIGITAL_MAIL: digitalMail,
+    };
+  };
+
   const columnDeliveryMethod: AutoTableHeader = {
     label: t('send-mail:reviewHandler.deliveryMethod'),
     isColumnSortable: false,
     renderColumn: (_value, item) => {
-      const deliveryMethodMap: Record<string, string> = {
-        SNAIL_MAIL: t('send-mail:mail'),
-        DIGITAL_MAIL: t('send-mail:digital'),
-      };
-      const deliveryMethodColorMap: Record<string, string> = {
-        SNAIL_MAIL: 'tertiary',
-        DIGITAL_MAIL: 'vattjom',
-      };
+      const deliveryMethodMap = createDeliveryMethodMap(t('send-mail:mail'), t('send-mail:digital'));
+      const deliveryMethodColorMap = createDeliveryMethodMap('tertiary', 'vattjom');
+
       const deliveryMethod = item?.address?.deliveryMethod;
 
       return (
