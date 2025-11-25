@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
 import { tryNormalizeAddressLine } from '@utils/address.helpers';
 import { formatPostalLineDisplay } from '@utils/postal.helpers';
+import { createDeliveryMethodMap } from '@utils/helpers';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
@@ -72,22 +73,21 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: sendType === formSendType.MAIL,
     renderColumn: (_value, item) => {
-      let toReturn = null;
       if (item?.firstName) {
-        toReturn = (
+        return (
           <>
             {item?.firstName} {item?.lastName}
           </>
         );
       } else if (sendType === formSendType.REK_MAIL) {
-        toReturn = (
+        return (
           <div>
             {item?.address?.givenname} {item?.address?.lastname},{' '}
             {formatPersonnummerDisplay(item?.address?.personNumber)}
           </div>
         );
       } else {
-        toReturn = (
+        return (
           <div>
             <p>
               {item?.address?.givenname} {item?.address?.lastname}
@@ -96,7 +96,6 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
           </div>
         );
       }
-      return toReturn;
     },
   } as AutoTableHeader;
 
@@ -133,14 +132,9 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     label: t('send-mail:reviewHandler.deliveryMethod'),
     isColumnSortable: true,
     renderColumn: (_value, item) => {
-      const deliveryMethodMap: Record<string, string> = {
-        SNAIL_MAIL: 'Post',
-        DIGITAL_MAIL: 'Digitalt',
-      };
-      const deliveryMethodColorMap: Record<string, string> = {
-        SNAIL_MAIL: 'tertiary',
-        DIGITAL_MAIL: 'vattjom',
-      };
+      const deliveryMethodMap = createDeliveryMethodMap(t('send-mail:mail'), t('send-mail:digital'));
+      const deliveryMethodColorMap = createDeliveryMethodMap('tertiary', 'vattjom');
+
       const deliveryMethod = item?.address?.deliveryMethod;
       return (
         <Label rounded={true} color={deliveryMethodColorMap[deliveryMethod]} inverted={true}>
