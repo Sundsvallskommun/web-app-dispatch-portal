@@ -34,23 +34,20 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     isColumnSortable: false,
     renderColumn: (_value, item) => {
       const formatedPersonnummer = formatPersonnummerDisplay(item?.address?.personNumber);
-      let toReturn = null;
       if (sendType === formSendType.REK_MAIL) {
-        toReturn = (
+        return (
           <p className="flex flex-col">
             <span>{`${item?.address?.givenname} ${item?.address?.lastname}, ${formatedPersonnummer}`}</span>
           </p>
         );
       } else {
-        toReturn = (
+        return (
           <p className="flex flex-col">
             <span>{`${item?.address?.givenname} ${item?.address?.lastname}`}</span>
             <span>{formatedPersonnummer}</span>
           </p>
         );
       }
-
-      return toReturn;
     },
   };
 
