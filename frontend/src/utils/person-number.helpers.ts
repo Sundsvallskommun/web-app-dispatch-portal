@@ -141,14 +141,6 @@ export function tryNormalizePersonnummer(
 }
 
 /**
- * Quick validator for raw input.
- */
-export function isValidPersonnummer(raw: string, opts?: { supportSamordning?: boolean; refDate?: Date }): boolean {
-  const normalized = tryNormalizePersonnummer(raw, opts);
-  return !!(normalized.ok && normalized.value);
-}
-
-/**
  * Pretty printer for UI:
  * - Always "YYYYMMDD-XXXX" if valid.
  * - Otherwise returns raw unchanged.
@@ -159,16 +151,4 @@ export function formatPersonnummerDisplay(raw: string, opts?: { supportSamordnin
   const yyyyMMdd = normalized.value.slice(0, 8);
   const xxxx = normalized.value.slice(8);
   return `${yyyyMMdd}-${xxxx}`;
-}
-
-/**
- * Storage helper:
- * - Returns the canonical 12-digit string or undefined if invalid.
- */
-export function toPersonnummerStorage(
-  raw: string,
-  opts?: { supportSamordning?: boolean; refDate?: Date }
-): string | undefined {
-  const normalized = tryNormalizePersonnummer(raw, opts);
-  return normalized.ok ? normalized.value : undefined;
 }

@@ -23,7 +23,6 @@ function capitalizeCity(city: string): string {
  * Sanitize and normalize a Swedish postal code.
  * Accepts: "85230", "852 30", "SE-85230", "SE 852 30", "852-30"
  * Returns:
- *   - storage (5 digits) via toPostalStorage
  *   - display ("NNN NN") via formatPostalDisplay
  */
 export function tryNormalizePostalCode(raw: string | undefined): ITryResult<string> {
@@ -44,23 +43,9 @@ export function tryNormalizePostalCode(raw: string | undefined): ITryResult<stri
   return { ok: true, value: postal };
 }
 
-/** Storage form: "NNNNN" or undefined if invalid */
-export function toPostalStorage(raw: string): string | undefined {
-  const postal = tryNormalizePostalCode(raw);
-  return postal.ok ? postal.value : undefined;
-}
-
-/** Display form: "NNN NN" if valid; otherwise returns raw unchanged */
-export function formatPostalDisplay(raw: string): string {
-  const postal = tryNormalizePostalCode(raw);
-  if (!postal.ok || !postal.value) return raw;
-  return postal.value.replaceAll(/^(\d{3})(\d{2})$/, '$1 $2');
-}
-
 /**
  * Full "postal line" normalizer: "<postal> <city>"
  * - Display: "NNN NN City"
- * - Storage: { postalCode: "NNNNN", city: "City" }
  * Accepts loose input like "SE-85230   sundsvall"
  */
 export function tryNormalizePostalLine(raw: string | undefined): ITryResult<{ postalCode: string; city: string }> {
