@@ -16,30 +16,6 @@ export interface IAddressTryResult<T = string> {
   error?: AddressError;
 }
 
-const STREET_ALLOWED_REGEX = /^[A-Za-zÅÄÖåäö0-9'.\-\s]+$/;
-const CITY_ALLOWED_REGEX = /^[A-Za-zÅÄÖåäö'.\-\s]+$/;
-
-/**
- * Capitalizes each word in a city name properly.
- * e.g. "västra frölunda" → "Västra Frölunda"
- */
-export function tryNormalizeCity(raw: string | undefined): IAddressTryResult {
-  if (!raw || collapseSpaces(raw) === '') {
-    return { ok: false, error: AddressError.EMPTY_INPUT };
-  }
-
-  const cleaned = collapseSpaces(raw);
-
-  if (!CITY_ALLOWED_REGEX.test(cleaned)) {
-    return { ok: false, error: AddressError.INVALID_CHAR };
-  }
-
-  // Capitalize each word (handles compound cities like "Västra Frölunda")
-  const normalized = cleaned.split(' ').map(capitalizeWord).join(' ');
-
-  return { ok: true, value: normalized };
-}
-
 /**
  * Parses "Street 24C" → Normalized
  */
@@ -50,7 +26,7 @@ export function tryNormalizeAddressLine(raw: string | undefined): IAddressTryRes
 
   const cleaned = collapseSpaces(normalizeDigits(raw));
 
-  const addressRegex = /^([^\d]{1,100})\s+(\d{1,4})([A-Za-zÅÄÖåäö])?$/;
+  const addressRegex = /^(.{1,100})\s+(\d{1,4})([A-Za-zÅÄÖåäö])?$/;
   const parts = addressRegex.exec(cleaned);
 
   if (!parts) return { ok: false, error: AddressError.BAD_FORMAT };
@@ -59,32 +35,10 @@ export function tryNormalizeAddressLine(raw: string | undefined): IAddressTryRes
   const number = parts[2];
   const suffix = (parts[3] ?? '').toUpperCase();
 
-  if (!STREET_ALLOWED_REGEX.test(street)) {
-    return { ok: false, error: AddressError.INVALID_CHAR };
-  }
   if (!/^\d{1,4}$/.test(number)) {
     return { ok: false, error: AddressError.BAD_HOUSENUMBER };
   }
 
   const normalized = `${capitalizeWord(street)} ${number}${suffix}`;
   return { ok: true, value: normalized };
-}
-
-export function isValidAddressLine(raw: string): boolean {
-  const normalizedAddress = tryNormalizeAddressLine(raw);
-  return !!(normalizedAddress.ok && normalizedAddress.value);
-}
-
-export function toAddressStorage(raw: string): string | undefined {
-  const normalizedAddress = tryNormalizeAddressLine(raw);
-  return normalizedAddress.ok ? normalizedAddress.value : undefined;
-}
-
-export function trySplitAddress(raw: string): IAddressTryResult<{ street: string; building: string }> {
-  const normalizedAddress = tryNormalizeAddressLine(raw);
-  if (!normalizedAddress.ok || !normalizedAddress.value) return { ok: false, error: normalizedAddress.error };
-  const addressRegex = /^([^\d]{1,100})\s+(\d{1,4}[A-ZÅÄÖ]?)$/;
-  const parts = addressRegex.exec(normalizedAddress.value);
-  if (!parts) return { ok: false, error: AddressError.BAD_FORMAT };
-  return { ok: true, value: { street: parts[1], building: parts[2] } };
 }
