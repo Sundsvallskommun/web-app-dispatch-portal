@@ -11,6 +11,7 @@ import { SendType } from 'src/types';
 import { formatPostalLineDisplay } from '@utils/postal.helpers';
 import { tryNormalizeAddressLine } from '@utils/address.helpers';
 import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
+import { createDeliveryMethodMap } from '@utils/helpers';
 
 interface ReviewHandlerProps {
   sendType: SendType;
@@ -68,13 +69,6 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
         </p>
       );
     },
-  };
-
-  const createDeliveryMethodMap = (snailMail: string, digitalMail: string): Record<string, string> => {
-    return {
-      SNAIL_MAIL: snailMail,
-      DIGITAL_MAIL: digitalMail,
-    };
   };
 
   const columnDeliveryMethod: AutoTableHeader = {

@@ -46,3 +46,10 @@ export function capitalizeWord(word: string): string {
   const lower = word.toLocaleLowerCase('sv-SE');
   return lower ? lower[0].toLocaleUpperCase('sv-SE') + lower.slice(1) : lower;
 }
+
+export const createDeliveryMethodMap = (snailMail: string, digitalMail: string): Record<string, string> => {
+  return {
+    SNAIL_MAIL: snailMail,
+    DIGITAL_MAIL: digitalMail,
+  };
+};
