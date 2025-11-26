@@ -1,11 +1,10 @@
 // address.service.ts
 // Handles both address lines (street + number) and city capitalization.
 
-import { capitalizeWord, collapseSpaces, normalizeDigits } from './helpers';
+import { capitalizeWord, collapseSpaces, normalizeDigits } from './util';
 
 export enum AddressError {
   EMPTY_INPUT = 'EMPTY_INPUT',
-  INVALID_CHAR = 'INVALID_CHAR',
   BAD_FORMAT = 'BAD_FORMAT',
   BAD_HOUSENUMBER = 'BAD_HOUSENUMBER',
 }
@@ -41,4 +40,8 @@ export function tryNormalizeAddressLine(raw: string | undefined): IAddressTryRes
 
   const normalized = `${capitalizeWord(street)} ${number}${suffix}`;
   return { ok: true, value: normalized };
+}
+
+export function capitalizeCity(city: string): string {
+  return city.split(' ').map(capitalizeWord).join(' ');
 }

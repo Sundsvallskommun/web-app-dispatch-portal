@@ -5,6 +5,7 @@ import { Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useKivraEligibility } from 'src/hooks/useGetEligibility';
 import { SendType } from 'src/types';
+import { formatPersonnummerDisplay } from '@utils/helpers';
 
 interface PreviewPersonProps {
   personId: string;
@@ -40,7 +41,7 @@ const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: Previ
       <p className="text-body text-base font-bold">
         {personAdress?.givenname} {personAdress?.lastname}
       </p>
-      <p className="text-small">{personAdress?.personNumber}</p>
+      <p className="text-small">{formatPersonnummerDisplay(personAdress?.personNumber ?? '')}</p>
       {sendType === formSendType.MAIL && (
         <p className="text-small">
           {personAdress?.addresses[0].address}, {personAdress?.addresses[0].city}

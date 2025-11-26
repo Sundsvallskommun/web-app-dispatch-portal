@@ -84,14 +84,6 @@ export function trySanitizeMobileNumber(raw: string | undefined): ITryResult {
 }
 
 /**
- * Convenience validator for *raw* input (sanitize → validate).
- */
-export function isValidMobile(raw: string): boolean {
-  const s = trySanitizeMobileNumber(raw);
-  return !!(s.ok && s.value && isValidMobileSanitized(s.value));
-}
-
-/**
  * Full pipeline for *raw* input:
  * sanitize → validate → normalize to canonical +467XXXXXXXX
  */

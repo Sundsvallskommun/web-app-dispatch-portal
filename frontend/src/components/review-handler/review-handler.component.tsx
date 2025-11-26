@@ -8,9 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
-import { formatPostalLineDisplay } from '@utils/postal.helpers';
-import { tryNormalizeAddressLine } from '@utils/address.helpers';
-import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
+import { formatPersonnummerDisplay } from '@utils/helpers';
 import { createDeliveryMethodMap } from '@utils/helpers';
 
 interface ReviewHandlerProps {
@@ -57,12 +55,8 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     renderColumn: (_value, item) => {
       return (
         <p className="flex flex-col">
-          <span>{tryNormalizeAddressLine(item?.address?.addresses[0].address).value},</span>
-          <span>
-            {formatPostalLineDisplay(
-              [item?.address?.addresses[0].postalCode, item?.address?.addresses[0].city].join(' ')
-            )}
-          </span>
+          <span>{item?.address?.addresses[0].address},</span>
+          <span>{[item?.address?.addresses[0].postalCode, item?.address?.addresses[0].city].join(' ')}</span>
         </p>
       );
     },

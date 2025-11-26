@@ -5,9 +5,7 @@ import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
-import { tryNormalizeAddressLine } from '@utils/address.helpers';
-import { formatPostalLineDisplay } from '@utils/postal.helpers';
+import { formatPersonnummerDisplay } from '@utils/helpers';
 import { createDeliveryMethodMap } from '@utils/helpers';
 
 interface RecipientTableProps {
@@ -108,8 +106,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
         return (
           <>
-            <span>{tryNormalizeAddressLine(address).value},</span>
-            <span>{formatPostalLineDisplay([zipCode, city].join(' '))}</span>
+            <span>{address},</span>
+            <span>{[zipCode, city].join(' ')}</span>
           </>
         );
       }
@@ -121,8 +119,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
       return (
         <div>
-          <p>{tryNormalizeAddressLine(address).value},</p>
-          <p>{formatPostalLineDisplay([postalCode, city].join(' '))}</p>
+          <p>{address},</p>
+          <p>{[postalCode, city].join(' ')}</p>
         </div>
       );
     },
