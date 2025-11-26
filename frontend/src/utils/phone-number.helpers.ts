@@ -126,15 +126,15 @@ export function normalizeDigits(input: string): string {
   for (const charcter of input) {
     const code = charcter.codePointAt(0);
     if (code === undefined) continue;
-    if (code >= 0x0660 && code <= 0x0669) {
-      out += String.fromCodePoint(48 + (code - 0x0660));
-      continue;
-    }
     if (code >= 0x06f0 && code <= 0x06f9) {
       out += String.fromCodePoint(48 + (code - 0x06f0));
       continue;
     }
-    out += charcter;
+    if (code >= 0x0660 && code <= 0x0669) {
+      out += String.fromCodePoint(48 + (code - 0x0660));
+      continue;
+    }
+    out = out + charcter;
   }
   return out;
 }
