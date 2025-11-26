@@ -90,7 +90,7 @@ export function normalizeDigits(input: string): string {
 }
 
 export function collapseSpaces(text: string): string {
-  return text.replace(/[\s\u00A0]+/g, ' ').trim();
+  return text.replaceAll(/[\s\u00A0]+/g, ' ').trim();
 }
 
 export function capitalizeWord(word: string): string {

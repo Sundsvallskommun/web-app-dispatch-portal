@@ -5,8 +5,7 @@ import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatPersonNumber } from '@utils/helpers';
-import { createDeliveryMethodMap } from '@utils/helpers';
+import { createDeliveryMethodMap, formatPersonNumber } from '@utils/helpers';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;

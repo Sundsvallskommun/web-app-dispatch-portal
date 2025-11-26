@@ -8,8 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
-import { formatPersonNumber } from '@utils/helpers';
-import { createDeliveryMethodMap } from '@utils/helpers';
+import { formatPersonNumber, createDeliveryMethodMap } from '@utils/helpers';
 
 interface ReviewHandlerProps {
   sendType: SendType;
