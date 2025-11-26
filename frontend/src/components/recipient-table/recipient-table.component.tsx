@@ -68,7 +68,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
   const AutoTableHeaderRecipient = {
     label: t('send-mail:reviewHandler.recipients'),
-    isColumnSortable: sendType === formSendType.MAIL,
+    isColumnSortable: false,
     renderColumn: (_value, item) => {
       if (item?.firstName) {
         return (
@@ -97,6 +97,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
   const AutoTableHeaderAddress = {
     label: t('send-mail:reviewHandler.address'),
+    isColumnSortable: false,
     renderColumn: (_value, item) => {
       // Added with address
       if (item?.firstName) {
@@ -126,7 +127,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
   const AutoTableHeaderDeliveryMethod: AutoTableHeader = {
     label: t('send-mail:reviewHandler.deliveryMethod'),
-    isColumnSortable: true,
+    isColumnSortable: false,
     renderColumn: (_value, item) => {
       const deliveryMethodMap = createDeliveryMethodMap(t('send-mail:mail'), t('send-mail:digital'));
       const deliveryMethodColorMap = createDeliveryMethodMap('tertiary', 'vattjom');
