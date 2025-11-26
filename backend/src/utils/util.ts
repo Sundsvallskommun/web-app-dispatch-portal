@@ -69,12 +69,6 @@ export const dataDir = (path: string): string => {
   return __dirname + '/../../data/' + path;
 };
 
-export const formatPersonNumber = (ssn: string) => {
-  return /\d/g.test(ssn) && (ssn.length === 10 || ssn.length === 12)
-    ? `${ssn.slice(0, ssn.length - 4)}-${ssn.slice(ssn.length - 4)}`
-    : ssn;
-};
-
 // Convert Arabic-Indic (٠–٩) and Eastern Arabic-Indic (۰–۹) numerals to ASCII
 export function normalizeDigits(input: string): string {
   if (!input) return input;
