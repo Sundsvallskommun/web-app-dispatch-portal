@@ -5,7 +5,7 @@ import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatPersonnummerDisplay } from '@utils/helpers';
+import { formatPersonNumber } from '@utils/helpers';
 import { createDeliveryMethodMap } from '@utils/helpers';
 
 interface RecipientTableProps {
@@ -80,8 +80,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
       } else if (sendType === formSendType.REK_MAIL) {
         return (
           <div>
-            {item?.address?.givenname} {item?.address?.lastname},{' '}
-            {formatPersonnummerDisplay(item?.address?.personNumber)}
+            {item?.address?.givenname} {item?.address?.lastname}, {formatPersonNumber(item?.address?.personNumber)}
           </div>
         );
       } else {
@@ -90,7 +89,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
             <p>
               {item?.address?.givenname} {item?.address?.lastname}
             </p>
-            <p>{formatPersonnummerDisplay(item?.address?.personNumber)}</p>
+            <p>{formatPersonNumber(item?.address?.personNumber)}</p>
           </div>
         );
       }

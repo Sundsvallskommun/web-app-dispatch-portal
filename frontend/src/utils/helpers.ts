@@ -38,32 +38,9 @@ export function normalizeDigits(input: string): string {
   return out;
 }
 
-export function collapseSpaces(text: string): string {
-  return text.replaceAll(/[\s\u00A0]+/g, ' ').trim();
-}
-
-export function capitalizeWord(word: string): string {
-  const lower = word.toLocaleLowerCase('sv-SE');
-  return lower ? lower[0].toLocaleUpperCase('sv-SE') + lower.slice(1) : lower;
-}
-
 export const createDeliveryMethodMap = (snailMail: string, digitalMail: string): Record<string, string> => {
   return {
     SNAIL_MAIL: snailMail,
     DIGITAL_MAIL: digitalMail,
   };
 };
-
-/**
- * Pretty printer for UI:
- * - Always "YYYYMMDD-XXXX" if valid.
- * - Otherwise returns personnummer unchanged.
- */
-export function formatPersonnummerDisplay(
-  personnummer: string,
-  opts?: { supportSamordning?: boolean; refDate?: Date }
-): string {
-  const yyyyMMdd = personnummer.slice(0, 8);
-  const xxxx = personnummer.slice(8);
-  return `${yyyyMMdd}-${xxxx}`;
-}

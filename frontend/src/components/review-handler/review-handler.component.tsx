@@ -8,7 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
-import { formatPersonnummerDisplay } from '@utils/helpers';
+import { formatPersonNumber } from '@utils/helpers';
 import { createDeliveryMethodMap } from '@utils/helpers';
 
 interface ReviewHandlerProps {
@@ -31,7 +31,7 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: false,
     renderColumn: (_value, item) => {
-      const formatedPersonnummer = formatPersonnummerDisplay(item?.address?.personNumber);
+      const formatedPersonnummer = formatPersonNumber(item?.address?.personNumber);
       if (sendType === formSendType.REK_MAIL) {
         return (
           <p className="flex flex-col">
