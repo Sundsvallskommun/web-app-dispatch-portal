@@ -16,7 +16,6 @@ import {
   FormErrorMessage,
   FormLabel,
   SearchField,
-  Link,
   Spinner,
   RadioButton,
   cx,
@@ -26,9 +25,9 @@ import {
 } from '@sk-web-gui/react';
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Trans, useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import { Plus } from 'lucide-react';
-import { RecipientTable } from 'src/recipient-table/recipient-table.component';
+import { RecipientTable } from '@components/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';
 import PreviewPerson from './preview-person';
 import { useKivraEligibility } from 'src/hooks/useGetEligibility';
@@ -313,21 +312,9 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
       <HandlerWrapper
         title={t('send-mail:recipientHandler.title')}
         description={
-          sendType === formSendType.MAIL ? (
-            <>
-              <span>
-                <Trans
-                  i18nKey="send-mail:recipientHandler.contentFirstRow"
-                  components={{
-                    Link: <Link href="/files/example.csv" />,
-                  }}
-                />
-              </span>
-              <span>{t('send-mail:recipientHandler.contentSecondRow')}</span>
-            </>
-          ) : (
-            t('send-mail:recipientHandler.rekMail.content')
-          )
+          sendType === formSendType.MAIL
+            ? t('send-mail:recipientHandler.contentFirstRow')
+            : t('send-mail:recipientHandler.rekMail.content')
         }
       >
         <div className="w-full gap-32">
