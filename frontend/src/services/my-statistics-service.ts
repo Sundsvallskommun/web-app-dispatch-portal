@@ -121,22 +121,8 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
   return { message, loaded };
 };
 
-export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; loaded: boolean } => {
-  const [signingInfo, setSigningInfo] = useState<SigningInfo>({
-    status: '',
-    signedAt: '',
-    contentKey: '',
-    orderReference: '',
-    user: {
-      personalIdentityNumber: '',
-      name: '',
-      givenName: '',
-      surname: '',
-    },
-    device: {
-      ipAddress: '',
-    },
-  });
+export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo | null; loaded: boolean } => {
+  const [signingInfo, setSigningInfo] = useState<SigningInfo | null>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -144,14 +130,23 @@ export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; lo
       setLoaded(true);
       return;
     }
-    apiService.get<SigningInfo>(`signing-info/${letterId}`).then((res) => {
-      const signingInfo = res?.data;
 
-      if (signingInfo) {
-        setSigningInfo(signingInfo);
+    const fetchData = async () => {
+      try {
+        const res = await apiService.get<SigningInfo>(`signing-info/${letterId}`);
+        setSigningInfo(res.data);
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          setSigningInfo(null);
+        } else {
+          console.error('Unexpected error loading signing info', err);
+        }
+      } finally {
+        setLoaded(true);
       }
-      setLoaded(true);
-    });
+    };
+
+    fetchData();
   }, [letterId]);
 
   return { signingInfo, loaded };

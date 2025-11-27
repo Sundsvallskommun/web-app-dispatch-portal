@@ -107,6 +107,13 @@ export class StatisticsController {
 
       return response.status(200).json(result.data);
     } catch (error) {
+      if (response.status(502)) {
+        return response
+          .status(400)
+          .json({
+            message: `Signing information belonging to letter with id '${id}' and municipalityId '${MUNICIPALITY_ID}' not found`,
+          });
+      }
       logger.error('Error getting signing info: ', error);
       return response.status(500).json({ message: 'Error getting signing info' });
     }

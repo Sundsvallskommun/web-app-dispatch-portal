@@ -62,7 +62,7 @@ const MyStatisticsDetails = () => {
   ];
 
   let recipient = undefined;
-  if (signingInfo.user && signingInfoLoaded) {
+  if (signingInfo && signingInfo.user && signingInfoLoaded) {
     recipient = {
       recipient: `${signingInfo.user?.name ?? ''} ${signingInfo.user?.surname ?? ''}${signingInfo.user?.personalIdentityNumber ? ',' : ''} ${signingInfo.user?.personalIdentityNumber ?? ''}`,
       status: signingInfo.status,
@@ -70,7 +70,7 @@ const MyStatisticsDetails = () => {
   } else {
     recipient = {
       recipient: 'Okänd',
-      status: signingInfo.status,
+      status: signingInfo?.status,
     };
   }
 
