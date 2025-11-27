@@ -27,7 +27,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { Plus } from 'lucide-react';
-import { RecipientTable } from 'src/recipient-table/recipient-table.component';
+import { RecipientTable } from '@components/recipient-table/recipient-table.component';
 import { formSendType } from '../../constants';
 import PreviewPerson from './preview-person';
 import { useKivraEligibility } from 'src/hooks/useGetEligibility';

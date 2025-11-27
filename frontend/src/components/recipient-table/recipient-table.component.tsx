@@ -5,9 +5,7 @@ import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
-import { tryNormalizeAddressLine } from '@utils/address.helpers';
-import { formatPostalLineDisplay } from '@utils/postal.helpers';
+import { createDeliveryMethodMap, formatPersonNumber } from '@utils/helpers';
 
 interface RecipientTableProps {
   showRemoveButton?: boolean;
@@ -70,38 +68,36 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
   const AutoTableHeaderRecipient = {
     label: t('send-mail:reviewHandler.recipients'),
-    isColumnSortable: sendType === formSendType.MAIL,
+    isColumnSortable: false,
     renderColumn: (_value, item) => {
-      let toReturn = null;
       if (item?.firstName) {
-        toReturn = (
+        return (
           <>
             {item?.firstName} {item?.lastName}
           </>
         );
       } else if (sendType === formSendType.REK_MAIL) {
-        toReturn = (
+        return (
           <div>
-            {item?.address?.givenname} {item?.address?.lastname},{' '}
-            {formatPersonnummerDisplay(item?.address?.personNumber)}
+            {item?.address?.givenname} {item?.address?.lastname}, {formatPersonNumber(item?.address?.personNumber)}
           </div>
         );
       } else {
-        toReturn = (
+        return (
           <div>
             <p>
               {item?.address?.givenname} {item?.address?.lastname}
             </p>
-            <p>{formatPersonnummerDisplay(item?.address?.personNumber)}</p>
+            <p>{formatPersonNumber(item?.address?.personNumber)}</p>
           </div>
         );
       }
-      return toReturn;
     },
   } as AutoTableHeader;
 
   const AutoTableHeaderAddress = {
     label: t('send-mail:reviewHandler.address'),
+    isColumnSortable: false,
     renderColumn: (_value, item) => {
       // Added with address
       if (item?.firstName) {
@@ -109,8 +105,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
         return (
           <>
-            <span>{tryNormalizeAddressLine(address).value},</span>
-            <span>{formatPostalLineDisplay([zipCode, city].join(' '))}</span>
+            <span>{address},</span>
+            <span>{[zipCode, city].join(' ')}</span>
           </>
         );
       }
@@ -122,8 +118,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
       return (
         <div>
-          <p>{tryNormalizeAddressLine(address).value},</p>
-          <p>{formatPostalLineDisplay([postalCode, city].join(' '))}</p>
+          <p>{address},</p>
+          <p>{[postalCode, city].join(' ')}</p>
         </div>
       );
     },
@@ -131,16 +127,11 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
   const AutoTableHeaderDeliveryMethod: AutoTableHeader = {
     label: t('send-mail:reviewHandler.deliveryMethod'),
-    isColumnSortable: true,
+    isColumnSortable: false,
     renderColumn: (_value, item) => {
-      const deliveryMethodMap: Record<string, string> = {
-        SNAIL_MAIL: 'Post',
-        DIGITAL_MAIL: 'Digitalt',
-      };
-      const deliveryMethodColorMap: Record<string, string> = {
-        SNAIL_MAIL: 'tertiary',
-        DIGITAL_MAIL: 'vattjom',
-      };
+      const deliveryMethodMap = createDeliveryMethodMap(t('send-mail:mail'), t('send-mail:digital'));
+      const deliveryMethodColorMap = createDeliveryMethodMap('tertiary', 'vattjom');
+
       const deliveryMethod = item?.address?.deliveryMethod;
       return (
         <Label rounded={true} color={deliveryMethodColorMap[deliveryMethod]} inverted={true}>

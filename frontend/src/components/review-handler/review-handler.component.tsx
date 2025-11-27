@@ -8,9 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
-import { formatPostalLineDisplay } from '@utils/postal.helpers';
-import { tryNormalizeAddressLine } from '@utils/address.helpers';
-import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
+import { formatPersonNumber, createDeliveryMethodMap } from '@utils/helpers';
 
 interface ReviewHandlerProps {
   sendType: SendType;
@@ -32,24 +30,21 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     label: t('send-mail:reviewHandler.recipients'),
     isColumnSortable: false,
     renderColumn: (_value, item) => {
-      const formatedPersonnummer = formatPersonnummerDisplay(item?.address?.personNumber);
-      let toReturn = null;
+      const formatedPersonnummer = formatPersonNumber(item?.address?.personNumber);
       if (sendType === formSendType.REK_MAIL) {
-        toReturn = (
+        return (
           <p className="flex flex-col">
             <span>{`${item?.address?.givenname} ${item?.address?.lastname}, ${formatedPersonnummer}`}</span>
           </p>
         );
       } else {
-        toReturn = (
+        return (
           <p className="flex flex-col">
             <span>{`${item?.address?.givenname} ${item?.address?.lastname}`}</span>
             <span>{formatedPersonnummer}</span>
           </p>
         );
       }
-
-      return toReturn;
     },
   };
 
@@ -59,12 +54,8 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     renderColumn: (_value, item) => {
       return (
         <p className="flex flex-col">
-          <span>{tryNormalizeAddressLine(item?.address?.addresses[0].address).value},</span>
-          <span>
-            {formatPostalLineDisplay(
-              [item?.address?.addresses[0].postalCode, item?.address?.addresses[0].city].join(' ')
-            )}
-          </span>
+          <span>{item?.address?.addresses[0].address},</span>
+          <span>{[item?.address?.addresses[0].postalCode, item?.address?.addresses[0].city].join(' ')}</span>
         </p>
       );
     },
@@ -74,14 +65,9 @@ const ReviewHandler = ({ sendType }: ReviewHandlerProps) => {
     label: t('send-mail:reviewHandler.deliveryMethod'),
     isColumnSortable: false,
     renderColumn: (_value, item) => {
-      const deliveryMethodMap: Record<string, string> = {
-        SNAIL_MAIL: t('send-mail:mail'),
-        DIGITAL_MAIL: t('send-mail:digital'),
-      };
-      const deliveryMethodColorMap: Record<string, string> = {
-        SNAIL_MAIL: 'tertiary',
-        DIGITAL_MAIL: 'vattjom',
-      };
+      const deliveryMethodMap = createDeliveryMethodMap(t('send-mail:mail'), t('send-mail:digital'));
+      const deliveryMethodColorMap = createDeliveryMethodMap('tertiary', 'vattjom');
+
       const deliveryMethod = item?.address?.deliveryMethod;
 
       return (
