@@ -62,10 +62,12 @@ export const getPermissions = async (
   });
 
   const messagingSettings = await getMessagingUserSettings(user, apiService);
-  const messagingSettingValues = messagingSettings?.[0]?.values || [];
-  const flag = (key: string) => messagingSettingValues.find(v => v.key === key)?.value?.toLowerCase() === 'true';
-  permissions.canSendSMS = flag('sms_enabled');
-  permissions.canSendRegisteredLetter = flag('rek_enabled');
+  const values = messagingSettings?.[0]?.values || [];
+
+  const settingsMap = Object.fromEntries(values.map(v => [v.key, v.value?.toLowerCase()]));
+
+  permissions.canSendSMS = settingsMap['sms_enabled'] === 'true';
+  permissions.canSendRegisteredLetter = settingsMap['rek_enabled'] === 'true';
 
   return permissions;
 };
