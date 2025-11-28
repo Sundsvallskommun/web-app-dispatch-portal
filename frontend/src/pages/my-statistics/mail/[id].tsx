@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import { isDigitalMessage } from '@utils/statistics-helpers';
 import HeaderMenu from '@components/header-menu/header-menu.component';
-import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
+import { formatPersonNumber } from '@utils/helpers';
 
 const defaultMessageInfo: UserMessage = createEmptyUserMessage();
 
@@ -68,7 +68,7 @@ const MyStatisticsDetails = () => {
 
   const recipientList = recipients?.map((r) => {
     return {
-      recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${formatPersonnummerDisplay(r?.personnummer?.toString() ?? '') ?? ''}`,
+      recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${formatPersonNumber(r?.personnummer?.toString() ?? '') ?? ''}`,
       address: `${r?.streetAddress}${r?.streetAddress ? ',' : ''} ${r?.zipCode} ${r?.city}`,
       messageType: r.messageType,
     };

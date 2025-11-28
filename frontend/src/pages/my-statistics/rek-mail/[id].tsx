@@ -11,8 +11,8 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
-import { formatPersonnummerDisplay } from '@utils/person-number.helpers';
 import { getCitizen } from '@services/recipient-service';
+import { formatPersonNumber } from '@utils/helpers';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -81,7 +81,7 @@ const MyStatisticsDetails = () => {
   // Define the data of the table
   let recipientInfo = undefined;
   if (recipient) {
-    const recipientPersonnummer = formatPersonnummerDisplay(recipient.personnummer?.toString() ?? '') ?? '';
+    const recipientPersonnummer = formatPersonNumber(recipient.personnummer?.toString() ?? '') ?? '';
 
     recipientInfo = {
       recipient:
