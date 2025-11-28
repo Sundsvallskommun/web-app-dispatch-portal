@@ -162,9 +162,9 @@ const samlStrategy = new Strategy(
       const { personid, orgTree } = employeeDetails.data;
 
       // Get permissions of the user
-      let permissionsUser: User = { ...dummyUser };
+      const permissionsUser: User = { ...dummyUser };
       permissionsUser.username = DEV ? TEST_USERNAME : username;
-      let permissions = await getPermissions(appGroups, permissionsUser, apiService);
+      const permissions = await getPermissions(appGroups, permissionsUser, apiService);
 
       const findUser = {
         name: `${givenName} ${sn}`,
