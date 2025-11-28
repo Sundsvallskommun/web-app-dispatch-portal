@@ -67,7 +67,7 @@ export class MessageController {
 
   @Post('/message/')
   @OpenAPI({ summary: 'Send attachment to recipients' })
-  @UseBefore(authMiddleware)
+  @UseBefore(authMiddleware, hasPermissions(['canSendLetter']))
   async recipients(
     @Req() req: RequestWithUser,
     @Body() body: RequestBodyMail,
@@ -103,7 +103,7 @@ export class MessageController {
 
   @Post('/rec-message/')
   @OpenAPI({ summary: 'Send attachment to recipients' })
-  @UseBefore(authMiddleware)
+  @UseBefore(authMiddleware, hasPermissions(['canSendRegisteredLetter']))
   async sendRecMessage(
     @Req() req: RequestWithUser,
     @Body() body: RequestBodyRecMail,

@@ -18,6 +18,8 @@ import { EnumQATags } from 'src/types';
 import { sendSms } from '@services/message-service';
 import { SMSRequest } from '@interfaces/sms';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
+import { useUserStore } from '@services/user-service/user-service';
+import { useRouter } from 'next/router';
 
 const createFormSchema = (t: TFunction) => {
   const formSchema = yup
@@ -50,6 +52,8 @@ export default function SendEmailPage() {
   const [success, setSuccess] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const { t } = useTranslation(['common', 'send-sms']);
+  const router = useRouter();
+  const { user } = useUserStore();
 
   const message = useSnackbar();
 
@@ -157,6 +161,12 @@ export default function SendEmailPage() {
 
     setIsSending(false);
   };
+
+  useEffect(() => {
+    if (!user.permissions.canSendSMS) router.replace('/');
+  }, [user.permissions.canSendSMS, router]);
+
+  if (!user.permissions.canSendSMS) return null;
 
   return (
     <DefaultLayout

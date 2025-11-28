@@ -1,4 +1,4 @@
-import { getPermissions, getRole, getRoles } from '@/services/authorization.service';
+import { getPermissions, getRole } from '@/services/authorization.service';
 import {
   BASE_URL_PREFIX,
   CREDENTIALS,
@@ -150,6 +150,8 @@ const samlStrategy = new Strategy(
         groups: '',
         permissions: {
           canSendSMS: false,
+          canSendLetter: true,
+          canSendRegisteredLetter: false,
         },
       };
 
@@ -158,6 +160,11 @@ const samlStrategy = new Strategy(
         dummyUser,
       );
       const { personid, orgTree } = employeeDetails.data;
+
+      // Get permissions of the user
+      const permissionsUser: User = { ...dummyUser };
+      permissionsUser.username = DEV ? TEST_USERNAME : username;
+      const permissions = await getPermissions(appGroups, permissionsUser, apiService);
 
       const findUser = {
         name: `${givenName} ${sn}`,
@@ -169,8 +176,7 @@ const samlStrategy = new Strategy(
         orgTree,
         groups: appGroups,
         role: getRole(appGroups),
-        roles: getRoles(appGroups),
-        permissions: getPermissions(appGroups),
+        permissions,
       };
 
       logger.info('Found user:', findUser);

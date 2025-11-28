@@ -57,8 +57,7 @@
   },
   "recipientHandler": {
     "title": "Lägg till mottagare",
-    "contentFirstRow": "Lägg till mottagare med personnummer eller adress, eller ladda upp en mottagarlista i CSV-format. Använd gärna <Link href=\"/files/example.csv/files/example.csv\">exempelfilen (csv)</Link> när du skapar en mottagarlista.",
-    "contentSecondRow": "Ska du skicka post till en mottagare som har särskild postadress? Då behöver du ange adressen manuellt. Klicka på knappen ”Lägg till med adress”",
+    "contentFirstRow": "Du kan antingen skriva in personnummer eller bifoga en mottagarlista i csv-format.",
     "howAddRecipient": "Hur vill du lägga till mottagare?",
     "optionPersonalNumberOrAddress": "Med personnummer eller adress",
     "optionRecipientList": "Bifoga mottagarlista",
@@ -98,31 +97,31 @@
     "addedRecipientNum": "Tillagda mottagare ({num})",
     "addedFromFileNum": "Tillagda mottagare från fil ({num})",
     "rekMail": {
-      "content": "Det går bara att lägga till en mottagare per rekommenderat brev. Mottagaren måste ha en digital brevlåda hos Kivra. ",
+      "content": "Det går bara att lägga till en mottagare per rekommenderat brev. Mottagaren måste ha en digital brevlåda hos Kivra.",
       "success": "Kan ta emot via Kivra",
       "error": "Kan inte ta emot via Kivra",
-      "replaceRecipientConfirm" : {
+      "replaceRecipientConfirm": {
         "title": "Ersätt mottagare?",
         "message": "Du kan bara lägga till en mottagare per rekommenderat brev. Vill du ersätta den nuvarande?",
         "confirm": "Ja, ersätt",
         "dismiss": "Nej, avbryt"
       }
     },
-    "addWithAddress" : {
-      "title" : "Lägg till mottagare med adress",
+    "addWithAddress": {
+      "title": "Lägg till mottagare med adress",
       "description": "När du lägger till en mottagare med adress skickas brevet som vanlig papperspost.",
-      "firstName" : "Förnamn",
-      "lastName" : "Efternamn",
-      "address" : "Adress",
-      "careOf" : "C/o adress (valfri)",
-      "zipCode" : "Postnummer",
-      "city" : "Ort",
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "address": "Adress",
+      "careOf": "C/o adress (valfri)",
+      "zipCode": "Postnummer",
+      "city": "Ort",
       "error": {
-        "firstName" : "Förnamn måste anges",
-        "lastName" : "Efternamn måste anges",
-        "address" : "Adress måste anges",
-        "zipCode" : "Postnummer måste anges",
-        "city" : "Ort måste anges"
+        "firstName": "Förnamn måste anges",
+        "lastName": "Efternamn måste anges",
+        "address": "Adress måste anges",
+        "zipCode": "Postnummer måste anges",
+        "city": "Ort måste anges"
       }
     }
   },
@@ -135,5 +134,7 @@
     "address": "Adress",
     "deliveryMethod": "Leveranssätt",
     "error": "Något gick fel"
-  }
+  },
+  "mail": "Post",
+  "digital": "Digitalt"
 }
