@@ -123,8 +123,8 @@ export interface UserMessage {
 }
 
 export interface SigningStatus {
-  letterState: string;
-  signingProcessState: string;
+  letterState: EnumLetterState;
+  signingProcessState: EnumSigningState;
 }
 
 export function createEmptyUserMessage(): UserMessage {
@@ -134,9 +134,6 @@ export function createEmptyUserMessage(): UserMessage {
     sentAt: '',
     subject: '',
     body: '',
-    signingStatus: {
-      letterState: '',
-      signingProcessState: '',
-    },
+    signingStatus: undefined,
   };
 }
