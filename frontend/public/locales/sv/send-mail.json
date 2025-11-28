@@ -57,7 +57,7 @@
   },
   "recipientHandler": {
     "title": "Lägg till mottagare",
-    "contentFirstRow": "Du kan antingen skriva in personnummer eller bifoga en mottagarlista i csv-format. ",
+    "contentFirstRow": "Du kan antingen skriva in personnummer eller bifoga en mottagarlista i csv-format.",
     "howAddRecipient": "Hur vill du lägga till mottagare?",
     "optionPersonalNumberOrAddress": "Med personnummer eller adress",
     "optionRecipientList": "Bifoga mottagarlista",
@@ -97,7 +97,7 @@
     "addedRecipientNum": "Tillagda mottagare ({num})",
     "addedFromFileNum": "Tillagda mottagare från fil ({num})",
     "rekMail": {
-      "content": "Det går bara att lägga till en mottagare per rekommenderat brev. Mottagaren måste ha en digital brevlåda hos Kivra. ",
+      "content": "Det går bara att lägga till en mottagare per rekommenderat brev. Mottagaren måste ha en digital brevlåda hos Kivra.",
       "success": "Kan ta emot via Kivra",
       "error": "Kan inte ta emot via Kivra",
       "replaceRecipientConfirm": {
