@@ -150,7 +150,7 @@ export const useDownloadReceipt = (signingInfoData: SigningInfo | null) => {
       });
 
       const blob = res.data;
-      const blobUrl = window.URL.createObjectURL(blob);
+      const blobUrl = globalThis.URL.createObjectURL(blob);
 
       const a = document.createElement('a');
       a.href = blobUrl;
@@ -161,7 +161,7 @@ export const useDownloadReceipt = (signingInfoData: SigningInfo | null) => {
       a.click();
       a.remove();
 
-      window.URL.revokeObjectURL(blobUrl);
+      globalThis.URL.revokeObjectURL(blobUrl);
 
       return { fileName: a.download, success: true };
     } catch (err) {

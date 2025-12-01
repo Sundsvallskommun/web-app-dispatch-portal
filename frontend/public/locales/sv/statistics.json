@@ -30,7 +30,7 @@
     "downloading": "Hämtar mottagningsbevis..",
     "receiptStatus": {
       "success": "\"{receipt}\" laddades ner",
-      "error": "Mottagningsbeviset kunde inte laddades ner"
+      "error": "Mottagningsbeviset kunde inte laddas ner"
     },
     "errors": {
       "FailedGettingFile": "Misslyckades med att hämta filen ({subject})"
