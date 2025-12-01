@@ -5,9 +5,9 @@ import {
   Letter,
   PagingMetaData,
   RecAttachment,
-  SigningInfo,
   UserLetters,
   UserMessage,
+  createEmptyUserMessage,
 } from '@interfaces/statistics.interface';
 
 export interface UserRecLetters {
@@ -95,13 +95,7 @@ export const useMyLetterList = (): {
 };
 
 export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean } => {
-  const [message, setMessage] = useState<UserMessage>({
-    attachments: [],
-    recipients: [],
-    sentAt: '',
-    subject: '',
-    body: '',
-  });
+  const [message, setMessage] = useState<UserMessage>(createEmptyUserMessage());
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -119,42 +113,6 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
   }, [messageId]);
 
   return { message, loaded };
-};
-
-export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo; loaded: boolean } => {
-  const [signingInfo, setSigningInfo] = useState<SigningInfo>({
-    status: '',
-    signedAt: '',
-    contentKey: '',
-    orderReference: '',
-    user: {
-      personalIdentityNumber: '',
-      name: '',
-      givenName: '',
-      surname: '',
-    },
-    device: {
-      ipAddress: '',
-    },
-  });
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!letterId) {
-      setLoaded(true);
-      return;
-    }
-    apiService.get<SigningInfo>(`signing-info/${letterId}`).then((res) => {
-      const signingInfo = res?.data;
-
-      if (signingInfo) {
-        setSigningInfo(signingInfo);
-      }
-      setLoaded(true);
-    });
-  }, [letterId]);
-
-  return { signingInfo, loaded };
 };
 
 export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResponse | AttachmentError> = (

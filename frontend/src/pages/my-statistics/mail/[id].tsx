@@ -17,20 +17,15 @@ import {
 import { File, Download } from 'lucide-react';
 import { getAttachmentFile, useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { MessageAttachment, UserMessage } from '@interfaces/statistics.interface';
+import { createEmptyUserMessage, MessageAttachment, UserMessage } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import { isDigitalMessage } from '@utils/statistics-helpers';
 import HeaderMenu from '@components/header-menu/header-menu.component';
+import { formatPersonNumber } from '@utils/helpers';
 
-const defaultMessageInfo: UserMessage = {
-  sentAt: '',
-  subject: '',
-  body: '',
-  recipients: [],
-  attachments: [],
-};
+const defaultMessageInfo: UserMessage = createEmptyUserMessage();
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -73,7 +68,7 @@ const MyStatisticsDetails = () => {
 
   const recipientList = recipients?.map((r) => {
     return {
-      recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${r?.personnummer ?? ''}`,
+      recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${formatPersonNumber(r?.personnummer?.toString() ?? '') ?? ''}`,
       address: `${r?.streetAddress}${r?.streetAddress ? ',' : ''} ${r?.zipCode} ${r?.city}`,
       messageType: r.messageType,
     };

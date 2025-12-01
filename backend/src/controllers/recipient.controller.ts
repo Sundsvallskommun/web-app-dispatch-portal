@@ -1,17 +1,19 @@
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
-import ApiService from '@/services/api.service';
+import ApiService, { ApiResponse } from '@/services/api.service';
 import {
   buildRecipientListFromPersonnumber,
   buildRecipientsList,
   checkEligibilityKivra,
+  Citizenaddress,
+  fetchCitizen,
   RecipientWithAddress,
 } from '@/services/recipient.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import authMiddleware from '@middlewares/auth.middleware';
 import { plainToInstance } from 'class-transformer';
 import { IsNotEmpty, IsString, validate } from 'class-validator';
-import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
+import { Body, Controller, Get, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { Response } from 'express';
 
@@ -109,5 +111,21 @@ export class RecipientController {
     const { partyId } = body;
     const result = await checkEligibilityKivra(partyId, req.user);
     return response.status(200).send({ data: result, message: 'success' });
+  }
+
+  @Get('/citizen/:personId')
+  @OpenAPI({ summary: 'Return person address by personId' })
+  @UseBefore(authMiddleware)
+  async getCitizen(
+    @Req() req: RequestWithUser,
+    @Param('personId') personId: string,
+    @Res() response: Response<ApiResponse<Citizenaddress>>,
+  ): Promise<Response<ApiResponse<Citizenaddress>>> {
+    const citizenaddress = await fetchCitizen(req.user, this.apiService, personId);
+
+    return response.status(200).send({
+      data: citizenaddress,
+      message: 'success',
+    });
   }
 }

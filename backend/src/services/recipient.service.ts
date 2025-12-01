@@ -195,6 +195,12 @@ export const fetchPersonnummer = async (user: User, api: ApiService, personId: s
     .then(res => res.data);
   return personnummer;
 };
+export const fetchCitizen = async (user: User, api: ApiService, personId: string): Promise<Citizenaddress> => {
+  const citizen = await api
+    .get<Citizenaddress>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personId}` }, user)
+    .then(res => res.data);
+  return citizen;
+};
 export const fetchPersonIdPersonnummerRecord = async (
   user: User,
   api: ApiService,
