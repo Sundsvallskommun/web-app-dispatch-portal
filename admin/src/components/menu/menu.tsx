@@ -40,7 +40,11 @@ export const Menu = () => {
           {...Object.keys(resources).map((resourcename, index) => {
             const resource = resources[resourcename as keyof typeof resources];
             return (
-              <MenuVertical.Item key={`mainmenu-${index}-${resource.name}`} menuIndex={`${resource.name}-parent`}>
+              <MenuVertical.Item
+                data-cy={`mainmenu-resource-${resource.name}`}
+                key={`mainmenu-${index}-${resource.name}`}
+                menuIndex={`${resource.name}-parent`}
+              >
                 <MenuVertical>
                   <MenuVertical.SubmenuButton>
                     <NextLink href={`/${resource.name}`}>{capitalize(t(`${resource.name}:name_many`))}</NextLink>

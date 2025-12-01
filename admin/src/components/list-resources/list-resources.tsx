@@ -54,6 +54,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
               ...headers,
               {
                 label: capitalize(t(`logotypes:name_one`)),
+                property: 'logotype',
                 renderColumn: (_value, item) => <LogoPreview logotype={item.logotype} name={item?.name} />,
                 isColumnSortable: false,
               },
@@ -99,7 +100,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
     sticky: true,
     renderColumn: (value) => (
       <div className="text-right w-full">
-        <NextLink href={`/${resource}/${value}`} aria-label="Redigera">
+        <NextLink data-cy="edit-resource" href={`/${resource}/${value}`} aria-label="Redigera">
           <Icon.Padded icon={<Pencil />} variant="tertiary" className="link-btn" />
         </NextLink>
       </div>
@@ -117,6 +118,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
     <div>
       {formattedData && formattedData?.length > 0 ?
         <AutoTable
+          data-cy="resource-table"
           pageSize={15}
           autodata={formattedData}
           autoheaders={[...filteredHeaders, ...(update ? [editHeader] : [])]}

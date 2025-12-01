@@ -28,6 +28,7 @@ export const EditLayout: React.FC<EditLayoutProps> = (props) => {
       <Header>
         <div className="flex gap-12 items-center">
           <Link
+            data-cy="goback"
             href={`/${resource}`}
             className="sk-btn sk-btn-lg sk-btn-tertiary"
             data-icon="true"
