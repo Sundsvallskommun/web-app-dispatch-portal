@@ -63,6 +63,7 @@ export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
             return (
               <Fragment key={`formc-${index}-${key}`}>
                 <EditResourceInput
+                  data-cy={`edit-${resource}-${key}`}
                   property={key}
                   index={index}
                   required={isRequired}
@@ -77,11 +78,16 @@ export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
           {formdata.logotype ?
             <>
               <LogoPreview logotype={formdata.logotype} name={formdata.name} />
-              <Button variant="secondary" onClick={() => resetLogo()}>
+              <Button data-cy={`edit-${resource}-remove-logo`} variant="secondary" onClick={() => resetLogo()}>
                 {capitalize(t('common:remove_resource', { resource: t('logotypes:name_one') }))}
               </Button>
             </>
-          : <Button variant="primary" color="vattjom" onClick={() => setShowLogotypeSelect(true)}>
+          : <Button
+              data-cy={`edit-${resource}-pick-logo`}
+              variant="primary"
+              color="vattjom"
+              onClick={() => setShowLogotypeSelect(true)}
+            >
               {capitalize(t('common:select_resource', { resource: t('logotypes:name_one') }))}
             </Button>
           }

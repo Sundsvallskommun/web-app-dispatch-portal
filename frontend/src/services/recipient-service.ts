@@ -1,8 +1,10 @@
 import { apiService } from '@services/api-service';
 import { __DEV__ } from '@sk-web-gui/react';
 import { AxiosResponse } from 'axios';
+import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { Recipient as StatisticsRecipient } from '@interfaces/statistics.interface';
 
 export const MAX_RECIPIENT_FILE_SIZE_MB = 50;
 export const MAX_RECIPIENT_ROW_SIZE = 250;
@@ -199,4 +201,26 @@ export const getCitizen = async (personId: string): Promise<Citizenaddress> => {
     });
 
   return result.data;
+};
+
+export const useRecipientName = (recipient?: StatisticsRecipient) => {
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (!recipient?.partyId) return;
+
+    let cancelled = false;
+
+    getCitizen(recipient.partyId).then((citizen) => {
+      if (!cancelled && citizen) {
+        setName(`${citizen.givenname} ${citizen.lastname}`);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [recipient?.partyId]);
+
+  return name;
 };

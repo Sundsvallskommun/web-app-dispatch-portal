@@ -1,0 +1,21 @@
+{
+  "personId": "00000000-0000-0000-0000-000000000000",
+  "personNumber": "198511013355",
+  "givenname": "Darth Vader",
+  "lastname": "Vader",
+  "addresses": [
+    {
+      "realEstateDescription": "",
+      "co": "",
+      "address": "",
+      "addressArea": "",
+      "addressNumber": "",
+      "addressLetter": "",
+      "appartmentNumber": "",
+      "postalCode": "",
+      "city": "",
+      "country": ""
+    }
+  ],
+  "errorMessage": ""
+}

@@ -5763,6 +5763,11 @@ next-i18next@^15.4.2:
     hoist-non-react-statics "^3.3.2"
     i18next-fs-backend "^2.6.0"
 
+next-navigation-guard@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/next-navigation-guard/-/next-navigation-guard-0.2.0.tgz#c9622cf184c59a0ecb54cb2cdbaf962a7d5361e4"
+  integrity sha512-EnQcqJi/bcHXnirnY0TGSFkQ3Rl9ID4BZWdU2ovoWAkA72mCofI2hTcaqUUOmlSBVZp4AvSGm1kQmkOJDLrEjg==
+
 next@15.5.3:
   version "15.5.3"
   resolved "https://registry.yarnpkg.com/next/-/next-15.5.3.tgz#bfa6836eeed2bad28e2fcbdda8f07c871aea78d1"

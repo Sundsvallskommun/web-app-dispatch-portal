@@ -48,7 +48,12 @@ export default function DefaultLayout({ children }: Readonly<DefaultLayoutProps>
           </div>
           <div className="relative flex flex-col w-full">
             <PopupMenu>
-              <PopupMenu.Button variant="tertiary" showBackground={false} className="justify-start">
+              <PopupMenu.Button
+                data-cy="user-menu-button"
+                variant="tertiary"
+                showBackground={false}
+                className="justify-start"
+              >
                 <Avatar
                   initials={`${user.name
                     .split(' ')
@@ -95,7 +100,9 @@ export default function DefaultLayout({ children }: Readonly<DefaultLayoutProps>
                     </PopupMenu.Item>
                   </PopupMenu.Group>
                   <PopupMenu.Item>
-                    <NextLink href="/logout">{capitalize(t('common:logout'))}</NextLink>
+                    <NextLink data-cy="logout-button" href="/logout">
+                      {capitalize(t('common:logout'))}
+                    </NextLink>
                   </PopupMenu.Item>
                 </PopupMenu.Items>
               </PopupMenu.Panel>

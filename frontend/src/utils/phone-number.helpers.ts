@@ -2,8 +2,6 @@
 // Utilities for Swedish SMS-capable mobile numbers.
 // Canonical storage format: +467XXXXXXXX (e.g. +46762358914)
 
-import { normalizeDigits } from './helpers';
-
 export enum MobileNumberError {
   EMPTY_INPUT = 'EMPTY_INPUT',
   INVALID_CHAR = 'INVALID_CHAR',
@@ -84,14 +82,6 @@ export function trySanitizeMobileNumber(raw: string | undefined): ITryResult {
 }
 
 /**
- * Convenience validator for *raw* input (sanitize → validate).
- */
-export function isValidMobile(raw: string): boolean {
-  const s = trySanitizeMobileNumber(raw);
-  return !!(s.ok && s.value && isValidMobileSanitized(s.value));
-}
-
-/**
  * Full pipeline for *raw* input:
  * sanitize → validate → normalize to canonical +467XXXXXXXX
  */
@@ -127,4 +117,24 @@ export function formatMobileNumberDisplay(raw: string): string {
   const rest = digits.slice(2); // "762358914"
   const pretty = rest.replace(/^(\d{2})(\d{3})(\d{2})(\d{2})$/, '+46 $1-$2 $3 $4');
   return pretty || r.value;
+}
+
+// Convert Arabic-Indic (٠–٩) and Eastern Arabic-Indic (۰–۹) numerals to ASCII
+export function normalizeDigits(input: string): string {
+  if (!input) return input;
+  let out = '';
+  for (const charcter of input) {
+    const code = charcter.codePointAt(0);
+    if (code === undefined) continue;
+    if (code >= 0x06f0 && code <= 0x06f9) {
+      out += String.fromCodePoint(48 + (code - 0x06f0));
+      continue;
+    }
+    if (code >= 0x0660 && code <= 0x0669) {
+      out += String.fromCodePoint(48 + (code - 0x0660));
+      continue;
+    }
+    out = out + charcter;
+  }
+  return out;
 }

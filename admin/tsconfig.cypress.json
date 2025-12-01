@@ -5,7 +5,7 @@
   },
   "include": [
     "cypress.config.ts",
-    "cypress/**/*.d.ts",
+    "cypress/**/*.ts",
     "**/*.cy.ts",
     "**/*.cy.tsx",
     "cypress/fixtures/*.ts",
