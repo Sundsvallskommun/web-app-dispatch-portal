@@ -2,6 +2,10 @@
   "subject": "Another Test Letter",
   "body": "This is the content of the second letter. Plain-text body",
   "sentAt": "2025-10-08T10:41:21+02:00",
+  "signingStatus": {
+    "letterState": "PENDING",
+    "signingProcessState": "NOT_FOUND"
+  },
   "attachments": [
     {
       "attachmentId": "00000000-0000-0000-0000-000000000000",

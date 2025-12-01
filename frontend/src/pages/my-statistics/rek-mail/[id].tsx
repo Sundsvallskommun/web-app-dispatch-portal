@@ -175,6 +175,7 @@ const MyStatisticsDetails = () => {
             autoheaders={headers}
             footer={false}
             tableSortable={false}
+            data-cy="letter-recepient-table"
           />
 
           <p className="mt-40 font-bold">{capitalize(t('statistics:myStatistics.attachments'))}</p>
