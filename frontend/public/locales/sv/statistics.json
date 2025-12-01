@@ -23,11 +23,17 @@
     "signingInfo": {
       "completed": "Mottaget",
       "pending": "Väntar",
-      "failed": "Misslyckades"
+      "failed": "Misslyckades",
+      "sent": "Skickat"
     },
-    "downloadReceipt": "Ladda ner kvittering",
+    "downloadReceipt": "Ladda ner mottagningsbevis",
+    "downloading": "Hämtar mottagningsbevis..",
+    "receiptStatus": {
+      "success": "\"{receipt}\" laddades ner",
+      "error": "Mottagningsbeviset kunde inte laddades ner"
+    },
     "errors": {
-      "FailedGettingFile": "Det Misslyckades med att hämta filen ({subject})"
+      "FailedGettingFile": "Misslyckades med att hämta filen ({subject})"
     }
   }
 }

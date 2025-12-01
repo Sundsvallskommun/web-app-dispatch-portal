@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnackbar, Divider } from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
-import { useMessage, getAttachmentFile } from '@services/my-statistics-service';
+import { useMessage, getAttachmentFile, useGetSigningInfo, useDownloadReceipt } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { EnumMessageStatus, EnumSigningState, RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -19,14 +19,24 @@ const MyStatisticsDetails = () => {
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
   const snackBar = useSnackbar();
   const { t } = useTranslation(['common', 'statistics']);
-
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
-
   const { message, loaded: messageLoaded } = useMessage(id ?? '');
+  const { data: signingInfoData } = useGetSigningInfo(id ?? '');
+  const { download, isLoading: isLoadingReceipt } = useDownloadReceipt(signingInfoData);
+
+  const handleDownloadReceipt = async () => {
+    const downloading = await download(id ?? '');
+    snackBar({
+      message: t(`statistics:myStatistics.receiptStatus.${downloading.success ? 'success' : 'error'}`, {
+        receipt: downloading.fileName,
+      }),
+      status: downloading.success ? 'success' : 'error',
+    });
+  };
 
   const headers: Array<AutoTableHeader | string> = [
     {
-      label: 'Mottagare',
+      label: capitalize(t('statistics:myStatistics.recipient')),
       property: 'recipient',
     },
     {
@@ -34,9 +44,10 @@ const MyStatisticsDetails = () => {
       property: 'status',
       renderColumn: (status: string) => {
         const map: Record<string, string> = {
-          completed: t('statistics:myStatistics.signingInfo.completed'),
+          signed: t('statistics:myStatistics.signingInfo.completed'),
           pending: t('statistics:myStatistics.signingInfo.pending'),
           failed: t('statistics:myStatistics.signingInfo.failed'),
+          sent: t('statistics:myStatistics.signingInfo.sent'),
         };
 
         const key = status?.toLowerCase();
@@ -44,22 +55,29 @@ const MyStatisticsDetails = () => {
 
         return (
           <div className="flex items-center bg-gronsta-surface-accent text-gronsta-text-primary py-4 px-10 rounded-circular font-bold">
-            {displayValue}{' '}
+            {displayValue}
           </div>
         );
       },
     },
-    {
-      label: '',
-      columnPosition: 'right',
-      renderColumn: () => (
-        <div className="">
-          <Button size="sm" color="vattjom" rightIcon={<Download />}>
-            {t('statistics:myStatistics.downloadReceipt')}
-          </Button>
-        </div>
-      ),
-    },
+    signingInfoData
+      ? {
+          label: '',
+          columnPosition: 'right',
+          renderColumn: () => (
+            <div className="">
+              <Button
+                size="sm"
+                color="vattjom"
+                rightIcon={isLoadingReceipt ? <Spinner color="info" /> : <Download />}
+                onClick={handleDownloadReceipt}
+              >
+                {t(`statistics:myStatistics.${isLoadingReceipt ? 'downloading' : 'downloadReceipt'}`)}
+              </Button>
+            </div>
+          ),
+        }
+      : {},
   ];
 
   const recipient = useMemo(() => {
@@ -68,11 +86,10 @@ const MyStatisticsDetails = () => {
 
   const recipientName = useRecipientName(recipient);
 
-  // Define the data of the table
   const recipientInfo: { recipient: string; status: EnumMessageStatus | EnumSigningState | undefined } = useMemo(() => {
     if (!recipient) {
       return {
-        recipient: 'Okänd',
+        recipient: t('statistics:myStatistics.unknown'),
         status: message.signingStatus?.signingProcessState,
       };
     }
@@ -131,7 +148,6 @@ const MyStatisticsDetails = () => {
       <Breadcrumb.Item>
         <Breadcrumb.Link href="/my-statistics">{t('common:mainMenu.myStatistics')}</Breadcrumb.Link>
       </Breadcrumb.Item>
-
       <Breadcrumb.Item currentPage>
         <Breadcrumb.Link>{t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}</Breadcrumb.Link>
       </Breadcrumb.Item>
