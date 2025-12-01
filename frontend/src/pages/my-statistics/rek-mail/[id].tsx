@@ -2,17 +2,28 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnackbar, Divider } from '@sk-web-gui/react';
+import {
+  Icon,
+  Breadcrumb,
+  AutoTable,
+  AutoTableHeader,
+  Button,
+  Spinner,
+  useSnackbar,
+  Divider,
+  Label,
+} from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
 import { useMessage, getAttachmentFile } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { EnumMessageStatus, EnumSigningState, RecAttachment } from '@interfaces/statistics.interface';
+import { EnumLetterState, RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatPersonNumber } from '@utils/helpers';
 import { useRecipientName } from '@services/recipient-service';
+import { EnumColors } from '@interfaces/common';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -32,20 +43,37 @@ const MyStatisticsDetails = () => {
     {
       label: 'Status',
       property: 'status',
-      renderColumn: (status: string) => {
-        const map: Record<string, string> = {
-          completed: t('statistics:myStatistics.signingInfo.completed'),
-          pending: t('statistics:myStatistics.signingInfo.pending'),
-          failed: t('statistics:myStatistics.signingInfo.failed'),
+      renderColumn: (status: EnumLetterState) => {
+        const valueMap: Record<EnumLetterState, string> = {
+          [EnumLetterState.NEW]: t('statistics:myStatistics.signingInfo.new'),
+          [EnumLetterState.SENT]: t('statistics:myStatistics.signingInfo.sent'),
+          [EnumLetterState.PENDING]: t('statistics:myStatistics.signingInfo.pending'),
+          [EnumLetterState.FAILED]: t('statistics:myStatistics.signingInfo.failed'),
+          [EnumLetterState.FAILED_Server_Error]: t('statistics:myStatistics.signingInfo.failed'),
+          [EnumLetterState.FAILED_Client_Error]: t('statistics:myStatistics.signingInfo.failed'),
+          [EnumLetterState.FAILED_Unknown_Error]: t('statistics:myStatistics.signingInfo.failed'),
+          [EnumLetterState.SIGNED]: t('statistics:myStatistics.signingInfo.signed'),
+          [EnumLetterState.EXPIRED]: t('statistics:myStatistics.signingInfo.expired'),
+        };
+        const colorMap: Record<EnumLetterState, string> = {
+          [EnumLetterState.NEW]: EnumColors.TERTIARY,
+          [EnumLetterState.SENT]: EnumColors.VATTJOM,
+          [EnumLetterState.PENDING]: EnumColors.WARNING,
+          [EnumLetterState.FAILED]: EnumColors.ERROR,
+          [EnumLetterState.FAILED_Server_Error]: EnumColors.ERROR,
+          [EnumLetterState.FAILED_Client_Error]: EnumColors.ERROR,
+          [EnumLetterState.FAILED_Unknown_Error]: EnumColors.ERROR,
+          [EnumLetterState.SIGNED]: EnumColors.GRONSTA,
+          [EnumLetterState.EXPIRED]: EnumColors.TERTIARY,
         };
 
-        const key = status?.toLowerCase();
-        const displayValue = map[key] ?? '';
+        const displayValue = valueMap[status] ?? '';
+        const displayColor = colorMap[status] ?? EnumColors.TERTIARY;
 
         return (
-          <div className="flex items-center bg-gronsta-surface-accent text-gronsta-text-primary py-4 px-10 rounded-circular font-bold">
-            {displayValue}{' '}
-          </div>
+          <Label color={displayColor} inverted rounded>
+            {displayValue}
+          </Label>
         );
       },
     },
@@ -69,11 +97,13 @@ const MyStatisticsDetails = () => {
   const recipientName = useRecipientName(recipient);
 
   // Define the data of the table
-  const recipientInfo: { recipient: string; status: EnumMessageStatus | EnumSigningState | undefined } = useMemo(() => {
+  const recipientInfo = useMemo(() => {
+    const status = message?.signingStatus?.letterState;
+
     if (!recipient) {
       return {
         recipient: 'Okänd',
-        status: message.signingStatus?.signingProcessState,
+        status,
       };
     }
 
@@ -82,7 +112,7 @@ const MyStatisticsDetails = () => {
 
     return {
       recipient: [name, personnummer].filter(Boolean).join(', '),
-      status: recipient.status,
+      status,
     };
   }, [recipient, recipientName, message]);
 

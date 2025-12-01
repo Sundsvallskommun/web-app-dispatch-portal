@@ -21,9 +21,12 @@
     "recLetterSubject": "{subject} (Rekommenderat Brev)",
     "sms": "Sms",
     "signingInfo": {
-      "completed": "Mottaget",
+      "new": "Nytt",
+      "sent": "Mottaget",
+      "signed": "Signerat",
       "pending": "Väntar",
-      "failed": "Misslyckades"
+      "failed": "Misslyckat",
+      "expired": "Löpt ut"
     },
     "downloadReceipt": "Ladda ner kvittering",
     "errors": {

@@ -47,9 +47,11 @@ export enum EnumLetterType {
 }
 export enum EnumLetterState {
   NEW = 'NEW',
+  PENDING = 'PENDING',
   SENT = 'SENT',
   SIGNED = 'SIGNED',
   EXPIRED = 'EXPIRED',
+  FAILED = 'FAILED',
   FAILED_Client_Error = 'FAILED - Client Error',
   FAILED_Server_Error = 'FAILED - Server Error',
   FAILED_Unknown_Error = 'FAILED - Unknown Error',
