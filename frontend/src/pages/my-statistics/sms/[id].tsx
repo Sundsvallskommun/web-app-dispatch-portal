@@ -4,19 +4,13 @@ import { useRouter } from 'next/router';
 import { Breadcrumb, Spinner } from '@sk-web-gui/react';
 import { useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { UserMessage } from '@interfaces/statistics.interface';
+import { createEmptyUserMessage, UserMessage } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 
-const defaultMessageInfo: UserMessage = {
-  sentAt: '',
-  subject: '',
-  body: '',
-  recipients: [],
-  attachments: [],
-};
+const defaultMessageInfo: UserMessage = createEmptyUserMessage();
 
 const MyStatisticsDetails = () => {
   const router = useRouter();

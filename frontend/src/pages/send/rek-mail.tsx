@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -21,6 +21,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
 import ReviewHandler from '@components/review-handler/review-handler.component';
 import { EnumQATags } from 'src/types';
+import { useRouter } from 'next/router';
+import { useUserStore } from '@services/user-service/user-service';
 
 export type SendRekMailForm = yup.InferType<typeof formSchema>;
 
@@ -54,6 +56,8 @@ const SendRekMail = () => {
   const hasDepartment = watch('department').length > 0;
   const hasAtLeastOneAttachment = (watchAttachmentList?.length ?? 0) > 0;
   const { t } = useTranslation(['common', 'send-mail']);
+  const router = useRouter();
+  const { user } = useUserStore();
 
   const stepTexts: Record<number, string> = {
     0: t('common:screenReader.postStepper.stepOne'),
@@ -68,7 +72,21 @@ const SendRekMail = () => {
     setResponse(undefined);
   }, [setRecipients, setAddresses, reset, setResponse]);
 
+  useEffect(() => {
+    if (!user.permissions.canSendRegisteredLetter) router.replace('/');
+  }, [user.permissions.canSendRegisteredLetter, router]);
+
   useSendMailEffects({ setValue, resetAll, setSuccess });
+
+  const recipientHandlerOnNextClick = useMailStepValidation(clearErrors, trigger, [
+    'singleRecipient',
+    'recipientList',
+    'storeRecipients',
+  ]);
+  const attachmentHandlerOnNextClick = useMailStepValidation(clearErrors, trigger, ['attachmentList']);
+  const senderHandlerOnNextClick = useMailStepValidation(clearErrors, trigger, ['department', 'subject']);
+
+  if (!user.permissions.canSendRegisteredLetter) return null;
 
   return (
     <DefaultLayout
@@ -89,23 +107,19 @@ const SendRekMail = () => {
               label: t('common:stepper.recipient'),
               component: <RecipientHandler sendType={formSendType.REK_MAIL} />,
               valid: hasValidRecipients(recipients, addresses),
-              onNextClick: useMailStepValidation(clearErrors, trigger, [
-                'singleRecipient',
-                'recipientList',
-                'storeRecipients',
-              ]),
+              onNextClick: recipientHandlerOnNextClick,
             },
             {
               label: t('common:stepper.files'),
               component: <AttachmentHandler />,
               valid: hasAtLeastOneAttachment,
-              onNextClick: useMailStepValidation(clearErrors, trigger, ['attachmentList']),
+              onNextClick: attachmentHandlerOnNextClick,
             },
             {
               label: t('common:stepper.header'),
               component: <SenderHandler />,
               valid: hasDepartment && hasSubject,
-              onNextClick: useMailStepValidation(clearErrors, trigger, ['department', 'subject']),
+              onNextClick: senderHandlerOnNextClick,
             },
             {
               label: t('common:stepper.review'),

@@ -5,9 +5,9 @@ import {
   Letter,
   PagingMetaData,
   RecAttachment,
-  SigningInfo,
   UserLetters,
   UserMessage,
+  createEmptyUserMessage,
 } from '@interfaces/statistics.interface';
 
 export interface UserRecLetters {
@@ -95,13 +95,7 @@ export const useMyLetterList = (): {
 };
 
 export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean } => {
-  const [message, setMessage] = useState<UserMessage>({
-    attachments: [],
-    recipients: [],
-    sentAt: '',
-    subject: '',
-    body: '',
-  });
+  const [message, setMessage] = useState<UserMessage>(createEmptyUserMessage());
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -119,37 +113,6 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
   }, [messageId]);
 
   return { message, loaded };
-};
-
-export const useSigningInfo = (letterId: string): { signingInfo: SigningInfo | null; loaded: boolean } => {
-  const [signingInfo, setSigningInfo] = useState<SigningInfo | null>(null);
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!letterId) {
-      setLoaded(true);
-      return;
-    }
-
-    const fetchData = async () => {
-      try {
-        const res = await apiService.get<SigningInfo>(`signing-info/${letterId}`);
-        setSigningInfo(res.data);
-      } catch (err: any) {
-        if (err.response?.status === 404) {
-          setSigningInfo(null);
-        } else {
-          console.error('Unexpected error loading signing info', err);
-        }
-      } finally {
-        setLoaded(true);
-      }
-    };
-
-    fetchData();
-  }, [letterId]);
-
-  return { signingInfo, loaded };
 };
 
 export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResponse | AttachmentError> = (

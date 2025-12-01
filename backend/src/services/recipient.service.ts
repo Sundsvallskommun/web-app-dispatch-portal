@@ -6,6 +6,7 @@ import { getApiBase, MUNICIPALITY_ID } from '@/config';
 import { User } from '@/interfaces/users.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
+import { capitalizeCity, tryNormalizeAddressLine } from '@/utils/address.helpers';
 
 const MAX_RECIPIENT_ROW_SIZE = 250;
 const POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
@@ -77,6 +78,17 @@ export const buildRecipientListFromPersonnumber: (
   } else {
     try {
       const citizenInfo = await fetchCitizensInfos(user, api, [personnumber]);
+      // Normalise addresses
+      const addresses = citizenInfo[0].addresses;
+      for (const address of addresses) {
+        // Address normalization
+        const addressNormalizationTrial = tryNormalizeAddressLine(address.address);
+        if (!addressNormalizationTrial.ok) console.log(addressNormalizationTrial.error);
+        const normalizedAddress = addressNormalizationTrial.ok ? addressNormalizationTrial.value : '';
+        address.address = normalizedAddress;
+
+        address.city = capitalizeCity(address.city);
+      }
       return [
         {
           recipient: { personnumber },
@@ -182,6 +194,12 @@ export const fetchPersonnummer = async (user: User, api: ApiService, personId: s
     .get<string>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personId}/personnumber` }, user)
     .then(res => res.data);
   return personnummer;
+};
+export const fetchCitizen = async (user: User, api: ApiService, personId: string): Promise<Citizenaddress> => {
+  const citizen = await api
+    .get<Citizenaddress>({ url: `citizen/3.0/${MUNICIPALITY_ID}/${personId}` }, user)
+    .then(res => res.data);
+  return citizen;
 };
 export const fetchPersonIdPersonnummerRecord = async (
   user: User,

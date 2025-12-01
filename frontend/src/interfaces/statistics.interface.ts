@@ -119,4 +119,21 @@ export interface UserMessage {
   sentAt: string;
   attachments: MessageAttachment[];
   recipients: Recipient[];
+  signingStatus?: SigningStatus;
+}
+
+export interface SigningStatus {
+  letterState: EnumLetterState;
+  signingProcessState: EnumSigningState;
+}
+
+export function createEmptyUserMessage(): UserMessage {
+  return {
+    attachments: [],
+    recipients: [],
+    sentAt: '',
+    subject: '',
+    body: '',
+    signingStatus: undefined,
+  };
 }

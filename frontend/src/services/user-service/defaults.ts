@@ -3,6 +3,8 @@ import { ApiResponse } from '@services/api-service';
 
 export const defaultPermissions: Permissions = {
   canSendSMS: false,
+  canSendLetter: true,
+  canSendRegisteredLetter: false,
 };
 
 export const emptyUser: User = {

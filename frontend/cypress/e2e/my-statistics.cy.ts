@@ -17,6 +17,9 @@ describe('My statistics page', () => {
     cy.intercept('GET', '**/api/signing-info/00000000-0000-0000-0000-000000000002', {
       fixture: 'statistics-signing-info.json',
     });
+    cy.intercept('GET', '**/api/citizen/00000000-0000-0000-0000-000000000000', {
+      fixture: 'citizen.json',
+    });
     cy.viewport('macbook-16');
     cy.visit('/my-statistics');
   });
