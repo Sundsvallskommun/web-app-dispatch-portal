@@ -31,11 +31,12 @@ export const LogotypeModal: React.FC<LogotypeModalProps> = ({ open, onClose }) =
       show={open}
       onClose={onClose}
       label={capitalize(t('common:select_resource', { resource: t('logotypes:name_one') }))}
+      data-cy="logotype-modal"
     >
       <Modal.Content>
         {!loaded ?
           <Spinner />
-        : <div className="grid grid-cols-8 gap-24">
+        : <div className="grid grid-cols-8 gap-24" data-cy="logotype-grid">
             {data.map((logotype: Logotype) => {
               const url = logotype?.[property] ?? logotype.urlLightMode;
               return (
@@ -64,10 +65,10 @@ export const LogotypeModal: React.FC<LogotypeModalProps> = ({ open, onClose }) =
       </Modal.Content>
 
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => handleClose()}>
+        <Button data-cy="button-cancel" variant="secondary" onClick={() => handleClose()}>
           {capitalize(t('common:cancel'))}
         </Button>
-        <Button disabled={!selected} onClick={() => handleClose(selected)}>
+        <Button data-cy="button-submit" disabled={!selected} onClick={() => handleClose(selected)}>
           {capitalize(t('common:select_resource', { resource: t('logotypes:name_one') }))}
         </Button>
       </Modal.Footer>

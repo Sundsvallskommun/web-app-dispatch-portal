@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import router from 'next/router';
 import { useConfirm } from '@sk-web-gui/react';
+import { useNavigationGuard } from 'next-navigation-guard';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ConfirmOptions {
@@ -26,33 +26,32 @@ export function useRouteGuard(
     setActive(showWarning);
   }, [showWarning]);
 
+  const navGuard = useNavigationGuard({ enabled: active });
+
   useEffect(() => {
-    const confirmRouterChange = async (url: string) => {
+    const confirmRouterChange = async () => {
       const confirm = await showConfirmation(title, text, options?.confirmLabel, options?.dismissLabel, 'info');
       if (confirm) {
+        navGuard.accept();
         setActive(false);
-        router.push(url);
+      } else {
+        navGuard.reject();
       }
     };
-
+    if (navGuard.active) {
+      confirmRouterChange();
+    }
+  }, [navGuard.active]);
+  useEffect(() => {
     const handleWindowClose = (e: BeforeUnloadEvent) => {
       if (!active) return;
       e.preventDefault();
       return `${title} ${text}`;
     };
 
-    const handleBrowseAway = (url: string) => {
-      if (!active) return;
-      confirmRouterChange(url);
-      router.events.emit('routeChangeError');
-      throw new Error('routing cancelled. Confirm to continue.');
-    };
-
     window.addEventListener('beforeunload', handleWindowClose);
-    router.events.on('routeChangeStart', handleBrowseAway);
     return () => {
       window.removeEventListener('beforeunload', handleWindowClose);
-      router.events.off('routeChangeStart', handleBrowseAway);
     };
   }, [active, showConfirmation, text, title, options?.confirmLabel, options?.dismissLabel]);
 
