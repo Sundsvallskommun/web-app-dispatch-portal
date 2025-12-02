@@ -19,17 +19,21 @@ export const StatisticsPage = () => {
       </div>
 
       <div data-cy="my-statistics-list" className="max-w-full mb-80">
-        {loaded ? (
-          letterListItems?.length > 0 ? (
-            letterListItems.map((letterListItem) => {
-              return <ListItem data={letterListItem} key={letterListItem?.id} />;
-            })
-          ) : (
-            <div className="w-full font-normal text-dark-secondary">{t('statistics:myStatistics.noMessagesExist')}</div>
-          )
-        ) : (
-          <Spinner />
-        )}
+        {(() => {
+          if (!loaded) {
+            return <Spinner />;
+          }
+
+          if (!letterListItems || letterListItems.length === 0) {
+            return (
+              <div className="w-full font-normal text-dark-secondary">
+                {t('statistics:myStatistics.noMessagesExist')}
+              </div>
+            );
+          }
+
+          return letterListItems.map((letterListItem) => <ListItem data={letterListItem} key={letterListItem.id} />);
+        })()}
       </div>
     </DefaultLayout>
   );
