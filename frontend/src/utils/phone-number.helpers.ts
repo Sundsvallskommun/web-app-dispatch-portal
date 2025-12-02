@@ -29,7 +29,7 @@ const ILLEGAL_CHARS_REGEX = /[^0-9+\s().\-\u00A0\u2010-\u2015]/;
 // Validate a *sanitized* Swedish mobile input (pre-normalization)
 function isValidMobileSanitized(s: string): boolean {
   // Accept: 07[2-9]xxxxxxx | +467[2-9]xxxxxxx | 00467[2-9]xxxxxxx | 7[2-9]xxxxxxxx
-  return /^(?:07\d\d{7}|\+467[0-9]\d{7}|00467[0-9]\d{7}|7[0-9]\d{8})$/.test(s);
+  return /^(?:07\d{8}|\+467\d{8}|00467\d{8}|7\d{8})$/.test(s);
 }
 
 // Normalize a *sanitized* Swedish mobile to +467XXXXXXXX
