@@ -238,14 +238,14 @@ const MyStatisticsDetails = () => {
               <div className="flex flex-col items-start content-center gap-4 self-stretch">
                 {attachments?.map((file, index) => (
                   <div className="w-full" key={`${file.fileName}-${index}`}>
-                    <div className="flex items-center p-12 gap-12 w-full self-stretch">
-                      <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
+                    <div className="w-full flex items-center p-12 gap-12 self-stretch">
+                      <div className="rounded-8 bg-vattjom-surface-accent flex p-6">
                         <Icon className="text-vattjom-text-primary" icon={<File />} />
                       </div>
                       <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
                       <Button
-                        loading={loadingAttachmentIndex === index}
                         onClick={() => getAttachment(file, index)}
+                        loading={loadingAttachmentIndex === index}
                         variant="tertiary"
                         aria-label={capitalize(t('statistics:myStatistics.attachments'))}
                       >
