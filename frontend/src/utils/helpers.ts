@@ -1,8 +1,8 @@
 export const formatPersonNumber = (ssn: string) => {
-  const ssnString = ssn.toString();
-  return /\d/g.test(ssnString.toString()) && (ssnString.length === 10 || ssnString.length === 12)
-    ? `${ssnString.slice(0, ssnString.length - 4)}-${ssnString.slice(ssnString.length - 4)}`
-    : ssnString;
+  const str = ssn.toString();
+  const isValid = /\d/g.test(str.toString()) && (str.length === 10 || str.length === 12);
+  if (!isValid) return str;
+  return `${str.slice(0, -4)}-${str.slice(-4)}`;
 };
 
 export const createDeliveryMethodMap = (snailMail: string, digitalMail: string): Record<string, string> => {
