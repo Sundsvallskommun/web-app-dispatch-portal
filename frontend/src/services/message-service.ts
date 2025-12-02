@@ -1,4 +1,3 @@
-import { BatchStatus, DeliveryInformation, MessageInformation } from '@interfaces/batch-status';
 import { FormModel } from '@pages/send/mail';
 import { ApiResponse, apiService } from './api-service';
 import { AddWithAddress, MessageResponse, RecipientWithAddress, toBase64 } from './recipient-service';
@@ -133,37 +132,4 @@ export const sendRecMessage: (formData: FormModel, recipientPersonId: string) =>
     });
 
   return res.data.data;
-};
-
-export const getBatchStatus: (id: string) => Promise<BatchStatus> = async (id) => {
-  if (!id) {
-    return Promise.reject('No id supplied');
-  }
-  const res = await apiService.get<BatchStatus>(`batchstatus/${id}`).catch((e) => {
-    console.error('Something went wrong when fetching batch status:', e);
-    throw e;
-  });
-  return res.data;
-};
-
-export const getMessageInformation: (id: string) => Promise<DeliveryInformation> = async (id) => {
-  if (!id) {
-    return Promise.reject('No id supplied');
-  }
-  const res = await apiService.get<DeliveryInformation>(`message/${id}`).catch((e) => {
-    console.error('Something went wrong when fetching message information:', e);
-    throw e;
-  });
-  return res.data;
-};
-
-export const getMessagesForBatch: (id: string) => Promise<MessageInformation[]> = async (id) => {
-  if (!id) {
-    return Promise.reject('No id supplied');
-  }
-  const res = await apiService.get<MessageInformation[]>(`batchmessages/${id}`).catch((e) => {
-    console.error('Something went wrong when fetching message information:', e);
-    throw e;
-  });
-  return res.data;
 };
