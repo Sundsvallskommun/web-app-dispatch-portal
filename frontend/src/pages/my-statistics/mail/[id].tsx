@@ -17,13 +17,19 @@ import {
 import { File, Download } from 'lucide-react';
 import { getAttachmentFile, useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { createEmptyUserMessage, MessageAttachment, UserMessage } from '@interfaces/statistics.interface';
+import {
+  createEmptyUserMessage,
+  EnumMessageStatus,
+  MessageAttachment,
+  UserMessage,
+} from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import { isDigitalMessage } from '@utils/statistics-helpers';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatPersonNumber } from '@utils/helpers';
+import CustomAlert from '@components/custom-alert/custom-alert-component';
 
 const defaultMessageInfo: UserMessage = createEmptyUserMessage();
 
@@ -41,16 +47,17 @@ const MyStatisticsDetails = () => {
     {
       label: 'Mottagare',
       property: 'recipient',
+      isColumnSortable: false,
     },
     {
       label: 'Adress',
       property: 'address',
+      isColumnSortable: false,
     },
     {
-      label: 'Skickat via',
+      label: 'Leveranssätt',
       property: 'messageType',
-      columnPosition: 'right',
-      renderColumn: (value, item) => (
+      renderColumn: (_value, item) => (
         <div className="min-w-[120px]">
           {item.messageType === 'SNAIL_MAIL' ? (
             <Label rounded inverted>
@@ -64,13 +71,50 @@ const MyStatisticsDetails = () => {
         </div>
       ),
     },
+    {
+      label: '',
+      columnPosition: 'right',
+      isColumnSortable: false,
+      renderColumn(_value, item) {
+        if (item?.status === EnumMessageStatus.FAILED) {
+          return (
+            <Label rounded inverted color="error">
+              {t('statistics:myStatistics.signingInfo.failed')}
+            </Label>
+          );
+        }
+        return <></>;
+      },
+    },
   ];
 
   const recipientList = recipients?.map((r) => {
     return {
-      recipient: `${r?.name ?? ''} ${r?.personnummer ? ',' : ''} ${formatPersonNumber(r?.personnummer?.toString() ?? '') ?? ''}`,
-      address: `${r?.streetAddress}${r?.streetAddress ? ',' : ''} ${r?.zipCode} ${r?.city}`,
+      recipient: (
+        <>
+          {r?.name ?? ''}
+          {r?.personnummer && (
+            <>
+              <br />
+              {formatPersonNumber(r.personnummer.toString())}
+            </>
+          )}
+        </>
+      ),
+      address: (
+        <>
+          {r?.streetAddress ?? ''}
+          {r?.streetAddress && (
+            <>
+              <span>,</span>
+              <br />
+            </>
+          )}
+          {r?.zipCode ?? ''} {r?.city ?? ''}
+        </>
+      ),
       messageType: r.messageType,
+      status: r.status,
     };
   });
 
@@ -124,88 +168,98 @@ const MyStatisticsDetails = () => {
       }
     >
       {loaded ? (
-        <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
-          <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.letterSubject', { subject: subject })}</h1>
-          <p className="mb-40">{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
+        <div
+          data-cy="send-type-item"
+          className="flex flex-col items-start w-full mx-auto p-32 bg-background-content shadow-50 rounded-14 gap-56"
+        >
+          <div>
+            <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.letterSubject', { subject: subject })}</h1>
+            <p>{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
+          </div>
 
-          <p className="pb-16 font-bold">
-            {capitalize(t('statistics:myStatistics.attachments'))} ({attachments?.length})
-          </p>
-          {attachments?.length ? (
-            <>
-              <Divider className="mb-0" />
-              <div className="flex flex-col items-start">
-                {attachments?.map((file, index) => (
-                  <div className="w-full" key={`${file.fileName}-${index}`}>
-                    <div className="flex items-center p-12 gap-12 w-full">
-                      <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
-                        <Icon className="text-vattjom-text-primary" icon={<File />} />
+          {recipientList?.some((r) => r.status === EnumMessageStatus.FAILED) && (
+            <CustomAlert title={t('statistics:myStatistics.errors.someMessagesNotSent')} />
+          )}
+
+          <div className="flex flex-col items-start gap-16 self-stretch">
+            <h3 className="pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
+            <Tabs>
+              <Tabs.Item>
+                <Tabs.Button>
+                  {t('statistics:myStatistics.all')} ({recipientList?.length ?? '0'})
+                </Tabs.Button>
+                <Tabs.Content>
+                  {recipientList?.length > 0 && (
+                    <AutoTable
+                      footer={recipientList.length >= 12}
+                      pageSize={11}
+                      autodata={[...recipientList]}
+                      autoheaders={headers}
+                    />
+                  )}
+                </Tabs.Content>
+              </Tabs.Item>
+              <Tabs.Item>
+                <Tabs.Button>
+                  {t('statistics:myStatistics.digitalMail')} ({recipientsDigitalMail?.length ?? '0'})
+                </Tabs.Button>
+                <Tabs.Content>
+                  {recipientsDigitalMail?.length > 0 && (
+                    <AutoTable
+                      footer={recipientsDigitalMail.length >= 12}
+                      pageSize={11}
+                      autodata={[...recipientsDigitalMail]}
+                      autoheaders={headers}
+                    />
+                  )}
+                </Tabs.Content>
+              </Tabs.Item>
+              <Tabs.Item>
+                <Tabs.Button>
+                  {t('statistics:myStatistics.snailMail')} ({recipientsSnailMail?.length ?? '0'})
+                </Tabs.Button>
+                <Tabs.Content>
+                  {recipientsSnailMail?.length > 0 && (
+                    <AutoTable
+                      footer={recipientsSnailMail.length >= 12}
+                      pageSize={11}
+                      autodata={[...recipientsSnailMail]}
+                      autoheaders={headers}
+                    />
+                  )}
+                </Tabs.Content>
+              </Tabs.Item>
+            </Tabs>
+          </div>
+
+          <div className="flex flex-col items-start gap-16 self-stretch">
+            <p className="font-bold">{capitalize(t('statistics:myStatistics.attachments'))}</p>
+            {attachments?.length ? (
+              <>
+                <div className="flex flex-col items-start content-center gap-4 self-stretch">
+                  {attachments?.map((file, index) => (
+                    <div className="w-full" key={`${file.fileName}-${index}`}>
+                      <div className="flex items-center p-12 gap-12 w-full self-stretch">
+                        <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
+                          <Icon className="text-vattjom-text-primary" icon={<File />} />
+                        </div>
+                        <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
+                        <Button
+                          loading={loadingAttachmentIndex === index}
+                          onClick={() => getAttachment(file, index)}
+                          variant="tertiary"
+                          aria-label={capitalize(t('statistics:myStatistics.attachments'))}
+                        >
+                          {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
+                        </Button>
                       </div>
-                      <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
-                      <Button
-                        loading={loadingAttachmentIndex === index}
-                        onClick={() => getAttachment(file, index)}
-                        variant="tertiary"
-                        aria-label={capitalize(t('statistics:myStatistics.attachments'))}
-                      >
-                        {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
-                      </Button>
+                      <Divider className="m-0" />
                     </div>
-                    <Divider className="m-0" />
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : null}
-
-          <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
-          <Tabs>
-            <Tabs.Item>
-              <Tabs.Button>
-                {t('statistics:myStatistics.all')} ({recipientList?.length ?? '0'})
-              </Tabs.Button>
-              <Tabs.Content>
-                {recipientList?.length > 0 && (
-                  <AutoTable
-                    footer={recipientList.length >= 12}
-                    pageSize={11}
-                    autodata={[...recipientList]}
-                    autoheaders={headers}
-                  />
-                )}
-              </Tabs.Content>
-            </Tabs.Item>
-            <Tabs.Item>
-              <Tabs.Button>
-                {t('statistics:myStatistics.digitalMail')} ({recipientsDigitalMail?.length ?? '0'})
-              </Tabs.Button>
-              <Tabs.Content>
-                {recipientsDigitalMail?.length > 0 && (
-                  <AutoTable
-                    footer={recipientsDigitalMail.length >= 12}
-                    pageSize={11}
-                    autodata={[...recipientsDigitalMail]}
-                    autoheaders={headers}
-                  />
-                )}
-              </Tabs.Content>
-            </Tabs.Item>
-            <Tabs.Item>
-              <Tabs.Button>
-                {t('statistics:myStatistics.snailMail')} ({recipientsSnailMail?.length ?? '0'})
-              </Tabs.Button>
-              <Tabs.Content>
-                {recipientsSnailMail?.length > 0 && (
-                  <AutoTable
-                    footer={recipientsSnailMail.length >= 12}
-                    pageSize={11}
-                    autodata={[...recipientsSnailMail]}
-                    autoheaders={headers}
-                  />
-                )}
-              </Tabs.Content>
-            </Tabs.Item>
-          </Tabs>
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </div>
         </div>
       ) : (
         <Spinner />

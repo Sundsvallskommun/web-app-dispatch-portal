@@ -8,6 +8,7 @@ import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import HeaderMenu from '@components/header-menu/header-menu.component';
+import { getMonthFirstDayDate, getMonthLastDayDate } from '@utils/helpers';
 
 const headers: Array<AutoTableHeader | string> = [
   {
@@ -87,19 +88,30 @@ export const StatisticsPage = () => {
         <h1 className="text-h1-lg mb-8">{t('statistics:title')}</h1>
         <p className="text-large text-dark-secondary mt-0">{`${t('statistics:description')}.`}</p>
 
-        <div className="lg:flex flex-row mb-16 mt-56 gap-12 items-center">
-          <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
-            {t('common:month')}
-          </label>
-          <Select id="month" size="sm" onSelectValue={handleDateChange}>
-            <Select.Option value="">{t('common:chooseMonth')}</Select.Option>
-            {generateMonthOptions().map((option) => (
-              <Select.Option key={option.value} value={option.value}>
-                {option.label}
-              </Select.Option>
-            ))}
-          </Select>
+        <div className="lg:flex flex-row justify-start mb-16 mt-56 gap-12 items-end">
+          <div className="flex flex-col gap-8">
+            <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
+              {t('statistics:showPerMonth')}
+            </label>
+            <Select id="month" size="sm" onSelectValue={handleDateChange}>
+              <Select.Option value="">{t('common:chooseMonth')}</Select.Option>
+              {generateMonthOptions().map((option) => (
+                <Select.Option key={option.value} value={option.value}>
+                  {option.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+          <span className="justify-self-end ml-auto text-dark-secondary text-small">
+            {selectedYear &&
+              selectedMonth &&
+              t('statistics:fromToDates', {
+                from: getMonthFirstDayDate(selectedYear, selectedMonth),
+                to: getMonthLastDayDate(selectedYear, selectedMonth),
+              })}
+          </span>
         </div>
+
         <div className="max-w-full mb-80">
           {!loaded && <Spinner />}
           {loaded && departmentStatistics.length === 0 && (

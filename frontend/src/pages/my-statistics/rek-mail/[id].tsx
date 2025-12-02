@@ -24,6 +24,7 @@ import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatPersonNumber } from '@utils/helpers';
 import { useRecipientName } from '@services/recipient-service';
 import { EnumColors } from '@interfaces/common';
+import CustomAlert from '@components/custom-alert/custom-alert-component';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -80,13 +81,16 @@ const MyStatisticsDetails = () => {
     {
       label: '',
       columnPosition: 'right',
-      renderColumn: () => (
-        <div className="">
+      renderColumn: (_value, item) => {
+        if (item?.status !== EnumLetterState.SIGNED) {
+          return <></>;
+        }
+        return (
           <Button size="sm" color="vattjom" rightIcon={<Download />}>
             {t('statistics:myStatistics.downloadReceipt')}
           </Button>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
@@ -175,46 +179,60 @@ const MyStatisticsDetails = () => {
       pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}
     >
       {messageLoaded ? (
-        <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
-          <h1 className="text-h4-lg mb-8">
-            {t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}
-          </h1>
-          <p className="mb-40">{message.sentAt ? dayjs(message.sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
+        <div
+          data-cy="send-type-item"
+          className="flex flex-col w-full mx-auto p-32 bg-background-content shadow-50 rounded-14 gap-56"
+        >
+          <div>
+            <h1 className="text-h4-lg mb-8">
+              {t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}
+            </h1>
+            <p className="">{message.sentAt ? dayjs(message.sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
+          </div>
 
-          <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
-          <AutoTable
-            className="mt-16"
-            pageSize={11}
-            autodata={[recipientInfo]}
-            autoheaders={headers}
-            footer={false}
-            tableSortable={false}
-          />
+          <div>
+            <h3 className="pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
+            <p className="text-dark-secondary font-normal">{t('statistics:myStatistics.recipientDescription')}</p>
+            <AutoTable
+              className="mt-16"
+              pageSize={11}
+              autodata={[recipientInfo]}
+              autoheaders={headers}
+              footer={false}
+              tableSortable={false}
+            />
+          </div>
 
-          <p className="mt-40 font-bold">{capitalize(t('statistics:myStatistics.attachments'))}</p>
-          {recAttachments?.length ? (
-            <div className="flex flex-col items-start mt-16">
-              {recAttachments?.map((file, index) => (
-                <div className="w-full" key={`${file.fileName}-${index}`}>
-                  <div className="flex items-center p-12 gap-12 w-full">
-                    <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
-                      <Icon className="text-vattjom-text-primary" icon={<File />} />
+          {recipientInfo.status === EnumLetterState.FAILED && (
+            <CustomAlert title={t('statistics:myStatistics.errors.messagesSendingFailed')} />
+          )}
+
+          <div>
+            <p className="font-bold">{capitalize(t('statistics:myStatistics.attachments'))}</p>
+            {recAttachments?.length ? (
+              <div className="flex flex-col items-start mt-16">
+                {recAttachments?.map((file, index) => (
+                  <div className="w-full" key={`${file.fileName}-${index}`}>
+                    <div className="flex items-center p-12 gap-12 w-full">
+                      <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
+                        <Icon className="text-vattjom-text-primary" icon={<File />} />
+                      </div>
+                      <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
+                      <Button
+                        loading={loadingAttachmentIndex === index}
+                        onClick={() => getRecAttachment(file.fileName, file.id, index)}
+                        variant="tertiary"
+                        aria-label={capitalize(t('statistics:myStatistics.attachments'))}
+                      >
+                        {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
+                      </Button>
                     </div>
-                    <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
-                    <Button
-                      loading={loadingAttachmentIndex === index}
-                      onClick={() => getRecAttachment(file.fileName, file.id, index)}
-                      variant="tertiary"
-                      aria-label={capitalize(t('statistics:myStatistics.attachments'))}
-                    >
-                      {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
-                    </Button>
+                    <Divider className="m-0" />
                   </div>
-                  <Divider className="m-0" />
-                </div>
-              ))}
-            </div>
-          ) : null}
+                ))}
+              </div>
+            ) : null}
+          </div>
         </div>
       ) : (
         <Spinner />
