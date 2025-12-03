@@ -14,7 +14,7 @@ import {
   Label,
 } from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
-import { useMessage, getAttachmentFile } from '@services/my-statistics-service';
+import { useMessage, getAttachmentFile, useGetSigningInfo, useDownloadReceipt } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { EnumLetterState, RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -31,14 +31,24 @@ const MyStatisticsDetails = () => {
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
   const snackBar = useSnackbar();
   const { t } = useTranslation(['common', 'statistics']);
-
   const [loadingAttachmentIndex, setLoadingAttachmentIndex] = useState<number>(-1);
-
   const { message, loaded: messageLoaded } = useMessage(id ?? '');
+  const { data: signingInfoData } = useGetSigningInfo(id ?? '');
+  const { download, isLoading: isLoadingReceipt } = useDownloadReceipt(signingInfoData);
+
+  const handleDownloadReceipt = async () => {
+    const downloading = await download(id ?? '');
+    snackBar({
+      message: t(`statistics:myStatistics.receiptStatus.${downloading.success ? 'success' : 'error'}`, {
+        receipt: downloading.fileName,
+      }),
+      status: downloading.success ? 'success' : 'error',
+    });
+  };
 
   const headers: Array<AutoTableHeader | string> = [
     {
-      label: 'Mottagare',
+      label: capitalize(t('statistics:myStatistics.recipient')),
       property: 'recipient',
     },
     {
@@ -78,20 +88,27 @@ const MyStatisticsDetails = () => {
         );
       },
     },
-    {
-      label: '',
-      columnPosition: 'right',
-      renderColumn: (_value, item) => {
-        if (item?.status !== EnumLetterState.SIGNED) {
-          return <></>;
+    signingInfoData
+      ? {
+          label: '',
+          columnPosition: 'right',
+          renderColumn: (_value, item) => {
+            if (item?.status !== EnumLetterState.SIGNED) {
+              return <></>;
+            }
+            return (
+              <Button
+                size="sm"
+                color="vattjom"
+                rightIcon={isLoadingReceipt ? <Spinner color="info" /> : <Download />}
+                onClick={handleDownloadReceipt}
+              >
+                {t(`statistics:myStatistics.${isLoadingReceipt ? 'downloading' : 'downloadReceipt'}`)}
+              </Button>
+            );
+          },
         }
-        return (
-          <Button size="sm" color="vattjom" rightIcon={<Download />}>
-            {t('statistics:myStatistics.downloadReceipt')}
-          </Button>
-        );
-      },
-    },
+      : {},
   ];
 
   const recipient = useMemo(() => {
@@ -100,13 +117,12 @@ const MyStatisticsDetails = () => {
 
   const recipientName = useRecipientName(recipient);
 
-  // Define the data of the table
   const recipientInfo = useMemo(() => {
     const status = message?.signingStatus?.letterState;
 
     if (!recipient) {
       return {
-        recipient: 'Okänd',
+        recipient: t('statistics:myStatistics.unknown'),
         status,
       };
     }
@@ -165,7 +181,6 @@ const MyStatisticsDetails = () => {
       <Breadcrumb.Item>
         <Breadcrumb.Link href="/my-statistics">{t('common:mainMenu.myStatistics')}</Breadcrumb.Link>
       </Breadcrumb.Item>
-
       <Breadcrumb.Item currentPage>
         <Breadcrumb.Link>{t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}</Breadcrumb.Link>
       </Breadcrumb.Item>
@@ -228,6 +243,7 @@ const MyStatisticsDetails = () => {
               autoheaders={headers}
               footer={false}
               tableSortable={false}
+              data-cy="letter-recepient-table"
             />
           </div>
 

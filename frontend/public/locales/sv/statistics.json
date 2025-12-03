@@ -33,6 +33,11 @@
       "expired": "Löpt ut"
     },
     "downloadReceipt": "Ladda ner mottagningsbevis",
+    "downloading": "Hämtar mottagningsbevis..",
+    "receiptStatus": {
+      "success": "\"{receipt}\" laddades ner",
+      "error": "Mottagningsbeviset kunde inte laddas ner"
+    },
     "errors": {
       "FailedGettingFile": "Det Misslyckades med att hämta filen ({subject})",
       "someMessagesNotSent": "Ett eller flera brev gick inte att skicka. Kontrollera listan nedan och gör ett nytt utskick för att försök skicka dem igen.",

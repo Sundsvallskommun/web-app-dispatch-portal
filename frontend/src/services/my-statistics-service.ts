@@ -8,7 +8,9 @@ import {
   UserLetters,
   UserMessage,
   createEmptyUserMessage,
+  SigningInfo,
 } from '@interfaces/statistics.interface';
+import { AxiosError } from 'axios';
 
 export interface UserRecLetters {
   _meta: PagingMetaData;
@@ -113,6 +115,65 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
   }, [messageId]);
 
   return { message, loaded };
+};
+
+export const useGetSigningInfo = (letterId: string) => {
+  const [data, setData] = useState<SigningInfo | null>(null);
+
+  useEffect(() => {
+    if (!letterId) return;
+
+    const fetchData = async () => {
+      try {
+        const res = await apiService.get<SigningInfo>(`signing-info/${letterId}`);
+        setData(res.data);
+      } catch (err) {
+        console.error(`Something went wrong when requesting signing information: ${err}`);
+      }
+    };
+
+    fetchData();
+  }, [letterId]);
+
+  return { data };
+};
+
+export const useDownloadReceipt = (signingInfoData: SigningInfo | null) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const download = async (messageId: string): Promise<{ fileName: string; success: boolean }> => {
+    setIsLoading(true);
+
+    try {
+      const res = await apiService.get<Blob>(`receipt/${messageId}`, {
+        responseType: 'blob',
+      });
+
+      const blob = res.data;
+      const blobUrl = globalThis.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = signingInfoData
+        ? `${signingInfoData.user.givenName}-${signingInfoData.user.surname}-${signingInfoData.user.personalIdentityNumber}-mottagningsbevis.pdf`
+        : `mottagningsbevis-${messageId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      globalThis.URL.revokeObjectURL(blobUrl);
+
+      return { fileName: a.download, success: true };
+    } catch (err) {
+      const e = err as AxiosError;
+      console.error(`Something went wrong while downloading receipt: ${e.message}`);
+      return { fileName: '', success: false };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { download, isLoading };
 };
 
 export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResponse | AttachmentError> = (

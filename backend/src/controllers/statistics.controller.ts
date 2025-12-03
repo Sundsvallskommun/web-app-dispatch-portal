@@ -1,4 +1,4 @@
-import { Controller, Get, Header, Param, Req, Res, UseBefore } from 'routing-controllers';
+import { Controller, Get, Header, HttpError, Param, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { HttpException } from '@exceptions/HttpException';
 import ApiService from '@services/api.service';
@@ -107,8 +107,39 @@ export class StatisticsController {
 
       return response.status(200).json(result.data);
     } catch (error) {
+      if (response.status(502)) {
+        return response.status(404).json({
+          message: `Signing information belonging to letter with id '${id}' and municipalityId '${MUNICIPALITY_ID}' not found`,
+        });
+      }
       logger.error('Error getting signing info: ', error);
       return response.status(500).json({ message: 'Error getting signing info' });
+    }
+  }
+
+  @Get('/receipt/:id')
+  @OpenAPI({ summary: 'Return receipt PDF' })
+  @UseBefore(authMiddleware)
+  async getReceipt(@Req() req: RequestWithUser, @Res() res: Response, @Param('id') id: string): Promise<any> {
+    try {
+      const url = `${this.POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/history/messages/${id}/receipt`;
+
+      const result = await this.apiService.get(
+        {
+          url,
+          responseType: 'arraybuffer',
+        },
+        req.user,
+      );
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="receipt-${id}.pdf"`);
+
+      return res.status(200).send(result.data);
+    } catch (error) {
+      const err = error as HttpError;
+      logger.error('Error receipt: ', error);
+      return res.status(err.httpCode).json({ message: `Error downloading receipt: ${err.message}` });
     }
   }
 
