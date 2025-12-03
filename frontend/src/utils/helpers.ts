@@ -1,6 +1,6 @@
-export const formatPersonNumber = (ssn: string) => {
-  const str = ssn.toString();
-  const isValid = /\d/g.test(str.toString()) && (str.length === 10 || str.length === 12);
+export const formatPersonNumber = (personnumber: string | number) => {
+  const str = personnumber.toString();
+  const isValid = /\d/g.test(str) && (str.length === 10 || str.length === 12);
   if (!isValid) return str;
   return `${str.slice(0, -4)}-${str.slice(-4)}`;
 };
