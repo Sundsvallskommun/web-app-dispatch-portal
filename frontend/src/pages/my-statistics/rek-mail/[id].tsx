@@ -88,27 +88,25 @@ const MyStatisticsDetails = () => {
         );
       },
     },
-    signingInfoData
-      ? {
-          label: '',
-          columnPosition: 'right',
-          renderColumn: (_value, item) => {
-            if (item?.status !== EnumLetterState.SIGNED) {
-              return <></>;
-            }
-            return (
-              <Button
-                size="sm"
-                color="vattjom"
-                rightIcon={isLoadingReceipt ? <Spinner color="info" /> : <Download />}
-                onClick={handleDownloadReceipt}
-              >
-                {t(`statistics:myStatistics.${isLoadingReceipt ? 'downloading' : 'downloadReceipt'}`)}
-              </Button>
-            );
-          },
+    {
+      label: '',
+      columnPosition: 'right',
+      renderColumn: (_value, item) => {
+        if (item?.status !== EnumLetterState.SIGNED || !signingInfoData) {
+          return <></>;
         }
-      : {},
+        return (
+          <Button
+            size="sm"
+            color="vattjom"
+            rightIcon={isLoadingReceipt ? <Spinner color="info" /> : <Download />}
+            onClick={handleDownloadReceipt}
+          >
+            {t(`statistics:myStatistics.${isLoadingReceipt ? 'downloading' : 'downloadReceipt'}`)}
+          </Button>
+        );
+      },
+    },
   ];
 
   const recipient = useMemo(() => {
