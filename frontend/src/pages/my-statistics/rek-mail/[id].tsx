@@ -132,7 +132,7 @@ const MyStatisticsDetails = () => {
       recipient: [name, personnummer].filter(Boolean).join(', '),
       status,
     };
-  }, [recipient, recipientName, message]);
+  }, [recipient, recipientName, message, t]);
 
   const recAttachments = useMemo<RecAttachment[]>(() => {
     if (message) {
