@@ -46,6 +46,13 @@ const MyStatisticsDetails = () => {
     });
   };
 
+  const makeStatusInfo = (state: EnumLetterState, messageKey: string, color: EnumColors) => ({
+    [state]: {
+      label: t(`statistics:myStatistics.signingInfo.${messageKey}`),
+      color,
+    },
+  });
+
   const headers: Array<AutoTableHeader | string> = [
     {
       label: capitalize(t('statistics:myStatistics.recipient')),
@@ -55,31 +62,21 @@ const MyStatisticsDetails = () => {
       label: 'Status',
       property: 'status',
       renderColumn: (status: EnumLetterState) => {
-        const valueMap: Record<EnumLetterState, string> = {
-          [EnumLetterState.NEW]: t('statistics:myStatistics.signingInfo.new'),
-          [EnumLetterState.SENT]: t('statistics:myStatistics.signingInfo.sent'),
-          [EnumLetterState.PENDING]: t('statistics:myStatistics.signingInfo.pending'),
-          [EnumLetterState.FAILED]: t('statistics:myStatistics.signingInfo.failed'),
-          [EnumLetterState.FAILED_Server_Error]: t('statistics:myStatistics.signingInfo.failed'),
-          [EnumLetterState.FAILED_Client_Error]: t('statistics:myStatistics.signingInfo.failed'),
-          [EnumLetterState.FAILED_Unknown_Error]: t('statistics:myStatistics.signingInfo.failed'),
-          [EnumLetterState.SIGNED]: t('statistics:myStatistics.signingInfo.signed'),
-          [EnumLetterState.EXPIRED]: t('statistics:myStatistics.signingInfo.expired'),
-        };
-        const colorMap: Record<EnumLetterState, string> = {
-          [EnumLetterState.NEW]: EnumColors.TERTIARY,
-          [EnumLetterState.SENT]: EnumColors.VATTJOM,
-          [EnumLetterState.PENDING]: EnumColors.WARNING,
-          [EnumLetterState.FAILED]: EnumColors.ERROR,
-          [EnumLetterState.FAILED_Server_Error]: EnumColors.ERROR,
-          [EnumLetterState.FAILED_Client_Error]: EnumColors.ERROR,
-          [EnumLetterState.FAILED_Unknown_Error]: EnumColors.ERROR,
-          [EnumLetterState.SIGNED]: EnumColors.GRONSTA,
-          [EnumLetterState.EXPIRED]: EnumColors.TERTIARY,
+        const statusInfoMap = {
+          ...makeStatusInfo(EnumLetterState.NEW, 'new', EnumColors.TERTIARY),
+          ...makeStatusInfo(EnumLetterState.SENT, 'sent', EnumColors.VATTJOM),
+          ...makeStatusInfo(EnumLetterState.PENDING, 'pending', EnumColors.WARNING),
+          ...makeStatusInfo(EnumLetterState.FAILED, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.FAILED_Server_Error, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.FAILED_Client_Error, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.FAILED_Unknown_Error, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.SIGNED, 'signed', EnumColors.GRONSTA),
+          ...makeStatusInfo(EnumLetterState.EXPIRED, 'expired', EnumColors.TERTIARY),
         };
 
-        const displayValue = valueMap[status] ?? '';
-        const displayColor = colorMap[status] ?? EnumColors.TERTIARY;
+        const info = statusInfoMap[status];
+        const displayValue = info?.label ?? '';
+        const displayColor = info?.color ?? EnumColors.TERTIARY;
 
         return (
           <Label color={displayColor} inverted rounded>
