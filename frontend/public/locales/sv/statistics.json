@@ -6,6 +6,8 @@
   "showPerMonth": "Visa statistik per månad",
   "myStatistics": {
     "recipient": "mottagare",
+    "address": "Adress",
+    "deliveryMethod": "Leveranssätt",
     "recipientDescription": "Mottagaren har 30 dagar på sig att öppna och signera brevet i Kivra. När brevet är signerat kan ett mottagningsbevis laddas ner.",
     "unknown": "Okänd",
     "unknownNumber": "Okänt nummer",
@@ -23,6 +25,7 @@
     "letterSubject": "{subject} (Brev)",
     "recLetterSubject": "{subject} (Rekommenderat Brev)",
     "noMessagesExist": "Du har inte gjort några utskick än. ",
+    "failedFetchingFile": "Misslyckades med att hämta filen {fileName}",
     "sms": "Sms",
     "signingInfo": {
       "new": "Nytt",

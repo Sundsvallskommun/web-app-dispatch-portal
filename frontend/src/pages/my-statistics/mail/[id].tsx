@@ -45,17 +45,17 @@ const MyStatisticsDetails = () => {
 
   const headers: Array<AutoTableHeader | string> = [
     {
-      label: 'Mottagare',
+      label: capitalize(t('statistics:myStatistics.recipient')),
       property: 'recipient',
       isColumnSortable: false,
     },
     {
-      label: 'Adress',
+      label: t('statistics:myStatistics.address'),
       property: 'address',
       isColumnSortable: false,
     },
     {
-      label: 'Leveranssätt',
+      label: t('statistics:myStatistics.deliveryMethod'),
       property: 'messageType',
       renderColumn: (_value, item) => (
         <div className="min-w-[120px]">
@@ -141,7 +141,7 @@ const MyStatisticsDetails = () => {
           URL.revokeObjectURL(url);
         } else {
           snackBar({
-            message: `Misslyckades med att hämta filen "${file.fileName}"`,
+            message: t('statistics:myStatistics.failedFetchingFile', { fileName: file.fileName }),
             status: 'error',
           });
         }
