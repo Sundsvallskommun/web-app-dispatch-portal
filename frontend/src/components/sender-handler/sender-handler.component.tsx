@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useDepartments, useMyDepartment } from '@services/departments-service';
-import { FormControl, FormLabel, Input, Spinner, Select, Divider, Label } from '@sk-web-gui/react';
+import { useMyDepartment } from '@services/departments-service';
+import { FormControl, FormLabel, Input, Spinner, Divider } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
