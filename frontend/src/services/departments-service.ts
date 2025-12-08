@@ -17,3 +17,17 @@ export const useDepartments = (): { departments: Organization[]; loaded: boolean
 
   return { departments: data, loaded };
 };
+
+export const useMyDepartment = (): { myDepartment: string; loaded: boolean } => {
+  const [myDepartment, setMyDepartment] = useState<string>('');
+  const [loaded, setLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    apiService.get<string>('my-department').then((res) => {
+      setMyDepartment(res.data);
+      setLoaded(true);
+    });
+  }, []);
+
+  return { myDepartment, loaded };
+};

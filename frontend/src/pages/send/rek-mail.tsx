@@ -68,7 +68,11 @@ const SendRekMail = () => {
   const resetAll = useCallback(() => {
     setRecipients([]);
     setAddresses([]);
-    reset({ ...initialValues, department: '', subject: '' });
+    reset({
+      ...initialValues,
+      department: '',
+      subject: '',
+    });
     setResponse(undefined);
   }, [setRecipients, setAddresses, reset, setResponse]);
 
