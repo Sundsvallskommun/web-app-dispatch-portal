@@ -1,7 +1,3 @@
-/* Google fonts */
-/* @import url('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap'); */
-
 @supports not (font-variation-settings: 'wght') {
   @font-face {
     font-family: 'Raleway';
@@ -51,7 +47,7 @@ h1,
 h2,
 h3,
 h4,
-h4,
+h5,
 h6,
 .btn,
 .header-font {
