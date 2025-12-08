@@ -3,7 +3,7 @@
   "body": "This is the content of the second letter. Plain-text body",
   "sentAt": "2025-10-08T10:41:21+02:00",
   "signingStatus": {
-    "letterState": "PENDING",
+    "letterState": "SIGNED",
     "signingProcessState": "NOT_FOUND"
   },
   "attachments": [

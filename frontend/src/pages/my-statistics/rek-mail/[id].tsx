@@ -2,17 +2,29 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnackbar, Divider } from '@sk-web-gui/react';
+import {
+  Icon,
+  Breadcrumb,
+  AutoTable,
+  AutoTableHeader,
+  Button,
+  Spinner,
+  useSnackbar,
+  Divider,
+  Label,
+} from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
 import { useMessage, getAttachmentFile, useGetSigningInfo, useDownloadReceipt } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { EnumMessageStatus, EnumSigningState, RecAttachment } from '@interfaces/statistics.interface';
+import { EnumLetterState, RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatPersonNumber } from '@utils/helpers';
 import { useRecipientName } from '@services/recipient-service';
+import { EnumColors } from '@interfaces/common';
+import CustomAlert from '@components/custom-alert/custom-alert-component';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -34,6 +46,13 @@ const MyStatisticsDetails = () => {
     });
   };
 
+  const makeStatusInfo = (state: EnumLetterState, messageKey: string, color: EnumColors) => ({
+    [state]: {
+      label: t(`statistics:myStatistics.signingInfo.${messageKey}`),
+      color,
+    },
+  });
+
   const headers: Array<AutoTableHeader | string> = [
     {
       label: capitalize(t('statistics:myStatistics.recipient')),
@@ -42,42 +61,49 @@ const MyStatisticsDetails = () => {
     {
       label: 'Status',
       property: 'status',
-      renderColumn: (status: string) => {
-        const map: Record<string, string> = {
-          signed: t('statistics:myStatistics.signingInfo.completed'),
-          pending: t('statistics:myStatistics.signingInfo.pending'),
-          failed: t('statistics:myStatistics.signingInfo.failed'),
-          sent: t('statistics:myStatistics.signingInfo.sent'),
+      renderColumn: (status: EnumLetterState) => {
+        const statusInfoMap = {
+          ...makeStatusInfo(EnumLetterState.NEW, 'new', EnumColors.TERTIARY),
+          ...makeStatusInfo(EnumLetterState.SENT, 'sent', EnumColors.VATTJOM),
+          ...makeStatusInfo(EnumLetterState.PENDING, 'pending', EnumColors.WARNING),
+          ...makeStatusInfo(EnumLetterState.FAILED, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.FAILED_Server_Error, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.FAILED_Client_Error, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.FAILED_Unknown_Error, 'failed', EnumColors.ERROR),
+          ...makeStatusInfo(EnumLetterState.SIGNED, 'signed', EnumColors.GRONSTA),
+          ...makeStatusInfo(EnumLetterState.EXPIRED, 'expired', EnumColors.TERTIARY),
         };
 
-        const key = status?.toLowerCase();
-        const displayValue = map[key] ?? '';
+        const info = statusInfoMap[status];
+        const displayValue = info?.label ?? '';
+        const displayColor = info?.color ?? EnumColors.TERTIARY;
 
         return (
-          <div className="flex items-center bg-gronsta-surface-accent text-gronsta-text-primary py-4 px-10 rounded-circular font-bold">
+          <Label color={displayColor} inverted rounded>
             {displayValue}
-          </div>
+          </Label>
         );
       },
     },
-    signingInfoData
-      ? {
-          label: '',
-          columnPosition: 'right',
-          renderColumn: () => (
-            <div className="">
-              <Button
-                size="sm"
-                color="vattjom"
-                rightIcon={isLoadingReceipt ? <Spinner color="info" /> : <Download />}
-                onClick={handleDownloadReceipt}
-              >
-                {t(`statistics:myStatistics.${isLoadingReceipt ? 'downloading' : 'downloadReceipt'}`)}
-              </Button>
-            </div>
-          ),
+    {
+      label: '',
+      columnPosition: 'right',
+      renderColumn: (_value, item) => {
+        if (item?.status !== EnumLetterState.SIGNED || !signingInfoData) {
+          return <></>;
         }
-      : {},
+        return (
+          <Button
+            size="sm"
+            color="vattjom"
+            rightIcon={isLoadingReceipt ? <Spinner color="info" /> : <Download />}
+            onClick={handleDownloadReceipt}
+          >
+            {t(`statistics:myStatistics.${isLoadingReceipt ? 'downloading' : 'downloadReceipt'}`)}
+          </Button>
+        );
+      },
+    },
   ];
 
   const recipient = useMemo(() => {
@@ -86,11 +112,13 @@ const MyStatisticsDetails = () => {
 
   const recipientName = useRecipientName(recipient);
 
-  const recipientInfo: { recipient: string; status: EnumMessageStatus | EnumSigningState | undefined } = useMemo(() => {
+  const recipientInfo = useMemo(() => {
+    const status = message?.signingStatus?.letterState;
+
     if (!recipient) {
       return {
         recipient: t('statistics:myStatistics.unknown'),
-        status: message.signingStatus?.signingProcessState,
+        status,
       };
     }
 
@@ -99,7 +127,7 @@ const MyStatisticsDetails = () => {
 
     return {
       recipient: [name, personnummer].filter(Boolean).join(', '),
-      status: recipient.status,
+      status,
     };
   }, [recipient, recipientName, message]);
 
@@ -154,6 +182,34 @@ const MyStatisticsDetails = () => {
     </Breadcrumb>
   );
 
+  const renderAttachments = () => {
+    if (!recAttachments?.length) return null;
+
+    return (
+      <div className="flex flex-col items-start mt-16">
+        {recAttachments?.map((file, index) => (
+          <div className="w-full" key={`${file.fileName}-${index}`}>
+            <div className="flex items-center p-12 gap-12 w-full">
+              <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
+                <Icon className="text-vattjom-text-primary" icon={<File />} />
+              </div>
+              <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
+              <Button
+                loading={loadingAttachmentIndex === index}
+                onClick={() => getRecAttachment(file.fileName, file.id, index)}
+                variant="tertiary"
+                aria-label={capitalize(t('statistics:myStatistics.attachments'))}
+              >
+                {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
+              </Button>
+            </div>
+            <Divider className="m-0" />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <DefaultLayout
       title={`Postportalen`}
@@ -161,47 +217,39 @@ const MyStatisticsDetails = () => {
       pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}
     >
       {messageLoaded ? (
-        <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
-          <h1 className="text-h4-lg mb-8">
-            {t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}
-          </h1>
-          <p className="mb-40">{message.sentAt ? dayjs(message.sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
+        <div
+          data-cy="send-type-item"
+          className="flex flex-col w-full mx-auto p-32 bg-background-content shadow-50 rounded-14 gap-56"
+        >
+          <div>
+            <h1 className="text-h4-lg mb-8">
+              {t('statistics:myStatistics.recLetterSubject', { subject: message.subject })}
+            </h1>
+            <p className="">{message.sentAt ? dayjs(message.sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
+          </div>
 
-          <h3 className="mt-40 pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
-          <AutoTable
-            className="mt-16"
-            pageSize={11}
-            autodata={[recipientInfo]}
-            autoheaders={headers}
-            footer={false}
-            tableSortable={false}
-            data-cy="letter-recepient-table"
-          />
+          <div>
+            <h3 className="pb-4 text-label-medium">{capitalize(t('statistics:myStatistics.recipient'))}</h3>
+            <p className="text-dark-secondary font-normal">{t('statistics:myStatistics.recipientDescription')}</p>
+            <AutoTable
+              className="mt-16"
+              pageSize={11}
+              autodata={[recipientInfo]}
+              autoheaders={headers}
+              footer={false}
+              tableSortable={false}
+              data-cy="letter-recepient-table"
+            />
+          </div>
 
-          <p className="mt-40 font-bold">{capitalize(t('statistics:myStatistics.attachments'))}</p>
-          {recAttachments?.length ? (
-            <div className="flex flex-col items-start mt-16">
-              {recAttachments?.map((file, index) => (
-                <div className="w-full" key={`${file.fileName}-${index}`}>
-                  <div className="flex items-center p-12 gap-12 w-full">
-                    <div className="bg-vattjom-surface-accent rounded-8 flex p-6">
-                      <Icon className="text-vattjom-text-primary" icon={<File />} />
-                    </div>
-                    <span className="flex-1 text-secondary text-base font-bold">{file.fileName}</span>
-                    <Button
-                      loading={loadingAttachmentIndex === index}
-                      onClick={() => getRecAttachment(file.fileName, file.id, index)}
-                      variant="tertiary"
-                      aria-label={capitalize(t('statistics:myStatistics.attachments'))}
-                    >
-                      {t('statistics:myStatistics.showAttachment')} <Icon icon={<Download />} />
-                    </Button>
-                  </div>
-                  <Divider className="m-0" />
-                </div>
-              ))}
-            </div>
-          ) : null}
+          {recipientInfo.status === EnumLetterState.FAILED && (
+            <CustomAlert title={t('statistics:myStatistics.errors.messagesSendingFailed')} />
+          )}
+
+          <div>
+            <p className="font-bold">{capitalize(t('statistics:myStatistics.attachments'))}</p>
+            {renderAttachments()}
+          </div>
         </div>
       ) : (
         <Spinner />

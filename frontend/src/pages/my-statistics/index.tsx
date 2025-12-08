@@ -19,12 +19,11 @@ export const StatisticsPage = () => {
       </div>
 
       <div data-cy="my-statistics-list" className="max-w-full mb-80">
-        {loaded ? (
-          letterListItems.map((letterListItem) => {
-            return <ListItem data={letterListItem} key={letterListItem?.id} />;
-          })
+        {!loaded && <Spinner />}
+        {!letterListItems || letterListItems.length === 0 ? (
+          <div className="w-full font-normal text-dark-secondary">{t('statistics:myStatistics.noMessagesExist')}</div>
         ) : (
-          <Spinner />
+          letterListItems.map((letterListItem) => <ListItem data={letterListItem} key={letterListItem.id} />)
         )}
       </div>
     </DefaultLayout>

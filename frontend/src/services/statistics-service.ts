@@ -22,6 +22,6 @@ export const getStatisticsByDate = async (year?: number, month?: number): Promis
   if (year === undefined && month === undefined) {
     throw new Error('No "year" and "month" supplied');
   }
-  const res = await apiService.get<Statistics[]>(`statistics/departments`, { year, month });
+  const res = await apiService.get<Statistics[]>(`statistics/departments`, { params: { year, month } });
   return res.data;
 };

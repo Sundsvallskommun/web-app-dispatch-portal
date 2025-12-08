@@ -9,13 +9,13 @@ describe('Send SMS flow', () => {
   it('should add a phone number', () => {
     addPhoneNumber('0701740635');
     cy.get('[data-cy="phone-numbers"]').should('exist');
-    cy.get('[data-cy="phone-numbers"]').contains('+46701740635').should('exist');
+    cy.get('[data-cy="phone-numbers"]').contains('+46 70-174 06 35').should('exist');
   });
 
   it('should remove a phone number', () => {
     addPhoneNumber('0701740635');
     cy.get('[data-cy="phone-numbers"]').should('exist');
-    cy.get('[data-cy="phone-numbers"]').contains('+46701740635').should('exist');
+    cy.get('[data-cy="phone-numbers"]').contains('+46 70-174 06 35').should('exist');
     cy.get('[data-cy="phone-numbers"]').find('[data-cy="delete-number-button"]').first().click();
     cy.get('[data-cy="phone-numbers"]').should('not.exist');
   });

@@ -9,6 +9,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
+import { formatMobileNumberDisplay } from '@utils/phone-number.helpers';
 
 const defaultMessageInfo: UserMessage = createEmptyUserMessage();
 
@@ -43,7 +44,7 @@ const MyStatisticsDetails = () => {
       {loaded ? (
         <div data-cy="send-type-item" className="w-full mx-auto p-32 bg-background-content shadow-50 rounded-14">
           <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.sms')}</h1>
-          <p className="mb-40">{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH:mm') : ''}</p>
+          <p className="mb-40">{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
 
           <h3 className="pb-16 text-label-medium">
             {capitalize(t('statistics:myStatistics.recipient'))} ({recipientList.length})
@@ -54,7 +55,7 @@ const MyStatisticsDetails = () => {
                 className="py-6 px-12 border-1 border-divider rounded-button"
                 key={`${index}-${recipient?.mobileNumber}`}
               >
-                {recipient?.mobileNumber ?? t('statistics:myStatistics.unknownNumber')}
+                {formatMobileNumberDisplay(recipient?.mobileNumber ?? '') ?? t('statistics:myStatistics.unknownNumber')}
               </div>
             ))}
           </div>
