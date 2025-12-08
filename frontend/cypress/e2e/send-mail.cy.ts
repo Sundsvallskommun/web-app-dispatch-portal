@@ -14,6 +14,13 @@ pages.forEach((p) => {
       cy.intercept('POST', '**/api/recipient', { fixture: 'recipient.json' }).as('recipient');
       cy.intercept('POST', '**/api/recipients', { fixture: 'recipients.json' }).as('recipients');
       cy.intercept('GET', '**/api/departments', { fixture: 'departments.json' });
+      cy.fixture('my-department.txt', 'utf8').then((text) => {
+        cy.intercept('GET', '**/api/my-department', {
+          statusCode: 200,
+          headers: { 'content-type': 'text/plain; charset=utf8' },
+          body: text,
+        });
+      });
       cy.intercept('GET', '**/api/batchmessages/*', { fixture: 'status.json' }).as('batchMessages');
       cy.intercept('POST', '**/api/message', { fixture: 'message.json' });
       cy.intercept('GET', '**/me', { fixture: 'me.json' }).as('getMe');
