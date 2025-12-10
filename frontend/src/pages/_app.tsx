@@ -2,6 +2,8 @@ import { FileUploadWrapper } from '@components/file-upload/file-upload.context';
 import LoginGuard from '@components/login-guard/login-guard';
 import { GuiProvider, defaultTheme, extendTheme, ConfirmationDialogContextProvider } from '@sk-web-gui/react';
 import '@styles/tailwind.scss';
+import '@styles/global.scss';
+import '../../public/fonts/fonts.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
 import updateLocale from 'dayjs/plugin/updateLocale';

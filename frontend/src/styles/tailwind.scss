@@ -1,16 +1,74 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@import '../../public/fonts/fonts.css';
+@layer components {
+  .custom-scroll {
+    @apply scrollbar scrollbar-h-5 scrollbar-thumb-gray-300 scrollbar-track-gray-100 scrollbar-thumb-rounded-full scrollbar-track-rounded-full;
+  }
 
-@import './base.scss';
-@import './utilities.scss';
-@import './components.scss';
-@import './variables.scss';
-@import './layouts/sidebar-layout.scss';
-@import './layouts/default-layout.scss';
-@import './layouts/page-header.scss';
+  .container {
+    @apply p-0;
+  }
 
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');
+  .form-error-message {
+    @apply mb-4;
+  }
+
+  .max-width-content {
+    @apply max-w-content;
+  }
+
+  .header-container .header-content,
+  .TabMenu > .tab-wrapper,
+  .container {
+    @apply max-w-content;
+  }
+
+  .header-container .sk-header {
+    @apply py-2 md:px-80;
+  }
+
+  .start-link {
+    @apply no-underline hover:no-underline;
+  }
+
+  .main-card {
+    @apply w-full lg:max-w-340 lg:min-h-220;
+  }
+
+  .main-card :is(.sk-card-body-wrapper) {
+    @apply flex flex-col gap-16 p-24 border-1 border-divider rounded-cards-lg shadow-50 w-full;
+  }
+
+  .main-card-button :is(.sk-btn.sk-btn-md.sk-btn-primary.sk-card-body-icon) {
+    @apply self-end mr-0;
+  }
+
+  .main-card-body .sk-card-body-header span {
+    padding-left: 0px;
+  }
+
+  .main-wrapper {
+    @apply flex flex-col grow;
+  }
+  .sms-main-container {
+    @apply flex pt-64 px-20 md:px-48 bg-transparent grow;
+
+    .sms-container {
+      @apply mx-auto flex flex-col items-start gap-80 self-stretch w-full;
+    }
+  }
+}
+
+@layer utilities {
+  .MuiSvgIcon-root.material-icon {
+    user-select: none;
+    font-size: 1.25em;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+}
