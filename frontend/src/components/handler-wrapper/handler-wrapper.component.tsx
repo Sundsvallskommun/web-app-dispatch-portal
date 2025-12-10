@@ -19,7 +19,7 @@ const HandlerWrapper = ({ title, description, children, customClasses, gap = 40 
       )}
     >
       <div className="w-full">
-        <h2 className="text-h4-md pb-6">{title}</h2>
+        <h2 className="text-h4-sm pb-6">{title}</h2>
         {description && <p className={cx('text-secondary pb-6 flex flex-col gap-8')}>{description}</p>}
       </div>
       {children}

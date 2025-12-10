@@ -45,7 +45,7 @@ export const SenderHandler: React.FC = () => {
       <Divider className="w-full my-22" />
       <FormControl className="w-full gap-24">
         <div className="flex flex-col gap-6">
-          <h4 className="text-h4-md">{t('send-mail:senderHandler.headerManagement')}</h4>
+          <h2 className="text-h4-sm">{t('send-mail:senderHandler.headerManagement')}</h2>
           <p className="text-secondary">{t('send-mail:senderHandler.managementDescription')}</p>
         </div>
         <div className="text-dark-primary font-bold">{myDepartment}</div>
