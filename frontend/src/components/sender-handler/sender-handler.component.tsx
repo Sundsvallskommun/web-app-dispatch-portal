@@ -1,6 +1,6 @@
-import React from 'react';
-import { useDepartments } from '@services/departments-service';
-import { FormControl, FormLabel, Input, Spinner, Select, Divider } from '@sk-web-gui/react';
+import React, { useEffect } from 'react';
+import { useMyDepartment } from '@services/departments-service';
+import { FormControl, FormLabel, Input, Spinner, Divider } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
@@ -12,12 +12,22 @@ export interface SenderFormModel {
 }
 
 export const SenderHandler: React.FC = () => {
-  const { departments, loaded } = useDepartments();
+  const { myDepartment, loaded } = useMyDepartment();
   const {
     register,
+    setValue,
     formState: { errors },
   } = useFormContext<SenderFormModel>();
   const { t } = useTranslation(['common', 'send-mail']);
+
+  useEffect(() => {
+    if (myDepartment) {
+      setValue('department', myDepartment, {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+    }
+  }, [myDepartment, setValue]);
 
   return !loaded ? (
     <Spinner />
@@ -33,28 +43,12 @@ export const SenderHandler: React.FC = () => {
         {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} padded={false} />}
       </FormControl>
       <Divider className="w-full my-22" />
-      <FormControl className="w-full">
-        <h4 className="text-h4-md">{t('send-mail:senderHandler.headerManagement')}</h4>
-        <p className="text-secondary">{t('send-mail:senderHandler.managementDescription')}</p>
-        <FormLabel className="text-label-medium mt-24">{t('send-mail:senderHandler.managementLabel')}</FormLabel>
-        <Select
-          invalid={!!errors?.department}
-          className="w-full max-w-[467px]"
-          {...register('department')}
-          defaultValue={''}
-        >
-          <Select.Option value="" disabled>
-            {t('send-mail:senderHandler.selectManagementText')}
-          </Select.Option>
-          {departments?.map((dep, index) => (
-            <Select.Option key={`${index}-${dep.orgName}`} value={dep.orgName}>
-              {dep.orgName}
-            </Select.Option>
-          ))}
-        </Select>
-        {errors?.department && (
-          <CustomFormErrorMessage message={errors.department.message?.toString()} padded={false} />
-        )}
+      <FormControl className="w-full gap-24">
+        <div className="flex flex-col gap-6">
+          <h2 className="text-h4-sm">{t('send-mail:senderHandler.headerManagement')}</h2>
+          <p className="text-secondary">{t('send-mail:senderHandler.managementDescription')}</p>
+        </div>
+        <div className="text-dark-primary font-bold">{myDepartment}</div>
       </FormControl>
     </HandlerWrapper>
   );
