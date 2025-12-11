@@ -33,8 +33,6 @@ export const {
   TEST_USERNAME,
   DEV,
   AUTHORIZED_GROUPS,
-  SMS_SENDER,
   COMPANY_IDS,
-  SMS_GROUP,
   ADMIN_GROUP,
 } = process.env;
