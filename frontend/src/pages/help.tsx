@@ -3,16 +3,18 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 export const HelpPage = () => {
+  const { t } = useTranslation('help-menu');
   return (
     <DefaultLayout
       title={`Postportalen`}
       pageheader={
         <PageHeader color="vattjom">
-          <h1 className="text-h2 m-0">Behöver du hjälp att komma igång?</h1>
+          <h1 className="text-h2 m-0">{t('help-menu:pageHeader')}</h1>
           <p className="text-h4-medium md:text-lead leading-lead text-primary font-bold m-0 header-font">
-            Här hittar du några vanliga frågor och svar.
+            {t('help-menu:pageDescription')}
           </p>
         </PageHeader>
       }
