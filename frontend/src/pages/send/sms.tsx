@@ -180,7 +180,6 @@ export default function SendEmailPage() {
         />
       }
     >
-      <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
       <div className="text-lg mb-11 ">
         {success ? (
           <div className="text-center pt-64">
@@ -214,7 +213,7 @@ export default function SendEmailPage() {
               <div className="flex flex-col w-full justify-center gap-24">
                 <div className="flex flex-col items-start w-full shadow-50 p-32 rounded-14 gap-40">
                   <div className="w-full flex flex-col gap-8">
-                    <div className="text-h4-md">{t('send-sms:title')}</div>
+                    <h2 className="m-0 text-h4-md">{t('send-sms:title')}</h2>
                     <div className="font-normal text-dark-secondary text-label-medium">{t('send-sms:description')}</div>
                   </div>
                   <div className="flex flex-col gap-56 items-start self-stretch">
@@ -260,9 +259,9 @@ export default function SendEmailPage() {
                     </div>
                     <div className="flex flex-col items-start gap-12 self-stretch">
                       <div className="flex flex-col items-start gap-12 self-stretch">
-                        <div className="text-label-medium text-dark-primary lining-nums proportional-nums">
+                        <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums">
                           {t('send-sms:addedRecipients')}
-                        </div>
+                        </FormLabel>
                         {recipientList && recipientList.length > 0 ? (
                           <div data-cy="phone-numbers" className="flex flex-col justify-center items-start gap-8">
                             {recipientList?.map((recipient) => (

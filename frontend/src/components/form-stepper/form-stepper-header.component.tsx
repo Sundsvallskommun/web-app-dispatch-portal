@@ -77,7 +77,7 @@ const FormStepperHeader = ({ title, icon, helpType, isSuccess = false }: FormSte
         {showTitle && (
           <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content]')}>
             {!isMd && <Icon icon={icon} />}
-            <h4 className="text-xs md:text-[2rem]">{title}</h4>
+            <h1 className="m-0 text-xs md:text-[2rem]">{title}</h1>
           </div>
         )}
         {helpButton}

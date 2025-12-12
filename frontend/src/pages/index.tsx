@@ -29,7 +29,7 @@ const Index = () => {
           <div className="flex self-center items-center flex-col text-lg mb-11 max-w-max gap-56">
             <div className="text-center flex flex-col gap-16 lining-nums proportional-nums">
               <div className="text-large text-dark-secondary">{t('start-page:subtitle')}</div>
-              <div className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</div>
+              <h1 className="m-0 text-display-3-lg text-dark-primary">{`${t('start-page:header')}`}</h1>
             </div>
             <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
               {canSendLetter && (
