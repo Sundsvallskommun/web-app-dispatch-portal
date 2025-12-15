@@ -1,6 +1,5 @@
 import { AUTHORIZED_GROUPS } from '@config';
-import { InternalRole, InternalRoleEnum, Permissions, User } from '@interfaces/users.interface';
-import { roleADMapping } from './ad-role.service';
+import { Permissions, User } from '@interfaces/users.interface';
 import ApiService, { ApiResponse } from './api.service';
 import { logError } from './message.service';
 
@@ -22,44 +21,13 @@ export const defaultPermissions: () => Permissions = () => ({
   canSendRegisteredLetter: false,
 });
 
-enum RoleOrderEnum {
-  'sms',
-}
-
-const roles = new Map<InternalRoleEnum, Partial<Permissions>>([
-  [
-    InternalRoleEnum.SMS,
-    {
-      canSendSMS: true,
-    },
-  ],
-]);
-
 /**
  *
  * @param groups Array of groups/roles
- * @param internalGroups Whether to use internal groups or external group-mappings
  * @returns collected permissions for all matching role groups
  */
-export const getPermissions = async (
-  groups: InternalRole[] | string[],
-  user: User,
-  apiService: ApiService,
-  internalGroups = false,
-): Promise<Permissions> => {
+export const getPermissions = async (user: User, apiService: ApiService): Promise<Permissions> => {
   const permissions: Permissions = defaultPermissions();
-  groups.forEach(group => {
-    const groupLower = group.toLowerCase();
-    const role = internalGroups ? (groupLower as InternalRoleEnum) : roleADMapping[groupLower];
-    if (roles.has(role)) {
-      const groupPermissions = roles.get(role);
-      Object.keys(groupPermissions).forEach(permission => {
-        if (groupPermissions[permission] === true) {
-          permissions[permission] = true;
-        }
-      });
-    }
-  });
 
   const messagingSettings = await getMessagingUserSettings(user, apiService);
   const values = messagingSettings?.[0]?.values || [];
@@ -70,26 +38,6 @@ export const getPermissions = async (
   permissions.canSendRegisteredLetter = settingsMap['rek_enabled'] === 'true';
 
   return permissions;
-};
-
-/**
- * Ensures to return only the role with most permissions
- * @param groups List of AD roles
- * @returns role with most permissions
- */
-export const getRole = (groups: string[]): InternalRole => {
-  if (groups.length == 1) return roleADMapping[groups[0]];
-
-  const roles: InternalRole[] = [];
-  groups.forEach(group => {
-    const groupLower = group.toLowerCase();
-    const role = roleADMapping[groupLower];
-    if (role) {
-      roles.push(role);
-    }
-  });
-
-  return roles.sort((a, b) => RoleOrderEnum[a] - RoleOrderEnum[b])[0];
 };
 
 export const getMessagingUserSettings: (user: User, api: ApiService) => Promise<MessagingSettings[]> = async (

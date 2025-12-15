@@ -22,7 +22,6 @@ export interface Permissions {
 export type InternalRole = 'admin' | 'sms';
 export enum InternalRoleEnum {
   Admin = 'admin',
-  SMS = 'sms',
 }
 
 export type InternalRoleMap = Map<InternalRole, Partial<Permissions>>;
