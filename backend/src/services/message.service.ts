@@ -1,9 +1,10 @@
 import { getApiBase, MUNICIPALITY_ID } from '@/config';
-import ApiService, { ApiResponse } from './api.service';
-import { RecipientWithAddress } from './recipient.service';
+import { Address, Recipient } from '@/data-contracts/postportalservice/data-contracts';
+import { MessageResponseData } from '@/interfaces/message.interface';
 import { User } from '@/interfaces/users.interface';
-import FormData from 'form-data';
 import { logger } from '@/utils/logger';
+import FormData from 'form-data';
+import ApiService, { ApiResponse } from './api.service';
 
 export interface AgnosticMessageResponse {
   messageId: string;
@@ -62,17 +63,6 @@ export interface DigitalMailAttachment {
   contentType: 'application/pdf';
   content: string;
   filename: string;
-}
-
-interface Address {
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartmentNumber: string;
-  careOf: string;
-  zipCode: string;
-  city: string;
-  country: string;
 }
 
 export interface LetterRequest {
@@ -193,15 +183,6 @@ export const sendSmsMessage: (
     });
 };
 
-export type MessageResponseData =
-  | {
-      recipients: RecipientWithAddress[];
-    }
-  | { recipientPersonId: string }
-  | { csv: boolean };
-
-export type MessageResponse = ApiResponse<MessageResponseData>;
-
 function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
   if (!files?.length) return;
 
@@ -224,7 +205,7 @@ function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): vo
 export const sendLetter: (
   user: User,
   api: ApiService,
-  recipients: RecipientWithAddress[],
+  recipients: Recipient[],
   message: Message,
   addresses: Address[],
 ) => Promise<MessageResponseData> = async (user, api, recipients, message, addresses) => {
@@ -234,23 +215,7 @@ export const sendLetter: (
   const request = {
     subject: subject,
     contentType: 'text/plain',
-    recipients: recipients.map(r => {
-      const currAddress = r.address.addresses?.length > 0 ? r.address.addresses[0] : undefined;
-      return {
-        partyId: r.address.personId,
-        deliveryMethod: r.address.deliveryMethod,
-        address: {
-          firstName: r.address.givenname,
-          lastName: r.address.lastname,
-          street: currAddress.address,
-          apartmentNumber: currAddress.appartmentNumber,
-          careOf: currAddress.co,
-          zipCode: currAddress.postalCode,
-          city: currAddress.city,
-          country: currAddress.country,
-        },
-      };
-    }),
+    recipients: recipients,
     addresses: addresses,
     body: body ?? 'This is the body of the registered letter.',
   } as LetterRequest;
@@ -270,8 +235,8 @@ export const sendLetter: (
 
   return api
     .post<string, FormData>({ url, data: form, headers }, user)
-    .then(async (_res: ApiResponse<string>) => {
-      return { recipients };
+    .then(async () => {
+      return { recipients, addresses };
     })
     .catch(e => {
       const errorMessage = 'Error when sending message';

@@ -20,6 +20,7 @@ export enum EnumMessageStatus {
   FAILED = 'FAILED',
   PENDING = 'PENDING',
 }
+
 export interface Recipient {
   name: string;
   partyId?: string;
@@ -31,7 +32,6 @@ export interface Recipient {
   status: EnumMessageStatus;
   personnummer?: string;
 }
-
 export interface PagingMetaData {
   page: number;
   limit: number;

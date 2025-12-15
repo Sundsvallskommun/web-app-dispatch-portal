@@ -26,14 +26,14 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
   } = useFormContext<FormModel>();
 
   const recipientPersonId = useMemo(() => {
-    return recipients.find((r) => !r.error)?.address?.personId;
+    return recipients.find((r) => r.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE')?.partyId;
   }, [recipients]);
 
   const handleNormalSend = () => {
     setIsSending(true);
     sendMessage(
       getValues(),
-      recipients.filter((r) => !r.error),
+      recipients.filter((r) => r.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE'),
       addresses
     )
       .then((res) => {
@@ -65,10 +65,10 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
     <Button
       variant="primary"
       color="vattjom"
-      disabled={(recipients.filter((r) => !r.error).length === 0 && addresses.length === 0) || !isValid}
+      disabled={!isValid}
       rightIcon={<SendHorizonal />}
       loading={isSending}
-      loadingText={'common:send'}
+      loadingText={t('common:sending')}
       onClick={() => {
         if (sendType === formSendType.REK_MAIL) handleRecSend();
         else handleNormalSend();

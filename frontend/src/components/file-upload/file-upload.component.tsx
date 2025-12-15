@@ -20,7 +20,6 @@ const FileUpload: React.FC<{
   allowReplace?: boolean;
   maxFileSizeMB?: number;
   onErrorReset?: () => void;
-  resetErrorTrigger?: number;
 }> = ({
   fieldName,
   allowMultiple = true,
@@ -32,7 +31,6 @@ const FileUpload: React.FC<{
   allowReplace = false,
   maxFileSizeMB = MAX_ATTACHMENT_FILE_SIZE_MB,
   onErrorReset,
-  resetErrorTrigger,
 }) => {
   const [fileErrors, setFileErrors] = useState<string[]>([]);
   const [added, setAdded] = useState<number>(0);
@@ -97,12 +95,6 @@ const FileUpload: React.FC<{
     });
   }, [newItem]);
   /* eslint-enable react-hooks/exhaustive-deps */
-
-  useEffect(() => {
-    if (resetErrorTrigger && resetErrorTrigger > 0) {
-      resetErrors(setFileErrors, onErrorReset);
-    }
-  }, [resetErrorTrigger, onErrorReset]);
 
   useEffect(() => {
     if (drop && drop?.length > 0) {

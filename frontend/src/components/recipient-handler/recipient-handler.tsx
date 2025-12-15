@@ -1,44 +1,35 @@
 import { AddWithAddressDialog } from '@components/add-with-address-dialog/add-with-address-dialog.component';
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
-import {
-  AddWithAddress,
-  getRecipient,
-  getRecipients,
-  MAX_RECIPIENT_FILE_SIZE_MB,
-  MAX_RECIPIENT_ROW_SIZE,
-  RecipientWithAddress,
-  useMessageStore,
-} from '@services/recipient-service';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
+import { RecipientTable } from '@components/recipient-table/recipient-table.component';
+import { getRecipient, MAX_RECIPIENT_FILE_SIZE_MB, useMessageStore } from '@services/recipient-service';
 import {
   Button,
+  cx,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Icon,
+  RadioButton,
   SearchField,
   Spinner,
-  RadioButton,
-  cx,
-  Modal,
-  Icon,
   useConfirm,
 } from '@sk-web-gui/react';
-import React, { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { useTranslation } from 'next-i18next';
 import { Plus } from 'lucide-react';
-import { RecipientTable } from '@components/recipient-table/recipient-table.component';
+import { useTranslation } from 'next-i18next';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { Address, Recipient } from 'src/data-contracts/backend/data-contracts';
+import { SendType } from 'src/types';
 import { formSendType } from '../../constants';
 import PreviewPerson from './preview-person';
-import { useKivraEligibility } from 'src/hooks/useGetEligibility';
-import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
-import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
-import { SendType } from 'src/types';
 
 export interface RecipientListFormModel {
   recipientList: { file: File | undefined }[];
   singleRecipient: string;
-  storeRecipients: RecipientWithAddress[];
+  storeRecipients: Partial<Recipient>[];
 }
 
 interface RecipientHandlerProps {
@@ -46,19 +37,15 @@ interface RecipientHandlerProps {
 }
 
 const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProps) => {
-  const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const [error, setError] = useState<string>();
-  const [foundPerson, setFoundPerson] = React.useState<RecipientWithAddress>();
+  const [foundPerson, setFoundPerson] = React.useState<Recipient>();
   const [current, setCurrent] = React.useState<number | undefined>(0);
   const [isAddWithAddressOpen, setIsAddWithAddressOpen] = useState(false);
   const { recipients, setRecipients, setAddresses, addresses } = useMessageStore();
   const allowReplace = true;
-  const validRecipientLength = recipients.filter((rec) => !rec?.error).length;
-  const invalidRecipient = recipients.filter((rec) => rec?.error);
+  const validRecipientLength = recipients.length;
   const combinedLength = validRecipientLength + addresses.length;
-  const { isEligible } = useKivraEligibility(foundPerson?.address?.personId, sendType);
-  const allowSearchFieldOnSearch = sendType === formSendType.MAIL || (isEligible && sendType === formSendType.REK_MAIL);
   const { t } = useTranslation(['send-mail', 'common', 'accessibility']);
   const confirm = useConfirm();
 
@@ -82,46 +69,13 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
     }
   };
 
-  const fetchRecipients = () => {
-    setIsLoadingRecipients(true);
-    setError(undefined);
-    setValue('singleRecipient', '');
-    getRecipients(recipientList)
-      .then((res) => {
-        setRecipients(res);
-        setIsLoadingRecipients(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        let errorMessage: string;
-        switch (e.message) {
-          case 'NO_FILE':
-            errorMessage = t('send-mail:recipientHandler.errorHandler.noFile');
-            break;
-          case 'MAX_SIZE':
-            errorMessage = t('send-mail:recipientHandler.errorHandler.maxSize', { size: MAX_RECIPIENT_FILE_SIZE_MB });
-            break;
-          case 'MAX_RECIPIENT_ROW_SIZE':
-            errorMessage = t('send-mail:recipientHandler.errorHandler.maxRow', { rows: MAX_RECIPIENT_ROW_SIZE });
-            break;
-          default:
-            errorMessage = t('send-mail:recipientHandler.errorHandler.default');
-        }
-        setIsLoadingRecipients(false);
-        setError(errorMessage);
-        setRecipients([]);
-      });
-  };
-
   const fetchRecipient = () => {
     setIsLoadingRecipients(true);
     setError(undefined);
-    getRecipient(recipient.replace('-', '').replace(' ', ''))
+    getRecipient(recipient.replace('-', '').replace(' ', ''), sendType === formSendType.REK_MAIL)
       .then((res) => {
         // check for duplicates
-        const alreadyExists = recipients.find(
-          (rec) => rec?.recipient?.personnumber === res[0]?.recipient?.personnumber
-        );
+        const alreadyExists = recipients.find((rec) => rec?.partyId === res?.partyId);
         if (alreadyExists) {
           setFormError('singleRecipient', {
             message: t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'),
@@ -131,7 +85,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
         }
 
         if (sendType === formSendType.REK_MAIL) {
-          setRecipients(res);
+          setRecipients([res]);
         } else {
           setRecipients(recipients.concat(res));
         }
@@ -151,12 +105,26 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   const findPerson = (SSN: string) => {
     getRecipient(SSN.replace('-', '').replace(' ', ''))
       .then((res) => {
-        setFoundPerson(res[0]);
+        setFoundPerson(res);
       })
       .catch((e) => {
         setFoundPerson(undefined);
         console.error(e);
       });
+  };
+
+  const handleRemoveFile = () => {
+    setValue('recipientList', []);
+  };
+  const resetAll = () => {
+    setRecipients([]);
+    setAddresses([]);
+    setFoundPerson(undefined);
+    clearErrors('storeRecipients');
+    clearErrors('singleRecipient');
+    clearErrors('recipientList');
+    setValue('storeRecipients', []);
+    setValue('recipientList', []);
   };
 
   useEffect(() => {
@@ -165,26 +133,13 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   }, [recipients, setFormError]);
 
   useEffect(() => {
-    if (recipientList?.length === 1) {
-      if (recipients?.length < 1) {
-        fetchRecipients();
-      } else {
-        if (allowReplace) {
-          fetchRecipients();
-        }
-      }
-    } else {
-      setRecipients([]);
-    }
-    //eslint-disable-next-line
-  }, [recipientList]);
-
-  useEffect(() => {
     setRecipients([]);
     setFoundPerson(undefined);
     clearErrors('singleRecipient');
-    setAddresses([]);
-    setValue('storeRecipients', recipients ?? []);
+    setValue('storeRecipients', [...(recipients ?? []), ...(addresses ?? [])]);
+    if (recipientList.length > 0) {
+      setCurrent(1);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
@@ -200,14 +155,29 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
   }, [recipient, setFormError]);
 
   const handleSwitchCurrent = (navigateTo: number) => {
-    if (combinedLength > 0 && current === 0) {
-      setIsWarningOpen(true);
-      return;
+    if (recipientList?.length > 0 || recipients?.length > 0) {
+      confirm
+        .showConfirmation(
+          t(`send-mail:recipientHandler.changeTo.${navigateTo === 0 ? 'person' : 'list'}.label`),
+          t(`send-mail:recipientHandler.changeTo.${navigateTo === 0 ? 'person' : 'list'}.text`),
+          t('common:yesContinue'),
+          t('common:cancel')
+        )
+        .then((confirm) => {
+          if (confirm) {
+            resetAll();
+            setCurrent(navigateTo);
+          }
+        });
+    } else {
+      resetAll();
+      setCurrent(navigateTo);
     }
-    setCurrent(navigateTo);
   };
 
   const handleSubmitSingleRecipient = () => {
+    if (foundPerson?.deliveryMethod === 'DELIVERY_NOT_POSSIBLE') return;
+
     if (sendType === formSendType.REK_MAIL && recipients.length > 0) {
       confirm
         .showConfirmation(
@@ -226,7 +196,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
         });
     } else {
       clearErrors(['singleRecipient', 'storeRecipients']);
-      if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
+      if (recipient && recipient?.replace('-', '').length === 12) {
         fetchRecipient();
         setValue('singleRecipient', '');
         setFoundPerson(undefined);
@@ -240,34 +210,21 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
     }
   };
 
-  const handleRemove = () => {
-    setRecipients([]);
-    setFoundPerson(undefined);
-    clearErrors('singleRecipient');
-    setValue('singleRecipient', '');
-    setValue('recipientList', []);
-  };
-
-  const handleCloseAddWithAddressDialog = (closeData: AddWithAddress | undefined) => {
+  const handleCloseAddWithAddressDialog = (closeData: Address | undefined) => {
     if (closeData) {
-      const { firstName, lastName, address, careOf, zipCode, city } = closeData;
-      const addWithAdress: AddWithAddress = {
-        firstName,
-        lastName,
-        address,
-        careOf,
-        zipCode,
-        city,
+      const newAdress: Partial<Recipient> = {
+        deliveryMethod: 'SNAIL_MAIL',
+        address: closeData,
       };
       // find duplicates
-      const alreadyExists = addresses.find(
-        (rec) =>
-          rec?.address === addWithAdress?.address &&
-          rec?.firstName === addWithAdress?.firstName &&
-          rec?.lastName === addWithAdress?.lastName &&
-          rec?.zipCode === addWithAdress?.zipCode &&
-          rec?.city === addWithAdress?.city &&
-          rec?.careOf === addWithAdress?.careOf
+      const alreadyExists = addresses.some(
+        (recipient) =>
+          recipient?.address === newAdress?.address &&
+          recipient?.address?.firstName === newAdress?.address?.firstName &&
+          recipient?.address?.lastName === newAdress?.address?.lastName &&
+          recipient?.address?.zipCode === newAdress?.address?.zipCode &&
+          recipient?.address?.city === newAdress?.address?.city &&
+          recipient?.address?.careOf === newAdress?.address?.careOf
       );
 
       if (alreadyExists) {
@@ -275,40 +232,21 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
         setIsAddWithAddressOpen(false);
         return;
       }
-
-      setAddresses(addresses.concat(addWithAdress));
+      clearErrors('storeRecipients');
+      setAddresses(addresses.concat(newAdress));
     }
     setIsAddWithAddressOpen(false);
   };
 
-  const onCloseWarningModal = (shouldNavigate: boolean) => {
-    if (shouldNavigate) {
-      setCurrent(1);
+  const handleEnter = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSubmitSingleRecipient();
     }
-    setIsWarningOpen(false);
   };
 
   return (
     <div className="w-full flex justify-center">
-      <Modal
-        show={isWarningOpen}
-        onClose={() => onCloseWarningModal(false)}
-        label={t('send-mail:recipientHandler.modalLabel')}
-        className="w-[40rem]"
-      >
-        <Modal.Content>
-          <p>{t('send-mail:recipientHandler.modalWarning')}</p>
-        </Modal.Content>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => onCloseWarningModal(false)}>
-            {t('common:cancel')}
-          </Button>
-          <Button color="vattjom" onClick={() => onCloseWarningModal(true)}>
-            {t('common:yesContinue')}
-          </Button>
-        </Modal.Footer>
-      </Modal>
       <HandlerWrapper
         title={t('send-mail:recipientHandler.title')}
         description={
@@ -363,20 +301,18 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     maxLength={13}
                     minLength={12}
                     placeholder="Sök"
+                    showSearchButton={false}
+                    onKeyDown={handleEnter}
                     onReset={() => {
                       setValue('singleRecipient', '');
                       setFoundPerson(undefined);
-                    }}
-                    onSearch={() => {
-                      allowSearchFieldOnSearch && handleSubmitSingleRecipient();
                     }}
                   />
                   {renderFormMessage()}
 
                   {foundPerson?.address && (
                     <PreviewPerson
-                      personId={foundPerson.address.personId}
-                      personAdress={foundPerson.address}
+                      person={foundPerson}
                       handleSubmit={handleSubmitSingleRecipient}
                       sendType={sendType}
                     />
@@ -388,6 +324,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                     <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
                     <p className="font-bold">{t('send-mail:recipientHandler.missingPersonalNumber')}</p>
                     <Button
+                      data-cy="add-with-address-button"
                       leftIcon={<Icon icon={<Plus />} />}
                       onClick={() => setIsAddWithAddressOpen(true)}
                       color="vattjom"
@@ -406,6 +343,7 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
                   showLabel
                   fieldName="recipientList"
                   accept={['.csv', '.CSV']}
+                  allowMultiple={false}
                   helperText={t('send-mail:recipientHandler.csvHelperText')}
                   allowMax={1}
                   allowReplace={allowReplace}
@@ -419,14 +357,6 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             </div>
           )}
 
-          {recipientList?.length && recipients?.length && current === 1 ? (
-            <div className="mt-56" data-cy="recipients">
-              <h4 className="text-label-medium mb-12">{t('send-mail:recipientHandler.csvAddedFile')}</h4>
-              <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
-            </div>
-          ) : (
-            <></>
-          )}
           {isLoadingRecipients && (
             <div className="my-lg flex flex-col items-center justify-center gap-sm">
               <>
@@ -438,24 +368,6 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             </div>
           )}
           <div>{error && <FormErrorMessage className="my-8">{error}</FormErrorMessage>}</div>
-
-          {invalidRecipient?.length > 0 && !isLoadingRecipients && (
-            <div className="mt-56">
-              <h4 className="text-label-medium">
-                {t('send-mail:recipientHandler.errorHandler.invalidRecipient', { num: invalidRecipient.length })}
-              </h4>
-              <div className="mt-12 border-1 rounded-groups border-error-surface-primary">
-                {invalidRecipient.map((rec, index) => (
-                  <div
-                    key={`inv-rec-${index}-${rec?.recipient?.personnumber}`}
-                    className="py-16 px-18 border-b-1 border-divider last:border-0"
-                  >
-                    <p className="text-small text-secondary">{rec?.recipient?.personnumber}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {combinedLength > 0 && !isLoadingRecipients && (
             <div className="w-full mt-40">
@@ -483,10 +395,19 @@ const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProp
             <p className="text-secondary">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
           </div>
         )}
-        {recipients?.length < 1 && current === 1 && (
-          <div>
+        {current === 1 && (
+          <div className="flex flex-col w-full">
             <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedFileTitle')}</h3>
-            <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}`}</p>
+            {recipientList?.length < 1 ? (
+              <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}`}</p>
+            ) : (
+              <FileListItemComponent
+                data-cy="recipientlist"
+                noBorder
+                data={recipientList[0]}
+                handleRemove={handleRemoveFile}
+              />
+            )}
           </div>
         )}
       </HandlerWrapper>

@@ -48,7 +48,7 @@ class ApiService {
       ...config,
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
-      headers: { ...config.headers, 'x-issuer': user.username },
+      headers: { ...config.headers, 'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}` },
       params: { ...defaultParams, ...config.params },
       url: apiURL(config.url),
     };

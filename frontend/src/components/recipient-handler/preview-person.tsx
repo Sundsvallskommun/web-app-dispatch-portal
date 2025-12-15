@@ -1,26 +1,23 @@
-import { Citizenaddress } from '@services/recipient-service';
-import { Button, cx, Icon, Spinner } from '@sk-web-gui/react';
-import { formSendType } from 'src/constants';
+import { Button, cx, Icon } from '@sk-web-gui/react';
+import { formatPersonNumber } from '@utils/helpers';
 import { Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useKivraEligibility } from 'src/hooks/useGetEligibility';
+import { formSendType } from 'src/constants';
+import { Recipient } from 'src/data-contracts/backend/data-contracts';
 import { SendType } from 'src/types';
-import { formatPersonNumber } from '@utils/helpers';
 
 interface PreviewPersonProps {
-  personId: string;
-  personAdress: Citizenaddress | undefined;
+  person: Recipient;
   handleSubmit: () => void;
   sendType: SendType;
 }
 
-const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: PreviewPersonProps) => {
-  const { isEligible, isLoading } = useKivraEligibility(personId, sendType);
-  const showButton = sendType === formSendType.MAIL || (isEligible && sendType === formSendType.REK_MAIL && !isLoading);
+const PreviewPerson = ({ person, handleSubmit, sendType }: PreviewPersonProps) => {
+  const isEligible = person.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE';
   const successClasses = 'border-gronsta-surface-primary bg-gronsta-background-100';
   const errorClasses = 'border-error-surface-primary bg-error-background-100';
   const { t } = useTranslation(['send-mail']);
-
+  const eligibleStatus = isEligible ? 'success' : 'error';
   const alert = (
     <div
       className={cx(
@@ -29,7 +26,9 @@ const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: Previ
       )}
     >
       <Icon color={isEligible ? 'success' : 'error'} icon={isEligible ? <Check /> : <X />} />
-      {t(`send-mail:recipientHandler.rekMail.${isEligible ? 'success' : 'error'}`)}
+      {sendType === formSendType.REK_MAIL
+        ? t(`send-mail:recipientHandler.rekMail.${eligibleStatus}`)
+        : t(`send-mail:recipientHandler.mail.error'}`)}
     </div>
   );
 
@@ -39,26 +38,22 @@ const PreviewPerson = ({ personId, personAdress, handleSubmit, sendType }: Previ
       className="preview-person bg-background-100 -mt-32 p-16 rounded-button border-1 border-divider w-full z-10"
     >
       <p className="text-body text-base font-bold">
-        {personAdress?.givenname} {personAdress?.lastname}
+        {person?.address?.firstName} {person?.address?.lastName}
       </p>
-      <p className="text-small">{formatPersonNumber(personAdress?.personNumber ?? '')}</p>
+      <p className="text-small">{formatPersonNumber(person?.personNumber ?? '')}</p>
       {sendType === formSendType.MAIL && (
         <p className="text-small">
-          {personAdress?.addresses[0].address}, {personAdress?.addresses[0].city}
+          {person?.address?.street}, {person?.address?.city}
         </p>
       )}
-      {sendType === formSendType.REK_MAIL &&
-        (isLoading ? (
-          <div className="flex w-full items-center justify-center pt-8">
-            <Spinner className="h-32 w-32" />
-          </div>
-        ) : (
-          alert
-        ))}
-      {showButton && (
+      {sendType === formSendType.REK_MAIL && isEligible && alert}
+
+      {isEligible ? (
         <Button className="mt-16" onClick={() => handleSubmit()}>
           {t('send-mail:recipientHandler.addRecipient')}
         </Button>
+      ) : (
+        alert
       )}
     </div>
   );

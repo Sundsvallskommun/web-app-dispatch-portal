@@ -1,21 +1,16 @@
+import { Address, Recipient } from '@/data-contracts/postportalservice/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
+import { MessageResponse } from '@/interfaces/message.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
+import { MessageApiResponse } from '@/responses/message.response';
 import ApiService from '@/services/api.service';
-import {
-  logError,
-  MessageResponse,
-  sendLetter,
-  sendLetterCsv,
-  sendRecLetter,
-  sendSmsMessage,
-} from '@/services/message.service';
-import { RecipientWithAddress } from '@/services/recipient.service';
+import { logError, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import authMiddleware from '@middlewares/auth.middleware';
 import { ArrayMinSize, IsArray, IsString } from 'class-validator';
 import { Response } from 'express';
 import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
-import { OpenAPI } from 'routing-controllers-openapi';
+import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 class RequestBodyMail {
   @IsString()
@@ -62,14 +57,15 @@ export class MessageController {
   @Post('/message/')
   @OpenAPI({ summary: 'Send attachment to recipients' })
   @UseBefore(authMiddleware, hasPermissions(['canSendLetter']))
+  @ResponseSchema(MessageApiResponse)
   async recipients(
     @Req() req: RequestWithUser,
     @Body() body: RequestBodyMail,
     @Res() response: Response<MessageResponse>,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
   ): Promise<Response<MessageResponse>> {
-    let recipients: RecipientWithAddress[];
-    let addresses;
+    let recipients: Recipient[];
+    let addresses: Address[];
     try {
       recipients = JSON.parse(body.recipients);
       addresses = JSON.parse(body.addresses);
@@ -92,7 +88,7 @@ export class MessageController {
         throw new Error('Error when sending message');
       });
 
-    return response.status(200).send({ data: res, message: 'success' });
+    return response.send({ data: res, message: 'success' });
   }
 
   @Post('/rec-message/')

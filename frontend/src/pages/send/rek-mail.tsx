@@ -14,7 +14,6 @@ import { useMessageStore } from '@services/recipient-service';
 import { formSendType } from 'src/constants';
 import { formSchema } from '../../utils/formSchema.yup';
 import AttachmentHandler from '@components/attachment-handler/attachment-handler';
-import { hasValidRecipients } from '@utils/hasValidRecipients';
 import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
 import { SenderHandler } from '@components/sender-handler/sender-handler.component';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -45,10 +44,7 @@ const SendRekMail = () => {
   });
   const { trigger, reset, watch, setValue, clearErrors } = controls;
   const [success, setSuccess] = useState(false);
-  const [step, setStep] = useState<number>(0);
-  const recipients = useMessageStore((state) => state.recipients);
   const setRecipients = useMessageStore((state) => state.setRecipients);
-  const addresses = useMessageStore((state) => state.addresses);
   const setAddresses = useMessageStore((state) => state.setAddresses);
   const setResponse = useMessageStore((state) => state.setResponse);
   const watchAttachmentList = watch('attachmentList');
@@ -58,12 +54,6 @@ const SendRekMail = () => {
   const { t } = useTranslation(['common', 'send-mail']);
   const router = useRouter();
   const { user } = useUserStore();
-
-  const stepTexts: Record<number, string> = {
-    0: t('common:screenReader.postStepper.stepOne'),
-  };
-
-  const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
 
   const resetAll = useCallback(() => {
     setRecipients([]);
@@ -110,7 +100,7 @@ const SendRekMail = () => {
             {
               label: t('common:stepper.recipient'),
               component: <RecipientHandler sendType={formSendType.REK_MAIL} />,
-              valid: hasValidRecipients(recipients, addresses),
+              validationProperties: ['storeRecipients'],
               onNextClick: recipientHandlerOnNextClick,
             },
             {
@@ -131,9 +121,7 @@ const SendRekMail = () => {
               valid: true,
             },
           ]}
-          onChangeStep={setStep}
           submitButton={<SubmitHandler sendType={formSendType.REK_MAIL} />}
-          getScreenReaderStepperText={getScreenReaderStepperText}
           controls={controls}
           success={success}
           onResetSuccess={() => setSuccess(false)}

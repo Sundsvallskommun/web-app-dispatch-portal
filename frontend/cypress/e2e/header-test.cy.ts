@@ -21,7 +21,6 @@ describe('Header', () => {
   pages.map((page) => {
     describe(page.description, () => {
       beforeEach(() => {
-        cy.intercept('GET', '**/api/departments', { fixture: 'departments.json' });
         cy.intercept('GET', '**/api/statistics/departments*', {
           fixture: 'departments-from-to.json',
         });

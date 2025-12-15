@@ -9,13 +9,21 @@ export const formSchema = yup
     attachmentList: yup.array().test('HAS_MIN_ONE', 'send-mail:attachmentHandler.errorMessage', (value) => {
       return value && value.length > 0;
     }),
-    recipientList: yup.array(),
+    recipientList: yup
+      .array()
+      .test('HAS_MIN_ONE_FILE', 'send-mail:recipientHandler.errorHandler.csvError', (value, yupObject) => {
+        return yupObject?.parent?.storeRecipients?.length > 0 || (value && value.length > 0);
+      }),
     singleRecipient: yup.string().nullable(),
     storeRecipients: yup
       .array()
       .default([])
-      .test('HAS_MIN_ONE_RECIPIENT', 'send-mail:recipientHandler.errorHandler.singleRecipientError', (value) => {
-        return value && value.length > 0;
-      }),
+      .test(
+        'HAS_MIN_ONE_RECIPIENT',
+        'send-mail:recipientHandler.errorHandler.singleRecipientError',
+        (value, yupObject) => {
+          return yupObject?.parent?.recipientList?.length > 0 || (value && value.length > 0);
+        }
+      ),
   })
   .required();

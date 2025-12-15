@@ -1,8 +1,8 @@
-import { FormModel } from '@pages/send/mail';
-import { ApiResponse, apiService } from './api-service';
-import { AddWithAddress, MessageResponse, RecipientWithAddress, toBase64 } from './recipient-service';
-import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { Attachment } from '@components/attachment-handler/attachment-handler';
+import { SMSRequest, SMSStatus } from '@interfaces/sms';
+import { FormModel } from '@pages/send/mail';
+import { Address, Message, MessageApiResponse, Recipient } from 'src/data-contracts/backend/data-contracts';
+import { ApiResponse, apiService } from './api-service';
 
 export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
 export interface FileInfo {
@@ -22,6 +22,14 @@ export const mapMessageType = (key: 'DIGITAL_MAIL' | 'SNAIL_MAIL') => {
       return key;
   }
 };
+
+export const toBase64: (file: File) => Promise<string> = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 
 const file2blob = async (fileItem: File) => {
   if (fileItem.size / 1024 / 1024 > MAX_ATTACHMENT_FILE_SIZE_MB) {
@@ -66,11 +74,11 @@ const getAttachmentsBlob = async (attachmentList: Attachment[]) => {
 // Use multipart/form-data
 export const sendMessage: (
   data: FormModel,
-  recipients: RecipientWithAddress[],
-  addresses: AddWithAddress[]
-) => Promise<MessageResponse> = async (data, recipients, addresses) => {
+  recipients: Recipient[],
+  addresses: Partial<Recipient>[]
+) => Promise<Message> = async (data, recipients, _addresses) => {
   const messageFormData = new FormData();
-
+  const addresses: Address[] = _addresses.map((recipient) => recipient.address).filter((address) => !!address);
   const attachmentList = data.attachmentList;
   const attachmentResults = await getAttachmentsBlob(attachmentList);
 
@@ -89,7 +97,7 @@ export const sendMessage: (
   messageFormData.append('addresses', JSON.stringify(addresses));
 
   const res = await apiService
-    .post<ApiResponse<MessageResponse>, FormData>(`message`, messageFormData, {
+    .post<MessageApiResponse, FormData>(`message`, messageFormData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .catch((e) => {
@@ -100,7 +108,7 @@ export const sendMessage: (
   return res.data.data;
 };
 
-export const sendRecMessage: (formData: FormModel, recipientPersonId: string) => Promise<MessageResponse> = async (
+export const sendRecMessage: (formData: FormModel, recipientPersonId: string) => Promise<Message> = async (
   data,
   recipientPersonId
 ) => {
@@ -123,7 +131,7 @@ export const sendRecMessage: (formData: FormModel, recipientPersonId: string) =>
   messageFormData.append('recipientPersonId', recipientPersonId);
 
   const res = await apiService
-    .post<ApiResponse<MessageResponse>, FormData>(`rec-message`, messageFormData, {
+    .post<MessageApiResponse, FormData>(`rec-message`, messageFormData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .catch((e) => {

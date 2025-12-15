@@ -14,7 +14,20 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
 
+beforeEach(() => {
+  cy.intercept('GET', '**/api/me', { fixture: 'me.json' });
+  cy.fixture('my-department.txt', 'utf8').then((text) => {
+    cy.intercept('GET', '**/api/my-department', {
+      statusCode: 200,
+      headers: { 'content-type': 'text/plain; charset=utf8' },
+      body: text,
+    });
+  });
+  cy.intercept('POST', '**/api/message', { fixture: 'message.json' });
+  cy.intercept('GET', '**/me', { fixture: 'me.json' }).as('getMe');
+  cy.viewport('macbook-16');
+});
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

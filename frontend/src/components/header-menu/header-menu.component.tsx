@@ -6,7 +6,7 @@ import { useUserStore } from '@services/user-service/user-service';
 import { Button, Header, Icon, PopupMenu, UserMenu, useGui } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
 import NextLink from 'next/link';
-import { shallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/shallow';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { userMenuGroups } from '@layouts/default-layout/userMenuGroups';
@@ -16,7 +16,7 @@ const HeaderMenu = () => {
   const initialFocus = useRef<HTMLElement>(null);
   const gui = useGui();
   const isMedium = useMediaQuery(`screen and (min-width:${gui.theme?.screens?.md})`);
-  const user = useUserStore((s) => s.user, shallow);
+  const user = useUserStore(useShallow((state) => state.user));
   const { t } = useTranslation(['common']);
   const router = useRouter();
 
