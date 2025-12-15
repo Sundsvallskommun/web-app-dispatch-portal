@@ -1,4 +1,4 @@
-import { getPermissions, getRole } from '@/services/authorization.service';
+import { getPermissions } from '@/services/authorization.service';
 import {
   BASE_URL_PREFIX,
   CREDENTIALS,
@@ -164,7 +164,7 @@ const samlStrategy = new Strategy(
       // Get permissions of the user
       const permissionsUser: User = { ...dummyUser };
       permissionsUser.username = DEV ? TEST_USERNAME : username;
-      const permissions = await getPermissions(appGroups, permissionsUser, apiService);
+      const permissions = await getPermissions(permissionsUser, apiService);
 
       const findUser = {
         name: `${givenName} ${sn}`,
@@ -175,7 +175,6 @@ const samlStrategy = new Strategy(
         personId: personid,
         orgTree,
         groups: appGroups,
-        role: getRole(appGroups),
         permissions,
       };
 
