@@ -87,11 +87,7 @@ const SendMailPage = () => {
               label: t('common:stepper.recipient'),
               component: <RecipientHandler />,
               validationProperties: ['recipientList', 'storeRecipients'],
-              onNextClick: useMailStepValidation(clearErrors, trigger, [
-                'singleRecipient',
-                'recipientList',
-                'storeRecipients',
-              ]),
+              onNextClick: useMailStepValidation(clearErrors, trigger, ['recipientList', 'storeRecipients']),
             },
             {
               label: t('common:stepper.files'),

@@ -5,10 +5,10 @@ import { EnumQATags, QAItem } from 'src/types';
 export const useHelpQA = (): QAItem[] => {
   const { t } = useTranslation(['help-menu']);
 
-  const splitInParagraphs = (text: string) =>
-    text.split('\n').map((p, i) => (
-      <p key={`${p.length}-${p.codePointAt(0) ?? i}`} className={i > 0 ? 'mt-4 leading-normal' : 'leading-normal'}>
-        {p}
+  const splitInParagraphs = (text: string, id: string) =>
+    text.split('\n').map((paragraph, index) => (
+      <p key={`helpparagraph-${id}-${index}`} className={index > 0 ? 'mt-4 leading-normal' : 'leading-normal'}>
+        {paragraph}
       </p>
     ));
 
@@ -16,31 +16,31 @@ export const useHelpQA = (): QAItem[] => {
     {
       id: '1',
       question: t('help-menu:questionsAndAnswers.1.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.1.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.1.answer'), '1'),
       tags: [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
       id: '2',
       question: t('help-menu:questionsAndAnswers.2.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.2.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.2.answer'), '2'),
       tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
       id: '3',
       question: t('help-menu:questionsAndAnswers.3.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.3.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.3.answer'), '3'),
       tags: [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
       id: '4',
       question: t('help-menu:questionsAndAnswers.4.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.4.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.4.answer'), '4'),
       tags: [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
       id: '5',
       question: t('help-menu:questionsAndAnswers.5.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.5.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.5.answer'), '5'),
       tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
@@ -48,7 +48,7 @@ export const useHelpQA = (): QAItem[] => {
       question: t('help-menu:questionsAndAnswers.6.question'),
       answer: (
         <>
-          {splitInParagraphs(t('help-menu:questionsAndAnswers.6.answer'))}
+          {splitInParagraphs(t('help-menu:questionsAndAnswers.6.answer'), '6')}
           <List listStyle="bullet">
             {[1, 3, 4, 5, 6].map((i) => (
               <List.Item key={i}>
@@ -63,31 +63,31 @@ export const useHelpQA = (): QAItem[] => {
     {
       id: '7',
       question: t('help-menu:questionsAndAnswers.7.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.7.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.7.answer'), '7'),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     ...[8, 9, 10, 11, 12, 13, 14].map((i) => ({
       id: String(i),
       question: t(`help-menu:questionsAndAnswers.${i}.question`),
-      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`)),
+      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
       tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
     })),
     {
       id: '15',
       question: t('help-menu:questionsAndAnswers.15.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.15.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.15.answer'), '15'),
       tags: [EnumQATags.REK_MAIL],
     },
     {
       id: '16',
       question: t('help-menu:questionsAndAnswers.16.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.16.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.16.answer'), '16'),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
       id: '17',
       question: t('help-menu:questionsAndAnswers.17.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.17.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.17.answer'), '17'),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
@@ -107,13 +107,13 @@ export const useHelpQA = (): QAItem[] => {
     {
       id: '19',
       question: t('help-menu:questionsAndAnswers.19.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.19.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.19.answer'), '19'),
       tags: [EnumQATags.SENDER, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
       id: '20',
       question: t('help-menu:questionsAndAnswers.20.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.20.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.20.answer'), '20'),
       tags: [EnumQATags.SENDER, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     },
     {
@@ -164,19 +164,19 @@ export const useHelpQA = (): QAItem[] => {
     ...[24, 25, 26].map((i) => ({
       id: String(i),
       question: t(`help-menu:questionsAndAnswers.${i}.question`),
-      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`)),
+      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
       tags: [EnumQATags.DOCUMENTS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
     })),
     {
       id: '27',
       question: t('help-menu:questionsAndAnswers.27.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.27.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.27.answer'), '27'),
       tags: [EnumQATags.SMS],
     },
     {
       id: '28',
       question: t('help-menu:questionsAndAnswers.28.question'),
-      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.28.answer')),
+      answer: splitInParagraphs(t('help-menu:questionsAndAnswers.28.answer'), '28'),
       tags: [EnumQATags.SMS],
     },
   ];

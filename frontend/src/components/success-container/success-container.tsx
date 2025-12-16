@@ -16,7 +16,7 @@ const SuccessContainer = ({ title, message, sendNewBtntext, onClick }: SuccessCo
   return (
     <div className="text-center mt-64">
       <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-      <h2 className="mt-24">{title}</h2>
+      <h1 className="text-h2-sm md:text-h2-md xl:text-h2-lg mt-24">{title}</h1>
       <p className="my-md text-base">{message}</p>
       <div className="flex gap-16 justify-center mt-40">
         <Button
@@ -29,10 +29,8 @@ const SuccessContainer = ({ title, message, sendNewBtntext, onClick }: SuccessCo
         >
           {sendNewBtntext}
         </Button>
-        <NextLink href="/" passHref legacyBehavior>
-          <Button className="mt-lg" color="vattjom">
-            {t('send-mail:goBack')}
-          </Button>
+        <NextLink href="/" className="sk-btn sk-btn-md sk-btn-primary mt-lg" data-color="vattjom">
+          {t('send-mail:goBack')}
         </NextLink>
       </div>
     </div>

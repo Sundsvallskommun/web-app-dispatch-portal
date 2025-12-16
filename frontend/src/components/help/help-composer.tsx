@@ -20,7 +20,7 @@ export const HelpComposer: React.FC<IHelpComposerProps> = ({ show, helpType, clo
   return (
     <HelpWrapper label="Hjälp" closeHandler={closeHandler} show={show}>
       <div className="my-md py-8 px-40 flex flex-col gap-24 ">
-        <div className="text-h4-lg font-header">{helpHeader}</div>
+        <p className="text-h4-lg font-header m-0">{helpHeader}</p>
         <Help filterTag={helpType} />
       </div>
     </HelpWrapper>

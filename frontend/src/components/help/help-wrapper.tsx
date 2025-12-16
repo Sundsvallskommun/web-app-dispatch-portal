@@ -14,9 +14,9 @@ export const HelpWrapper: React.FC<{
   return (
     <CustomModal show={show} onClose={closeHandler}>
       <Header className="h-[64px] flex justify-between" wrapperClasses="py-4 px-40">
-        <div className="text-h4-sm flex items-center gap-12">
+        <h2 className="text-h4-sm flex items-center gap-12 m-0">
           <Icon icon={<HelpCircle />} /> {label}
-        </div>
+        </h2>
         <Button
           tabIndex={show ? 0 : -1}
           aria-label={t('help-menu:closeHelp')}

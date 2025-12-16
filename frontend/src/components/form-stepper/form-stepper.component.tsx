@@ -1,11 +1,10 @@
 import SuccessContainer from '@components/success-container/success-container';
-import { Button, cx, ProgressStepper } from '@sk-web-gui/react';
+import { Button, cx, ProgressStepper, useThemeQueries } from '@sk-web-gui/react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React, { ReactNode, useState } from 'react';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { formSendType, tailwindBreakPoint } from 'src/constants';
-import { useWindowSize } from 'src/hooks/useWindowSize';
+import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 
 export interface FormStep {
@@ -19,7 +18,7 @@ export interface FormStep {
 interface FormStepperProps<T extends FieldValues> {
   steps: FormStep[];
   onChangeStep?: (step: number) => void;
-  submitButton?: JSX.Element;
+  submitButton?: React.JSX.Element;
   controls: UseFormReturn<T>;
   success: boolean;
   onResetSuccess: () => void;
@@ -37,8 +36,7 @@ const FormStepper = <T extends FieldValues>({
 }: FormStepperProps<T>) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const { t } = useTranslation(['common', 'send-mail']);
-  const { width } = useWindowSize();
-  const isMd = width < tailwindBreakPoint.MD;
+  const { isMaxSm } = useThemeQueries();
   const i18nSendType = `send-mail:success.${sendType === formSendType.MAIL ? 'mail' : 'rekMail'}`;
 
   const {
@@ -69,14 +67,14 @@ const FormStepper = <T extends FieldValues>({
   const contentFormProvider = (
     <FormProvider {...controls}>
       <ProgressStepper
-        className={cx(isMd ? 'pt-16 pb-16' : 'pt-64 pb-40')}
+        className={cx(isMaxSm ? 'pt-16 pb-16' : 'pt-64 pb-40')}
         size="sm"
         labelPosition="right"
         steps={steps.map((s) => {
           return s.label;
         })}
         current={currentStep}
-        vertical={isMd}
+        vertical={isMaxSm}
       />
       {steps[currentStep].component}
       <div className="flex flex-row justify-end gap-16 my-40">
@@ -110,7 +108,7 @@ const FormStepper = <T extends FieldValues>({
   );
 
   return (
-    <div className={cx('flex flex-col', isMd ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
+    <div className={cx('flex flex-col', isMaxSm ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
       {success ? (
         <SuccessContainer
           onClick={handleOnResetSuccess}

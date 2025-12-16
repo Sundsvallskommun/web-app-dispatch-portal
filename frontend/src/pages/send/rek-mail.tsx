@@ -72,11 +72,7 @@ const SendRekMail = () => {
 
   useSendMailEffects({ setValue, resetAll, setSuccess });
 
-  const recipientHandlerOnNextClick = useMailStepValidation(clearErrors, trigger, [
-    'singleRecipient',
-    'recipientList',
-    'storeRecipients',
-  ]);
+  const recipientHandlerOnNextClick = useMailStepValidation(clearErrors, trigger, ['recipientList', 'storeRecipients']);
   const attachmentHandlerOnNextClick = useMailStepValidation(clearErrors, trigger, ['attachmentList']);
   const senderHandlerOnNextClick = useMailStepValidation(clearErrors, trigger, ['department', 'subject']);
 

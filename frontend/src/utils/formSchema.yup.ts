@@ -14,7 +14,6 @@ export const formSchema = yup
       .test('HAS_MIN_ONE_FILE', 'send-mail:recipientHandler.errorHandler.csvError', (value, yupObject) => {
         return yupObject?.parent?.storeRecipients?.length > 0 || (value && value.length > 0);
       }),
-    singleRecipient: yup.string().nullable(),
     storeRecipients: yup
       .array()
       .default([])

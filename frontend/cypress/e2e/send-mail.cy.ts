@@ -1,5 +1,6 @@
 import { Pages } from './types';
 import { recipient } from '../fixtures/recipient';
+import { recipientcsv } from 'cypress/fixtures/recipientcsv';
 
 const pages = [
   { route: '/send/mail', description: 'Send letter flow' },
@@ -62,10 +63,16 @@ pages.forEach((p) => {
           cy.get('[data-cy="recipientlist"]').contains('personal-numbers.csv').should('be.visible');
         });
 
+        it('should show error when adding a bad csv file', () => {
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('BAD')).as('csv');
+          addCsv();
+          cy.get('[data-cy="recipientlist"]').should('not.exist');
+          cy.get('.sk-form-error-message').contains('Felaktig CSV-fil');
+        });
+
         it('should warn and reset if changing to csv from added person', () => {
           cy.intercept('POST', '**/api/recipient', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           addRecipient(notEligiblePn, true);
-          cy.wait('@recipient');
           cy.get('input[type="radio"][value="1"]').check();
           cy.get('.sk-modal-wrapper')
             .first()
@@ -264,7 +271,8 @@ const addAddress = () => {
 
 const addCsv = () => {
   cy.get('input[type="radio"][value="1"]').check();
-  cy.get('[data-cy="file-input"]').selectFile('cypress/files/personal-numbers.csv', { force: true });
+  cy.get('#file-upload-files').selectFile('cypress/files/personal-numbers.csv', { force: true });
+  cy.wait('@csv');
 };
 
 const addRecipient = (personNumber: string, enter: boolean) => {

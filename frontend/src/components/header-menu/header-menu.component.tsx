@@ -1,9 +1,8 @@
 import React, { useRef } from 'react';
 import { mainMenuItems } from '@components/main-menu/main-menu-items';
 import { MainMenu } from '@components/main-menu/main-menu.component';
-import { useMediaQuery } from '@mui/material';
 import { useUserStore } from '@services/user-service/user-service';
-import { Button, Header, Icon, PopupMenu, UserMenu, useGui } from '@sk-web-gui/react';
+import { Button, Header, Icon, PopupMenu, UserMenu, useThemeQueries } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
 import NextLink from 'next/link';
 import { useShallow } from 'zustand/shallow';
@@ -14,8 +13,7 @@ import { useRouter } from 'next/router';
 
 const HeaderMenu = () => {
   const initialFocus = useRef<HTMLElement>(null);
-  const gui = useGui();
-  const isMedium = useMediaQuery(`screen and (min-width:${gui.theme?.screens?.md})`);
+  const { isMinMd } = useThemeQueries();
   const user = useUserStore(useShallow((state) => state.user));
   const { t } = useTranslation(['common']);
   const router = useRouter();
@@ -77,7 +75,7 @@ const HeaderMenu = () => {
             </PopupMenu>
           }
         >
-          {isMedium && <MainMenu />}
+          {isMinMd && <MainMenu />}
         </Header>
       </div>
     </React.Fragment>

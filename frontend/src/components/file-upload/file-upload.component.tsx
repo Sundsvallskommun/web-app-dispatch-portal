@@ -1,4 +1,3 @@
-import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
 import { FormErrorMessage, FormLabel, Input, cx } from '@sk-web-gui/react';
 import { Upload } from 'lucide-react';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
@@ -8,6 +7,7 @@ import { handleFiles, resetErrors } from './file-upload-utils';
 import { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
 import { Trans, useTranslation } from 'react-i18next';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
+import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@utils/file.utils';
 
 const FileUpload: React.FC<{
   fieldName: string;

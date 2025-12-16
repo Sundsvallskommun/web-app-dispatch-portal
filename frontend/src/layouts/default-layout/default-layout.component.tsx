@@ -1,11 +1,11 @@
-import { ReactNode, useRef } from 'react';
+import React, { ReactNode, useRef } from 'react';
 import Head from 'next/head';
 
 interface DefaultLayoutProps {
   title: string;
-  pageheader?: JSX.Element;
+  pageheader?: React.JSX.Element;
   children: ReactNode;
-  headerMenu?: JSX.Element;
+  headerMenu?: React.JSX.Element;
 }
 
 const DefaultLayout = ({ title, pageheader, children, headerMenu }: DefaultLayoutProps) => {

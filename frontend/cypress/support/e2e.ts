@@ -14,6 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import { recipientcsv } from 'cypress/fixtures/recipientcsv';
 import './commands';
 
 beforeEach(() => {
@@ -26,8 +27,15 @@ beforeEach(() => {
     });
   });
   cy.intercept('POST', '**/api/message', { fixture: 'message.json' });
+  cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK')).as('csv');
   cy.intercept('GET', '**/me', { fixture: 'me.json' }).as('getMe');
+  cy.intercept('GET', '**/api/statistics/departments*', {
+    fixture: 'departments-from-to.json',
+  });
+  cy.intercept('GET', '**/api/my-statistics', { fixture: 'my-statistics.json' });
+  cy.intercept('GET', '**/api/my-rec-letters', { fixture: 'my-rec-letters.json' });
+  cy.intercept('GET', '**/api/user/avatar*', (req) => {
+    req.destroy();
+  });
   cy.viewport('macbook-16');
 });
-// Alternatively you can use CommonJS syntax:
-// require('./commands')

@@ -33,6 +33,12 @@ export interface Recipient {
   personNumber?: string;
 }
 
+export interface Csv {
+  name: string;
+  id: string;
+  status: "OK" | "BAD" | 0 | 1;
+}
+
 export interface RecipientApiResponse {
   data: Recipient;
   message: string;
@@ -40,6 +46,36 @@ export interface RecipientApiResponse {
 
 export interface RecipientNameApiResponse {
   data: string;
+  message: string;
+}
+
+export interface CsvApiResponse {
+  data: Csv;
+  message: string;
+}
+
+export interface RequestBodyMail {
+  recipients: string;
+  addresses: string;
+  subject: string;
+  body?: string;
+}
+
+export interface RequestBodyRecMail {
+  recipientPersonId: string;
+  subject: string;
+  body?: string;
+}
+
+export interface RequestBodyCsvMail {
+  csvId: string;
+  subject: string;
+  body?: string;
+}
+
+export interface RequestBodySMS {
+  /** @minItems 1 */
+  recipients: string[];
   message: string;
 }
 
@@ -52,22 +88,6 @@ export interface Message {
 
 export interface MessageApiResponse {
   data: Message;
-  message: string;
-}
-
-export interface RequestBodyMail {
-  recipients: string;
-  addresses: string;
-}
-
-export interface RequestBodyRecMail {
-  recipientPersonId: string;
-  subject: string;
-}
-
-export interface RequestBodySMS {
-  /** @minItems 1 */
-  recipients: string[];
   message: string;
 }
 

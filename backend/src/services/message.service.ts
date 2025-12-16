@@ -6,83 +6,11 @@ import { logger } from '@/utils/logger';
 import FormData from 'form-data';
 import ApiService, { ApiResponse } from './api.service';
 
-export interface AgnosticMessageResponse {
-  messageId: string;
-}
-
-export interface EmailRequest {
-  party?: {
-    partyId: string;
-    externalReferences?: [
-      {
-        key: string;
-        value: string;
-      },
-    ];
-  };
-  emailAddress: string;
-  sender?: {
-    name: string;
-    address: string;
-    replyTo: string;
-  };
-  subject: string;
-  message: string;
-  htmlMessage: string;
-}
-
-export interface SmsAndEmailRequest {
-  messages: {
-    party?: {
-      partyId: string;
-      externalReferences?: [
-        {
-          key: string;
-          value: string;
-        },
-      ];
-    };
-    sender?: {
-      email: {
-        name: string;
-        address: string;
-        replyTo: string;
-      };
-      sms: {
-        name: string;
-      };
-    };
-    subject: string;
-    message: string;
-    htmlMessage: string;
-  }[];
-}
-
-export interface DigitalMailAttachment {
-  deliveryMode: 'ANY' | 'DIGITAL_MAIL' | 'SNAIL_MAIL';
-  contentType: 'application/pdf';
-  content: string;
-  filename: string;
-}
-
 export interface LetterRequest {
   subject: string;
   contentType: 'text/plain';
   body: string;
-  recipients: {
-    partyId: string;
-    deliveryMethod: string;
-    address: {
-      firstName: string;
-      lastName: string;
-      street: string;
-      apartmentNumber: string;
-      careOf: string;
-      zipCode: string;
-      city: string;
-      country: string;
-    };
-  }[];
+  recipients: Recipient[];
   addresses: Address[];
   headers?: [
     {
@@ -212,13 +140,13 @@ export const sendLetter: (
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
 
-  const request = {
+  const request: LetterRequest = {
     subject: subject,
     contentType: 'text/plain',
     recipients: recipients,
     addresses: addresses,
-    body: body ?? 'This is the body of the registered letter.',
-  } as LetterRequest;
+    body: body ?? '-',
+  };
 
   const form = new FormData();
 
@@ -255,7 +183,7 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
 
   const request = {
-    body: body ?? 'This is the body of the registered letter.',
+    body: body ?? '-',
     contentType: 'text/plain',
     subject: subject,
     partyId: recipientPersonId,
@@ -301,7 +229,7 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   const request = {
     subject: subject,
     contentType: 'text/plain',
-    body: body ?? 'This is the body of the registered letter.',
+    body: body ?? '-',
   } as CsvLetterRequest;
 
   const form = new FormData();
@@ -318,7 +246,11 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
     throw new Error('Wrong csv file mimetype; must be text/csv');
   }
   if (!Buffer.isBuffer(csvFile.buffer)) {
-    throw new TypeError('Csv file buffer missing');
+    // eslint-disable-next-line no-explicit-any
+    csvFile.buffer = Buffer.from((csvFile.buffer as any).data);
+    if (!Buffer.isBuffer(csvFile.buffer)) {
+      throw new TypeError('Csv file buffer missing');
+    }
   }
   form.append('csv-file', csvFile.buffer, {
     filename: csvFile.originalname,
@@ -332,7 +264,7 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
 
   return api
     .post<string, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<string>) => {
+    .then(async () => {
       return { csv: true };
     })
     .catch(e => {

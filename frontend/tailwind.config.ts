@@ -1,28 +1,8 @@
-import Core from '@sk-web-gui/core';
-import Forms from '@tailwindcss/forms';
-import ContainerQueries from '@tailwindcss/container-queries';
+import { preset } from '@sk-web-gui/core';
 
 import type { Config } from 'tailwindcss';
 
 export default {
-  theme: {
-    extend: {
-      spacing: {
-        '59': '59px',
-        '120': '120px',
-        '128': '128px',
-        '174': '174px',
-        '182': '182px',
-        '200': '200px',
-        '206': '206px',
-        '220': '220px',
-        '249': '249px',
-        '340': '340px',
-        '382': '382px',
-        '818': '818px',
-      },
-    },
-  },
   mode: 'jit',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
@@ -40,12 +20,5 @@ export default {
   ],
 
   darkMode: 'class', // or 'media' or 'class'
-  plugins: [
-    Forms,
-    ContainerQueries,
-    Core({
-      cssBase: true,
-      colors: [],
-    }),
-  ],
+  presets: [preset()],
 } satisfies Config;

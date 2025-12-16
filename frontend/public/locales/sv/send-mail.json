@@ -77,11 +77,13 @@
       "invalidRecipient": "Ogiltiga mottagare ({num})",
       "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
       "singleRecipientError": "Du måste lägga till en mottagare.",
-      "csvError": "Du måste lägga till en fil"
+      "csvError": "Du måste lägga till en fil",
+      "badCsvFile": "Felaktig CSV-fil. Får endast innehålla personnummer."
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är redan tillagd",
-      "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?"
+      "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?",
+      "csvFile": "Kunde inte kontroller CSV-fil. Kontrollera din fil, och försök igen."
     },
     "personalNumberError": {
       "fewNumber": "För få siffror i personnumret",
@@ -135,6 +137,11 @@
     },
     "mail": {
       "error": "Kan ej lägga till mottagaren"
+    },
+    "": {
+      "errorHandler": {
+        "badFile": "Felaktig fil"
+      }
     }
   },
   "reviewHandler": {

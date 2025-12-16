@@ -9,13 +9,16 @@ import {
 import { RecipientDto } from '@/dtos/recipient.dto';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
-import { ExtendedRecipient } from '@/interfaces/recipient.interface';
-import { RecipientApiResponse, RecipientNameApiResponse } from '@/responses/recipient.response';
+import { CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
+import { CsvApiResponse, RecipientApiResponse, RecipientNameApiResponse } from '@/responses/recipient.response';
 import ApiService from '@/services/api.service';
+import { checkCsv } from '@/utils/csv-service/csv-service';
+import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Response } from 'express';
-import { Body, Controller, Get, Param, Post, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
+import { randomUUID } from 'node:crypto';
+import { Body, Controller, Get, Param, Post, QueryParam, Req, Res, UploadedFile, UseBefore } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 @Controller()
@@ -113,6 +116,40 @@ export class RecipientController {
     } catch (error) {
       logger.error('Error getting citizen', error);
       throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal server error');
+    }
+  }
+
+  @Post('/recipient/csv')
+  @OpenAPI({ summary: 'Check status of csv-file and save to session' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(CsvApiResponse)
+  async getCsvStatus(
+    @Req() req: RequestWithUser,
+    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
+    @Res() response: Response<CsvApiResponse>,
+  ): Promise<Response<CsvApiResponse>> {
+    try {
+      const isGoodCsv = checkCsv(csvFile);
+      const id = randomUUID();
+      if (isGoodCsv) {
+        const data = {
+          id,
+          status: CSVStatus.Ok,
+          name: csvFile.originalname,
+        };
+        req.session.csv = { ...data, file: csvFile };
+        return response.send({ message: 'success', data });
+      } else {
+        const data = {
+          id,
+          status: CSVStatus.Bad,
+          name: csvFile.originalname,
+        };
+        return response.send({ message: 'success', data });
+      }
+    } catch (error) {
+      logger.error('Error checking csv-file', error);
+      throw new HttpException(500, 'Internal server error');
     }
   }
 }

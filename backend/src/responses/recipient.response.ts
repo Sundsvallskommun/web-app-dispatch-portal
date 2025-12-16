@@ -1,5 +1,5 @@
 import { Address as AddressType, RecipientDeliveryMethodEnum } from '@/data-contracts/postportalservice/data-contracts';
-import { ExtendedRecipient } from '@/interfaces/recipient.interface';
+import { CSV, CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
 import { ApiResponse } from '@/services/api.service';
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
@@ -43,6 +43,15 @@ export class Recipient implements ExtendedRecipient {
   personNumber?: string;
 }
 
+export class Csv implements Omit<CSV, 'file'> {
+  @IsString()
+  name: string;
+  @IsString()
+  id: string;
+  @IsEnum(CSVStatus)
+  status: CSVStatus;
+}
+
 export class RecipientApiResponse implements ApiResponse<ExtendedRecipient> {
   @ValidateNested()
   @Type(() => Recipient)
@@ -54,6 +63,14 @@ export class RecipientApiResponse implements ApiResponse<ExtendedRecipient> {
 export class RecipientNameApiResponse implements ApiResponse<string> {
   @IsString()
   data: string;
+  @IsString()
+  message: string;
+}
+
+export class CsvApiResponse implements ApiResponse<Csv> {
+  @ValidateNested()
+  @Type(() => Csv)
+  data: Csv;
   @IsString()
   message: string;
 }

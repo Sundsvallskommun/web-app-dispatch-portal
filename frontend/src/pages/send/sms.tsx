@@ -180,12 +180,11 @@ export default function SendEmailPage() {
         />
       }
     >
-      <h1 className="sr-only">{t('send-sms:sendSms')}</h1>
-      <div className="text-lg mb-11 ">
+      <div>
         {success ? (
           <div className="text-center pt-64">
             <Icon size="5.6rem" color="gronsta" icon={<BadgeCheck />} />
-            <h2 className="mt-24">{t('send-sms:yourMessageSent')}</h2>
+            <h1 className="text-h4-sm md:text-h4-md xl:text-h4-lg mt-24">{t('send-sms:yourMessageSent')}</h1>
             <p className="my-md text-base">
               <Trans i18nKey={'send-sms:youCanReviewUnderSentTab'} components={{ strong: <strong /> }} />
             </p>
@@ -201,10 +200,8 @@ export default function SendEmailPage() {
               >
                 {t('send-sms:sendNewSms')}
               </Button>
-              <NextLink href="/" passHref legacyBehavior>
-                <Button className="mt-lg" color="vattjom">
-                  {t('send-sms:toStartPage')}
-                </Button>
+              <NextLink href="/" className="sk-btn sk-btn-md sk-btn-primary mt-lg" data-color="vattjom">
+                {t('send-sms:toStartPage')}
               </NextLink>
             </div>
           </div>
@@ -212,14 +209,14 @@ export default function SendEmailPage() {
           <div className="flex flex-col w-full max-w-[82rem] mx-auto mt-64">
             <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col w-full justify-center gap-24">
-                <div className="flex flex-col items-start w-full shadow-50 p-32 rounded-14 gap-40">
+                <div className="flex flex-col items-start w-full shadow-50 p-32 rounded-14 gap-40 bg-background-content">
                   <div className="w-full flex flex-col gap-8">
-                    <div className="text-h4-md">{t('send-sms:title')}</div>
-                    <div className="font-normal text-dark-secondary text-label-medium">{t('send-sms:description')}</div>
+                    <h2 className="text-h4-md m-0">{t('send-sms:title')}</h2>
+                    <p className="text-dark-secondary">{t('send-sms:description')}</p>
                   </div>
                   <div className="flex flex-col gap-56 items-start self-stretch">
                     <div>
-                      <div className="flex max-w-382 flex-col items-start gap-16">
+                      <div className="flex max-w-[38rem] flex-col items-start gap-16">
                         <div className="flex flex-col items-start gap-8 self-stretch w-full">
                           <FormControl
                             invalid={!!errors.singleRecipient?.message || !!errors.recipientList}
@@ -235,7 +232,7 @@ export default function SendEmailPage() {
                               className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full"
                             >
                               <Input
-                                className="flex items-center gap-8 flex-1 w-full min-w-249"
+                                className="flex items-center gap-8 flex-1 w-full min-w-[25rem]"
                                 {...register('singleRecipient')}
                               />
                               <Button
@@ -295,7 +292,7 @@ export default function SendEmailPage() {
                       </div>
                       <Textarea
                         data-cy="sms-message-input"
-                        className="flex min-h-182 flex-col items-start gap-8 self-stretch w-full text-dark-placeholder"
+                        className="flex min-h-[18.2rem] flex-col items-start gap-8 self-stretch w-full text-dark-placeholder"
                         maxLength={459}
                         {...register('message')}
                       />

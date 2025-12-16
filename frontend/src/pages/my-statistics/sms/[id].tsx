@@ -7,9 +7,9 @@ import dayjs from 'dayjs';
 import { createEmptyUserMessage, UserMessage } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
-import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatMobileNumberDisplay } from '@utils/phone-number.helpers';
+import { capitalize } from 'underscore.string';
 
 const defaultMessageInfo: UserMessage = createEmptyUserMessage();
 

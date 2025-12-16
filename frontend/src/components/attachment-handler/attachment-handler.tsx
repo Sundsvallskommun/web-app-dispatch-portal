@@ -12,8 +12,8 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
 import { FormControl, Icon, ProgressBar } from '@sk-web-gui/react';
+import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@utils/file.utils';
 import { Menu } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';

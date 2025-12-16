@@ -1,5 +1,5 @@
 import { FormModel } from '@pages/send/mail';
-import { sendMessage, sendRecMessage } from '@services/message-service';
+import { sendCsvMessage, sendMessage, sendRecMessage } from '@services/message-service';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, useSnackbar } from '@sk-web-gui/react';
 import { SendHorizonal } from 'lucide-react';
@@ -29,6 +29,19 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
     return recipients.find((r) => r.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE')?.partyId;
   }, [recipients]);
 
+  const handleCsvSend = () => {
+    setIsSending(true);
+    sendCsvMessage(getValues())
+      .then((res) => {
+        setIsSending(false);
+        setResponse(res);
+      })
+      .catch((e) => {
+        console.error(e);
+        setIsSending(false);
+        message({ message: t('send-mail:reviewHandler.error'), status: 'error' });
+      });
+  };
   const handleNormalSend = () => {
     setIsSending(true);
     sendMessage(
@@ -61,6 +74,15 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
       });
   };
 
+  const handleSend = () => {
+    if (sendType === formSendType.REK_MAIL) {
+      handleRecSend();
+    } else if (getValues().recipientList?.length > 0) {
+      handleCsvSend();
+    } else {
+      handleNormalSend();
+    }
+  };
   return (
     <Button
       variant="primary"
@@ -69,10 +91,7 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
       rightIcon={<SendHorizonal />}
       loading={isSending}
       loadingText={t('common:sending')}
-      onClick={() => {
-        if (sendType === formSendType.REK_MAIL) handleRecSend();
-        else handleNormalSend();
-      }}
+      onClick={() => handleSend()}
     >
       {t('common:send')}
     </Button>

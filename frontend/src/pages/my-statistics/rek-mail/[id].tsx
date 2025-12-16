@@ -19,12 +19,12 @@ import dayjs from 'dayjs';
 import { EnumLetterState, RecAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
-import { capitalize } from '@mui/material';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatPersonNumber } from '@utils/helpers';
 import { useRecipientName } from '@services/recipient-service';
 import { EnumColors } from '@interfaces/common';
 import CustomAlert from '@components/custom-alert/custom-alert-component';
+import { capitalize } from 'underscore.string';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();

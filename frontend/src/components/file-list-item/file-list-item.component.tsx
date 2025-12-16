@@ -45,7 +45,7 @@ export const FileListItemComponent: React.FC<FileListItemComponentProps> = (prop
               {data?.file?.name}
             </strong>
           </span>
-          <span className="text-small text-secondary">{data?.file?.size && formatBytes(data.file.size, 0)}</span>
+          {data?.file?.size && <span className="text-small text-secondary">{formatBytes(data.file.size, 0)}</span>}
         </div>
       </div>
       {!!handleRemove && (
