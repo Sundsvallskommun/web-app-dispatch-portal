@@ -1,23 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
 import FileUpload from '@components/file-upload/file-upload.component';
-import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@services/message-service';
-import { FormControl, Icon, ProgressBar } from '@sk-web-gui/react';
-import { useFormContext } from 'react-hook-form';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { FormControl, Icon, ProgressBar } from '@sk-web-gui/react';
+import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@utils/file.utils';
 import { Menu } from 'lucide-react';
+import { useEffect, useMemo } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 
 export interface Attachment {
   file: File | undefined;
@@ -32,7 +32,6 @@ const AttachmentHandler: React.FC = () => {
   const maxSecondary = 3;
   const { register, watch, setValue, getValues } = useFormContext<AttachmentFormModel>();
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
-  const [resetErrorTrigger, setResetErrorTrigger] = useState(0);
   const { t } = useTranslation(['send-mail']);
 
   useEffect(() => {
@@ -47,10 +46,6 @@ const AttachmentHandler: React.FC = () => {
   const progressBarValues = {
     steps: MAX_ATTACHMENT_FILE_SIZE_MB * 10,
     current: Number(fileStorageLimit) * 10,
-  };
-
-  const handleErrorTrigger = () => {
-    setResetErrorTrigger((prev) => prev + 1);
   };
 
   const handleRemove = (index: number) => {
@@ -91,7 +86,6 @@ const AttachmentHandler: React.FC = () => {
           accept={['.pdf', '.PDF']}
           helperText={t('send-mail:attachmentHandler.helperText')}
           maxFileSizeMB={MAX_ATTACHMENT_FILE_SIZE_MB}
-          resetErrorTrigger={resetErrorTrigger}
         />
       </FormControl>
       <div className="flex flex-col gap-8 w-full">
@@ -116,13 +110,7 @@ const AttachmentHandler: React.FC = () => {
                   strategy={verticalListSortingStrategy}
                 >
                   {attachmentList.map((attach) => (
-                    <SortableItem
-                      key={attach.index}
-                      id={attach.index}
-                      attach={attach}
-                      handleRemove={handleRemove}
-                      callback={handleErrorTrigger}
-                    />
+                    <SortableItem key={attach.index} id={attach.index} attach={attach} handleRemove={handleRemove} />
                   ))}
                 </SortableContext>
               </DndContext>
@@ -140,17 +128,12 @@ const SortableItem: React.FC<{
   id: number;
   attach: Attachment;
   handleRemove: (index: number) => void;
-  callback: () => void;
-}> = ({ id, attach, handleRemove, callback }) => {
+}> = ({ id, attach, handleRemove }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  };
-
-  const handleErrorTriggerCallback = () => {
-    callback();
   };
 
   return (
@@ -160,12 +143,7 @@ const SortableItem: React.FC<{
         <div className="py-24 px-22 border-r-1 content-center" {...listeners}>
           <Icon icon={<Menu />} />
         </div>
-        <FileListItemComponent
-          data={attach}
-          callback={handleErrorTriggerCallback}
-          handleRemove={() => handleRemove(id)}
-          noBorder={true}
-        />
+        <FileListItemComponent data={attach} handleRemove={() => handleRemove(id)} noBorder={true} />
       </div>
     </div>
   );

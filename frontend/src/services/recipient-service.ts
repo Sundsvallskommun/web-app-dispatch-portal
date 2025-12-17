@@ -1,56 +1,22 @@
 import { apiService } from '@services/api-service';
 import { __DEV__ } from '@sk-web-gui/react';
-import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
+import {
+  Csv,
+  CsvApiResponse,
+  Message,
+  Recipient,
+  RecipientApiResponse,
+  RecipientDto,
+  RecipientNameApiResponse,
+} from 'src/data-contracts/backend/data-contracts';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { Recipient as StatisticsRecipient } from '@interfaces/statistics.interface';
+import { file2blob } from '@utils/file.utils';
 
 export const MAX_RECIPIENT_FILE_SIZE_MB = 50;
 export const MAX_RECIPIENT_ROW_SIZE = 250;
-
-export interface Recipient {
-  personnumber: string;
-}
-
-type RecipientError = 'MISSING' | 'INVALID_SSN' | 'MINOR' | 'UNKNOWN';
-
-export interface Citizenaddress {
-  personId: string;
-  personNumber?: string;
-  givenname: string;
-  lastname: string;
-  addresses: [
-    {
-      realEstateDescription: string;
-      co: string;
-      address: string;
-      addressArea: string;
-      addressNumber: string;
-      addressLetter: string;
-      appartmentNumber: string;
-      postalCode: string;
-      city: string;
-      country: string;
-    },
-  ];
-  errorMessage?: string;
-}
-
-export interface RecipientWithAddress {
-  recipient: Recipient;
-  address?: Citizenaddress;
-  error?: RecipientError;
-}
-
-export interface AddWithAddress {
-  firstName: string;
-  lastName: string;
-  address: string;
-  careOf?: string;
-  zipCode: string;
-  city: string;
-}
 
 export interface ErrorMessageObj {
   searchPersonnummerBox: string;
@@ -58,78 +24,9 @@ export interface ErrorMessageObj {
 
 export const ssnPattern = /^$|^((19|20)[0-9]{6}-?[0-9]{4})$/gi;
 
-export const mapRecipientError = (e: RecipientError) => {
-  switch (e) {
-    case 'MISSING':
-      return 'Saknas';
-    case 'INVALID_SSN':
-      return 'Ogiltig';
-    case 'MINOR':
-      return 'Minderårig';
-    default:
-      return 'Okänt fel';
-  }
-};
-export const mapRecipientErrorToColor = (e: RecipientError) => {
-  switch (e) {
-    case 'MISSING':
-      return 'warning';
-    case 'INVALID_SSN':
-      return 'error';
-    case 'MINOR':
-      return 'juniskar';
-    default:
-      return 'vattjom';
-  }
-};
-
-export const toBase64: (file: File) => Promise<string> = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-
-export const getRecipients = async (files: { file?: File }[]): Promise<RecipientWithAddress[]> => {
-  const uploadPromises = files.map(async (f) => {
-    const fileItem = f.file;
-    if (!fileItem) {
-      throw new Error('NO_FILE');
-    }
-    if (fileItem.size / 1024 / 1024 > MAX_RECIPIENT_FILE_SIZE_MB) {
-      throw new Error('MAX_SIZE');
-    }
-    const fileData = await toBase64(fileItem);
-    const buf = Buffer.from(fileData.split(',')[1], 'base64');
-    const blob = new Blob([new Uint8Array(buf)], { type: fileItem.type });
-
-    // Building form data
-    const formData = new FormData();
-    formData.append(`files`, blob, fileItem.name);
-
-    const postFile = () =>
-      apiService
-        .post<{ data: RecipientWithAddress[] }, FormData>(`recipients`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
-        .then((r) => r.data.data)
-        .catch((e) => {
-          if (e.response.data.message === 'MAX_RECIPIENT_ROW_SIZE') {
-            throw new Error('MAX_RECIPIENT_ROW_SIZE');
-          }
-          console.error('Something went wrong when posting recipient list.');
-          throw e;
-        });
-    return postFile();
-  });
-  const res = await Promise.all(uploadPromises);
-  return res[0];
-};
-
-export const getRecipient = async (personnumber: string): Promise<RecipientWithAddress[]> => {
+export const getRecipient = async (personNumber: string, rek?: boolean): Promise<Recipient> => {
   return apiService
-    .post<{ data: RecipientWithAddress[] }, { personnumber: string }>('recipient', { personnumber })
+    .post<RecipientApiResponse, RecipientDto>('recipient', { personNumber }, { force_kirva: rek })
     .then((r) => r.data.data)
     .catch((e) => {
       console.error('Something went wrong when posting recipient list.');
@@ -137,21 +34,15 @@ export const getRecipient = async (personnumber: string): Promise<RecipientWithA
     });
 };
 
-export type MessageResponse =
-  | {
-      recipients: RecipientWithAddress[];
-    }
-  | { recipientPersonId: string };
-
 interface State {
-  recipients: RecipientWithAddress[];
-  addresses: AddWithAddress[];
-  response?: MessageResponse;
+  recipients: Recipient[];
+  addresses: Partial<Recipient>[];
+  response?: Message;
 }
 interface Actions {
-  setRecipients: (rs: RecipientWithAddress[]) => void;
-  setAddresses: (addresses: AddWithAddress[]) => void;
-  setResponse: (r: MessageResponse | undefined) => void;
+  setRecipients: (rs: Recipient[]) => void;
+  setAddresses: (addresses: Partial<Recipient>[]) => void;
+  setResponse: (r: Message | undefined) => void;
   reset: () => void;
 }
 
@@ -176,24 +67,9 @@ export const useMessageStore = create<State & Actions>()(
   )
 );
 
-interface EligibilityItemResponseDto {
-  partyId: string;
-  hasKivra: boolean;
-}
-
-export const getEligibilityKivra = async (partyId: string): Promise<EligibilityItemResponseDto> => {
-  return apiService
-    .post<{ data: EligibilityItemResponseDto }, { partyId: string }>('eligibility-kivra', { partyId })
-    .then((r) => r.data.data)
-    .catch((e) => {
-      console.error('Something went wrong when requesting eligibilty.');
-      throw e;
-    });
-};
-
-export const getCitizen = async (personId: string): Promise<Citizenaddress> => {
+export const getCitizenName = async (personId: string): Promise<string> => {
   const result = await apiService
-    .get<AxiosResponse<Citizenaddress>>(`citizen/${personId}`)
+    .get<RecipientNameApiResponse>(`recipient/${personId}/name`)
     .then((res) => res.data)
     .catch((e) => {
       console.error('Something went wrong when getting citizen.');
@@ -207,13 +83,16 @@ export const useRecipientName = (recipient?: StatisticsRecipient) => {
   const [name, setName] = useState('');
 
   useEffect(() => {
-    if (!recipient?.partyId) return;
+    if (!recipient?.partyId) {
+      setName('');
+      return;
+    }
 
     let cancelled = false;
 
-    getCitizen(recipient.partyId).then((citizen) => {
-      if (!cancelled && citizen) {
-        setName(`${citizen.givenname} ${citizen.lastname}`);
+    getCitizenName(recipient.partyId).then((name) => {
+      if (!cancelled && name) {
+        setName(name);
       }
     });
 
@@ -223,4 +102,23 @@ export const useRecipientName = (recipient?: StatisticsRecipient) => {
   }, [recipient?.partyId]);
 
   return name;
+};
+
+export const checkCsv: (csvFile: File) => Promise<Csv> = async (csvFile) => {
+  const messageFormData = new FormData();
+
+  const csvBlob = await file2blob(csvFile);
+
+  messageFormData.append('csv', csvBlob.blob, csvBlob.attachment.name);
+
+  const res = await apiService
+    .post<CsvApiResponse, FormData>(`recipient/csv`, messageFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .catch((e) => {
+      console.error('Something went wrong when sending message:', e);
+      throw e;
+    });
+
+  return res.data.data;
 };

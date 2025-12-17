@@ -3,7 +3,7 @@ import { cx } from '@sk-web-gui/react';
 
 interface HandlerWrapperProps {
   title: string;
-  description?: string | JSX.Element;
+  description?: string | React.JSX.Element;
   children: ReactNode;
   customClasses?: string | string[];
   gap?: number;

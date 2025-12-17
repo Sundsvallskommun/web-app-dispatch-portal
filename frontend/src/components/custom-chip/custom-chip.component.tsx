@@ -9,7 +9,7 @@ type ICustomChipProps = React.HTMLAttributes<HTMLDivElement> & {
 
 const CustomChip = ({ children, onRemove }: ICustomChipProps) => {
   return (
-    <div className="border-spacing-1 border-1 border-secondary-outline rounded-button items-center py-8 px-12 flex justify-between gap-24 min-w-206 hover:cursor-default">
+    <div className="border-spacing-1 border-1 border-secondary-outline rounded-button items-center py-8 px-12 flex justify-between gap-24 min-w-[20rem] hover:cursor-default">
       <div className="text-dark-secondary lining-nums proportional-nums text-base font-normal">{children}</div>
       <Button
         data-cy="delete-number-button"

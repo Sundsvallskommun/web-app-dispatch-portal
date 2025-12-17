@@ -32,12 +32,27 @@ const headers: Array<AutoTableHeader | string> = [
     label: 'Sms',
   },
 ];
+const generateMonthOptions = () => {
+  const options = [];
+  const today = dayjs();
+
+  for (let i = 0; i < 12; i++) {
+    const date = today.subtract(i, 'month');
+    const value = date.format('YYYY-MM');
+    const label = date.format('MMMM YYYY');
+    options.push({ value, label });
+  }
+
+  return options;
+};
 
 export const StatisticsPage = () => {
+  const [initialYear, initialMonth] = generateMonthOptions()[0].value.split('-');
+
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const [departmentStatistics, setDepartmentStatistics] = React.useState<Statistics[]>([]);
-  const [selectedYear, setSelectedYear] = useState<number | undefined>();
-  const [selectedMonth, setSelectedMonth] = useState<number | undefined>();
+  const [selectedYear, setSelectedYear] = useState<string>(initialYear);
+  const [selectedMonth, setSelectedMonth] = useState<string>(initialMonth);
   const { t } = useTranslation(['common', 'statistics']);
 
   useEffect(() => {
@@ -58,28 +73,14 @@ export const StatisticsPage = () => {
   const handleDateChange = (date: string) => {
     setLoaded(false);
     if (!date) {
-      setSelectedYear(undefined);
-      setSelectedMonth(undefined);
+      setSelectedYear(initialYear);
+      setSelectedMonth(initialMonth);
       return;
     }
 
-    const [year, month] = date.split('-').map(Number);
+    const [year, month] = date.split('-');
     setSelectedYear(year);
     setSelectedMonth(month);
-  };
-
-  const generateMonthOptions = () => {
-    const options = [];
-    const today = dayjs();
-
-    for (let i = 0; i < 12; i++) {
-      const date = today.subtract(i, 'month');
-      const value = date.format('YYYY-MM');
-      const label = date.format('MMMM YYYY');
-      options.push({ value, label });
-    }
-
-    return options;
   };
 
   return (
@@ -93,8 +94,7 @@ export const StatisticsPage = () => {
             <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
               {t('statistics:showPerMonth')}
             </label>
-            <Select id="month" size="sm" onSelectValue={handleDateChange}>
-              <Select.Option value="">{t('common:chooseMonth')}</Select.Option>
+            <Select id="month" size="sm" onSelectValue={handleDateChange} value={`${selectedYear}-${selectedMonth}`}>
               {generateMonthOptions().map((option) => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}
@@ -106,8 +106,8 @@ export const StatisticsPage = () => {
             {selectedYear &&
               selectedMonth &&
               t('statistics:fromToDates', {
-                from: getMonthFirstDayDate(selectedYear, selectedMonth),
-                to: getMonthLastDayDate(selectedYear, selectedMonth),
+                from: getMonthFirstDayDate(Number(selectedYear), Number(selectedMonth)),
+                to: getMonthLastDayDate(Number(selectedYear), Number(selectedMonth)),
               })}
           </span>
         </div>

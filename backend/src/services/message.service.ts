@@ -1,98 +1,16 @@
 import { getApiBase, MUNICIPALITY_ID } from '@/config';
-import ApiService, { ApiResponse } from './api.service';
-import { RecipientWithAddress } from './recipient.service';
+import { Address, Recipient } from '@/data-contracts/postportalservice/data-contracts';
+import { MessageResponseData } from '@/interfaces/message.interface';
 import { User } from '@/interfaces/users.interface';
-import FormData from 'form-data';
 import { logger } from '@/utils/logger';
-
-export interface AgnosticMessageResponse {
-  messageId: string;
-}
-
-export interface EmailRequest {
-  party?: {
-    partyId: string;
-    externalReferences?: [
-      {
-        key: string;
-        value: string;
-      },
-    ];
-  };
-  emailAddress: string;
-  sender?: {
-    name: string;
-    address: string;
-    replyTo: string;
-  };
-  subject: string;
-  message: string;
-  htmlMessage: string;
-}
-
-export interface SmsAndEmailRequest {
-  messages: {
-    party?: {
-      partyId: string;
-      externalReferences?: [
-        {
-          key: string;
-          value: string;
-        },
-      ];
-    };
-    sender?: {
-      email: {
-        name: string;
-        address: string;
-        replyTo: string;
-      };
-      sms: {
-        name: string;
-      };
-    };
-    subject: string;
-    message: string;
-    htmlMessage: string;
-  }[];
-}
-
-export interface DigitalMailAttachment {
-  deliveryMode: 'ANY' | 'DIGITAL_MAIL' | 'SNAIL_MAIL';
-  contentType: 'application/pdf';
-  content: string;
-  filename: string;
-}
-
-interface Address {
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartmentNumber: string;
-  careOf: string;
-  zipCode: string;
-  city: string;
-  country: string;
-}
+import FormData from 'form-data';
+import ApiService, { ApiResponse } from './api.service';
 
 export interface LetterRequest {
   subject: string;
   contentType: 'text/plain';
   body: string;
-  recipients: {
-    partyId: string;
-    deliveryMethod: string;
-    address: {
-      firstName: string;
-      lastName: string;
-      street: string;
-      apartmentNumber: string;
-      careOf: string;
-      zipCode: string;
-      city: string;
-      country: string;
-    };
-  }[];
+  recipients: Recipient[];
   addresses: Address[];
   headers?: [
     {
@@ -193,15 +111,6 @@ export const sendSmsMessage: (
     });
 };
 
-export type MessageResponseData =
-  | {
-      recipients: RecipientWithAddress[];
-    }
-  | { recipientPersonId: string }
-  | { csv: boolean };
-
-export type MessageResponse = ApiResponse<MessageResponseData>;
-
 function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
   if (!files?.length) return;
 
@@ -224,36 +133,20 @@ function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): vo
 export const sendLetter: (
   user: User,
   api: ApiService,
-  recipients: RecipientWithAddress[],
+  recipients: Recipient[],
   message: Message,
   addresses: Address[],
 ) => Promise<MessageResponseData> = async (user, api, recipients, message, addresses) => {
   const { subject, files, body } = message;
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter`;
 
-  const request = {
+  const request: LetterRequest = {
     subject: subject,
     contentType: 'text/plain',
-    recipients: recipients.map(r => {
-      const currAddress = r.address.addresses?.length > 0 ? r.address.addresses[0] : undefined;
-      return {
-        partyId: r.address.personId,
-        deliveryMethod: r.address.deliveryMethod,
-        address: {
-          firstName: r.address.givenname,
-          lastName: r.address.lastname,
-          street: currAddress.address,
-          apartmentNumber: currAddress.appartmentNumber,
-          careOf: currAddress.co,
-          zipCode: currAddress.postalCode,
-          city: currAddress.city,
-          country: currAddress.country,
-        },
-      };
-    }),
+    recipients: recipients,
     addresses: addresses,
-    body: body ?? 'This is the body of the registered letter.',
-  } as LetterRequest;
+    body: body ?? '-',
+  };
 
   const form = new FormData();
 
@@ -270,8 +163,8 @@ export const sendLetter: (
 
   return api
     .post<string, FormData>({ url, data: form, headers }, user)
-    .then(async (_res: ApiResponse<string>) => {
-      return { recipients };
+    .then(async () => {
+      return { recipients, addresses };
     })
     .catch(e => {
       const errorMessage = 'Error when sending message';
@@ -290,7 +183,7 @@ export const sendRecLetter: (user: User, api: ApiService, message: RecMessage) =
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/registered-letter`;
 
   const request = {
-    body: body ?? 'This is the body of the registered letter.',
+    body: body ?? '-',
     contentType: 'text/plain',
     subject: subject,
     partyId: recipientPersonId,
@@ -336,7 +229,7 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   const request = {
     subject: subject,
     contentType: 'text/plain',
-    body: body ?? 'This is the body of the registered letter.',
+    body: body ?? '-',
   } as CsvLetterRequest;
 
   const form = new FormData();
@@ -353,7 +246,11 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
     throw new Error('Wrong csv file mimetype; must be text/csv');
   }
   if (!Buffer.isBuffer(csvFile.buffer)) {
-    throw new TypeError('Csv file buffer missing');
+    // eslint-disable-next-line no-explicit-any
+    csvFile.buffer = Buffer.from((csvFile.buffer as any).data);
+    if (!Buffer.isBuffer(csvFile.buffer)) {
+      throw new TypeError('Csv file buffer missing');
+    }
   }
   form.append('csv-file', csvFile.buffer, {
     filename: csvFile.originalname,
@@ -367,7 +264,7 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
 
   return api
     .post<string, FormData>({ url, data: form, headers }, user)
-    .then(async (res: ApiResponse<string>) => {
+    .then(async () => {
       return { csv: true };
     })
     .catch(e => {

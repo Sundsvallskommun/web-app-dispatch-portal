@@ -1,11 +1,9 @@
-import { ReactElement, useMemo, useState } from 'react';
-import NextLink from 'next/link';
-import { Button, cx, Icon, Link } from '@sk-web-gui/react';
-import { CircleX, HelpCircle } from 'lucide-react';
 import { HelpComposer } from '@components/help/help-composer';
+import { Button, cx, Icon, useThemeQueries } from '@sk-web-gui/react';
+import { CircleX, HelpCircle } from 'lucide-react';
+import NextLink from 'next/link';
+import { ReactElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWindowSize } from 'src/hooks/useWindowSize';
-import { tailwindBreakPoint } from 'src/constants';
 import { EnumQATags } from 'src/types';
 
 interface FormStepperHeaderProps {
@@ -17,48 +15,35 @@ interface FormStepperHeaderProps {
 
 const FormStepperHeader = ({ title, icon, helpType, isSuccess = false }: FormStepperHeaderProps) => {
   const [showHelpComposer, setShowHelpComposer] = useState(false);
-  const { width } = useWindowSize();
   const { t } = useTranslation(['common']);
-  const isMd = width < tailwindBreakPoint.MD;
+  const { isMaxSm } = useThemeQueries();
   const showCancelButton = useMemo(() => !isSuccess, [isSuccess]);
   const showTitle = useMemo(() => !isSuccess, [isSuccess]);
   const openHelpComposer = () => setShowHelpComposer(true);
   const closeHelpComposer = () => setShowHelpComposer(false);
   const justifyClass = !showCancelButton && !showTitle ? 'justify-end' : 'justify-between';
 
-  const cancelButton = (
-    <NextLink href="/" passHref legacyBehavior>
-      {isMd ? (
-        <Button
-          data-cy="cancel-mobile-button"
-          iconButton
-          variant="secondary"
-          className="border-0"
-          aria-label={t('common:cancel')}
-        >
-          <Icon icon={<CircleX />} />
-        </Button>
-      ) : (
-        <Link data-cy="cancel-button" strong={true} variant="tertiary">
-          {t('common:cancel')}
-        </Link>
-      )}
+  const cancelButton = isMaxSm ? (
+    <NextLink href="/" data-cy="cancel-mobile-button" aria-label={t('common:cancel')}>
+      <Icon icon={<CircleX />} />
+    </NextLink>
+  ) : (
+    <NextLink href="/" data-cy="cancel-button" className="sk-link text-dark-secondary font-bold">
+      {t('common:cancel')}
     </NextLink>
   );
 
-  const helpButton = isMd ? (
-    <Button
+  const helpButton = isMaxSm ? (
+    <button
       data-cy="help-button"
-      iconButton
-      variant="secondary"
-      className="border-0"
+      className="text-dark-secondary"
       onClick={openHelpComposer}
       aria-label={t('common:help')}
     >
       <Icon icon={<HelpCircle />} />
-    </Button>
+    </button>
   ) : (
-    <Button data-cy="help-button" className="min-w-[10.4rem]" variant="secondary" onClick={openHelpComposer}>
+    <Button data-cy="help-button" variant="secondary" onClick={openHelpComposer}>
       <Icon icon={<HelpCircle />} />
       {t('common:help')}
     </Button>
@@ -69,15 +54,15 @@ const FormStepperHeader = ({ title, icon, helpType, isSuccess = false }: FormSte
       data-cy="header"
       className={cx(
         'flex grow justify-center py-16 w-full border-b-1 border-solid max-h-[78px]',
-        isMd ? 'px-16' : 'px-80'
+        isMaxSm ? 'px-16' : 'px-80'
       )}
     >
       <div className={cx('flex grow items-center w-full max-w-[--max-w-7xl]', justifyClass)}>
-        <div className={cx(!isMd && 'pr-54')}>{showCancelButton && cancelButton}</div>
+        <div className={cx(!isMaxSm && 'pr-54')}>{showCancelButton && cancelButton}</div>
         {showTitle && (
-          <div className={cx('flex items-center gap-12', isMd ? 'm-12' : 'w-[--w-stepper-content]')}>
-            {!isMd && <Icon icon={icon} />}
-            <h4 className="text-xs md:text-[2rem]">{title}</h4>
+          <div className={cx('flex items-center gap-12', isMaxSm ? 'm-12' : 'w-[--w-stepper-content]')}>
+            {!isMaxSm && <Icon icon={icon} />}
+            <h1 className="text-h4-sm md:text-h4-md xl:text-h4-lg m-0">{title}</h1>
           </div>
         )}
         {helpButton}

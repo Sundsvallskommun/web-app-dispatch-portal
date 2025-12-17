@@ -1,16 +1,9 @@
-import { FormModel } from '@pages/send/mail';
-import { ApiResponse, apiService } from './api-service';
-import { AddWithAddress, MessageResponse, RecipientWithAddress, toBase64 } from './recipient-service';
-import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { Attachment } from '@components/attachment-handler/attachment-handler';
-
-export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
-export interface FileInfo {
-  name: string;
-  extension: string;
-  mimeType: string;
-  file: string;
-}
+import { SMSRequest, SMSStatus } from '@interfaces/sms';
+import { FormModel } from '@pages/send/mail';
+import { Address, Message, MessageApiResponse, Recipient } from 'src/data-contracts/backend/data-contracts';
+import { ApiResponse, apiService } from './api-service';
+import { file2blob, FileInfo } from '@utils/file.utils';
 
 export const mapMessageType = (key: 'DIGITAL_MAIL' | 'SNAIL_MAIL') => {
   switch (key) {
@@ -21,23 +14,6 @@ export const mapMessageType = (key: 'DIGITAL_MAIL' | 'SNAIL_MAIL') => {
     default:
       return key;
   }
-};
-
-const file2blob = async (fileItem: File) => {
-  if (fileItem.size / 1024 / 1024 > MAX_ATTACHMENT_FILE_SIZE_MB) {
-    console.error('File too large.');
-    return Promise.reject();
-  }
-  const fileData = await toBase64(fileItem);
-  const attachment: FileInfo = {
-    name: fileItem.name,
-    extension: fileItem.name.split('.').pop() || '',
-    mimeType: fileItem.type,
-    file: fileData.split(',')[1],
-  };
-  const buf = Buffer.from(attachment.file, 'base64');
-  const blob = new Blob([new Uint8Array(buf)], { type: attachment.mimeType });
-  return { attachment, blob };
 };
 
 export const sendSms: (data: SMSRequest) => Promise<SMSStatus> = async (data) => {
@@ -66,11 +42,11 @@ const getAttachmentsBlob = async (attachmentList: Attachment[]) => {
 // Use multipart/form-data
 export const sendMessage: (
   data: FormModel,
-  recipients: RecipientWithAddress[],
-  addresses: AddWithAddress[]
-) => Promise<MessageResponse> = async (data, recipients, addresses) => {
+  recipients: Recipient[],
+  addresses: Partial<Recipient>[]
+) => Promise<Message> = async (data, recipients, _addresses) => {
   const messageFormData = new FormData();
-
+  const addresses: Address[] = _addresses.map((recipient) => recipient.address).filter((address) => !!address);
   const attachmentList = data.attachmentList;
   const attachmentResults = await getAttachmentsBlob(attachmentList);
 
@@ -89,7 +65,7 @@ export const sendMessage: (
   messageFormData.append('addresses', JSON.stringify(addresses));
 
   const res = await apiService
-    .post<ApiResponse<MessageResponse>, FormData>(`message`, messageFormData, {
+    .post<MessageApiResponse, FormData>(`message`, messageFormData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .catch((e) => {
@@ -100,7 +76,36 @@ export const sendMessage: (
   return res.data.data;
 };
 
-export const sendRecMessage: (formData: FormModel, recipientPersonId: string) => Promise<MessageResponse> = async (
+export const sendCsvMessage: (data: FormModel) => Promise<Message> = async (data) => {
+  if (!data.recipientList[0]) {
+    throw new Error('No csv file included');
+  }
+
+  const messageFormData = new FormData();
+  const attachmentList = data.attachmentList;
+  const attachmentResults = await getAttachmentsBlob(attachmentList);
+
+  for (const result of attachmentResults) {
+    if (result.status === 'fulfilled') {
+      const attachment = result.value.attachment;
+      const blob = result.value.blob;
+      messageFormData.append(`files`, blob, attachment.name);
+    } else {
+      console.error(`Error: attachment could not be processed for the following reason: ${result.reason}`);
+    }
+  }
+
+  messageFormData.append('subject', data.subject);
+  messageFormData.append('csvId', data.recipientList[0].id);
+
+  return apiService
+    .post<MessageApiResponse, FormData>(`csv-message`, messageFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .then((res) => res.data.data);
+};
+
+export const sendRecMessage: (formData: FormModel, recipientPersonId: string) => Promise<Message> = async (
   data,
   recipientPersonId
 ) => {
@@ -123,7 +128,7 @@ export const sendRecMessage: (formData: FormModel, recipientPersonId: string) =>
   messageFormData.append('recipientPersonId', recipientPersonId);
 
   const res = await apiService
-    .post<ApiResponse<MessageResponse>, FormData>(`rec-message`, messageFormData, {
+    .post<MessageApiResponse, FormData>(`rec-message`, messageFormData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .catch((e) => {

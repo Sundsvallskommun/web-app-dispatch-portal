@@ -34,7 +34,7 @@
   }
 
   .main-card {
-    @apply w-full lg:max-w-340 lg:min-h-220;
+    @apply w-full lg:max-w-[34rem] lg:min-h-[22rem];
   }
 
   .main-card :is(.sk-card-body-wrapper) {

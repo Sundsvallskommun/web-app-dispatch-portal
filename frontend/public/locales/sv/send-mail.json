@@ -76,18 +76,29 @@
       "default": "Något gick fel när mottagarlistan hanterades",
       "invalidRecipient": "Ogiltiga mottagare ({num})",
       "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
-      "singleRecipientError": "Du måste lägga till en mottagare."
+      "singleRecipientError": "Du måste lägga till en mottagare.",
+      "csvError": "Du måste lägga till en fil",
+      "badCsvFile": "Felaktig CSV-fil. Får endast innehålla personnummer."
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är redan tillagd",
-      "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?"
+      "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?",
+      "csvFile": "Kunde inte kontroller CSV-fil. Kontrollera din fil, och försök igen."
     },
     "personalNumberError": {
       "fewNumber": "För få siffror i personnumret",
       "tooManyNumbers": "För många siffror i personnumret"
     },
-    "modalLabel": "Vill du lägga till mottagare med mottagarlista?",
-    "modalWarning": "Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna",
+    "changeTo": {
+      "list": {
+        "label": "Vill du lägga till mottagare med mottagarlista?",
+        "text": "Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna"
+      },
+      "person": {
+        "label": "Vill du lägga till mottagare med personnummer eller adress?",
+        "text": "Listan du lagt till kommer att försvinna"
+      }
+    },
     "searchPersonalNumber": "Sök mottagare med personnummer",
     "searchPersonalNumberHelper": "Ange personnumret i formatet ååååmmddxxxx",
     "addedRecipientsTitle": "Tillagda mottagare",
@@ -123,11 +134,20 @@
         "zipCode": "Postnummer måste anges",
         "city": "Ort måste anges"
       }
+    },
+    "mail": {
+      "error": "Kan ej lägga till mottagaren"
+    },
+    "": {
+      "errorHandler": {
+        "badFile": "Felaktig fil"
+      }
     }
   },
   "reviewHandler": {
     "header": "Granska utskick",
     "recipients": "Mottagare",
+    "recipientlist": "Mottagarlista",
     "attachments": "Bifogade filer",
     "subject": "Rubrik",
     "department": "Förvaltning",

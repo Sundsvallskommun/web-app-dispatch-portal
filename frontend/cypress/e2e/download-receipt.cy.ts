@@ -1,8 +1,8 @@
 describe('Sinlgle letter statistics page', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/api/me', { fixture: 'me.json' });
-    cy.intercept('GET', '**/api/citizen/00000000-0000-0000-0000-000000000000', {
-      fixture: 'citizen.json',
+    cy.intercept('GET', '**/api/recipient/00000000-0000-0000-0000-000000000000/name', {
+      fixture: 'recipientname.json',
     });
     cy.intercept('GET', '**/api/my-statistics/00000000-0000-0000-0000-000000000002', {
       fixture: 'statistics-rek-mail.json',

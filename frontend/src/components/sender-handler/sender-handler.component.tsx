@@ -39,7 +39,12 @@ export const SenderHandler: React.FC = () => {
     >
       <FormControl className="w-full" size="md">
         <FormLabel className="text-label-medium">{t('send-mail:senderHandler.formLabelHeader')}</FormLabel>
-        <Input invalid={!!errors?.subject} className="max-w-[467px]" {...register('subject')} />
+        <Input
+          invalid={!!errors?.subject}
+          data-cy="sender-subject"
+          className="max-w-[467px]"
+          {...register('subject')}
+        />
         {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} padded={false} />}
       </FormControl>
       <Divider className="w-full my-22" />

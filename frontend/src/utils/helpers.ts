@@ -1,4 +1,5 @@
-export const formatPersonNumber = (personnumber: string | number) => {
+export const formatPersonNumber = (personnumber?: string | number) => {
+  if (!personnumber) return '';
   const str = personnumber.toString();
   const isValid = /\d/g.test(str) && (str.length === 10 || str.length === 12);
   if (!isValid) return str;

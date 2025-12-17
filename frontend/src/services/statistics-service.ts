@@ -18,7 +18,7 @@ export const useStatistics = (): { departmentStatistics: Statistics[]; loaded: b
   return { departmentStatistics: data, loaded };
 };
 
-export const getStatisticsByDate = async (year?: number, month?: number): Promise<Statistics[]> => {
+export const getStatisticsByDate = async (year?: string, month?: string): Promise<Statistics[]> => {
   if (year === undefined && month === undefined) {
     throw new Error('No "year" and "month" supplied');
   }

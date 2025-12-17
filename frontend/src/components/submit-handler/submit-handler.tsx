@@ -1,5 +1,5 @@
 import { FormModel } from '@pages/send/mail';
-import { sendMessage, sendRecMessage } from '@services/message-service';
+import { sendCsvMessage, sendMessage, sendRecMessage } from '@services/message-service';
 import { useMessageStore } from '@services/recipient-service';
 import { Button, useSnackbar } from '@sk-web-gui/react';
 import { SendHorizonal } from 'lucide-react';
@@ -26,14 +26,27 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
   } = useFormContext<FormModel>();
 
   const recipientPersonId = useMemo(() => {
-    return recipients.find((r) => !r.error)?.address?.personId;
+    return recipients.find((r) => r.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE')?.partyId;
   }, [recipients]);
 
+  const handleCsvSend = () => {
+    setIsSending(true);
+    sendCsvMessage(getValues())
+      .then((res) => {
+        setIsSending(false);
+        setResponse(res);
+      })
+      .catch((e) => {
+        console.error(e);
+        setIsSending(false);
+        message({ message: t('send-mail:reviewHandler.error'), status: 'error' });
+      });
+  };
   const handleNormalSend = () => {
     setIsSending(true);
     sendMessage(
       getValues(),
-      recipients.filter((r) => !r.error),
+      recipients.filter((r) => r.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE'),
       addresses
     )
       .then((res) => {
@@ -61,18 +74,24 @@ const SubmitHandler = ({ sendType = formSendType.MAIL }: SubmitHandlerProps) => 
       });
   };
 
+  const handleSend = () => {
+    if (sendType === formSendType.REK_MAIL) {
+      handleRecSend();
+    } else if (getValues().recipientList?.length > 0) {
+      handleCsvSend();
+    } else {
+      handleNormalSend();
+    }
+  };
   return (
     <Button
       variant="primary"
       color="vattjom"
-      disabled={(recipients.filter((r) => !r.error).length === 0 && addresses.length === 0) || !isValid}
+      disabled={!isValid}
       rightIcon={<SendHorizonal />}
       loading={isSending}
-      loadingText={'common:send'}
-      onClick={() => {
-        if (sendType === formSendType.REK_MAIL) handleRecSend();
-        else handleNormalSend();
-      }}
+      loadingText={t('common:sending')}
+      onClick={() => handleSend()}
     >
       {t('common:send')}
     </Button>

@@ -34,7 +34,7 @@ export default function Start() {
     <>
       <EmptyLayout title={`Postportalen - Logga In`}>
         <div className="flex items-center justify-center min-h-screen">
-          <div className="max-w-5xl w-full flex flex-col bg-white p-20 shadow-lg text-left">
+          <div className="max-w-5xl w-full flex flex-col bg-background-content p-20 shadow-lg text-left">
             <div className="text-center">
               <h3 className="mb-20">
                 Logga in till <br aria-hidden />

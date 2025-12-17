@@ -24,12 +24,11 @@ const Index = () => {
   return (
     <DefaultLayout title={t('start-page:appTitle')} headerMenu={<HeaderMenu />}>
       {!isCheckingPermissions && (
-        <div className="pt-128 flex flex-col items-center gap-32 flex-1 self-stretch">
-          <h1 className="sr-only">{`${t('start-page:screenReader')}.`}</h1>
+        <div className="pt-[12.8rem] flex flex-col items-center gap-32 flex-1 self-stretch">
           <div className="flex self-center items-center flex-col text-lg mb-11 max-w-max gap-56">
             <div className="text-center flex flex-col gap-16 lining-nums proportional-nums">
-              <div className="text-large text-dark-secondary">{t('start-page:subtitle')}</div>
-              <div className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</div>
+              <h1 className="text-large text-dark-secondary font-sans font-normal m-0">{t('start-page:subtitle')}</h1>
+              <p className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</p>
             </div>
             <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
               {canSendLetter && (

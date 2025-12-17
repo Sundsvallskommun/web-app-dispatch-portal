@@ -11,7 +11,7 @@ export default defineConfig({
     video: false,
     screenshotOnRunFailure: false,
     chromeWebSecurity: false,
-    defaultCommandTimeout: 50000,
+    defaultCommandTimeout: 10000,
     retries: 5,
 
     setupNodeEvents(on, config) {

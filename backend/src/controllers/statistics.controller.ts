@@ -9,7 +9,6 @@ import { SigningInfo, UserLetters, UserMessage } from '@/interfaces/my-statistic
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { logger } from '@/utils/logger';
 import { Response } from 'express';
-import { fetchPersonIdPersonnummerRecord } from '@/services/recipient.service';
 
 @Controller()
 export class StatisticsController {
@@ -64,7 +63,7 @@ export class StatisticsController {
   }
 
   @Get('/my-statistics/:id')
-  @OpenAPI({ summary: 'Return my statistics' })
+  @OpenAPI({ summary: 'Return my statistics message' })
   @UseBefore(authMiddleware)
   async getMyStatisticsMessage(
     @Req() req: RequestWithUser,
@@ -77,14 +76,7 @@ export class StatisticsController {
       const result = await this.apiService.get<UserMessage>({ url }, req.user);
 
       const message = result.data;
-      let personnummerRecords = await fetchPersonIdPersonnummerRecord(
-        req.user,
-        this.apiService,
-        message.recipients.map(r => r.partyId),
-      );
-      for (const recipient of message.recipients) {
-        if (recipient.partyId) recipient.personnummer = personnummerRecords[recipient.partyId];
-      }
+
       return response.send(message);
     } catch (error) {
       logger.error('Error getting statistics: ', error);

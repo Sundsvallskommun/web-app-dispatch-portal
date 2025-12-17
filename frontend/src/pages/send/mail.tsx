@@ -15,7 +15,6 @@ import { Mail } from 'lucide-react';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import FormStepperHeader from '@components/form-stepper/form-stepper-header.component';
 import { formSchema } from '../../utils/formSchema.yup';
-import { hasValidRecipients } from '@utils/hasValidRecipients';
 import { useMailStepValidation } from 'src/hooks/useMailStepValidation';
 import { useSendMailEffects } from 'src/hooks/useSendMailEffects';
 import ReviewHandler from '@components/review-handler/review-handler.component';
@@ -44,9 +43,6 @@ const SendMailPage = () => {
     reValidateMode: 'onChange',
     resolver: yupResolver(formSchema),
   });
-  const [step, setStep] = useState<number>(0);
-  const recipients = useMessageStore((state) => state.recipients);
-  const addresses = useMessageStore((state) => state.addresses);
   const setAddresses = useMessageStore((state) => state.setAddresses);
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const setResponse = useMessageStore((state) => state.setResponse);
@@ -72,14 +68,6 @@ const SendMailPage = () => {
 
   useSendMailEffects({ setValue, resetAll, setSuccess });
 
-  const stepTexts: Record<number, string> = {
-    0: t('common:screenReader.postStepper.stepOne'),
-    1: t('common:screenReader.postStepper.stepTwo'),
-    2: t('common:screenReader.postStepper.stepThree'),
-  };
-
-  const getScreenReaderStepperText = () => stepTexts[step] ?? undefined;
-
   return (
     <DefaultLayout
       title={t('send-mail:sendLetter')}
@@ -98,12 +86,8 @@ const SendMailPage = () => {
             {
               label: t('common:stepper.recipient'),
               component: <RecipientHandler />,
-              valid: hasValidRecipients(recipients, addresses),
-              onNextClick: useMailStepValidation(clearErrors, trigger, [
-                'singleRecipient',
-                'recipientList',
-                'storeRecipients',
-              ]),
+              validationProperties: ['recipientList', 'storeRecipients'],
+              onNextClick: useMailStepValidation(clearErrors, trigger, ['recipientList', 'storeRecipients']),
             },
             {
               label: t('common:stepper.files'),
@@ -123,9 +107,7 @@ const SendMailPage = () => {
               valid: true,
             },
           ]}
-          onChangeStep={setStep}
           submitButton={<SubmitHandler />}
-          getScreenReaderStepperText={getScreenReaderStepperText}
           controls={controls}
           success={success}
           onResetSuccess={() => setSuccess(false)}
