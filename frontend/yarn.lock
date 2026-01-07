@@ -1611,10 +1611,10 @@
     "@sk-web-gui/utils" "2.2.2"
     universal-cookie "^8.0.1"
 
-"@sk-web-gui/core@4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@sk-web-gui/core/-/core-4.1.1.tgz#b95bc2780c7e0fcd0b11406c550fe4310922865e"
-  integrity sha512-X0AyzOMTLYj1bTG3RPhgdjcFicAE+1rVc2+SEiqC7Xj7LVZ3JRm4hfADYWPXkYYE92DOFTxhtrL7Gfl2y6Sw3A==
+"@sk-web-gui/core@4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@sk-web-gui/core/-/core-4.1.2.tgz#1720682ad7990286ac345b116ae3a860372b76bd"
+  integrity sha512-mGoL1v0cm02QoXYq0I0vk9cilRXRi6Erm0+tLaY1VMhNiSD5I9qgXnzz/vOg6E/LilzCaoJdCc9XTFEiFKTJXA==
   dependencies:
     "@sk-web-gui/theme" "2.6.0"
     "@tailwindcss/container-queries" "^0.1.1"
@@ -1787,7 +1787,7 @@
     "@sk-web-gui/utils" "2.2.2"
     lucide-react "^0.537.0"
 
-"@sk-web-gui/react@^3.0.6":
+"@sk-web-gui/react@3.0.6":
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/@sk-web-gui/react/-/react-3.0.6.tgz#5f3077891c48837e3774f3238f5f83747efec2f3"
   integrity sha512-3dSWE4ziKQNDt/aNIEOLO4XU7uhrvR6yTT9VvhswiiUymc0ulACrHQIzx4P9C9x8eBE32SAHiKWjqNBYjKHCtg==
