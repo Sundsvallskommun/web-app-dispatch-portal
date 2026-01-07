@@ -23,8 +23,16 @@ export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
     return (
       <>
         {filteredQAItems.map((q) => (
-          <Accordion.Item headerAs="h3" header={q.question} key={q.id}>
-            {q.answer}
+          <Accordion.Item key={q.id}>
+            <Accordion.Item.Header>
+              <Accordion.Item.Title>
+                <h3 className="text-h4-sm">{q.question}</h3>
+              </Accordion.Item.Title>
+              <Accordion.Item.Button />
+            </Accordion.Item.Header>
+            <Accordion.Item.Content>
+              <p>{q.answer}</p>
+            </Accordion.Item.Content>
           </Accordion.Item>
         ))}
       </>
