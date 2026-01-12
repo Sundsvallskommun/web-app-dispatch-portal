@@ -29,9 +29,7 @@ export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
             </Accordion.Item.Title>
             <Accordion.Item.Button />
           </Accordion.Item.Header>
-          <Accordion.Item.Content>
-            <p>{q.answer}</p>
-          </Accordion.Item.Content>
+          <Accordion.Item.Content>{q.answer}</Accordion.Item.Content>
         </Accordion.Item>
       ))}
     </Accordion>
