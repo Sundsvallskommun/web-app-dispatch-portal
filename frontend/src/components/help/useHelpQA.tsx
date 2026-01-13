@@ -73,7 +73,11 @@ export const useHelpQA = (): QAItem[] => {
         ...itemsFactory([23], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
           p: <p className="mt-4 text-justify [hyphens:auto]" />,
           strong: <strong />,
-          a: <a className="text-vattjom-text-primary underline" href="mailto:support@sundsvall.se" />,
+          a: (
+            <a className="text-vattjom-text-primary underline" href="mailto:support@sundsvall.se">
+              {/* translation will inject text here */}
+            </a>
+          ),
         }),
         ...itemsFactory([1], [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL]),
       ].sort((a, b) => Number(a.id) - Number(b.id)),
