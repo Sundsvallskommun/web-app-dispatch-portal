@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Link, List } from '@sk-web-gui/react';
+import { JSX, useMemo } from 'react';
+import { cx, Link, List } from '@sk-web-gui/react';
 import { Trans, useTranslation } from 'next-i18next';
 import { EnumQATags, QAItem } from 'src/types';
 
@@ -23,115 +23,59 @@ export const useHelpQA = (): QAItem[] => {
 
   const splitInParagraphs = (text: string, id: string) =>
     text.split('\n').map((paragraph, index) => (
-      <p key={`helpparagraph-${id}-${index}`} className={index > 0 ? 'mt-4 leading-normal' : 'leading-normal'}>
+      <p
+        key={`helpparagraph-${id}-${index}`}
+        className={cx(index > 0 ? 'mt-8 leading-normal' : 'leading-normal', 'text-justify [hyphens:auto]')}
+      >
         {paragraph}
       </p>
     ));
 
+  const itemsFactory = (ids: number[], tags: EnumQATags[], components?: { [key: string]: JSX.Element }) => {
+    if (components) {
+      return ids.map((i) => ({
+        id: String(i),
+        question: t(`help-menu:questionsAndAnswers.${i}.question`),
+        answer: <Trans i18nKey={`help-menu:questionsAndAnswers.${i}.answer`} components={components} />,
+        tags,
+      }));
+    }
+    return ids.map((i) => ({
+      id: String(i),
+      question: t(`help-menu:questionsAndAnswers.${i}.question`),
+      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
+      tags,
+    }));
+  };
+
   const items = useMemo(
     () =>
       [
-        ...[27, 28].map((i) => ({
-          id: String(i),
-          question: t(`help-menu:questionsAndAnswers.${i}.question`),
-          answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
-          tags: [EnumQATags.SMS],
-        })),
-        ...[12, 13, 14, 15].map((i) => ({
-          id: String(i),
-          question: t(`help-menu:questionsAndAnswers.${i}.question`),
-          answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
-          tags: [EnumQATags.MAIL],
-        })),
-        {
-          id: '18',
-          question: t('help-menu:questionsAndAnswers.18.question'),
-          answer: (
-            <Trans
-              i18nKey="help-menu:questionsAndAnswers.18.answer"
-              components={{
-                p: <p />,
-                a: <Link href="/files/example.csv" />,
-              }}
-            />
-          ),
-          tags: [EnumQATags.MAIL],
-        },
-        ...[2, 3, 4, 5, 7, 8, 9, 10, 11, 16, 17, 19, 20, 24, 25, 26].map((i) => ({
-          id: String(i),
-          question: t(`help-menu:questionsAndAnswers.${i}.question`),
-          answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
-          tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-        })),
-        {
-          id: '6',
-          question: t('help-menu:questionsAndAnswers.6.question'),
-          answer: (
-            <>
-              {splitInParagraphs(t('help-menu:questionsAndAnswers.6.answer'), '6')}
-              <List listStyle="bullet">
-                {[1, 3, 4, 5, 6].map((i) => (
-                  <List.Item key={i}>
-                    <List.Text>{t(`help-menu:questionsAndAnswers.6.listItems.${i}`)} </List.Text>
-                  </List.Item>
-                ))}
-              </List>
-            </>
-          ),
-          tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-        },
-
-        {
-          id: '21',
-          question: t('help-menu:questionsAndAnswers.21.question'),
-          answer: (
-            <Trans
-              i18nKey="help-menu:questionsAndAnswers.21.answer"
-              components={{
-                p: <p />,
-              }}
-            />
-          ),
-          tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-        },
-        {
-          id: '22',
-          question: t('help-menu:questionsAndAnswers.22.question'),
-          answer: (
-            <Trans
-              i18nKey={'help-menu:questionsAndAnswers.22.answer'}
-              components={{
-                p: <p />,
-              }}
-            />
-          ),
-          tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-        },
-        {
-          id: '23',
-          question: t('help-menu:questionsAndAnswers.23.question'),
-          answer: (
-            <Trans
-              i18nKey="help-menu:questionsAndAnswers.23.answer"
-              components={{
-                p: <p />,
-                strong: <strong />,
-                a: (
-                  <a className="text-vattjom-text-primary underline" href="mailto:support@sundsvall.se">
-                    {/* translation will inject text here */}
-                  </a>
-                ),
-              }}
-            />
-          ),
-          tags: [EnumQATags.MAIL, EnumQATags.REK_MAIL],
-        },
-        {
-          id: '1',
-          question: t('help-menu:questionsAndAnswers.1.question'),
-          answer: splitInParagraphs(t('help-menu:questionsAndAnswers.1.answer'), '1'),
-          tags: [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL],
-        },
+        ...itemsFactory([27, 28], [EnumQATags.SMS]),
+        ...itemsFactory([12, 13, 14, 15], [EnumQATags.MAIL]),
+        ...itemsFactory([18], [EnumQATags.MAIL], {
+          p: <p className="mt-4 text-justify [hyphens:auto]" />,
+          a: <Link href="/files/example.csv" />,
+        }),
+        ...itemsFactory(
+          [2, 3, 4, 5, 7, 8, 9, 10, 11, 16, 17, 19, 20, 24, 25, 26],
+          [EnumQATags.MAIL, EnumQATags.REK_MAIL]
+        ),
+        ...itemsFactory([6], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
+          p: <p className="mt-4 text-justify [hyphens:auto]" />,
+          List: <List listStyle="bullet" />,
+          ListItem: <List.Item />,
+          ListText: <List.Text />,
+        }),
+        ...itemsFactory([21, 22], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
+          p: <p className="mt-4 text-justify [hyphens:auto]" />,
+        }),
+        ...itemsFactory([23], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
+          p: <p className="mt-4 text-justify [hyphens:auto]" />,
+          strong: <strong />,
+          a: <a className="text-vattjom-text-primary underline" href="mailto:support@sundsvall.se" />,
+        }),
+        ...itemsFactory([1], [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL]),
       ].sort((a, b) => Number(a.id) - Number(b.id)),
     [i18n.language]
   );
