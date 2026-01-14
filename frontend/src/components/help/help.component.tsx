@@ -19,21 +19,19 @@ export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
     return qaItems.filter((q) => q.tags.includes(filterTag));
   }, [filterTag, qaItems]);
 
-  const getContent = () => {
-    return (
-      <>
-        {filteredQAItems.map((q) => (
-          <Accordion.Item headerAs="h3" header={q.question} key={q.id}>
-            {q.answer}
-          </Accordion.Item>
-        ))}
-      </>
-    );
-  };
-
   return (
     <Accordion className="w-full" size={size} allowMultipleOpen>
-      {getContent()}
+      {filteredQAItems.map((q) => (
+        <Accordion.Item key={q.id}>
+          <Accordion.Item.Header>
+            <Accordion.Item.Title>
+              <h3 className="text-h4-sm">{q.question}</h3>
+            </Accordion.Item.Title>
+            <Accordion.Item.Button />
+          </Accordion.Item.Header>
+          <Accordion.Item.Content>{q.answer}</Accordion.Item.Content>
+        </Accordion.Item>
+      ))}
     </Accordion>
   );
 };
