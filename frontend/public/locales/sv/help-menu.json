@@ -26,15 +26,7 @@
     },
     "6": {
       "question": "Hur skapar jag en tillgänglig pdf?",
-      "answer": "Det vanligaste sättet att skapa en pdf är att spara om ett dokument från Word till pdf-format. Gå till fliken Arkiv, klicka på Spara som, Fler alternativ och välj pdf på listan. Klicka på Alternativ och se till att rutorna Skapa bokmärken, Dokumentegenskaper och Visa taggar för dokumentstruktur är ikryssade.\n Innan du gör det, kontrollera att dokumentet är tillgängligt genom att använda Microsofts hjälpfunktion, och skriva in ”Tillgänglighetskontroll” i sökrutan. Då får du anvisningar om vad som eventuellt behöver göras direkt i dokumentet.\n De viktigaste punkterna är att:",
-      "listItems": {
-        "1": "Använda rubrikformat, och i rätt ordning (i fallande storlek)",
-        "2": "Ange alt-texter för bilder och icke textbaserat innehåll",
-        "3": "Använd listverktyget för listor, ta ett av listformaten bland formatmallarna.",
-        "4": "Formatera tabeller med rubrikrad och alt-text.",
-        "5": "Alla länkar i dokumentet ska vara klickbara. Om dina länkar inte blivit automatiskt klickbara måste du markera länktexten, högerklicka och välja länk.",
-        "6": "När du sparar, ange titel och författare på dokumentet. Titeln ska tydligt beskriva vad dokumentet handlar om. Organisationens namn ska normalt stå som författare."
-      }
+      "answer": "<p>Det vanligaste sättet att skapa en pdf är att spara om ett dokument från Word till pdf-format. Gå till fliken Arkiv, klicka på Spara som, Fler alternativ och välj pdf på listan. Klicka på Alternativ och se till att rutorna Skapa bokmärken, Dokumentegenskaper och Visa taggar för dokumentstruktur är ikryssade.</p><p>Innan du gör det, kontrollera att dokumentet är tillgängligt genom att använda Microsofts hjälpfunktion, och skriva in ”Tillgänglighetskontroll” i sökrutan. Då får du anvisningar om vad som eventuellt behöver göras direkt i dokumentet.</p><p>De viktigaste punkterna är att:</p> <List><ListItem><ListText>Använda rubrikformat, och i rätt ordning (i fallande storlek)</ListText></ListItem><ListItem><ListText>Ange alt-texter för bilder och icke textbaserat innehåll</ListText></ListItem><ListItem><ListText>Använd listverktyget för listor, ta ett av listformaten bland formatmallarna.</ListText></ListItem><ListItem><ListText>Formatera tabeller med rubrikrad och alt-text.</ListText></ListItem><ListItem><ListText>Alla länkar i dokumentet ska vara klickbara. Om dina länkar inte blivit automatiskt klickbara måste du markera länktexten, högerklicka och välja länk.</ListText></ListItem><ListItem><ListText>När du sparar, ange titel och författare på dokumentet. Titeln ska tydligt beskriva vad dokumentet handlar om. Organisationens namn ska normalt stå som författare.</ListText></ListItem></List>"
     },
     "7": {
       "question": "Skriver Servicecenter administration ut i färg?",
