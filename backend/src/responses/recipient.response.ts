@@ -1,8 +1,12 @@
-import { Address as AddressType, RecipientDeliveryMethodEnum } from '@/data-contracts/postportalservice/data-contracts';
-import { CSV, CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
+import {
+  Address as AddressType,
+  PrecheckCsvResponse,
+  RecipientDeliveryMethodEnum,
+} from '@/data-contracts/postportalservice/data-contracts';
+import { CSV, CSVError, CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
 import { ApiResponse } from '@/services/api.service';
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class Address implements AddressType {
   @IsString()
@@ -43,13 +47,22 @@ export class Recipient implements ExtendedRecipient {
   personNumber?: string;
 }
 
-export class Csv implements Omit<CSV, 'file'> {
+export class Csv implements Omit<CSV, 'file'>, Pick<PrecheckCsvResponse, 'duplicateEntries' | 'rejectedEntries'> {
   @IsString()
   name: string;
   @IsString()
   id: string;
   @IsEnum(CSVStatus)
   status: CSVStatus;
+  @IsEnum(CSVError)
+  @IsOptional()
+  error?: CSVError;
+  @IsObject()
+  @IsOptional()
+  duplicateEntries?: Record<string, number>;
+  @IsString({ each: true })
+  @IsOptional()
+  rejectedEntries?: string[];
 }
 
 export class RecipientApiResponse implements ApiResponse<ExtendedRecipient> {

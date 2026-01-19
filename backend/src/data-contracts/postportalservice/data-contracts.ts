@@ -22,20 +22,19 @@ export interface PrecheckRequest {
   /**
    * List of party ids to precheck
    * @minItems 1
-   * @example ["b46f0ca2-d2ad-43e8-8d50-3aeb949e3604","fd99a03c-790c-4b87-bc4b-f4f73e4a2df4"]
    */
   partyIds: string[];
 }
 
 export interface Problem {
-  title?: string;
-  detail?: string;
   /** @format uri */
   instance?: string;
   /** @format uri */
   type?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
   status?: StatusType;
+  title?: string;
+  detail?: string;
 }
 
 export interface StatusType {
@@ -55,7 +54,7 @@ export interface ConstraintViolationProblem {
   message?: string;
   /** @format uri */
   instance?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
   detail?: string;
   suppressed?: ConstraintViolationProblemSuppressedInner[];
   localizedMessage?: string;
@@ -80,17 +79,17 @@ export interface ConstraintViolationProblemSuppressedInner {
 }
 
 export interface ThrowableProblem {
-  cause?: ThrowableProblem;
+  cause?: any;
   stackTrace?: ConstraintViolationProblemStackTraceInner[];
   message?: string;
   /** @format uri */
   instance?: string;
   /** @format uri */
   type?: string;
-  parameters?: Record<string, object>;
-  status?: StatusType;
-  detail?: string;
+  parameters?: Record<string, any>;
   title?: string;
+  detail?: string;
+  status?: StatusType;
   suppressed?: ConstraintViolationProblemSuppressedInner[];
   localizedMessage?: string;
 }
@@ -102,22 +101,13 @@ export interface Violation {
 
 /** Per-recipient delivery capability */
 export interface PrecheckRecipient {
-  /**
-   * Personal identity number of the recipient
-   * @example "19111111-1111"
-   */
+  /** Personal identity number of the recipient */
   personalIdentityNumber?: string;
-  /**
-   * Party ID of the recipient
-   * @example "da03b33e-9de2-45ac-8291-31a88de59410"
-   */
+  /** Party ID of the recipient */
   partyId?: string;
-  /** Possible delivery methods */
+  /** Delivery method for the recipient */
   deliveryMethod?: DeliveryMethod;
-  /**
-   * Reason when delivery method isn't available or an upstream lookup failed
-   * @example "Person not found"
-   */
+  /** Reason when delivery method isn't available or an upstream lookup failed */
   reason?: string;
 }
 
@@ -132,22 +122,22 @@ export interface KivraEligibilityRequest {
   /**
    * List of party IDs to check for Kivra eligibility
    * @minItems 1
-   * @example ["da03b33e-9de2-45ac-8291-31a88de59410","eb13b33e-9de2-45ac-8291-31a88de59411"]
    */
   partyIds: string[];
 }
 
+/** Model used as response when validating csv format and duplicate entries */
+export interface PrecheckCsvResponse {
+  duplicateEntries?: Record<string, number>;
+  /** @uniqueItems true */
+  rejectedEntries?: string[];
+}
+
 /** SMS recipient model */
 export interface SmsRecipient {
-  /**
-   * PartyId is the unique identifier for the recipient
-   * @example "6d0773d6-3e7f-4552-81bc-f0007af95adf"
-   */
+  /** PartyId is the unique identifier for the recipient */
   partyId?: string;
-  /**
-   * Phone number of the recipient, used for SMS notifications
-   * @example "+46701234567"
-   */
+  /** Phone number of the recipient, used for SMS notifications */
   phoneNumber: string;
 }
 
@@ -156,7 +146,6 @@ export interface SmsRequest {
   /**
    * The message to be sent
    * @minLength 1
-   * @example "This is the message to be sent"
    */
   message: string;
   /** @minItems 1 */
@@ -168,23 +157,15 @@ export interface DigitalRegisteredLetterRequest {
   /**
    * The body of the letter in HTML format
    * @minLength 1
-   * @example "<h1>This is the body of the letter</h1>"
    */
   body: string;
-  /**
-   * The content type of the body
-   * @example "text/html"
-   */
+  /** The content type of the body */
   contentType?: string;
-  /**
-   * The party id of the recipient
-   * @example "6d0773d6-3e7f-4552-81bc-f0007af95adf"
-   */
+  /** The party id of the recipient */
   partyId?: string;
   /**
    * The subject of the letter
    * @minLength 1
-   * @example "This is the subject of the letter"
    */
   subject: string;
 }
@@ -194,47 +175,35 @@ export interface Address {
   /**
    * First name of the recipient
    * @minLength 1
-   * @example "John"
    */
   firstName: string;
   /**
    * Last name of the recipient
    * @minLength 1
-   * @example "Doe"
    */
   lastName: string;
   /**
    * Street address
    * @minLength 1
-   * @example "Main Street 1"
    */
   street: string;
-  /**
-   * Apartment number
-   * @example "1101"
-   */
+  /** Apartment number */
   apartmentNumber?: string;
-  /**
-   * Care of
-   * @example "c/o Jane Doe"
-   */
+  /** Care of */
   careOf?: string;
   /**
    * Zip code
    * @minLength 1
-   * @example "12345"
    */
   zipCode: string;
   /**
    * City
    * @minLength 1
-   * @example "Sundsvall"
    */
   city: string;
   /**
    * Country
    * @minLength 1
-   * @example "Sweden"
    */
   country: string;
 }
@@ -244,38 +213,23 @@ export interface LetterRequest {
   /**
    * The subject of the letter
    * @minLength 1
-   * @example "This is the subject of the letter"
    */
   subject: string;
-  /**
-   * The body of the letter
-   * @minLength 1
-   * @example "This is the body of the letter"
-   */
-  body: string;
-  /**
-   * The content type of the body
-   * @minLength 1
-   * @example "text/plain"
-   */
-  contentType: string;
+  /** The body of the letter */
+  body?: string;
+  /** The content type of the body */
+  contentType?: string;
   recipients?: Recipient[];
   addresses?: Address[];
 }
 
 /** Recipient model */
 export interface Recipient {
-  /**
-   * PartyId is the unique identifier for the recipient
-   * @example "6d0773d6-3e7f-4552-81bc-f0007af95adf"
-   */
+  /** PartyId is the unique identifier for the recipient */
   partyId?: string;
-  /**
-   * Delivery method for the recipient
-   * @example "DIGITAL_MAIL"
-   */
+  /** Delivery method for the recipient */
   deliveryMethod: RecipientDeliveryMethodEnum;
-  /** Address model */
+  /** Address details for the recipient, used for SNAIL_MAIL delivery method */
   address?: Address;
 }
 
@@ -284,57 +238,44 @@ export interface LetterCsvRequest {
   /**
    * The subject of the letter
    * @minLength 1
-   * @example "This is the subject of the letter"
    */
   subject: string;
   /**
    * The body of the letter
    * @minLength 1
-   * @example "This is the body of the letter"
    */
   body: string;
   /**
    * The content type of the body
    * @minLength 1
-   * @example "text/plain"
    */
   contentType: string;
 }
 
 /** Statistics model */
 export interface Statistics {
-  /**
-   * Entity id
-   * @example "f40e6975-a82a-4167-8622-4b0e71ab8d92"
-   */
+  /** Entity id */
   id?: string;
-  /**
-   * Entity name
-   * @example "Test Department"
-   */
+  /** Entity name */
   name?: string;
   /**
    * Number of snail mail sent
    * @format int64
-   * @example 50
    */
   snailMail?: number;
   /**
    * Number of digital mail sent
    * @format int64
-   * @example 30
    */
   digitalMail?: number;
   /**
    * Number of text messages
    * @format int64
-   * @example 20
    */
   sms?: number;
   /**
    * Number of registered letters sent
    * @format int64
-   * @example 5
    */
   digitalRegisteredLetter?: number;
 }
@@ -355,32 +296,22 @@ export interface Pageable {
 
 /** Message model */
 export interface Message {
-  /**
-   * Message ID
-   * @example "123456"
-   */
+  /** Message ID */
   messageId?: string;
-  /**
-   * The subject
-   * @example "Viktig information"
-   */
+  /** The subject */
   subject?: string;
-  /**
-   * Type of message
-   * @example "SMS|LETTER|DIGITAL_REGISTERED_LETTER"
-   */
+  /** Type of message */
   type?: string;
   /**
    * When the message was sent
    * @format date-time
    */
   sentAt?: string;
-  /** Signing status model */
+  /** Status for signing process. Only applicable for message type DIGITAL_REGISTERED_LETTER */
   signingStatus?: SigningStatus;
   /**
    * Total number of recipients to whom the message has been sent
    * @format int32
-   * @example 12
    */
   numberOfRecipients?: number;
 }
@@ -428,105 +359,57 @@ export interface PagingMetaData {
 
 /** Signing status model */
 export interface SigningStatus {
-  /**
-   * Present state for the letter
-   * @example "NEW|SENT|SIGNED|EXPIRED|FAILED - Client Error|FAILED - Server Error|FAILED - Unknown Error"
-   */
+  /** Present state for the letter */
   letterState?: string;
-  /**
-   * Present state for the signing process
-   * @example "PENDING|COMPLETED|FAILED"
-   */
+  /** Present state for the signing process */
   signingProcessState?: string;
 }
 
-/** List of attachment details */
 export interface AttachmentDetails {
-  /**
-   * Attachment ID
-   * @example "123e4567-e89b-12d3-a456-426614174000"
-   */
+  /** Attachment ID */
   attachmentId?: string;
-  /**
-   * File name of the attachment
-   * @example "document.pdf"
-   */
+  /** File name of the attachment */
   fileName?: string;
-  /**
-   * MIME type of the attachment
-   * @example "application/pdf"
-   */
+  /** MIME type of the attachment */
   contentType?: string;
 }
 
 /** Message details model */
 export interface MessageDetails {
-  /**
-   * Message subject
-   * @example "This is a subject"
-   */
+  /** Message subject */
   subject?: string;
-  /**
-   * Message body
-   * @example "This is the message body"
-   */
+  /** Message body */
   body?: string;
   /**
    * When the message was sent
    * @format date-time
    */
   sentAt?: string;
-  /** Signing status model */
+  /** Status for signing process. Only applicable for message type DIGITAL_REGISTERED_LETTER */
   signingStatus?: SigningStatus;
   attachments?: AttachmentDetails[];
   recipients?: RecipientDetails[];
 }
 
-/** List of recipient details */
 export interface RecipientDetails {
-  /**
-   * Name of the recipient
-   * @example "John Doe"
-   */
+  /** Name of the recipient */
   name?: string;
-  /**
-   * The recipients party ID
-   * @example "1234567890"
-   */
+  /** The recipients party ID */
   partyId?: string;
-  /**
-   * Mobile number
-   * @example "+46701234567"
-   */
+  /** Mobile number */
   mobileNumber?: string;
-  /**
-   * Street address
-   * @example "Main Street 5"
-   */
+  /** Street address */
   streetAddress?: string;
-  /**
-   * Zip code
-   * @example "85751"
-   */
+  /** Zip code */
   zipCode?: string;
-  /**
-   * City
-   * @example "Sundsvall"
-   */
+  /** City */
   city?: string;
-  /**
-   * Message type
-   * @example "SNAIL_MAIL|DIGITAL_MAIL|SMS"
-   */
+  /** Message type */
   messageType?: string;
-  /**
-   * Status of the message to this recipient
-   * @example "SENT|NOT_SENT|FAILED"
-   */
+  /** Status of the message to this recipient */
   status?: string;
 }
 
-/** Information about the device used when signing the letter */
 export interface Device {
   /** Ip address used when the letter was signed */
   ipAddress?: string;
@@ -557,13 +440,11 @@ export interface SigningInformation {
   stepUp?: StepUp;
 }
 
-/** Step-up information for the signing order */
 export interface StepUp {
   /** Whether an MRTD check was performed before the order was completed */
   mrtd?: boolean;
 }
 
-/** Information about the user that signed the letter */
 export interface User {
   /** Personal identity number for the signing party */
   personalIdentityNumber?: string;
@@ -575,10 +456,7 @@ export interface User {
   surname?: string;
 }
 
-/**
- * Delivery method for the recipient
- * @example "DIGITAL_MAIL"
- */
+/** Delivery method for the recipient */
 export enum RecipientDeliveryMethodEnum {
   DIGITAL_MAIL = "DIGITAL_MAIL",
   SNAIL_MAIL = "SNAIL_MAIL",

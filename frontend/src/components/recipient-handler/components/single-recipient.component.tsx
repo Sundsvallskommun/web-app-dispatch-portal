@@ -31,9 +31,9 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
 
   const renderFormMessage = () => {
     if (errors.storeRecipients?.message) {
-      return <CustomFormErrorMessage padded={false} message={errors.storeRecipients.message} />;
+      return <CustomFormErrorMessage message={errors.storeRecipients.message} />;
     } else if (error) {
-      return <CustomFormErrorMessage padded={false} message={error} />;
+      return <CustomFormErrorMessage message={error} />;
     } else {
       return <p className="text-small">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>;
     }

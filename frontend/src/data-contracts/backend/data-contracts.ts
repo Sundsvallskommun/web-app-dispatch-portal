@@ -27,7 +27,7 @@ export interface Address {
 
 export interface Recipient {
   partyId?: string;
-  deliveryMethod: "DIGITAL_MAIL" | "SNAIL_MAIL" | "DELIVERY_NOT_POSSIBLE";
+  deliveryMethod: 'DIGITAL_MAIL' | 'SNAIL_MAIL' | 'DELIVERY_NOT_POSSIBLE';
   address?: Address;
   reason?: string;
   personNumber?: string;
@@ -36,7 +36,10 @@ export interface Recipient {
 export interface Csv {
   name: string;
   id: string;
-  status: "OK" | "BAD" | 0 | 1;
+  status: 'OK' | 'BAD';
+  error?: 'UNKNOWN' | 'MISSING_VALID_IDS';
+  duplicateEntries?: object;
+  rejectedEntries?: string[];
 }
 
 export interface RecipientApiResponse {
@@ -93,7 +96,7 @@ export interface MessageApiResponse {
 
 export interface UpdateLogotypeDto {
   name?: string;
-  removeDarkMode?: "true" | "false";
+  removeDarkMode?: 'true' | 'false';
 }
 
 export interface CreateLogotypeDto {

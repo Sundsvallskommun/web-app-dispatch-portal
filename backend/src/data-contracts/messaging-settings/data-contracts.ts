@@ -11,14 +11,14 @@
  */
 
 export interface Problem {
-  title?: string;
-  detail?: string;
   /** @format uri */
   instance?: string;
   /** @format uri */
   type?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
   status?: StatusType;
+  title?: string;
+  detail?: string;
 }
 
 export interface StatusType {
@@ -46,10 +46,10 @@ export interface ConstraintViolationProblem {
   violations?: Violation[];
   title?: string;
   message?: string;
-  detail?: string;
   /** @format uri */
   instance?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
+  detail?: string;
   suppressed?: {
     stackTrace?: {
       classLoaderName?: string;
@@ -69,7 +69,7 @@ export interface ConstraintViolationProblem {
 }
 
 export interface ThrowableProblem {
-  cause?: ThrowableProblem;
+  cause?: any;
   stackTrace?: {
     classLoaderName?: string;
     moduleName?: string;
@@ -82,14 +82,14 @@ export interface ThrowableProblem {
     nativeMethod?: boolean;
   }[];
   message?: string;
-  title?: string;
-  detail?: string;
   /** @format uri */
   instance?: string;
   /** @format uri */
   type?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
   status?: StatusType;
+  title?: string;
+  detail?: string;
   suppressed?: {
     stackTrace?: {
       classLoaderName?: string;
@@ -113,150 +113,60 @@ export interface Violation {
   message?: string;
 }
 
-/** Messaging setting value model */
-export interface MessagingSettingValue {
+/** Messaging setting value request model */
+export interface MessagingSettingValueRequest {
   /**
    * Identifier key for the value setting
-   * @example "department_name"
+   * @minLength 1
    */
-  key?: string;
+  key: string;
   /**
    * Stored value for the value setting
-   * @example "Department 44"
+   * @minLength 1
    */
-  value?: string;
+  value: string;
   /**
    * Type of data for the stored value. Can be one of [STRING|NUMERIC|BOOLEAN]
-   * @example "STRING"
+   * @minLength 1
    */
+  type: string;
+}
+
+/** Messaging settings request model */
+export interface MessagingSettingsRequest {
+  /**
+   * Values for the messaging setting
+   * @minItems 1
+   */
+  values: MessagingSettingValueRequest[];
+}
+
+/** Messaging setting value model */
+export interface MessagingSettingValue {
+  /** Identifier key for the value setting */
+  key?: string;
+  /** Stored value for the value setting */
+  value?: string;
+  /** Type of data for the stored value. Can be one of [STRING|NUMERIC|BOOLEAN] */
   type?: string;
 }
 
 /** Messaging settings response model */
 export interface MessagingSettings {
-  /**
-   * Id for the messaging setting instance
-   * @example "c9383d10-6fb5-4fc1-bd0a-50bf5a24d5b7"
-   */
+  /** Id for the messaging setting instance */
   id?: string;
-  /**
-   * Municipality id for municipality that the messaging setting instance belongs to
-   * @example "2281"
-   */
+  /** Municipality id for municipality that the messaging setting instance belongs to */
   municipalityId?: string;
   /**
    * Timestamp when the instance was created
    * @format date-time
-   * @example "2025-10-24T15:30:00+02:00"
    */
   created?: string;
   /**
    * Timestamp when the instance was last updated. Null if instance has never been updated.
    * @format date-time
-   * @example "2025-10-25T16:30:00+02:00"
    */
   updated?: string;
   /** Values connected to the messaging setting instance */
   values?: MessagingSettingValue[];
-}
-
-/** SenderInfo response */
-export interface SenderInfoResponse {
-  /**
-   * Organization number of the organization connected to the information
-   * @example "162021005489"
-   */
-  organizationNumber?: string;
-  /**
-   * Descriptive support text
-   * @example "Kontakta oss via epost eller telefon"
-   */
-  supportText?: string;
-  /**
-   * Contact information URL
-   * @example "https://sundsvall.se/"
-   */
-  contactInformationUrl?: string;
-  /**
-   * Contact information phone number
-   * @example "060-19 10 00"
-   */
-  contactInformationPhoneNumber?: string;
-  /**
-   * Contact information e-mail address
-   * @example "sundsvalls.kommun@sundsvall.se"
-   */
-  contactInformationEmail?: string;
-  /**
-   * Name of contact information e-mail sender
-   * @example "Sundsvalls kommun"
-   */
-  contactInformationEmailName?: string;
-  /**
-   * Name of SMS sender
-   * @example "Sundsvall"
-   */
-  smsSender?: string;
-  /**
-   * Folder name
-   * @example "Foo"
-   */
-  folderName?: string;
-}
-
-/** CallbackEmail response */
-export interface CallbackEmailResponse {
-  /**
-   * Organization number of the organization connected to the information
-   * @example "162021005489"
-   */
-  organizationNumber?: string;
-  /**
-   * Callback e-mail address
-   * @example "no-reply@domain.tld"
-   */
-  callbackEmail?: string;
-}
-
-/** PortalSettings response */
-export interface PortalSettingsResponse {
-  /**
-   * Organization number of the organization connected to the information
-   * @example "162021005489"
-   */
-  organizationNumber?: string;
-  /**
-   * Municipality ID
-   * @example "2281"
-   */
-  municipalityId?: string;
-  /**
-   * Department name
-   * @example "SKM"
-   */
-  departmentName?: string;
-  /**
-   * Method of delivery
-   * @example "EMAIL"
-   */
-  snailMailMethod?: PortalSettingsResponseSnailMailMethodEnum;
-  /**
-   * Indicates if sms is enabled for the given department
-   * @example true
-   */
-  smsEnabled?: boolean;
-  /**
-   * Indicates if rek is enabled for the given department
-   * @example true
-   */
-  rekEnabled?: boolean;
-}
-
-/**
- * Method of delivery
- * @example "EMAIL"
- */
-export enum PortalSettingsResponseSnailMailMethodEnum {
-  EMAIL = "EMAIL",
-  SC_ADMIN = "SC_ADMIN",
 }

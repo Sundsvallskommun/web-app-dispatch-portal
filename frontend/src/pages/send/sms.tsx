@@ -245,11 +245,9 @@ export default function SendEmailPage() {
                                 {t('send-sms:add')}
                               </Button>
                             </div>
-                            {errors?.recipientList && (
-                              <CustomFormErrorMessage padded={false} message={errors.recipientList.message} />
-                            )}
+                            {errors?.recipientList && <CustomFormErrorMessage message={errors.recipientList.message} />}
                             {errors?.singleRecipient && (
-                              <CustomFormErrorMessage padded={false} message={errors.singleRecipient.message} />
+                              <CustomFormErrorMessage message={errors.singleRecipient.message} />
                             )}
                           </FormControl>
                         </div>
@@ -296,7 +294,7 @@ export default function SendEmailPage() {
                         maxLength={459}
                         {...register('message')}
                       />
-                      {errors.message && <CustomFormErrorMessage padded={false} message={errors.message?.message} />}
+                      {errors.message && <CustomFormErrorMessage message={errors.message?.message} />}
                     </FormControl>
                   </div>
                 </div>
