@@ -75,9 +75,14 @@ if (SESSION_STORE === 'redis') {
     password: REDIS_PASSWORD,
   });
 
-  redisClient.connect().catch(err => {
-    logger.error('Failed to connect to Redis', err);
-  });
+  (async () => {
+    try {
+      await redisClient!.connect();
+      logger.info('Redis connected');
+    } catch (err) {
+      logger.error('Failed to connect to Redis', err);
+    }
+  })();
 }
 
 const apiService = new ApiService();
