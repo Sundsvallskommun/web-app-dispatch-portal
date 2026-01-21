@@ -11,21 +11,36 @@ import { AdminLogotypeController } from './controllers/admin/logotype.controller
 import { AdminMunicipalityController } from './controllers/admin/municipality.controller';
 import { AdminOrganizationController } from './controllers/admin/organization.controller';
 import { AdminUserController } from './controllers/admin/user.controller';
+import { initRedis } from './utils/initRedis';
+import { createSessionStore } from './utils/createSessionStore';
 
 validateEnv();
 
-const app = new App([
-  IndexController,
-  UserController,
-  HealthController,
-  RecipientController,
-  MessageController,
-  DepartmentsController,
-  StatisticsController,
-  AdminLogotypeController,
-  AdminMunicipalityController,
-  AdminOrganizationController,
-  AdminUserController,
-]);
+async function bootstrap() {
+  await initRedis();
+  const sessionStore = createSessionStore(4 * 24 * 60 * 60);
 
-app.listen();
+  const app = new App(
+    [
+      IndexController,
+      UserController,
+      HealthController,
+      RecipientController,
+      MessageController,
+      DepartmentsController,
+      StatisticsController,
+      AdminLogotypeController,
+      AdminMunicipalityController,
+      AdminOrganizationController,
+      AdminUserController,
+    ],
+    sessionStore,
+  );
+
+  app.listen();
+}
+
+bootstrap().catch(err => {
+  console.error('Failed to start app: ', err);
+  process.exit(1);
+});

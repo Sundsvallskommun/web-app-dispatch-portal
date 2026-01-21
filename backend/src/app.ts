@@ -17,10 +17,6 @@ import {
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
   SECRET_KEY,
-  SESSION_STORE,
-  REDIS_HOST,
-  REDIS_PORT,
-  REDIS_PASSWORD,
   SWAGGER_ENABLED,
   TEST_EMAIL,
   TEST_USERNAME,
@@ -40,16 +36,12 @@ import session from 'express-session';
 import { existsSync, mkdirSync } from 'fs';
 import helmet from 'helmet';
 import hpp from 'hpp';
-import createMemoryStore from 'memorystore';
 import morgan from 'morgan';
 import passport from 'passport';
 import { join } from 'path';
 import 'reflect-metadata';
 import { getMetadataArgsStorage, useExpressServer } from 'routing-controllers';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
-import createFileStore from 'session-file-store';
-import connectRedis from 'connect-redis';
-import { createClient, RedisClientType } from 'redis';
 import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
@@ -60,57 +52,7 @@ import { getRelayState } from './utils/getRelayState';
 import { dataDir, dataPath } from './utils/util';
 import { isAllowedOrigin } from './utils/isAllowedOrigin';
 
-let redisClient: RedisClientType | null = null;
-
-if (SESSION_STORE === 'redis') {
-  if (!REDIS_HOST) {
-    throw new Error('SESSION_STORE=redis but REDIS_HOST is not set');
-  }
-
-  redisClient = createClient({
-    socket: {
-      host: REDIS_HOST,
-      port: Number(REDIS_PORT || 6379),
-    },
-    password: REDIS_PASSWORD,
-  });
-
-  (async () => {
-    try {
-      await redisClient!.connect();
-      logger.info('Redis connected');
-    } catch (err) {
-      logger.error('Failed to connect to Redis', err);
-    }
-  })();
-}
-
 const apiService = new ApiService();
-const sessionTTL = 4 * 24 * 60 * 60;
-
-let sessionStore: session.Store;
-
-if (SESSION_STORE === 'redis') {
-  const RedisStore = connectRedis(session);
-
-  sessionStore = new RedisStore({
-    client: redisClient,
-    ttl: sessionTTL,
-  });
-} else if (SESSION_STORE === 'file') {
-  const FileStore = createFileStore(session);
-
-  sessionStore = new FileStore({
-    path: './data/sessions',
-    ttl: sessionTTL,
-  });
-} else {
-  const MemoryStore = createMemoryStore(session);
-
-  sessionStore = new MemoryStore({
-    checkPeriod: sessionTTL * 1000,
-  });
-}
 
 // Rate limiter for sensitive endpoints, e.g., SAML login callback
 const samlLoginRateLimiter = rateLimit({
@@ -250,7 +192,10 @@ class App {
   public port: string | number;
   public swaggerEnabled: boolean;
 
-  constructor(Controllers: Function[]) {
+  constructor(
+    Controllers: Function[],
+    private sessionStore: session.Store,
+  ) {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
@@ -295,7 +240,7 @@ class App {
         secret: SECRET_KEY,
         resave: false,
         saveUninitialized: false,
-        store: sessionStore,
+        store: this.sessionStore,
       }),
     );
 
