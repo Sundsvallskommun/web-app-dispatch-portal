@@ -66,6 +66,16 @@
     "addRecipientWithAddress": "Lägg till mottagare med adress",
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
     "csvAddedFile": "Tillagd fil",
+    "csvWarning": {
+      "title": "Filen innehåller problem.",
+      "duplicates_one": "Filen innehåller {count} personnummer med dubbletter.",
+      "duplicates_other": "Filen innehåller {count} personnummer med dubbletter.",
+      "rejections_one": "Filen innehåller {count} felaktigt personnummer.",
+      "rejections_other": "Filen innehåller {count} felaktiga personnummer.",
+      "description": "Du kan välja att fortsätta ändå. Utskicket kommer endast skickas en gång per mottagare.",
+      "confirm": "Fortsätt ändå",
+      "cancel": "Avbryt"
+    },
     "IndividualRecipients": "Enskilda mottagare",
     "ImportRecipients": "Importera mottagare",
     "fetchingRecipient": "Hämtar mottagare",
@@ -77,8 +87,12 @@
       "invalidRecipient": "Ogiltiga mottagare ({num})",
       "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
       "singleRecipientError": "Du måste lägga till en mottagare.",
+      "badFile": "Felaktig fil",
       "csvError": "Du måste lägga till en fil",
-      "badCsvFile": "Felaktig CSV-fil. Får endast innehålla personnummer."
+      "csv": {
+        "UNKNOWN": "Felaktig CSV-fil. Får endast innehålla personnummer.",
+        "MISSING_VALID_IDS": "Kunde inte hitta några giltiga mottagare. Kontrollera din fil."
+      }
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är redan tillagd",
@@ -137,11 +151,6 @@
     },
     "mail": {
       "error": "Kan ej lägga till mottagaren"
-    },
-    "": {
-      "errorHandler": {
-        "badFile": "Felaktig fil"
-      }
     }
   },
   "reviewHandler": {

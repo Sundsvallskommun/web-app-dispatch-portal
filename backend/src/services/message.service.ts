@@ -5,6 +5,7 @@ import { User } from '@/interfaces/users.interface';
 import { logger } from '@/utils/logger';
 import FormData from 'form-data';
 import ApiService, { ApiResponse } from './api.service';
+import { appendCsvFile } from '@/utils/csv-service/csv-service';
 
 export interface LetterRequest {
   subject: string;
@@ -224,7 +225,6 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   const url = `${POSTPORTALSERVICE_PATH}/${MUNICIPALITY_ID}/messages/letter/csv`;
 
   const requestContentType = 'application/json';
-  const csvContentType = 'text/csv';
 
   const request = {
     subject: subject,
@@ -242,20 +242,7 @@ export const sendLetterCsv: (user: User, api: ApiService, message: CsvMessage) =
   appendPdfAttachments(form, files);
 
   // Append csv file
-  if (csvFile.mimetype !== csvContentType) {
-    throw new Error('Wrong csv file mimetype; must be text/csv');
-  }
-  if (!Buffer.isBuffer(csvFile.buffer)) {
-    // eslint-disable-next-line no-explicit-any
-    csvFile.buffer = Buffer.from((csvFile.buffer as any).data);
-    if (!Buffer.isBuffer(csvFile.buffer)) {
-      throw new TypeError('Csv file buffer missing');
-    }
-  }
-  form.append('csv-file', csvFile.buffer, {
-    filename: csvFile.originalname,
-    contentType: csvContentType,
-  });
+  appendCsvFile(csvFile, 'csv-file', form);
 
   const headers = {
     ...form.getHeaders(),

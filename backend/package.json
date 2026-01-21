@@ -34,7 +34,6 @@
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "csv": "^6.4.1",
     "dayjs": "^1.11.19",
     "envalid": "^8.1.1",
     "express": "^5.1.0",

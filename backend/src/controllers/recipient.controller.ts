@@ -2,6 +2,7 @@ import { getApiBase, MUNICIPALITY_ID } from '@/config';
 import { CitizenExtended } from '@/data-contracts/citizen/data-contracts';
 import {
   KivraEligibilityRequest,
+  PrecheckCsvResponse,
   PrecheckRequest,
   PrecheckResponse,
   RecipientDeliveryMethodEnum,
@@ -9,10 +10,10 @@ import {
 import { RecipientDto } from '@/dtos/recipient.dto';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
-import { CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
-import { CsvApiResponse, RecipientApiResponse, RecipientNameApiResponse } from '@/responses/recipient.response';
+import { CSVError, CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
+import { Csv, CsvApiResponse, RecipientApiResponse, RecipientNameApiResponse } from '@/responses/recipient.response';
 import ApiService from '@/services/api.service';
-import { checkCsv } from '@/utils/csv-service/csv-service';
+import { appendCsvFile } from '@/utils/csv-service/csv-service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
@@ -20,6 +21,7 @@ import { Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import { Body, Controller, Get, Param, Post, QueryParam, Req, Res, UploadedFile, UseBefore } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
+import FormData from 'form-data';
 
 @Controller()
 export class RecipientController {
@@ -129,13 +131,23 @@ export class RecipientController {
     @Res() response: Response<CsvApiResponse>,
   ): Promise<Response<CsvApiResponse>> {
     try {
-      const isGoodCsv = checkCsv(csvFile);
+      const url = `${this.postportalApi}/${MUNICIPALITY_ID}/precheck/csv`;
+      const data = new FormData();
+      appendCsvFile(csvFile, 'csv-file', data);
+
+      const csvcheck = await this.apiService.post<PrecheckCsvResponse, FormData>(
+        { url, data, headers: { 'Content-Type': 'multipart/form-data' } },
+        req.user,
+      );
+
       const id = randomUUID();
-      if (isGoodCsv) {
-        const data = {
+      if (csvcheck) {
+        const data: Csv = {
           id,
           status: CSVStatus.Ok,
           name: csvFile.originalname,
+          duplicateEntries: csvcheck?.data?.duplicateEntries,
+          rejectedEntries: csvcheck?.data?.rejectedEntries,
         };
         req.session.csv = { ...data, file: csvFile };
         return response.send({ message: 'success', data });
@@ -143,13 +155,22 @@ export class RecipientController {
         const data = {
           id,
           status: CSVStatus.Bad,
+          error: CSVError.Unknown,
           name: csvFile.originalname,
         };
         return response.send({ message: 'success', data });
       }
     } catch (error) {
       logger.error('Error checking csv-file', error);
-      throw new HttpException(500, 'Internal server error');
+      const data = {
+        id: '',
+        status: CSVStatus.Bad,
+        error: error?.message.toLowerCase().startsWith('no valid partyids found')
+          ? CSVError.MissingValidIds
+          : CSVError.Unknown,
+        name: csvFile.originalname,
+      };
+      return response.send({ message: 'success', data });
     }
   }
 }

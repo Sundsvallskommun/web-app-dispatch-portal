@@ -45,7 +45,7 @@ export const SenderHandler: React.FC = () => {
           className="max-w-[467px]"
           {...register('subject')}
         />
-        {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} padded={false} />}
+        {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} />}
       </FormControl>
       <Divider className="w-full my-22" />
       <FormControl className="w-full gap-24">
