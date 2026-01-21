@@ -16,32 +16,31 @@ import { createSessionStore } from './utils/createSessionStore';
 
 validateEnv();
 
-// bootstrap application IIFE - async immediately invoked function expression
-(async () => {
-  try {
-    await initRedis();
-    const sessionStore = createSessionStore(4 * 24 * 60 * 60);
+async function bootstrap() {
+  await initRedis();
+  const sessionStore = createSessionStore(4 * 24 * 60 * 60);
 
-    const app = new App(
-      [
-        IndexController,
-        UserController,
-        HealthController,
-        RecipientController,
-        MessageController,
-        DepartmentsController,
-        StatisticsController,
-        AdminLogotypeController,
-        AdminMunicipalityController,
-        AdminOrganizationController,
-        AdminUserController,
-      ],
-      sessionStore,
-    );
+  const app = new App(
+    [
+      IndexController,
+      UserController,
+      HealthController,
+      RecipientController,
+      MessageController,
+      DepartmentsController,
+      StatisticsController,
+      AdminLogotypeController,
+      AdminMunicipalityController,
+      AdminOrganizationController,
+      AdminUserController,
+    ],
+    sessionStore,
+  );
 
-    app.listen();
-  } catch (err) {
-    console.error('Failed to start app:', err);
-    process.exit(1);
-  }
-})();
+  app.listen();
+}
+
+bootstrap().catch(err => {
+  console.error('Failed to start app: ', err);
+  process.exit(1);
+});
