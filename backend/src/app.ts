@@ -194,7 +194,7 @@ class App {
 
   constructor(
     Controllers: Function[],
-    private sessionStore: session.Store,
+    private readonly sessionStore: session.Store,
   ) {
     this.app = express();
     this.env = NODE_ENV || 'development';
