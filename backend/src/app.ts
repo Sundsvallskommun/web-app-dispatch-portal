@@ -17,7 +17,10 @@ import {
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
   SECRET_KEY,
-  SESSION_MEMORY,
+  SESSION_STORE,
+  REDIS_HOST,
+  REDIS_PORT,
+  REDIS_PASSWORD,
   SWAGGER_ENABLED,
   TEST_EMAIL,
   TEST_USERNAME,
@@ -45,6 +48,8 @@ import 'reflect-metadata';
 import { getMetadataArgsStorage, useExpressServer } from 'routing-controllers';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import createFileStore from 'session-file-store';
+import connectRedis from 'connect-redis';
+import { createClient, RedisClientType } from 'redis';
 import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
@@ -55,13 +60,52 @@ import { getRelayState } from './utils/getRelayState';
 import { dataDir, dataPath } from './utils/util';
 import { isAllowedOrigin } from './utils/isAllowedOrigin';
 
+let redisClient: RedisClientType | null = null;
+
+if (SESSION_STORE === 'redis') {
+  if (!REDIS_HOST) {
+    throw new Error('SESSION_STORE=redis but REDIS_HOST is not set');
+  }
+
+  redisClient = createClient({
+    socket: {
+      host: REDIS_HOST,
+      port: Number(REDIS_PORT || 6379),
+    },
+    password: REDIS_PASSWORD,
+  });
+
+  redisClient.connect().catch(err => {
+    logger.error('Failed to connect to Redis', err);
+  });
+}
+
 const apiService = new ApiService();
-const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
 const sessionTTL = 4 * 24 * 60 * 60;
-// NOTE: memory uses ms while file uses seconds
-const sessionStore = new SessionStoreCreate(
-  SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { ttl: sessionTTL, path: './data/sessions' },
-);
+
+let sessionStore: session.Store;
+
+if (SESSION_STORE === 'redis') {
+  const RedisStore = connectRedis(session);
+
+  sessionStore = new RedisStore({
+    client: redisClient,
+    ttl: sessionTTL,
+  });
+} else if (SESSION_STORE === 'file') {
+  const FileStore = createFileStore(session);
+
+  sessionStore = new FileStore({
+    path: './data/sessions',
+    ttl: sessionTTL,
+  });
+} else {
+  const MemoryStore = createMemoryStore(session);
+
+  sessionStore = new MemoryStore({
+    checkPeriod: sessionTTL * 1000,
+  });
+}
 
 // Rate limiter for sensitive endpoints, e.g., SAML login callback
 const samlLoginRateLimiter = rateLimit({
