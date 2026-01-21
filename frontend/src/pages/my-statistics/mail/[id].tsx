@@ -20,7 +20,9 @@ import dayjs from 'dayjs';
 import {
   createEmptyUserMessage,
   EnumMessageStatus,
+  EnumMessageType,
   MessageAttachment,
+  Recipient,
   UserMessage,
 } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -43,6 +45,29 @@ const MyStatisticsDetails = () => {
   const { message, loaded } = useMessage(id ?? '');
   const { recipients, attachments, sentAt, subject } = message ?? defaultMessageInfo;
 
+  const getLabelColor = (recipient: Recipient): string | undefined => {
+    switch (recipient.status) {
+      case 'SENT':
+        return recipient.messageType === EnumMessageType.DIGITAL_MAIL ? 'vattjom' : undefined;
+
+      case 'NOT_SENT':
+        return 'warning';
+
+      default:
+        return 'error';
+    }
+  };
+
+  const getLabelText = (recipient: Recipient): string => {
+    if (recipient.status === 'SENT') {
+      return t(`statistics:myStatistics.messageType.${recipient.messageType}`);
+    }
+
+    return t(`statistics:myStatistics.status.${recipient.status}`, {
+      defaultValue: t(`statistics:myStatistics.status.default`),
+    });
+  };
+
   const headers: Array<AutoTableHeader | string> = [
     {
       label: capitalize(t('statistics:myStatistics.recipient')),
@@ -59,15 +84,9 @@ const MyStatisticsDetails = () => {
       property: 'messageType',
       renderColumn: (_value, item) => (
         <div className="min-w-[120px]">
-          {item.messageType === 'SNAIL_MAIL' ? (
-            <Label rounded inverted>
-              {t('statistics:myStatistics.snailMail_one')}
-            </Label>
-          ) : (
-            <Label color="vattjom" rounded inverted>
-              {t('statistics:myStatistics.digitalMail_one')}
-            </Label>
-          )}
+          <Label color={getLabelColor(item as Recipient)} rounded inverted>
+            {getLabelText(item as Recipient)}
+          </Label>
         </div>
       ),
     },
@@ -92,7 +111,7 @@ const MyStatisticsDetails = () => {
     return {
       recipient: (
         <>
-          {r?.name ?? ''}
+          {r?.name ?? '-'}
           {r?.personnummer && (
             <>
               <br />
@@ -103,7 +122,7 @@ const MyStatisticsDetails = () => {
       ),
       address: (
         <>
-          {r?.streetAddress ?? ''}
+          {r?.streetAddress ?? '-'}
           {r?.streetAddress && (
             <>
               <span>,</span>
@@ -118,8 +137,8 @@ const MyStatisticsDetails = () => {
     };
   });
 
-  const recipientsSnailMail = recipientList?.filter((r) => !isDigitalMessage(r.messageType));
-  const recipientsDigitalMail = recipientList?.filter((r) => isDigitalMessage(r.messageType));
+  const recipientsSnailMail = recipientList?.filter((r) => r.status === 'SENT' && !isDigitalMessage(r.messageType));
+  const recipientsDigitalMail = recipientList?.filter((r) => r.status === 'SENT' && isDigitalMessage(r.messageType));
 
   const getAttachment = (file: MessageAttachment, index: number) => {
     setLoadingAttachmentIndex(index);
@@ -201,7 +220,7 @@ const MyStatisticsDetails = () => {
               </Tabs.Item>
               <Tabs.Item>
                 <Tabs.Button>
-                  {t('statistics:myStatistics.digitalMail')} ({recipientsDigitalMail?.length ?? '0'})
+                  {t('statistics:myStatistics.messageType.DIGITAL_MAIL')} ({recipientsDigitalMail?.length ?? '0'})
                 </Tabs.Button>
                 <Tabs.Content>
                   {recipientsDigitalMail?.length > 0 && (
@@ -216,7 +235,7 @@ const MyStatisticsDetails = () => {
               </Tabs.Item>
               <Tabs.Item>
                 <Tabs.Button>
-                  {t('statistics:myStatistics.snailMail')} ({recipientsSnailMail?.length ?? '0'})
+                  {t('statistics:myStatistics.messageType.SNAIL_MAIL')} ({recipientsSnailMail?.length ?? '0'})
                 </Tabs.Button>
                 <Tabs.Content>
                   {recipientsSnailMail?.length > 0 && (
