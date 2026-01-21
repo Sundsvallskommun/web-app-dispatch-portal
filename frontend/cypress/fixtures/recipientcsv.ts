@@ -1,10 +1,25 @@
-import { CsvApiResponse } from 'src/data-contracts/backend/data-contracts';
+import { Csv, CsvApiResponse } from 'src/data-contracts/backend/data-contracts';
 
-export const recipientcsv = (status: 'OK' | 'BAD'): CsvApiResponse => ({
-  data: {
-    name: 'personal-numbers.csv',
-    id: '1234-2345-3456',
-    status,
-  },
-  message: 'success',
-});
+interface csvOptions {
+  duplicates?: boolean;
+  rejections?: boolean;
+  error?: Csv['error'];
+}
+
+export const recipientcsv = (
+  status: Csv['status'],
+  options: csvOptions = { duplicates: false, rejections: false, error: 'UNKNOWN' }
+): CsvApiResponse => {
+  const { duplicates = false, rejections = false, error = 'UNKNOWN' } = options;
+  return {
+    data: {
+      name: 'personal-numbers.csv',
+      id: '1234-2345-3456',
+      status,
+      error: status === 'BAD' ? error : undefined,
+      duplicateEntries: duplicates ? { '199011182475': 2, '192301010159': 3 } : undefined,
+      rejectedEntries: rejections ? ['189001019802', '179001019802'] : undefined,
+    },
+    message: 'success',
+  };
+};

@@ -10,10 +10,6 @@
  * ---------------------------------------------------------------
  */
 
-/**
- * The sort order direction
- * @example "ASC"
- */
 export enum Direction {
   ASC = "ASC",
   DESC = "DESC",
@@ -26,14 +22,14 @@ export interface LetterStatusRequest {
 }
 
 export interface Problem {
-  title?: string;
-  detail?: string;
   /** @format uri */
   instance?: string;
   /** @format uri */
   type?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
   status?: StatusType;
+  title?: string;
+  detail?: string;
 }
 
 export interface StatusType {
@@ -61,10 +57,10 @@ export interface ConstraintViolationProblem {
   violations?: Violation[];
   title?: string;
   message?: string;
-  detail?: string;
   /** @format uri */
   instance?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
+  detail?: string;
   suppressed?: {
     stackTrace?: {
       classLoaderName?: string;
@@ -84,7 +80,7 @@ export interface ConstraintViolationProblem {
 }
 
 export interface ThrowableProblem {
-  cause?: ThrowableProblem;
+  cause?: any;
   stackTrace?: {
     classLoaderName?: string;
     moduleName?: string;
@@ -97,14 +93,14 @@ export interface ThrowableProblem {
     nativeMethod?: boolean;
   }[];
   message?: string;
-  title?: string;
-  detail?: string;
   /** @format uri */
   instance?: string;
   /** @format uri */
   type?: string;
-  parameters?: Record<string, object>;
+  parameters?: Record<string, any>;
   status?: StatusType;
+  title?: string;
+  detail?: string;
   suppressed?: {
     stackTrace?: {
       classLoaderName?: string;
@@ -130,151 +126,100 @@ export interface Violation {
 
 /** Letter status */
 export interface LetterStatus {
-  /**
-   * Letter ID
-   * @example "43a32404-28ee-480f-a095-00d48109afab"
-   */
+  /** Letter ID */
   letterId?: string;
-  /**
-   * Delivery status of the letter. NOT_FOUND if the letter could not be found
-   * @example "NEW"
-   */
+  /** Delivery status of the letter */
   status?: string;
-  /**
-   * Information about the signing process. NOT_FOUND if there is no signing information available
-   * @example "COMPLETED"
-   */
+  /** Information about the signing process */
   signingInformation?: string;
 }
 
 /** Request to send a digital registered letter */
 export interface LetterRequest {
-  /**
-   * Party ID of the recipient
-   * @example "7ca29702-a07f-4e13-a66a-4ebc27929cfd"
-   */
+  /** Party ID of the recipient */
   partyId: string;
   /**
    * Subject of the letter
    * @minLength 1
-   * @example "Important Notification"
    */
   subject: string;
   /** Support information for the letter */
   supportInfo: SupportInfo;
   /** Information regarding the organizational unit sending the letter */
   organization: Organization;
-  /**
-   * Content type of the letter body, e.g., 'text/plain' or 'text/html'
-   * @example "text/plain"
-   */
+  /** Content type of the letter body, e.g., 'text/plain' or 'text/html' */
   contentType: string;
   /**
    * Body of the letter
    * @minLength 1
-   * @example "This is the content of the letter. Plain-text body"
    */
   body: string;
 }
 
-/** Information regarding the organizational unit sending the letter */
 export interface Organization {
   /**
    * Unique id for the organization
    * @format int32
-   * @example 44
    */
   number: number;
   /**
    * Readable name for the organization
    * @minLength 1
-   * @example "Department 44"
    */
   name: string;
 }
 
-/** Support information for the letter */
 export interface SupportInfo {
   /**
    * Support text for the letter
    * @minLength 1
-   * @example "For support, please contact us at the information below."
    */
   supportText: string;
   /**
    * URL for contact
    * @minLength 1
-   * @example "https://example.com/support"
    */
   contactInformationUrl: string;
-  /**
-   * Phone number for contact
-   * @example "+46123456789"
-   */
+  /** Phone number for contact */
   contactInformationPhoneNumber: string;
   /**
    * Email address for contact
    * @format email
-   * @example "support@email.com"
    */
   contactInformationEmail: string;
 }
 
-/** List of attachments for the letter */
 export interface Attachment {
-  /**
-   * Unique identifier for the attachment, used for fetching the attachment content
-   * @example "123e4567-e89b-12d3-a456-426614174001"
-   */
+  /** Unique identifier for the attachment, used for fetching the attachment content */
   id?: string;
-  /**
-   * Name of the attachment file
-   * @example "document.pdf"
-   */
+  /** Name of the attachment file */
   fileName?: string;
-  /**
-   * Content type of the attachment
-   * @example "application/pdf"
-   */
+  /** Content type of the attachment */
   contentType?: string;
 }
 
 /** Digital registered letter response */
 export interface Letter {
-  /**
-   * Unique identifier for the letter
-   * @example "123e4567-e89b-12d3-a456-426614174000"
-   */
+  /** Unique identifier for the letter */
   id?: string;
-  /**
-   * Letter subject
-   * @example "Important Notification"
-   */
+  /** Letter subject */
   subject?: string;
-  /**
-   * Municipality ID for the sender of the letter
-   * @example "2281"
-   */
+  /** Municipality ID for the sender of the letter */
   municipalityId?: string;
   /** Status of the letter */
   status?: string;
   /** The letter body */
   body?: string;
-  /**
-   * Content type of the letter body
-   * @example "text/html"
-   */
+  /** Content type of the letter body */
   contentType?: string;
   /**
    * When the letter was sent
    * @format date-time
-   * @example "2023-10-09T12:34:56Z"
    */
   created?: string;
   /**
    * When the letter was last updated
    * @format date-time
-   * @example "2023-10-09T12:34:56Z"
    */
   updated?: string;
   /** Support information for the letter */
@@ -327,11 +272,13 @@ export interface PagingAndSortingMetaData {
    */
   totalPages?: number;
   sortBy?: string[];
-  /** The sort order direction */
+  /**
+   * The sort order direction
+   * @example "ASC"
+   */
   sortDirection?: Direction;
 }
 
-/** Information regarding the device used for the signing order */
 export interface Device {
   /** Ip address used when the letter was signed */
   ipAddress?: string;
@@ -361,13 +308,11 @@ export interface SigningInfo {
   stepUp?: StepUp;
 }
 
-/** Information about possible additional verifications that were part of the signing order */
 export interface StepUp {
   /** Whether an MRTD check was performed before the order was completed */
   mrtd?: boolean;
 }
 
-/** Information regarding the signing party */
 export interface User {
   /** Personal identity number for the signing party */
   personalIdentityNumber?: string;

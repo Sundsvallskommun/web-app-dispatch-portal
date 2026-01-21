@@ -84,10 +84,7 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
               <FormLabel>{t('send-mail:recipientHandler.addWithAddress.firstName')}</FormLabel>
               <Input {...register('firstName')} aria-describedby="firstName-error" />
               {errors.firstName && (
-                <CustomFormErrorMessage
-                  padded={false}
-                  message={t('send-mail:recipientHandler.addWithAddress.error.firstName')}
-                />
+                <CustomFormErrorMessage message={t('send-mail:recipientHandler.addWithAddress.error.firstName')} />
               )}
             </FormControl>
 
@@ -95,10 +92,7 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
               <FormLabel>{t('send-mail:recipientHandler.addWithAddress.lastName')}</FormLabel>
               <Input {...register('lastName')} aria-describedby="lastName-error" />
               {errors.lastName && (
-                <CustomFormErrorMessage
-                  padded={false}
-                  message={t('send-mail:recipientHandler.addWithAddress.error.lastName')}
-                />
+                <CustomFormErrorMessage message={t('send-mail:recipientHandler.addWithAddress.error.lastName')} />
               )}
             </FormControl>
 
@@ -106,10 +100,7 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
               <FormLabel>{t('send-mail:recipientHandler.addWithAddress.address')}</FormLabel>
               <Input {...register('street')} aria-describedby="address-error" />
               {errors.street && (
-                <CustomFormErrorMessage
-                  padded={false}
-                  message={t('send-mail:recipientHandler.addWithAddress.error.address')}
-                />
+                <CustomFormErrorMessage message={t('send-mail:recipientHandler.addWithAddress.error.address')} />
               )}
             </FormControl>
 
@@ -122,10 +113,7 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
               <FormLabel>{t('send-mail:recipientHandler.addWithAddress.zipCode')}</FormLabel>
               <Input {...register('zipCode')} aria-describedby="zipCode-error" />
               {errors.zipCode && (
-                <CustomFormErrorMessage
-                  padded={false}
-                  message={t('send-mail:recipientHandler.addWithAddress.error.zipCode')}
-                />
+                <CustomFormErrorMessage message={t('send-mail:recipientHandler.addWithAddress.error.zipCode')} />
               )}
             </FormControl>
 
@@ -133,10 +121,7 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
               <FormLabel>{t('send-mail:recipientHandler.addWithAddress.city')}</FormLabel>
               <Input {...register('city')} aria-describedby="city-error" />
               {errors.city && (
-                <CustomFormErrorMessage
-                  padded={false}
-                  message={t('send-mail:recipientHandler.addWithAddress.error.city')}
-                />
+                <CustomFormErrorMessage message={t('send-mail:recipientHandler.addWithAddress.error.city')} />
               )}
             </FormControl>
           </div>

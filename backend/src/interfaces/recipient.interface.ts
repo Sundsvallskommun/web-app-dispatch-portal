@@ -9,6 +9,11 @@ export enum CSVStatus {
   Ok = 'OK',
   Bad = 'BAD',
 }
+
+export enum CSVError {
+  Unknown = 'UNKNOWN',
+  MissingValidIds = 'MISSING_VALID_IDS',
+}
 export interface CSV {
   name: string;
   file: Express.Multer.File;

@@ -73,6 +73,10 @@ class ApiService {
         logger.error('Error data:', error.response.config.data);
         logger.error('Error method:', error.response.config.method);
         logger.error('Error headers:', error.response.config.headers);
+        throw new HttpException(
+          error?.response?.status ?? 500,
+          error?.response?.data?.detail ?? 'Internal server error',
+        );
       } else {
         console.error('Unknown error:', error);
         logger.error('Unknown error:', error);

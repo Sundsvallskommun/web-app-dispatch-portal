@@ -70,6 +70,29 @@ pages.forEach((p) => {
           cy.get('.sk-form-error-message').contains('Felaktig CSV-fil');
         });
 
+        it('should show error when adding a csv file with no valid recipients', () => {
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('BAD', { error: 'MISSING_VALID_IDS' })).as('csv');
+          addCsv();
+          cy.get('[data-cy="recipientlist"]').should('not.exist');
+          cy.get('.sk-form-error-message').contains('Kunde inte hitta några giltiga mottagare.');
+        });
+
+        it('should show dialog when adding a csv file with duplicate recipients', () => {
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { duplicates: true, rejections: true })).as(
+            'csv'
+          );
+          addCsv();
+          cy.get('.sk-modal-dialog.sk-dialog')
+            .eq(0)
+            .within(() => {
+              cy.get('h1').should('include.text', 'Filen innehåller problem');
+              cy.get('p').contains('Filen innehåller 2 personnummer med dubbletter.');
+              cy.get('p').contains('Filen innehåller 2 felaktiga personnummer.');
+              cy.get('button').contains('Fortsätt ändå').click();
+            });
+          cy.get('[data-cy="recipientlist"]').contains('personal-numbers.csv').should('be.visible');
+        });
+
         it('should warn and reset if changing to csv from added person', () => {
           cy.intercept('POST', '**/api/recipient', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           addRecipient(notEligiblePn, true);
