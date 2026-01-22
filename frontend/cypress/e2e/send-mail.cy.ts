@@ -23,7 +23,7 @@ pages.forEach((p) => {
       if (p.route === '/send/mail') {
         // VANLIGT BREV
 
-        it('should add an correct personal number with Kivra in the search input, show dialog and add a person on enter', () => {
+        it('should add a correct personal number with Kivra in the search input, show dialog and add a person on enter', () => {
           cy.intercept('POST', '**/api/recipient', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
           addRecipient(eligiblePn, true);
           cy.get('[data-cy="recipient-table"]>tbody>tr')
@@ -35,7 +35,7 @@ pages.forEach((p) => {
             });
         });
 
-        it('should add an correct personal number without Kivra in the search input, show dialog and add a person on enter', () => {
+        it('should add a correct personal number without Kivra in the search input, show dialog and add a person on enter', () => {
           cy.intercept('POST', '**/api/recipient', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           addRecipient(notEligiblePn, true);
           cy.get('[data-cy="recipient-table"]>tbody>tr')
@@ -45,6 +45,14 @@ pages.forEach((p) => {
               if (index === 0) cy.wrap(child).contains(personalNumber.isNotEligible);
               if (index === 2) cy.wrap(child).contains('Post');
             });
+        });
+
+        it('should add a minor personal number, show dialog with error message', () => {
+          cy.intercept('POST', '**/api/recipient', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE', true)).as(
+            'recipient'
+          );
+          addRecipient(notEligiblePn, false);
+          cy.get('[data-cy="preview-person-error"]').should('include.text', 'Mottagaren är underårig');
         });
 
         it('should add persons with address', () => {

@@ -19,6 +19,7 @@ export enum EnumMessageStatus {
   NOT_SENT = 'NOT_SENT',
   FAILED = 'FAILED',
   PENDING = 'PENDING',
+  INELIGIBLE_MINOR = 'INELIGIBLE_MINOR',
 }
 
 export interface Recipient {
