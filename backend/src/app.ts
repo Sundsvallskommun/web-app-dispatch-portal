@@ -183,8 +183,7 @@ const samlStrategy = new Strategy(
       done(null, findUser);
     } catch (err) {
       if (err instanceof HttpException && err?.status === 404) {
-        // TODO: Handle missing person form Citizen?
-        logger.error('Error when calling Citizen:');
+        logger.error('Error when getting user:');
         logger.error(err);
       }
       done(err);
@@ -351,7 +350,7 @@ class App {
         const handleLogin = (err, user) => {
           if (err) return redirectWithFailure(err.name);
 
-          if (!user) return res.redirect('/saml/login');
+          if (!user) return redirectWithFailure('NO_USER');
 
           req.login(user, loginErr => {
             if (loginErr) return redirectWithFailure('SAML_UNKNOWN_ERROR');

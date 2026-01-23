@@ -21,10 +21,9 @@ Router.events.on('routeChangeComplete', (route) => {
   }
 });
 
-export const handleError = (error: AxiosError) => {
+export const handleError = (error: AxiosError<ApiResponse<unknown>>) => {
   if (error.response?.status === 401 && Router.pathname !== '/login' && !isRedirectingToLogin) {
-    isRedirectingToLogin = true;
-    Router.push(`${process.env.NEXT_PUBLIC_API_URL}/saml/login`);
+    Router.push(`/login?path=${globalThis.location.pathname}&failMessage=${error.response.data.message}`);
   }
 
   throw error;
