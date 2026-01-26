@@ -7,12 +7,12 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 | API               | Version |
 | ----------------- | ------: |
 | SimulatorServer   |     2.0 |
-| Messaging         |     7.9 |
+| Messaging         |    7.10 |
 | Company           |     1.0 |
 | Employee          |     2.0 |
 | Citizen           |     3.0 |
 | PostPortalService |     1.3 |
-| MessagingSettings |     2.0 |
+| MessagingSettings |     3.0 |
 
 ## Utveckling
 
