@@ -3,6 +3,7 @@ import {
   BASE_URL_PREFIX,
   CREDENTIALS,
   DEV,
+  getApiBase,
   LOG_FORMAT,
   MUNICIPALITY_ID,
   NODE_ENV,
@@ -155,11 +156,11 @@ const samlStrategy = new Strategy(
         },
       };
 
-        const employeeDetails = await apiService.get<any>(
-          { url: `${getApiBase('employee')}/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
-          dummyUser,
-        );
-        const { personid, orgTree } = employeeDetails.data;
+      const employeeDetails = await apiService.get<any>(
+        { url: `${getApiBase('employee')}/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
+        dummyUser,
+      );
+      const { personid, orgTree } = employeeDetails.data;
 
       // Get permissions of the user
       const permissionsUser: User = { ...dummyUser };
