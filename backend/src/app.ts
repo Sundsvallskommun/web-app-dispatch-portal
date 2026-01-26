@@ -155,11 +155,11 @@ const samlStrategy = new Strategy(
         },
       };
 
-      const employeeDetails = await apiService.get<any>(
-        { url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
-        dummyUser,
-      );
-      const { personid, orgTree } = employeeDetails.data;
+        const employeeDetails = await apiService.get<any>(
+          { url: `${getApiBase('employee')}/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
+          dummyUser,
+        );
+        const { personid, orgTree } = employeeDetails.data;
 
       // Get permissions of the user
       const permissionsUser: User = { ...dummyUser };
