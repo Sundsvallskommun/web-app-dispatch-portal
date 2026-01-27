@@ -1,10 +1,7 @@
-import { AUTHORIZED_GROUPS } from '@config';
+import { AUTHORIZED_GROUPS, getApiBase, MUNICIPALITY_ID } from '@config';
 import { Permissions, User } from '@interfaces/users.interface';
 import ApiService, { ApiResponse } from './api.service';
 import { logError } from './message.service';
-
-const MESSAGING_SETTINGS_PATH = `messaging-settings/2.0`;
-const MUNICIPALITY_ID = '2281';
 
 export function authorizeGroups(groups) {
   console.log('authorizing groups', groups);
@@ -44,7 +41,7 @@ export const getMessagingUserSettings: (user: User, api: ApiService) => Promise<
   user,
   api,
 ) => {
-  const url = `${MESSAGING_SETTINGS_PATH}/${MUNICIPALITY_ID}/user`;
+  const url = `${getApiBase('messaging-settings')}/${MUNICIPALITY_ID}/user`;
   const headers = {
     'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
   };

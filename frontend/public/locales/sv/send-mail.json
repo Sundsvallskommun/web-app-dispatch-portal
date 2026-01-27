@@ -149,8 +149,11 @@
         "city": "Ort måste anges"
       }
     },
-    "mail": {
-      "error": "Kan ej lägga till mottagaren"
+    "singleRecipient": {
+      "error": {
+        "default": "Kan ej lägga till mottagaren",
+        "INELIGIBLE_MINOR": "Mottagaren är underårig"
+      }
     }
   },
   "reviewHandler": {

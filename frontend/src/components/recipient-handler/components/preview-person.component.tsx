@@ -21,6 +21,7 @@ const PreviewPerson = ({ person, loading, handleSubmit, sendType }: PreviewPerso
   const eligibleStatus = isEligible ? 'success' : 'error';
   const alert = (
     <div
+      data-cy="preview-person-error"
       className={cx(
         'flex items-center gap-6 border-1 rounded-utility p-8 mt-16',
         isEligible ? successClasses : errorClasses
@@ -29,7 +30,9 @@ const PreviewPerson = ({ person, loading, handleSubmit, sendType }: PreviewPerso
       <Icon color={isEligible ? 'success' : 'error'} icon={isEligible ? <Check /> : <X />} />
       {sendType === formSendType.REK_MAIL
         ? t(`send-mail:recipientHandler.rekMail.${eligibleStatus}`)
-        : t(`send-mail:recipientHandler.mail.error'}`)}
+        : t(`send-mail:recipientHandler.singleRecipient.error.${person?.reason}`, {
+            defaultValue: t(`send-mail:recipientHandler.singleRecipient.error.default`),
+          })}
     </div>
   );
 

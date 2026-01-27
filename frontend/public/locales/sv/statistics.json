@@ -5,6 +5,15 @@
   "fromToDates": "Visar statistik från {from} till {to}",
   "showPerMonth": "Visa statistik per månad",
   "myStatistics": {
+    "messageType": {
+      "SNAIL_MAIL": "Post",
+      "DIGITAL_MAIL": "Digitalt"
+    },
+    "status": {
+      "default": "Fel",
+      "NOT_SENT": "Ej skickat",
+      "INELIGIBLE_MINOR": "Underårig"
+    },
     "recipient": "mottagare",
     "address": "Adress",
     "deliveryMethod": "Leveranssätt",
@@ -16,10 +25,6 @@
     "attachments": "Bifogade filer",
     "showAttachment": "Ladda ner",
     "all": "Alla leveranssätt",
-    "digitalMail_one": "Digitalt",
-    "digitalMail": "Digitalt",
-    "snailMail_one": "Post",
-    "snailMail": "Post",
     "SMSMessagePrefixUrl": "/my-statistics/sms",
     "emailMessagePrefixUrl": "/my-statistics/mail",
     "letterSubject": "{subject} (Brev)",
@@ -27,6 +32,7 @@
     "noMessagesExist": "Du har inte gjort några utskick än. ",
     "failedFetchingFile": "Misslyckades med att hämta filen {fileName}",
     "sms": "Sms",
+    "deliveryMethods": {},
     "signingInfo": {
       "new": "Nytt",
       "sent": "Mottaget",

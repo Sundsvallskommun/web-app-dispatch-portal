@@ -146,11 +146,11 @@ const samlStrategy = new Strategy(
         },
       };
 
-      const employeeDetails = await apiService.get<any>(
-        { url: `employee/2.0/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
-        dummyUser,
-      );
-      const { personid, orgTree } = employeeDetails.data;
+        const employeeDetails = await apiService.get<any>(
+          { url: `${getApiBase('employee')}/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
+          dummyUser,
+        );
+        const { personid, orgTree } = employeeDetails.data;
 
       // Get permissions of the user
       const permissionsUser: User = { ...dummyUser };
@@ -174,8 +174,7 @@ const samlStrategy = new Strategy(
       done(null, findUser);
     } catch (err) {
       if (err instanceof HttpException && err?.status === 404) {
-        // TODO: Handle missing person form Citizen?
-        logger.error('Error when calling Citizen:');
+        logger.error('Error when getting user:');
         logger.error(err);
       }
       done(err);
@@ -345,7 +344,7 @@ class App {
         const handleLogin = (err, user) => {
           if (err) return redirectWithFailure(err.name);
 
-          if (!user) return res.redirect('/saml/login');
+          if (!user) return redirectWithFailure('NO_USER');
 
           req.login(user, loginErr => {
             if (loginErr) return redirectWithFailure('SAML_UNKNOWN_ERROR');

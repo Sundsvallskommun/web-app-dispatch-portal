@@ -22,8 +22,6 @@ export const LoginGuard: React.FC<{ children?: React.ReactNode }> = ({ children 
       if (res.error) {
         logout();
         if (router.pathname !== '/login') {
-          router.push(`${process.env.NEXT_PUBLIC_API_URL}/saml/login`);
-        } else {
           router.push(
             {
               pathname: '/login',
