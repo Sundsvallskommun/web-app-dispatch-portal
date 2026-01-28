@@ -155,7 +155,6 @@ const samlStrategy = new Strategy(
 
       // Get permissions of the user
       const permissionsUser: User = { ...dummyUser };
-      const permissions = await getPermissions(permissionsUser, apiService);
       const reqWithUser = { ...req, user: permissionsUser } as RequestWithUser;
       const permissions = await getPermissions(reqWithUser, apiService);
 

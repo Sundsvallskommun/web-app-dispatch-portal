@@ -5,16 +5,16 @@ import { Request } from 'express';
 export const getRelayState = (req: Request): string => {
   let successRedirect = SAML_SUCCESS_REDIRECT ?? '/';
 
-  if (req.session.returnTo) {
+  if (req?.session?.returnTo) {
     successRedirect = req.session.returnTo;
   }
-  if (typeof req.query.successRedirect === 'string') {
+  if (typeof req?.query?.successRedirect === 'string') {
     successRedirect = req.query.successRedirect;
   }
 
   let failureRedirect = successRedirect;
 
-  if (typeof req.query.failureRedirect === 'string') {
+  if (typeof req?.query?.failureRedirect === 'string') {
     failureRedirect = req.query.failureRedirect;
   }
 

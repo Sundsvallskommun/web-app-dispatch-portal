@@ -1,6 +1,6 @@
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { getMunicipalityId } from '@/utils/getMunicipalityId';
-import { AUTHORIZED_GROUPS, getApiBase } from '@config';
+import { getApiBase } from '@config';
 import { InternalRole, Permissions } from '@interfaces/users.interface';
 import ApiService, { ApiResponse } from './api.service';
 import { logError } from './message.service';
@@ -11,6 +11,24 @@ export const defaultPermissions: () => Permissions = () => ({
   canSendLetter: true,
   canSendRegisteredLetter: false,
 });
+
+/**
+ * Returns all roles
+ * @param groups List of AD groups
+ * @returns roles
+ */
+export const getRoles = (groups: string[]): InternalRole[] => {
+  const roles: InternalRole[] = [];
+  for (let group of groups) {
+    const groupLower = group.toLowerCase();
+    const role = roleADMapping[groupLower];
+    if (role) {
+      roles.push(role);
+    }
+  }
+
+  return roles;
+};
 
 /**
  *
