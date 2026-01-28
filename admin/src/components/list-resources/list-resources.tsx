@@ -1,6 +1,5 @@
 'use client';
 
-import { LogoPreview } from '@components/logo-preview/logo-preview.component';
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
 import { ResourceName } from '@interfaces/resource-name';
@@ -49,18 +48,17 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
       _headers ||
       storeHeaders?.reduce<AutoTableHeader[]>((headers, key) => {
         if (data) {
-          if (key === 'logotype') {
+          const type = typeof data?.[0]?.[key];
+          if (key === 'idpId') {
             return [
               ...headers,
               {
-                label: capitalize(t(`logotypes:name_one`)),
-                property: 'logotype',
-                renderColumn: (_value, item) => <LogoPreview logotype={item.logotype} name={item?.name} />,
-                isColumnSortable: false,
+                label: getHeader(key),
+                property: key,
+                renderColumn: (_value, item) => <span>{item.idp.name ?? item.idp.id}</span>,
               },
             ];
           }
-          const type = typeof data?.[0]?.[key];
           if (type === 'string' || type === 'number') {
             return [
               ...headers,

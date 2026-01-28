@@ -10,7 +10,7 @@ const handleSetUserResponse: (res: ApiResponse<AdminUser>) => AdminUser = (res) 
 
 const getMe: () => Promise<ServiceResponse<AdminUser>> = () => {
   return apiService
-    .get<ApiResponse<AdminUser>>('admin/me')
+    .get<ApiResponse<AdminUser>>('/admin/me')
     .then((res) => ({ data: handleSetUserResponse(res.data) }))
     .catch((e) => ({
       message: e.response?.data.message,
