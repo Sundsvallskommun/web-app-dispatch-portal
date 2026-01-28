@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 async function main() {
-  console.log(process.env);
   const idp = await prisma.iDP.upsert({
     where: { id: 1 },
     update: {},
