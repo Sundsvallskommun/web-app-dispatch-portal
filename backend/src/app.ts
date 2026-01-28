@@ -3,6 +3,7 @@ import {
   BASE_URL_PREFIX,
   CREDENTIALS,
   DEV,
+  getApiBase,
   LOG_FORMAT,
   MUNICIPALITY_ID,
   NODE_ENV,
@@ -146,7 +147,7 @@ const samlStrategy = new Strategy(
         surname: '',
         email: '',
         password: '',
-        username: '',
+        username: username ?? '',
         groups: '',
         permissions: {
           canSendSMS: false,
@@ -155,15 +156,14 @@ const samlStrategy = new Strategy(
         },
       };
 
-        const employeeDetails = await apiService.get<any>(
-          { url: `${getApiBase('employee')}/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
-          dummyUser,
-        );
-        const { personid, orgTree } = employeeDetails.data;
+      const employeeDetails = await apiService.get<any>(
+        { url: `${getApiBase('employee')}/${MUNICIPALITY_ID}/portalpersondata/PERSONAL/${employee}` },
+        dummyUser,
+      );
+      const { personid, orgTree } = employeeDetails.data;
 
       // Get permissions of the user
       const permissionsUser: User = { ...dummyUser };
-      permissionsUser.username = DEV ? TEST_USERNAME : username;
       const permissions = await getPermissions(permissionsUser, apiService);
 
       const findUser = {
@@ -186,7 +186,7 @@ const samlStrategy = new Strategy(
         logger.error('Error when getting user:');
         logger.error(err);
       }
-      done(err);
+      done({ ...err, name: 'AUTH_FAILED' }, {});
     }
   },
   async function (_profile: Profile, done: VerifiedCallback) {
