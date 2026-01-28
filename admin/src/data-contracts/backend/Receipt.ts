@@ -10,31 +10,23 @@
  * ---------------------------------------------------------------
  */
 
-import { MessageApiResponse, RequestBodyMail } from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+import { HttpClient, RequestParams } from "./http-client";
 
-export class Message<
+export class Receipt<
   SecurityDataType = unknown,
 > extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
-   * @tags Message
-   * @name MessageControllerRecipients
-   * @summary Send attachment to recipients
-   * @request POST:/message/
+   * @tags Statistics
+   * @name StatisticsControllerGetReceipt
+   * @summary Return receipt PDF
+   * @request GET:/receipt/{id}
    */
-  messageControllerRecipients = (
-    data?: RequestBodyMail & {
-      files?: File[];
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<MessageApiResponse, any>({
-      path: `/message/`,
-      method: "POST",
-      body: data,
-      type: ContentType.FormData,
+  statisticsControllerGetReceipt = (id: string, params: RequestParams = {}) =>
+    this.request<void, any>({
+      path: `/receipt/${id}`,
+      method: "GET",
       ...params,
     });
 }

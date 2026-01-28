@@ -1,0 +1,11 @@
+{
+  "name_zero": "IDP",
+  "name_one": "IDP",
+  "name_many": "IDP",
+  "name_other": "IDP",
+  "properties": {
+    "name": "Namn",
+    "entryPoint": "Ingångsurl",
+    "idpCert": "Certifikat"
+  }
+}
