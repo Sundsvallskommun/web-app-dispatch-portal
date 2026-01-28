@@ -1,41 +1,27 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 async function main() {
-  const logotype = await prisma.logotype.upsert({
+  console.log(process.env);
+  const idp = await prisma.iDP.upsert({
     where: { id: 1 },
     update: {},
     create: {
-      id: 1,
-      name: 'Sundsvalls kommuns logotyp',
-      filenameLightMode: 'symbol-lightmode.svg',
-      urlLightMode: '/files/symbol-lightmode.svg',
-      filenameDarkMode: 'symbol-darkmode.svg',
-      urlDarkMode: '/files/symbol-darkmode.svg',
+      entryPoint: process.env.SAML_ENTRY_SSO,
+      idpCert: process.env.SAML_IDP_PUBLIC_CERT,
     },
   });
 
-  const kommun = await prisma.municipality.upsert({
-    where: { municipalityId: 2281 },
+  const sundsvall = await prisma.host.upsert({
+    where: { name: 'sundsvall' },
     update: {},
     create: {
       municipalityId: 2281,
-      name: 'Sundsvalls kommun',
-      logotypeId: 1,
+      name: 'sundsvall',
+      idpId: 1,
     },
   });
 
-  const org = await prisma.organization.upsert({
-    where: { host: 'postportal.sundsvall.se' },
-    update: {},
-    create: {
-      host: 'postportal.sundsvall.se',
-      name: 'Sundsvalls kommun',
-      orgId: 13,
-      municipalityId: 2281,
-      logotypeId: 1,
-    },
-  });
-  console.log(logotype, kommun, org);
+  console.log(idp, sundsvall);
 }
 
 main()

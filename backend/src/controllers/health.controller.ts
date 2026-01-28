@@ -17,15 +17,13 @@ export class HealthController {
       status: 'OK',
     };
     const dummyUser: User = {
-      id: 0,
       personId: '',
       name: '',
       givenName: '',
       surname: '',
       email: '',
-      password: '',
       username: '',
-      groups: '',
+      groups: [],
       permissions: {
         canSendSMS: false,
         canSendLetter: true,

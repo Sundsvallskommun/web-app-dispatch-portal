@@ -5,10 +5,6 @@ export const APIS = [
     version: '2.0',
   },
   {
-    name: 'messaging',
-    version: '7.10',
-  },
-  {
     name: 'company',
     version: '1.0',
   },

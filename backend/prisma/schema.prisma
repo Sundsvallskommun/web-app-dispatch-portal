@@ -8,38 +8,25 @@ datasource db {
 }
 
 
-model Municipality {
+
+
+model Host {
   id                Int             @id @default(autoincrement())
-  municipalityId    Int             @unique
-  name              String?         
-  logotypeId        Int?
-  logotype          Logotype?       @relation(fields: [logotypeId], references: [id])
-  organizations     Organization[]
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-}
-model Organization { 
-  id                Int             @id @default(autoincrement())
-  host              String          @unique
-  orgId             Int          
-  name              String?
-  logotypeId        Int?
-  logotype          Logotype?       @relation(fields: [logotypeId], references: [id])
+  name              String          @unique
   municipalityId    Int
-  municipality      Municipality    @relation(fields: [municipalityId], references: [municipalityId])
+  idpId             Int
+  idp               IDP             @relation(fields: [idpId], references: [id] )
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 }
 
-model Logotype {
-  id                  Int             @id @default(autoincrement())
-  name                String
-  filenameLightMode   String
-  urlLightMode        String
-  filenameDarkMode    String?
-  urlDarkMode         String?
-  municipalities      Municipality[]
-  organizations       Organization[]
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+
+model IDP {
+  id                Int             @id @default(autoincrement())
+  name              String?
+  entryPoint        String
+  idpCert           String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  hosts             Host[]
 }

@@ -23,7 +23,7 @@ export class MessageController {
   @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
   async sendSMS(@Body() body: RequestBodySMS, @Req() req: RequestWithUser, @Res() response: Response) {
     const { message, recipients } = body;
-    const res = await sendSmsMessage(req.user, this.apiService, recipients, message).catch(e => {
+    const res = await sendSmsMessage(req, this.apiService, recipients, message).catch(e => {
       logError('Error when sending sms', e);
       throw new Error('Error when sending sms');
     });
@@ -51,7 +51,7 @@ export class MessageController {
     }
 
     const res = await sendLetter(
-      req.user,
+      req,
       this.apiService,
       recipients,
       { subject: body.subject, body: body.body, files },
@@ -77,7 +77,7 @@ export class MessageController {
     @Res() response: Response<MessageResponse>,
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
   ): Promise<Response<MessageResponse>> {
-    const res = await sendRecLetter(req.user, this.apiService, {
+    const res = await sendRecLetter(req, this.apiService, {
       recipientPersonId: body.recipientPersonId,
       subject: body.subject,
       body: body.body,
@@ -110,7 +110,7 @@ export class MessageController {
         throw new HttpException(400, 'Csv file missing');
       }
 
-      const res = await sendLetterCsv(req.user, this.apiService, {
+      const res = await sendLetterCsv(req, this.apiService, {
         subject: body.subject,
         body: body.body,
         files,

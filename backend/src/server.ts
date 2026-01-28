@@ -7,10 +7,9 @@ import { RecipientController } from './controllers/recipient.controller';
 import { MessageController } from './controllers/message.controller';
 import { DepartmentsController } from './controllers/departments.controller';
 import { StatisticsController } from '@controllers/statistics.controller';
-import { AdminLogotypeController } from './controllers/admin/logotype.controller';
-import { AdminMunicipalityController } from './controllers/admin/municipality.controller';
-import { AdminOrganizationController } from './controllers/admin/organization.controller';
 import { AdminUserController } from './controllers/admin/user.controller';
+import { AdminHostController } from './controllers/admin/host.controller';
+import { AdminIdpController } from './controllers/admin/idp.controller';
 
 validateEnv();
 
@@ -22,10 +21,9 @@ const app = new App([
   MessageController,
   DepartmentsController,
   StatisticsController,
-  AdminLogotypeController,
-  AdminMunicipalityController,
-  AdminOrganizationController,
   AdminUserController,
+  AdminHostController,
+  AdminIdpController,
 ]);
 
 app.listen();
