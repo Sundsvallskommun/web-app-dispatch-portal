@@ -1,16 +1,26 @@
 import { SAML_SUCCESS_REDIRECT } from '@/config';
+import { RelayState } from '@/interfaces/relaystate.interface';
 import { Request } from 'express';
 
 export const getRelayState = (req: Request): string => {
-  let relayState = SAML_SUCCESS_REDIRECT ?? '/';
+  let successRedirect = SAML_SUCCESS_REDIRECT ?? '/';
+
   if (req?.session?.returnTo) {
-    relayState = req.session.returnTo;
+    successRedirect = req.session.returnTo;
   }
-  if (req?.query?.successRedirect) {
-    relayState = `${req.query.successRedirect}`;
+  if (typeof req?.query?.successRedirect === 'string') {
+    successRedirect = req.query.successRedirect;
   }
-  if (req?.query?.failureRedirect) {
-    relayState = `${relayState},${req.query.failureRedirect}`;
+
+  let failureRedirect = successRedirect;
+
+  if (typeof req?.query?.failureRedirect === 'string') {
+    failureRedirect = req.query.failureRedirect;
   }
-  return relayState;
+
+  const host = typeof req?.query?.host === 'string' ? req.query.host : undefined;
+
+  const relayState: RelayState = { successRedirect, failureRedirect, host };
+
+  return JSON.stringify(relayState);
 };

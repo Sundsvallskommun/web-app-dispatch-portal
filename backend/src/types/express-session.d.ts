@@ -8,6 +8,7 @@ declare module 'express-session' {
     user?: User;
     passport?: any;
     messages: string[];
+    municipalityId?: string;
     csv: CSV;
   }
 }
