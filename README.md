@@ -112,3 +112,73 @@ module.exports = {
 ```
 
 Som hjälp i VSCode rekommenderas [i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally).
+
+### Session-hantering (Memory / File / Redis)
+
+Backend använder `express-session` för sessionshantering.
+Session store väljs via miljövariabeln `SESSION_STORE`
+
+#### Tillgängliga session stores
+
+| Värde    | Beskrivning                          | Rekommenderad miljö |
+| -------- | ------------------------------------ | ------------------- |
+| `memory` | In-memory store (default)            | Lokal utveckling    |
+| `file`   | Filbaserad store (`./data/sessions`) | Lokal test / legacy |
+| `redis`  | Redis-baserad store                  | OpenShift / test    |
+
+#### Lokal utveckling (rekommenderat)
+
+Vid lokal utveckling används Memory Store som standard. Ingen Redis krävs.
+
+`backend/.env.development.local`:
+
+```
+SESSION_STORE=memory
+```
+
+Alternativt kan File Store användas:
+
+```
+SESSION_STORE=file
+```
+
+File Store ska inte användas i OpenShift eftersom poddar är stateless.
+
+#### Redis (för OpenShift / container-miljö)
+
+När applikationen körs i OpenShift används Redis för sessions, vilket möjliggör:
+
+- flera backend-poddar
+- stabila inloggningar
+- korrekt skalning
+
+I detta läge ska följande miljövariabler sättas via Deployment / Helm / ArgoCD (inte i `.env.development.local`):
+
+```
+SESSION_STORE=redis
+REDIS_HOST=<redis-hostname>
+REDIS_PORT=6379
+REDIS_PASSWORD=<secret>
+```
+
+##### Exempel - Kubernetes/OpenShift:
+
+```
+env:
+  - name: SESSION_STORE
+    value: redis
+  - name: REDIS_HOST
+    value: redis-master.redis.svc.cluster.local
+  - name: REDIS_PORT
+    value: "6379"
+  - name: REDIS_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: redis-secret
+        key: password
+```
+
+- Redis används endast när `SESSION_STORE=redis`
+- Saknas Redis-konfiguration när Redis är vald kraschar applikationen med: `error: uncaughtException: SESSION_STORE=redis but REDIS_HOST is not set`
+- Lokal utveckling kräver ingen Redis
+- Samma kodbas används i alla miljöer
