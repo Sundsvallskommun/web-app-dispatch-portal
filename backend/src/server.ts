@@ -7,10 +7,9 @@ import { RecipientController } from './controllers/recipient.controller';
 import { MessageController } from './controllers/message.controller';
 import { DepartmentsController } from './controllers/departments.controller';
 import { StatisticsController } from '@controllers/statistics.controller';
-import { AdminLogotypeController } from './controllers/admin/logotype.controller';
-import { AdminMunicipalityController } from './controllers/admin/municipality.controller';
-import { AdminOrganizationController } from './controllers/admin/organization.controller';
 import { AdminUserController } from './controllers/admin/user.controller';
+import { AdminHostController } from './controllers/admin/host.controller';
+import { AdminIdpController } from './controllers/admin/idp.controller';
 import { initRedis } from './utils/initRedis';
 import { createSessionStore } from './utils/createSessionStore';
 
@@ -29,9 +28,8 @@ async function bootstrap() {
       MessageController,
       DepartmentsController,
       StatisticsController,
-      AdminLogotypeController,
-      AdminMunicipalityController,
-      AdminOrganizationController,
+      AdminHostController,
+      AdminIdpController,
       AdminUserController,
     ],
     sessionStore,

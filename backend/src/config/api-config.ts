@@ -5,10 +5,6 @@ export const APIS = [
     version: '2.0',
   },
   {
-    name: 'messaging',
-    version: '7.9',
-  },
-  {
     name: 'company',
     version: '1.0',
   },
@@ -21,12 +17,8 @@ export const APIS = [
     version: '3.0',
   },
   {
-    name: 'digitalregisteredletter',
-    version: '2.4',
-  },
-  {
     name: 'messaging-settings',
-    version: '2.0',
+    version: '3.0',
   },
   {
     name: 'postportalservice',

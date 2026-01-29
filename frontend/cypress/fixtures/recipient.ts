@@ -1,8 +1,16 @@
 import { Recipient, RecipientApiResponse } from 'src/data-contracts/backend/data-contracts';
 
+const getReason = (minor?: boolean) => {
+  if (minor) {
+    return 'INELIGIBLE_MINOR';
+  }
+  return 'REASON';
+};
+
 export const recipient = (
   personnumber: string,
-  deliveryMethod: Recipient['deliveryMethod'] = 'SNAIL_MAIL'
+  deliveryMethod: Recipient['deliveryMethod'] = 'SNAIL_MAIL',
+  minor?: boolean
 ): RecipientApiResponse => ({
   data: {
     personNumber: personnumber,
@@ -15,7 +23,7 @@ export const recipient = (
       city: 'STADEN',
       country: 'SVERIGE',
     },
-    reason: deliveryMethod === 'DELIVERY_NOT_POSSIBLE' ? 'En anledning' : undefined,
+    reason: deliveryMethod === 'DELIVERY_NOT_POSSIBLE' ? getReason(minor) : undefined,
   },
   message: 'success',
 });

@@ -1,14 +1,12 @@
 export interface User {
-  id: number;
   name: string;
   givenName: string;
   surname: string;
   email: string;
-  password: string;
   username: string;
-  groups: string;
+  groups: string[];
   permissions: Permissions;
-  roles?: InternalRoleEnum[];
+  roles?: InternalRole[];
   personId: string;
   orgTree?: string;
 }

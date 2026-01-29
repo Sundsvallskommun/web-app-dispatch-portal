@@ -26,10 +26,12 @@ export enum EnumMessageType {
   DIGITAL_MAIL = 'DIGITAL_MAIL',
   SMS = 'SMS',
 }
+
 export enum EnumMessageStatus {
   SENT = 'SENT',
   NOT_SENT = 'NOT_SENT',
   FAILED = 'FAILED',
+  INELIGIBLE_MINOR = 'INELIGIBLE_MINOR',
 }
 
 export interface Recipient {

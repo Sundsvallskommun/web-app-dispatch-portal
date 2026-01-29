@@ -1,11 +1,12 @@
+import { getApiBase } from '@/config';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { Permissions } from '@/interfaces/users.interface';
 import ApiService from '@/services/api.service';
+import { getMunicipalityId } from '@/utils/getMunicipalityId';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Controller, Get, Header, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
-import { MUNICIPALITY_ID } from '@/config';
 
 interface UserData {
   name: string;
@@ -56,8 +57,8 @@ export class UserController {
     if (!personId) {
       throw new HttpException(400, 'Bad Request');
     }
-
-    const url = `employee/2.0/${MUNICIPALITY_ID}/${personId}/personimage`;
+    const municipalityId = await getMunicipalityId(req);
+    const url = `${getApiBase('employee')}/${municipalityId}/${personId}/personimage`;
     const res = await this.apiService.get<any>(
       {
         url,
