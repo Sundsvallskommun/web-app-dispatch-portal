@@ -7,6 +7,7 @@
   "errors": {
     "AUTH_FAILED": "Inloggning misslyckades",
     "NOT_AUTHORIZED": "Inte inloggad",
+    "SAML_MISSING_PROFILE": "Användaren saknas",
     "SAML_MISSING_GROUP": "Användaren saknar rätt grupper",
     "SAML_MISSING_ATTRIBUTES": "Användaren saknar rätt attribut",
     "MISSING_PERMISSIONS": "Användaren saknar rättigheter",

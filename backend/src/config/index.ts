@@ -35,7 +35,5 @@ export const {
   TEST_EMAIL,
   TEST_USERNAME,
   DEV,
-  AUTHORIZED_GROUPS,
-  COMPANY_IDS,
   ADMIN_GROUP,
 } = process.env;

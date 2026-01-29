@@ -1,16 +1,7 @@
-import { AUTHORIZED_GROUPS, getApiBase, MUNICIPALITY_ID } from '@config';
+import { getApiBase, MUNICIPALITY_ID } from '@config';
 import { Permissions, User } from '@interfaces/users.interface';
 import ApiService, { ApiResponse } from './api.service';
 import { logError } from './message.service';
-
-export function authorizeGroups(groups) {
-  console.log('authorizing groups', groups);
-  console.log('against', AUTHORIZED_GROUPS);
-  if (!AUTHORIZED_GROUPS) return true; // no authorization groups configured
-  const authorizedGroupsList = AUTHORIZED_GROUPS.split(',');
-  const groupsList = groups.split(',').map((g: string) => g.toLowerCase());
-  return authorizedGroupsList.some(authorizedGroup => groupsList.includes(authorizedGroup.toLowerCase()));
-}
 
 export const defaultPermissions: () => Permissions = () => ({
   canSendSMS: false, // NOTE: everyone can send SMS by default
