@@ -25,7 +25,7 @@ export const ListResourcesView: React.FC<ListResourcesViewProps> = ({ resource: 
 
   return (
     loaded && (
-      <ListLayout resource={resource} properties={[...getProperties(), 'logotype']}>
+      <ListLayout resource={resource} properties={[...getProperties()]}>
         {loaded && <ListResources resource={resource} data={data} />}
       </ListLayout>
     )
