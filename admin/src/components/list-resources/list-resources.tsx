@@ -55,7 +55,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
               {
                 label: getHeader(key),
                 property: key,
-                renderColumn: (_value, item) => <span>{item.idp.name ?? item.idp.id}</span>,
+                renderColumn: (_value, item) => <span>{item.idp?.name ?? item.idp?.id}</span>,
               },
             ];
           }

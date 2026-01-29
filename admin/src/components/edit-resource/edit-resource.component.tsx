@@ -48,7 +48,7 @@ export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
               return (
                 <FormControl key={`formc-${index}-${key}`}>
                   <FormLabel>{t(`${resource}:properties.${key}`)}</FormLabel>
-                  <IdpSelect field="idpId" />
+                  <IdpSelect field="idpId" data-cy={`edit-${resource}-idp`} />
                 </FormControl>
               );
             }
@@ -60,6 +60,7 @@ export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
                   property={key}
                   index={index}
                   required={isRequired}
+                  defaultValue={defaultValues?.[key]}
                   label={capitalize(t(`${resource}:properties.${key}`))}
                 />
               </Fragment>
