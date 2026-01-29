@@ -18,16 +18,16 @@ export function createSessionStore(sessionTTL: number): session.Store {
     });
   }
 
-  if (SESSION_STORE === 'file') {
-    const FileStore = createFileStore(session);
-    return new FileStore({
-      path: './data/sessions',
-      ttl: sessionTTL,
+  if (SESSION_STORE === 'memory') {
+    const MemoryStore = createMemoryStore(session);
+    return new MemoryStore({
+      checkPeriod: sessionTTL * 1000,
     });
   }
 
-  const MemoryStore = createMemoryStore(session);
-  return new MemoryStore({
-    checkPeriod: sessionTTL * 1000,
+  const FileStore = createFileStore(session);
+  return new FileStore({
+    path: './data/sessions',
+    ttl: sessionTTL,
   });
 }
