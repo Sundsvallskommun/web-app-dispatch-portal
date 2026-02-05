@@ -20,5 +20,5 @@ beforeEach(() => {
   cy.viewport('macbook-16');
   cy.intercept('GET', '**/api/admin/me', me).as('me');
   cy.intercept('GET', '**/api/admin/hosts', apiResponse([host1, host2, host3])).as('hosts');
-  cy.intercept('GET', '**/api/admin/idps', apiResponse([idp1, idp2])).as('organizations');
+  cy.intercept('GET', '**/api/admin/idps', apiResponse([idp1, idp2])).as('idps');
 });
