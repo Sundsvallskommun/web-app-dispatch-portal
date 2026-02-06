@@ -1,0 +1,56 @@
+{
+  "title": "Statistik",
+  "description": "Här hittar du statistik över skickade brev från varje förvaltning. Statistiken sparas ett år bakåt",
+  "noStatisticsFound": "Ingen statistik hittades",
+  "fromToDates": "Visar statistik från {from} till {to}",
+  "showPerMonth": "Visa statistik per månad",
+  "myStatistics": {
+    "messageType": {
+      "SNAIL_MAIL": "Post",
+      "DIGITAL_MAIL": "Digitalt"
+    },
+    "status": {
+      "default": "Fel",
+      "NOT_SENT": "Ej skickat",
+      "INELIGIBLE_MINOR": "Underårig"
+    },
+    "recipient": "mottagare",
+    "address": "Adress",
+    "deliveryMethod": "Leveranssätt",
+    "recipientDescription": "Mottagaren har 30 dagar på sig att öppna och signera brevet i Kivra. När brevet är signerat kan ett mottagningsbevis laddas ner.",
+    "unknown": "Okänd",
+    "unknownNumber": "Okänt nummer",
+    "message": "Meddelande",
+    "description": "Här hittar du dina skickade brev. Utskicken sparas i 30 dagar.",
+    "attachments": "Bifogade filer",
+    "showAttachment": "Ladda ner",
+    "all": "Alla leveranssätt",
+    "SMSMessagePrefixUrl": "/my-statistics/sms",
+    "emailMessagePrefixUrl": "/my-statistics/mail",
+    "letterSubject": "{subject} (Brev)",
+    "recLetterSubject": "{subject} (Rekommenderat Brev)",
+    "noMessagesExist": "Du har inte gjort några utskick än. ",
+    "failedFetchingFile": "Misslyckades med att hämta filen {fileName}",
+    "sms": "Sms",
+    "deliveryMethods": {},
+    "signingInfo": {
+      "new": "Nytt",
+      "sent": "Mottaget",
+      "signed": "Signerat",
+      "pending": "Väntar",
+      "failed": "Misslyckat",
+      "expired": "Löpt ut"
+    },
+    "downloadReceipt": "Ladda ner mottagningsbevis",
+    "downloading": "Hämtar mottagningsbevis..",
+    "receiptStatus": {
+      "success": "\"{receipt}\" laddades ner",
+      "error": "Mottagningsbeviset kunde inte laddas ner"
+    },
+    "errors": {
+      "FailedGettingFile": "Det Misslyckades med att hämta filen ({subject})",
+      "someMessagesNotSent": "Ett eller flera brev gick inte att skicka. Kontrollera listan nedan och gör ett nytt utskick för att försök skicka dem igen.",
+      "messagesSendingFailed": "Brevet gick inte att skicka. Gör ett nytt utskick för att försök skicka det igen."
+    }
+  }
+}

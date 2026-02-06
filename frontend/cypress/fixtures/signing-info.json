@@ -1,0 +1,20 @@
+{
+  "status": "COMPLETED",
+  "signedAt": "2025-11-05T13:06:58+01:00",
+  "contentKey": "176218252220b2a7cfeb8c48cfa7f340cxxxxxxxx",
+  "orderReference": "019a53e9-828e-7385-99c0-8fce9a22cc51",
+  "signature": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLT",
+  "ocspResponse": "m1BE2k96HGGYdlv3yUhZmBhYSEfP9cZU2chubJrTMU4xdIT1e6d1/iioaCLvQ==",
+  "user": {
+    "personalIdentityNumber": "000000000000",
+    "name": "Benny Hill",
+    "givenName": "Benny",
+    "surname": "Hill"
+  },
+  "device": {
+    "ipAddress": "00.000.000.000"
+  },
+  "stepUp": {
+    "mrtd": false
+  }
+}

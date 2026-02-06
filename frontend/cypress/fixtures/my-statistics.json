@@ -1,0 +1,121 @@
+{
+  "_meta": {
+    "page": 1,
+    "limit": 9000,
+    "count": 40,
+    "totalRecords": 40,
+    "totalPages": 1
+  },
+  "messages": [
+    {
+      "messageId": "00000000-0000-0000-0000-000000000000",
+      "type": "LETTER",
+      "subject": "Test test test",
+      "sentAt": "2025-10-20T14:00:25.862565",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000001",
+      "type": "LETTER",
+      "subject": "Glupp",
+      "sentAt": "2025-10-20T12:58:38.91489",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000002",
+      "type": "DIGITAL_REGISTERED_LETTER",
+      "subject": "erg4tg",
+      "sentAt": "2025-10-20T12:53:45.014044",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000003",
+      "type": "LETTER",
+      "subject": "Meddelande gällande er ansökan om parkeringstillstånd",
+      "sentAt": "2025-10-14T14:26:34.616131",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "NEW",
+        "signingProcessState": "COMPLETED"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000004",
+      "type": "LETTER",
+      "subject": "test4",
+      "sentAt": "2025-10-14T14:07:25.952913",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000005",
+      "type": "LETTER",
+      "subject": "test3",
+      "sentAt": "2025-10-14T14:05:41.677029",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000006",
+      "type": "LETTER",
+      "subject": "Test",
+      "sentAt": "2025-10-14T13:48:15.797932",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000007",
+      "type": "SMS",
+      "subject": "",
+      "sentAt": "2025-10-14T13:15:01.556691",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000008",
+      "type": "LETTER",
+      "subject": "Test letter",
+      "sentAt": "2025-10-14T10:43:35.569545",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    },
+    {
+      "messageId": "00000000-0000-0000-0000-000000000009",
+      "type": "SMS",
+      "subject": "",
+      "sentAt": "2025-10-14T09:39:35.19762",
+      "numberOfRecipients": 1,
+      "signingStatus": {
+        "letterState": "SENT",
+        "signingProcessState": "PENDING"
+      }
+    }
+  ]
+}

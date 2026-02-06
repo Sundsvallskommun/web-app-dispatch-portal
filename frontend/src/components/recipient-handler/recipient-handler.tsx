@@ -1,235 +1,172 @@
 import { FileListItemComponent } from '@components/file-list-item/file-list-item.component';
-import FileUpload from '@components/file-upload/file-upload.component';
-import { RecipientList } from '@components/recipient-list/recipient-list';
-import {
-  getRecipient,
-  getRecipients,
-  MAX_RECIPIENT_FILE_SIZE_MB,
-  MAX_RECIPIENT_ROW_SIZE,
-  ssnPattern,
-  useMessageStore,
-} from '@services/recipient-service';
-import {
-  Button,
-  Divider,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  MenuBar,
-  SearchField,
-  Spinner,
-} from '@sk-web-gui/react';
-import React, { useEffect, useState } from 'react';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
+import { RecipientTable } from '@components/recipient-table/recipient-table.component';
+import { useMessageStore } from '@services/recipient-service';
+import { cx, RadioButton, useConfirm } from '@sk-web-gui/react';
+import { useTranslation } from 'next-i18next';
+import React, { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { Csv, Recipient } from 'src/data-contracts/backend/data-contracts';
+import { SendType } from 'src/types';
+import { formSendType } from '../../constants';
+import { CsvRecipients } from './components/csv-file.component';
+import { SingleAddress } from './components/single-address.component';
+import { SingleRecipient } from './components/single-recipient.component';
+import { Attachment } from '@components/attachment-handler/attachment-handler';
 
 export interface RecipientListFormModel {
-  recipientList: { file: File | undefined }[];
-  singleRecipient: string;
+  recipientList: Array<Csv & Attachment>;
+  storeRecipients: Partial<Recipient>[];
 }
 
-const RecipientHandler: React.FC = () => {
-  const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
-  const [error, setError] = useState<string>();
-  const setRecipients = useMessageStore((state) => state.setRecipients);
-  const recipients = useMessageStore((state) => state.recipients);
+interface RecipientHandlerProps {
+  sendType?: SendType;
+}
 
+const RecipientHandler = ({ sendType = formSendType.MAIL }: RecipientHandlerProps) => {
   const [current, setCurrent] = React.useState<number | undefined>(0);
-  const allowReplace = true;
 
-  const {
-    watch,
-    setValue,
-    setError: setFormError,
-    register,
-    formState: { errors, dirtyFields },
-  } = useFormContext<RecipientListFormModel>();
-  const recipientList = watch('recipientList');
-  const recipient = watch('singleRecipient');
+  const { recipients, setRecipients, setAddresses, addresses } = useMessageStore();
+  const validRecipientLength = recipients.length;
+  const combinedLength = validRecipientLength + addresses.length;
+  const { t } = useTranslation(['send-mail', 'common', 'accessibility']);
+  const confirm = useConfirm();
 
-  const fetchRecipients = () => {
-    setIsLoadingRecipients(true);
-    setError(undefined);
-    setValue('singleRecipient', '');
-    getRecipients(recipientList)
-      .then((res) => {
-        setRecipients(res);
-        setIsLoadingRecipients(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        let errorMessage: string;
-        switch (e.message) {
-          case 'NO_FILE':
-            errorMessage = 'Ingen fil vald';
-            break;
-          case 'MAX_SIZE':
-            errorMessage = `Filen får ej överstiga ${MAX_RECIPIENT_FILE_SIZE_MB}MB`;
-            break;
-          case 'MAX_RECIPIENT_ROW_SIZE':
-            errorMessage = `Filen får inte innehålla fler än ${MAX_RECIPIENT_ROW_SIZE} rader`;
-            break;
-          default:
-            errorMessage = 'Något gick fel när mottagarlistan hanterades';
-        }
-        setIsLoadingRecipients(false);
-        setError(errorMessage);
-        setRecipients([]);
-      });
-  };
-  const fetchRecipient = () => {
-    setIsLoadingRecipients(true);
-    setError(undefined);
-    getRecipient(recipient.replace('-', '').replace(' ', ''))
-      .then((res) => {
-        setRecipients(recipients.concat(res));
-        setIsLoadingRecipients(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        setIsLoadingRecipients(false);
-        setFormError('singleRecipient', { message: 'Kunde inte hämta person. Har du angivit personnumret korrekt?' });
-      });
-  };
+  const { watch, setValue, clearErrors } = useFormContext<RecipientListFormModel>();
+  const [recipientList] = watch(['recipientList']);
 
-  useEffect(() => {
-    if (recipientList?.length === 1) {
-      if (recipients?.length < 1) {
-        fetchRecipients();
-      } else {
-        if (allowReplace) {
-          fetchRecipients();
-        }
-      }
-    } else {
-      setRecipients([]);
-    }
-    //eslint-disable-next-line
-  }, [recipientList]);
-
-  useEffect(() => {
-    setRecipients([]);
+  const handleRemoveFile = () => {
     setValue('recipientList', []);
+  };
+  const resetAll = () => {
+    setRecipients([]);
+    setAddresses([]);
+    clearErrors('storeRecipients');
+    clearErrors('recipientList');
+    setValue('storeRecipients', []);
+    setValue('recipientList', []);
+  };
+
+  useEffect(() => {
+    setValue('storeRecipients', [...(recipients ?? []), ...(addresses ?? [])]);
+    if (recipientList.length > 0) {
+      setCurrent(1);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current]);
+  }, []);
 
-  const handleSubmitSingleRecipient = () => {
-    if ((recipient && recipient?.length === 12) || recipient?.length === 13) {
-      fetchRecipient();
-      setValue('singleRecipient', '');
-    } else if (recipient.length < 12) {
-      setFormError('singleRecipient', { message: 'För få siffror i personnumret' });
-    } else if (recipient.length > 13) {
-      setFormError('singleRecipient', { message: 'För många siffror i personnumret' });
+  const handleSwitchCurrent = (navigateTo: number) => {
+    if (recipientList?.length > 0 || combinedLength > 0) {
+      confirm
+        .showConfirmation(
+          t(`send-mail:recipientHandler.changeTo.${navigateTo === 0 ? 'person' : 'list'}.label`),
+          t(`send-mail:recipientHandler.changeTo.${navigateTo === 0 ? 'person' : 'list'}.text`),
+          t('common:yesContinue'),
+          t('common:cancel')
+        )
+        .then((confirm) => {
+          if (confirm) {
+            resetAll();
+            setCurrent(navigateTo);
+          }
+        });
+    } else {
+      resetAll();
+      setCurrent(navigateTo);
     }
-  };
-
-  const handleRemove = () => {
-    setRecipients([]);
-    setValue('singleRecipient', '');
-    setValue('recipientList', []);
   };
 
   return (
     <div className="w-full flex justify-center">
-      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards pb-32">
-        <h4 className="px-32 py-16">Lägg till mottagare</h4>
-        <Divider className="w-full" orientation="horizontal" strong={false} />
-
-        <div className="w-full px-32 pt-32 gap-32">
-          <MenuBar current={current} className="px-0">
-            <MenuBar.Item>
-              <Button
-                onClick={() => {
-                  setCurrent(0);
-                  handleRemove();
-                }}
-              >
-                Enskilda mottagare
-              </Button>
-            </MenuBar.Item>
-            <MenuBar.Item>
-              <Button
-                onClick={() => {
-                  setCurrent(1);
-                  handleRemove();
-                }}
-              >
-                Importera mottagare
-              </Button>
-            </MenuBar.Item>
-          </MenuBar>
-
-          {current === 0 ? (
-            <div className="flex flex-col gap-12 pt-32">
-              <FormControl invalid={!!errors.singleRecipient}>
-                <FormLabel>Personnummer</FormLabel>
-                <SearchField
-                  {...register('singleRecipient')}
-                  value={recipient}
-                  className="w-full"
-                  showSearchButton={dirtyFields.singleRecipient && ssnPattern.test(recipient)}
-                  showResetButton={recipients.length > 0 && recipient}
-                  type="text"
-                  size="md"
-                  maxLength={13}
-                  minLength={12}
-                  placeholder="ååååmmddxxxx"
-                  hideExtra
-                  onReset={() => setValue('singleRecipient', '')}
-                  onSearch={() => handleSubmitSingleRecipient()}
-                />
-
-                <FormHelperText className="w-full">Exempel: 199001012385</FormHelperText>
-                {errors.singleRecipient && <FormErrorMessage>{errors.singleRecipient.message}</FormErrorMessage>}
-              </FormControl>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-32 w-full pt-32">
-              <FormControl id="attachment" className="w-full">
-                <FileUpload
-                  showLabel
-                  fieldName="recipientList"
-                  accept={['.csv', '.CSV']}
-                  helperText="Tillåtna filtyper: csv. Maximalt antal rader: 250"
-                  allowMax={1}
-                  allowReplace={allowReplace}
-                  maxFileSizeMB={MAX_RECIPIENT_FILE_SIZE_MB}
-                  onErrorReset={() => {
-                    setError(undefined);
-                    setRecipients([]);
-                  }}
-                />
-              </FormControl>
-            </div>
-          )}
-
-          {recipientList?.length && recipients?.length && current === 1 ? (
-            <div className="pt-24">
-              <FileListItemComponent data={recipientList[0]} handleRemove={handleRemove} />
-            </div>
-          ) : (
-            <></>
-          )}
-          {isLoadingRecipients && (
-            <div className="my-lg flex flex-col items-center justify-center gap-sm">
-              <>
-                <div>
-                  <Spinner className="h-32 w-32"></Spinner>
+      <HandlerWrapper
+        title={t('send-mail:recipientHandler.title')}
+        description={
+          sendType === formSendType.MAIL
+            ? t('send-mail:recipientHandler.contentFirstRow')
+            : t('send-mail:recipientHandler.rekMail.content')
+        }
+      >
+        <div className="w-full gap-32">
+          {sendType === formSendType.MAIL && (
+            <div className="flex flex-col">
+              <h3 className="text-label-medium">{t('send-mail:recipientHandler.howAddRecipient')}</h3>
+              <div className="flex flex-col md:flex-row gap-24 mt-12 mb-32">
+                <div
+                  className={cx(
+                    'flex-1 border rounded-groups p-16',
+                    current === 0 ? 'border-dark-primary' : 'border-divider'
+                  )}
+                >
+                  <RadioButton value="0" onChange={() => handleSwitchCurrent(0)} checked={current === 0}>
+                    {t('send-mail:recipientHandler.optionPersonalNumberOrAddress')}
+                  </RadioButton>
                 </div>
-                <div>Hämtar mottagare</div>
-              </>
+                {
+                  <div
+                    className={cx(
+                      'flex-1 border rounded-groups p-16',
+                      current === 1 ? 'border-dark-primary' : 'border-divider'
+                    )}
+                  >
+                    <RadioButton value="1" onChange={() => handleSwitchCurrent(1)} checked={current === 1}>
+                      {t('send-mail:recipientHandler.optionRecipientList')}
+                    </RadioButton>
+                  </div>
+                }
+              </div>
             </div>
           )}
-          <div>{error && <FormErrorMessage className="my-8">{error}</FormErrorMessage>}</div>
-          {recipients?.length > 0 && !isLoadingRecipients && (
+          {current === 0 ? (
+            <div className={cx('flex flex-col gap-12', sendType === formSendType.MAIL && 'pt-32')}>
+              <SingleRecipient sendType={sendType} />
+              <SingleAddress sendType={sendType} />
+            </div>
+          ) : (
+            <CsvRecipients />
+          )}
+
+          {combinedLength > 0 && (
             <div className="w-full mt-40">
-              <h4 className="mb-16 text-h4-sm">Mottagare</h4>
-              <RecipientList />
+              {current === 0 && (
+                <h3 className="mb-16 text-label-medium font-sans">
+                  {sendType === formSendType.MAIL
+                    ? t('send-mail:recipientHandler.addedRecipientNum', { num: combinedLength })
+                    : t('send-mail:recipientHandler.addedRecipientsTitle')}
+                </h3>
+              )}
+              {current === 1 && (
+                <h3 className="mb-16 text-label-medium font-sans">
+                  {t('send-mail:recipientHandler.addedFromFileNum', { num: validRecipientLength })}
+                </h3>
+              )}
+              <div className="w-full">
+                <RecipientTable showRemoveButton sendType={sendType} />
+              </div>
             </div>
           )}
         </div>
-      </div>
+        {combinedLength < 1 && current === 0 && (
+          <div>
+            <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedRecipientsTitle')}</h3>
+            <p className="text-secondary">{`${t('send-mail:recipientHandler.noRecipientAdded')}.`}</p>
+          </div>
+        )}
+        {current === 1 && (
+          <div className="flex flex-col w-full">
+            <h3 className="text-label-medium font-sans">{t('send-mail:recipientHandler.addedFileTitle')}</h3>
+            {recipientList?.length < 1 ? (
+              <p className="text-base">{`${t('send-mail:recipientHandler.noFileAdded')}`}</p>
+            ) : (
+              <FileListItemComponent
+                data-cy="recipientlist"
+                noBorder
+                data={recipientList[0]}
+                handleRemove={handleRemoveFile}
+              />
+            )}
+          </div>
+        )}
+      </HandlerWrapper>
     </div>
   );
 };

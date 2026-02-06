@@ -1,0 +1,44 @@
+{
+  "appTitle": "Postportalen",
+  "appSubTitle": "Sundsvalls kommun",
+  "mainMenu": {
+    "sendMessage": "Skicka meddelande",
+    "myStatistics": "Dina utskick",
+    "statistics": "Statistik"
+  },
+  "personalNumber": "Personnummer",
+  "goToContent": "Hoppa till innehåll",
+  "example": "Exempel",
+  "receiver": "Mottagare",
+  "letter": "Brev",
+  "recLetter": "Rekommenderat brev",
+  "textMessage": "Sms",
+  "stepper": {
+    "recipient": "Mottagare",
+    "files": "Filer",
+    "header": "Rubrik och förvaltning",
+    "review": "Granska"
+  },
+  "done": "Klart",
+  "cancel": "Avbryt",
+  "delete": "Radera",
+  "remove": "Ta bort",
+  "help": "Hjälp",
+  "next": "Nästa",
+  "back": "Tillbaka",
+  "send": "Skicka",
+  "sending": "Skickar...",
+  "yesContinue": "Ja, fortsätt",
+  "dispatchDone": "Ditt utskick har gjorts",
+  "dispatchNew": "Gör ett nytt utskick",
+  "screenReader": {
+    "sendPost": "Skicka post",
+    "postStepper": {
+      "stepOne": "Steg 1: Lägg till textdokument",
+      "stepTwo": "Steg 2: Lägg till mottagare",
+      "stepThree": "Steg 3: Ange avsändare"
+    }
+  },
+  "month": "Månad",
+  "chooseMonth": "Välj månad"
+}

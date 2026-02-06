@@ -1,3 +1,4 @@
+import { getApiBase } from '@/config';
 import { User } from '@/interfaces/users.interface';
 import ApiService from '@/services/api.service';
 import { logger } from '@/utils/logger';
@@ -6,12 +7,12 @@ import { OpenAPI } from 'routing-controllers-openapi';
 
 @Controller()
 export class HealthController {
-  private apiService = new ApiService();
+  private readonly apiService = new ApiService();
 
   @Get('/health/up')
   @OpenAPI({ summary: 'Return health check' })
   async up() {
-    const url = `simulatorserver/2.0/simulations/response?status=200%20OK`;
+    const url = `${getApiBase('simulatorserver')}/simulations/response?status=200%20OK`;
     const data = {
       status: 'OK',
     };
@@ -27,6 +28,8 @@ export class HealthController {
       groups: '',
       permissions: {
         canSendSMS: false,
+        canSendLetter: true,
+        canSendRegisteredLetter: false,
       },
     };
     const res = await this.apiService.post<{ status: string }, any>({ url, data }, dummyUser).catch(e => {

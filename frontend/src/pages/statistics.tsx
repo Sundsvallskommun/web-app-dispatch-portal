@@ -1,175 +1,144 @@
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { PageHeader } from '@layouts/page-header/page-header.component';
-import { Spinner, Table, SortMode, Select, Input, Pagination } from '@sk-web-gui/react';
-import { useStatistics } from '@services/statistics-service';
-import React from 'react';
+import { Spinner, Select, AutoTableHeader, AutoTable } from '@sk-web-gui/react';
+import { getStatisticsByDate } from '@services/statistics-service';
+import React, { useEffect, useState } from 'react';
 import { Statistics } from '@interfaces/statistics.interface';
+import dayjs from 'dayjs';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
+import HeaderMenu from '@components/header-menu/header-menu.component';
+import { getMonthFirstDayDate, getMonthLastDayDate } from '@utils/helpers';
+
+const headers: Array<AutoTableHeader | string> = [
+  {
+    property: 'department',
+    label: 'Förvaltning',
+  },
+  {
+    property: 'snailMail',
+    label: 'Fysiska brev',
+  },
+  {
+    property: 'digitalMail',
+    label: 'Digitala brev',
+  },
+  {
+    property: 'registeredMail',
+    label: 'Rek brev',
+  },
+  {
+    property: 'sms',
+    label: 'Sms',
+  },
+];
+const generateMonthOptions = () => {
+  const options = [];
+  const today = dayjs();
+
+  for (let i = 0; i < 12; i++) {
+    const date = today.subtract(i, 'month');
+    const value = date.format('YYYY-MM');
+    const label = date.format('MMMM YYYY');
+    options.push({ value, label });
+  }
+
+  return options;
+};
+
 export const StatisticsPage = () => {
-  const { departmentStatistics, loaded } = useStatistics();
-  const [sortColumn, setSortColumn] = React.useState<string>('department');
-  const [sortOrder, setSortOrder] = React.useState(SortMode.ASC);
-  const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [_pageSize, setPageSize] = React.useState<number>(12);
-  const handleSorting = (column: string) => {
-    if (sortColumn !== column) {
-      setSortColumn(column);
-    } else {
-      setSortOrder(sortOrder === SortMode.ASC ? SortMode.DESC : SortMode.ASC);
+  const [initialYear, initialMonth] = generateMonthOptions()[0].value.split('-');
+
+  const [loaded, setLoaded] = React.useState<boolean>(false);
+  const [departmentStatistics, setDepartmentStatistics] = React.useState<Statistics[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>(initialYear);
+  const [selectedMonth, setSelectedMonth] = useState<string>(initialMonth);
+  const { t } = useTranslation(['common', 'statistics']);
+
+  useEffect(() => {
+    getStatisticsByDate(selectedYear, selectedMonth)
+      .then((res) => {
+        setDepartmentStatistics(res);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        if (!loaded) {
+          setLoaded(true);
+        }
+      });
+  }, [loaded, selectedMonth, selectedYear]);
+
+  const handleDateChange = (date: string) => {
+    setLoaded(false);
+    if (!date) {
+      setSelectedYear(initialYear);
+      setSelectedMonth(initialMonth);
+      return;
     }
+
+    const [year, month] = date.split('-');
+    setSelectedYear(year);
+    setSelectedMonth(month);
   };
 
-  const getDeepColumn = (column: string, object: Statistics) => {
-    const columns = column.split('.');
-    let value = object;
-    columns.forEach((col) => {
-      if (value && value[col]) {
-        value = value[col];
-      } else {
-        value[col] = 0;
-        value = value[col];
-      }
-    });
-    return value;
-  };
+  return (
+    <DefaultLayout title={`Postportal`} headerMenu={<HeaderMenu />}>
+      <div className="text-lg mb-11 pt-32">
+        <h1 className="text-h1-lg mb-8">{t('statistics:title')}</h1>
+        <p className="text-large text-dark-secondary mt-0">{`${t('statistics:description')}.`}</p>
 
-  const tableRows = departmentStatistics
-    .sort((a, b) => {
-      const order = sortOrder === SortMode.ASC ? -1 : 1;
-      return getDeepColumn(sortColumn, a) < getDeepColumn(sortColumn, b)
-        ? order
-        : getDeepColumn(sortColumn, a) > getDeepColumn(sortColumn, b)
-        ? order * -1
-        : 0;
-    })
-    .slice((currentPage - 1) * _pageSize, currentPage * _pageSize)
-    .map((statistics, idx: number) => {
-      return (
-        <Table.Row key={`row-${idx}`}>
-          <Table.HeaderColumn scope="row">{statistics.department}</Table.HeaderColumn>
-          <Table.Column>{statistics.snailMail?.sent ? statistics.snailMail?.sent : 0}</Table.Column>
-          <Table.Column>{statistics.digitalMail?.sent ? statistics.digitalMail?.sent : 0}</Table.Column>
-        </Table.Row>
-      );
-    });
+        <div className="lg:flex flex-row justify-start mb-16 mt-56 gap-12 items-end">
+          <div className="flex flex-col gap-8">
+            <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
+              {t('statistics:showPerMonth')}
+            </label>
+            <Select id="month" size="sm" onSelectValue={handleDateChange} value={`${selectedYear}-${selectedMonth}`}>
+              {generateMonthOptions().map((option) => (
+                <Select.Option key={option.value} value={option.value}>
+                  {option.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+          <span className="justify-self-end ml-auto text-dark-secondary text-small">
+            {selectedYear &&
+              selectedMonth &&
+              t('statistics:fromToDates', {
+                from: getMonthFirstDayDate(Number(selectedYear), Number(selectedMonth)),
+                to: getMonthLastDayDate(Number(selectedYear), Number(selectedMonth)),
+              })}
+          </span>
+        </div>
 
-  return !loaded ? (
-    <Spinner />
-  ) : (
-    <DefaultLayout
-      title={`Postportal`}
-      pageheader={
-        <PageHeader color="vattjom">
-          <h2 className="pb-8">Statistik</h2>
-          <p className="text-h4-medium md:text-lead leading-lead text-primary font-bold m-0 header-font">
-            Här hittar du statistik över skickad post.
-          </p>
-        </PageHeader>
-      }
-    >
-      <div className="max-w-full mb-80">
-        <Table background={true}>
-          <Table.Header className="bg-white">
-            <Table.HeaderColumn
-              className="bg-background-color-mixin-1"
-              aria-sort={sortColumn === 'department' ? sortOrder : 'none'}
-            >
-              <Table.SortButton
-                isActive={sortColumn === 'department'}
-                sortOrder={sortOrder}
-                onClick={() => handleSorting('department')}
-              >
-                Förvaltning
-              </Table.SortButton>
-            </Table.HeaderColumn>
-            <Table.HeaderColumn
-              className="bg-background-color-mixin-1"
-              aria-sort={sortColumn === 'snailMail.sent' ? sortOrder : 'none'}
-            >
-              <Table.SortButton
-                isActive={sortColumn === 'snailMail.sent'}
-                sortOrder={sortOrder}
-                onClick={() => handleSorting('snailMail.sent')}
-              >
-                Skickad fysisk post (antal)
-              </Table.SortButton>
-            </Table.HeaderColumn>
-            <Table.HeaderColumn
-              className="bg-background-color-mixin-1"
-              aria-sort={sortColumn === 'digitalMail.sent' ? sortOrder : 'none'}
-            >
-              <Table.SortButton
-                isActive={sortColumn === 'digitalMail.sent'}
-                sortOrder={sortOrder}
-                onClick={() => handleSorting('digitalMail.sent')}
-              >
-                Skickad digital post (antal)
-              </Table.SortButton>
-            </Table.HeaderColumn>
-          </Table.Header>
-          <Table.Body>
-            {tableRows.map((row) => {
-              return row;
-            })}
-          </Table.Body>
-
-          {departmentStatistics.length > 12 && (
-            <Table.Footer>
-              <div className="sk-table-bottom-section sk-table-pagination-mobile">
-                <label className="sk-table-bottom-section-label" htmlFor="paginationSelect">
-                  Sida:
-                </label>
-                <Select
-                  id="paginationSelect"
-                  size="sm"
-                  value={currentPage.toString()}
-                  onSelectValue={(value: string) => setCurrentPage(parseInt(value, 10))}
-                >
-                  {[...Array.from(Array(Math.ceil(departmentStatistics.length / _pageSize)).keys())].map((page) => (
-                    <Select.Option key={`pagipage-${page}`} value={(page + 1).toString()}>
-                      {page + 1}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-              <div className="sk-table-bottom-section">
-                <div className="sk-table-paginationwrapper">
-                  <Pagination
-                    className="sk-table-pagination"
-                    pages={Math.ceil(departmentStatistics.length / _pageSize)}
-                    activePage={currentPage}
-                    showConstantPages
-                    pagesAfter={1}
-                    pagesBefore={1}
-                    changePage={(page: number) => setCurrentPage(page)}
-                    fitContainer
-                  />
-                </div>
-              </div>
-
-              <div className="sk-table-bottom-section">
-                <label className="sk-table-bottom-section-label" htmlFor="pagiPageSize">
-                  Rader per sida:
-                </label>
-                <Input
-                  hideExtra={false}
-                  size="sm"
-                  id="pagePageSize"
-                  type="number"
-                  min={1}
-                  max={100}
-                  className="max-w-[6.5rem]"
-                  value={`${_pageSize}`}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    event.target.value && setPageSize(parseInt(event.target.value))
-                  }
-                />
-              </div>
-            </Table.Footer>
+        <div className="max-w-full mb-80">
+          {!loaded && <Spinner />}
+          {loaded && departmentStatistics.length === 0 && (
+            <div>
+              <p className="text-h4-medium md:text-lead leading-lead text-primary font-bold m-0 header-font">
+                {t('statistics:noStatisticsFound')}
+              </p>
+            </div>
           )}
-        </Table>
+          {loaded && departmentStatistics.length > 0 && (
+            <AutoTable
+              footer={departmentStatistics.length >= 12}
+              pageSize={11}
+              autodata={departmentStatistics.length > 0 ? departmentStatistics : []}
+              autoheaders={headers}
+            />
+          )}
+        </div>
       </div>
     </DefaultLayout>
   );
 };
+
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'statistics'])),
+  },
+});
 
 export default StatisticsPage;

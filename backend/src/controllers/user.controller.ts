@@ -5,6 +5,7 @@ import ApiService from '@/services/api.service';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Controller, Get, Header, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
+import { getApiBase, MUNICIPALITY_ID } from '@/config';
 
 interface UserData {
   name: string;
@@ -19,7 +20,7 @@ interface UserData {
 
 @Controller()
 export class UserController {
-  apiService = new ApiService();
+  private readonly apiService = new ApiService();
 
   @Get('/me')
   @OpenAPI({ summary: 'Return current user' })
@@ -56,7 +57,7 @@ export class UserController {
       throw new HttpException(400, 'Bad Request');
     }
 
-    const url = `employee/1.0/${personId}/personimage`;
+    const url = `${getApiBase('employee')}/${MUNICIPALITY_ID}/${personId}/personimage`;
     const res = await this.apiService.get<any>(
       {
         url,

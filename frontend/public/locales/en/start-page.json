@@ -1,0 +1,9 @@
+{
+  "letter": "Letter",
+  "recLetter": "Recommended letter",
+  "sendImportantDoc": "Send important documents safely via Kivra when a receipt from the recipient is needed.",
+  "price20kr": "Price: SEK 20/recipient",
+  "sendLetterDigitally": "Send letter digitally, or as a regular mail if the recipient lacks digital mailbox.",
+  "priceHalfKr": "Price: SEK 0.5/recipient",
+  "fastMethodToShare": "A quick way to reach the recipient when important information needs to be shared."
+}

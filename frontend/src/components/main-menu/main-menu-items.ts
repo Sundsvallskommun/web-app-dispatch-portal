@@ -1,14 +1,19 @@
-export const mainMenuItems = [
+type MainMenuItemProps = {
+  href: string;
+  label: 'sendMessage' | 'myStatistics' | 'statistics';
+};
+
+export const mainMenuItems: MainMenuItemProps[] = [
   {
     href: '/',
-    label: 'Skicka post',
+    label: 'sendMessage',
+  },
+  {
+    href: '/my-statistics',
+    label: 'myStatistics',
   },
   {
     href: '/statistics',
-    label: 'Statistik',
-  },
-  {
-    href: '/help',
-    label: 'Hjälp',
+    label: 'statistics',
   },
 ];

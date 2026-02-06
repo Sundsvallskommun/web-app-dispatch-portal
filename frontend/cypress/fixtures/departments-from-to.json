@@ -1,0 +1,22 @@
+[
+  {
+    "department": "Test Department",
+    "snailMail": 38,
+    "digitalMail": 28
+  },
+  {
+    "department": "Test Department",
+    "snailMail": 1,
+    "digitalMail": 0
+  },
+  {
+    "department": "Test Department",
+    "snailMail": 3,
+    "digitalMail": 1
+  },
+  {
+    "department": "Test Department",
+    "snailMail": 225,
+    "digitalMail": 1
+  }
+]

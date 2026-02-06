@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+export { APIS, getApiBase } from './api-config';
 config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
 
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';
@@ -21,7 +22,6 @@ export const {
   SAML_LOGOUT_CALLBACK_URL,
   SAML_SUCCESS_REDIRECT,
   SAML_FAILURE_REDIRECT,
-  SAML_FAILURE_REDIRECT_MESSAGE,
   SAML_LOGOUT_REDIRECT,
   SAML_ENTRY_SSO,
   SAML_ISSUER,
@@ -31,5 +31,5 @@ export const {
   TEST_EMAIL,
   TEST_USERNAME,
   DEV,
-  AUTHORIZED_GROUPS,
+  ADMIN_GROUP,
 } = process.env;

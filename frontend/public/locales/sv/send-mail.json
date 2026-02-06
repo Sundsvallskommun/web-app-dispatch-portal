@@ -1,0 +1,172 @@
+{
+  "stepper": {
+    "next": "Nästa",
+    "back": "Tillbaka",
+    "cancel": "Avbryt",
+    "help": "Hjälp"
+  },
+  "success": {
+    "mail": {
+      "header": "Ditt brev är skickat",
+      "description": "Brevet skickas digitalt till mottagare med en digital brevlåda. De som saknar en får brevet som vanlig post. Du kan granska och se status för utskicket under Dina utskick från startsidan.",
+      "buttonMsg": "Skicka nytt brev"
+    },
+    "rekMail": {
+      "header": "Ditt rekommenderade brev är skickat",
+      "description": "Du kan granska och och se status för utskicket under Dina utskick på startsidan.",
+      "buttonMsg": "Skicka nytt rekommenderat brev"
+    }
+  },
+  "sendNew": "Skicka nytt brev",
+  "goBack": "Till startsidan",
+  "sendLetter": "Skicka brev",
+  "sendRecLetter": "Skicka rekommenderat brev",
+  "addTextDocument": "Lägg till textdokument",
+  "addSender": "Ange avsändare",
+  "senderHandler": {
+    "headerLabel": "Rubrik för brevet",
+    "headerDescription": "Ange en rubrik som beskriver brevets innehåll.",
+    "formLabelHeader": "Rubrik",
+    "headerManagement": "Din förvaltning",
+    "managementDescription": "Informationen används endast för fakturering. Förvaltningen visas inte för mottagaren.",
+    "managementLabel": "Förvaltning",
+    "selectManagementText": "Välj förvaltning",
+    "error": {
+      "noDepartment": "Välj din förvaltning.",
+      "noSubject": "Ange ett ämne för utskicket."
+    }
+  },
+  "attachmentHandler": {
+    "header": "Bifoga filer",
+    "description": "Bifoga upp till 4 filer som ska ingå i brevet. Den totala storleken får vara högst 1,5 MB.",
+    "helperText": "Tillåtna filtyper: PDF",
+    "addedFilesHeader": "Bifogade filer",
+    "noFiles": "Du har inte bifogat några filer än",
+    "sort": "Sortera filerna i den ordning du vill att dom ska synas i utskicket",
+    "progressStepper": "Använt utrymme: {files} MB av {limit} MB",
+    "uploadHelperSingle": "<span>Välj fil</span> eller dra och släpp den här",
+    "uploadHelperMultiple": "<span>Välj filer</span> eller dra och släpp dem här",
+    "uploadInputPlaceHolder": "Välj fil att lägga till",
+    "errorMessage": "Du måste bifoga minst ett dokument.",
+    "validation": {
+      "wrongFileType": "Fel filtyp - {fileName}",
+      "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
+      "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
+      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB."
+    }
+  },
+  "recipientHandler": {
+    "title": "Lägg till mottagare",
+    "contentFirstRow": "Du kan antingen skriva in personnummer eller bifoga en mottagarlista i csv-format.",
+    "howAddRecipient": "Hur vill du lägga till mottagare?",
+    "optionPersonalNumberOrAddress": "Med personnummer eller adress",
+    "optionRecipientList": "Bifoga mottagarlista",
+    "addRecipient": "Lägg till",
+    "missingPersonalNumber": "Saknar du personnummer?",
+    "addRecipientWithAddress": "Lägg till mottagare med adress",
+    "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
+    "csvAddedFile": "Tillagd fil",
+    "csvWarning": {
+      "title": "Filen innehåller problem.",
+      "duplicates_one": "Filen innehåller {count} personnummer med dubbletter.",
+      "duplicates_other": "Filen innehåller {count} personnummer med dubbletter.",
+      "rejections_one": "Filen innehåller {count} felaktigt personnummer.",
+      "rejections_other": "Filen innehåller {count} felaktiga personnummer.",
+      "description": "Du kan välja att fortsätta ändå. Utskicket kommer endast skickas en gång per mottagare.",
+      "confirm": "Fortsätt ändå",
+      "cancel": "Avbryt"
+    },
+    "IndividualRecipients": "Enskilda mottagare",
+    "ImportRecipients": "Importera mottagare",
+    "fetchingRecipient": "Hämtar mottagare",
+    "errorHandler": {
+      "noFile": "Ingen fil vald",
+      "maxSize": "Filen får ej överstiga {size}MB",
+      "maxRow": "Filen får inte innehålla fler än {rows} rader",
+      "default": "Något gick fel när mottagarlistan hanterades",
+      "invalidRecipient": "Ogiltiga mottagare ({num})",
+      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
+      "singleRecipientError": "Du måste lägga till en mottagare.",
+      "badFile": "Felaktig fil",
+      "csvError": "Du måste lägga till en fil",
+      "csv": {
+        "UNKNOWN": "Felaktig CSV-fil. Får endast innehålla personnummer.",
+        "MISSING_VALID_IDS": "Kunde inte hitta några giltiga mottagare. Kontrollera din fil."
+      }
+    },
+    "fetchRecipientError": {
+      "alreadyExists": "Personen är redan tillagd",
+      "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?",
+      "csvFile": "Kunde inte kontroller CSV-fil. Kontrollera din fil, och försök igen."
+    },
+    "personalNumberError": {
+      "fewNumber": "För få siffror i personnumret",
+      "tooManyNumbers": "För många siffror i personnumret"
+    },
+    "changeTo": {
+      "list": {
+        "label": "Vill du lägga till mottagare med mottagarlista?",
+        "text": "Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna"
+      },
+      "person": {
+        "label": "Vill du lägga till mottagare med personnummer eller adress?",
+        "text": "Listan du lagt till kommer att försvinna"
+      }
+    },
+    "searchPersonalNumber": "Sök mottagare med personnummer",
+    "searchPersonalNumberHelper": "Ange personnumret i formatet ååååmmddxxxx",
+    "addedRecipientsTitle": "Tillagda mottagare",
+    "noRecipientAdded": "Du har inte lagt till några mottagare än",
+    "addedFileTitle": "Bifogad fil",
+    "noFileAdded": "Du har inte bifogat någon fil än.",
+    "addedRecipientNum": "Tillagda mottagare ({num})",
+    "addedFromFileNum": "Tillagda mottagare från fil ({num})",
+    "rekMail": {
+      "content": "Det går bara att lägga till en mottagare per rekommenderat brev. Mottagaren måste ha en digital brevlåda hos Kivra.",
+      "success": "Kan ta emot via Kivra",
+      "error": "Kan inte ta emot via Kivra",
+      "replaceRecipientConfirm": {
+        "title": "Ersätt mottagare?",
+        "message": "Du kan bara lägga till en mottagare per rekommenderat brev. Vill du ersätta den nuvarande?",
+        "confirm": "Ja, ersätt",
+        "dismiss": "Nej, avbryt"
+      }
+    },
+    "addWithAddress": {
+      "title": "Lägg till mottagare med adress",
+      "description": "När du lägger till en mottagare med adress skickas brevet som vanlig papperspost.",
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "address": "Adress",
+      "careOf": "C/o adress (valfri)",
+      "zipCode": "Postnummer",
+      "city": "Ort",
+      "error": {
+        "firstName": "Förnamn måste anges",
+        "lastName": "Efternamn måste anges",
+        "address": "Adress måste anges",
+        "zipCode": "Postnummer måste anges",
+        "city": "Ort måste anges"
+      }
+    },
+    "singleRecipient": {
+      "error": {
+        "default": "Kan ej lägga till mottagaren",
+        "INELIGIBLE_MINOR": "Mottagaren är underårig"
+      }
+    }
+  },
+  "reviewHandler": {
+    "header": "Granska utskick",
+    "recipients": "Mottagare",
+    "recipientlist": "Mottagarlista",
+    "attachments": "Bifogade filer",
+    "subject": "Rubrik",
+    "department": "Förvaltning",
+    "address": "Adress",
+    "deliveryMethod": "Leveranssätt",
+    "error": "Något gick fel"
+  },
+  "mail": "Post",
+  "digital": "Digitalt"
+}

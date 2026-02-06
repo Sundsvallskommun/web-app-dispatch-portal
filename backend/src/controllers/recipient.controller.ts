@@ -1,64 +1,176 @@
+import { getApiBase, MUNICIPALITY_ID } from '@/config';
+import { CitizenExtended } from '@/data-contracts/citizen/data-contracts';
+import {
+  KivraEligibilityRequest,
+  PrecheckCsvResponse,
+  PrecheckRequest,
+  PrecheckResponse,
+  RecipientDeliveryMethodEnum,
+} from '@/data-contracts/postportalservice/data-contracts';
+import { RecipientDto } from '@/dtos/recipient.dto';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
+import { CSVError, CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
+import { Csv, CsvApiResponse, RecipientApiResponse, RecipientNameApiResponse } from '@/responses/recipient.response';
 import ApiService from '@/services/api.service';
-import { buildRecipientListFromPersonnumber, buildRecipientsList, RecipientWithAddress } from '@/services/recipient.service';
+import { appendCsvFile } from '@/utils/csv-service/csv-service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
+import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
-import { IsString } from 'class-validator';
-import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
-import { OpenAPI } from 'routing-controllers-openapi';
-class RecipientBody {
-  @IsString()
-  personnumber: string;
-}
+import { Response } from 'express';
+import { randomUUID } from 'node:crypto';
+import { Body, Controller, Get, Param, Post, QueryParam, Req, Res, UploadedFile, UseBefore } from 'routing-controllers';
+import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
+import FormData from 'form-data';
 
 @Controller()
 export class RecipientController {
-  private apiService = new ApiService();
-
-  @Post('/recipients/')
-  @OpenAPI({ summary: 'Build list of recipients from CSV file' })
-  @UseBefore(authMiddleware)
-  async recipients(
-    @Req() req: RequestWithUser,
-    @Res() response: any,
-    @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
-  ): Promise<{
-    data: RecipientWithAddress[];
-    message: string;
-  }> {
-    const base64String = files[0].buffer.toString('base64');
-    const data = Buffer.from(base64String, 'base64').toString('utf-8');
-    const recipientsWithAddresses = await buildRecipientsList(req.user, this.apiService, data).catch(e => {
-      if (e.message === 'MAX_RECIPIENT_ROW_SIZE') {
-        throw new HttpException(400, 'MAX_RECIPIENT_ROW_SIZE');
-      }
-    });
-    return response
-      .send({ data: recipientsWithAddresses, message: 'success' } as {
-        data: RecipientWithAddress[];
-        message: string;
-      })
-      .status(200);
-  }
+  private readonly apiService = new ApiService();
+  private readonly citizenApi = getApiBase('citizen');
+  private readonly postportalApi = getApiBase('postportalservice');
 
   @Post('/recipient')
-  @OpenAPI({ summary: 'Build list with single recipient from personal number' })
+  @OpenAPI({ summary: 'Get single recipient from personal number' })
   @UseBefore(authMiddleware)
+  @ResponseSchema(RecipientApiResponse)
   async recipient(
     @Req() req: RequestWithUser,
-    @Body() body: RecipientBody,
-    @Res() response: any,
-  ): Promise<{
-    data: RecipientWithAddress[];
-    message: string;
-  }> {
-    const recipientWithAddresses = await buildRecipientListFromPersonnumber(req.user, this.apiService, body.personnumber);
-    return response
-      .send({ data: recipientWithAddresses, message: 'success' } as {
-        data: RecipientWithAddress[];
-        message: string;
-      })
-      .status(200);
+    @Body() body: RecipientDto,
+    @QueryParam('force_kivra') force_kivra: boolean,
+    @Res() response: Response<RecipientApiResponse>,
+  ): Promise<Response<RecipientApiResponse>> {
+    try {
+      const partyIdUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${body.personNumber}/guid`;
+      const { data: partyId } = await this.apiService.get<string>({ url: partyIdUrl }, req.user);
+      const citizenUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${partyId}`;
+      const { data: citizen } = await this.apiService.get<CitizenExtended>({ url: citizenUrl }, req.user);
+
+      if (!citizen) {
+        throw new HttpException(404, 'Citizen not found');
+      }
+
+      const precheckUrl = `${this.postportalApi}/${MUNICIPALITY_ID}/precheck`;
+      const {
+        data: { recipients },
+      } = await this.apiService.post<PrecheckResponse, PrecheckRequest>(
+        { url: precheckUrl, data: { partyIds: [partyId] } },
+        req.user,
+      );
+
+      const recipient = recipients[0];
+
+      if (!recipient) {
+        throw new HttpException(404, 'Citizen message settings not found');
+      }
+
+      let data: ExtendedRecipient = {
+        partyId,
+        deliveryMethod: recipient.deliveryMethod as unknown as RecipientDeliveryMethodEnum,
+        reason: recipient.reason,
+        address: {
+          firstName: citizen.givenname,
+          lastName: citizen.lastname,
+          street: citizen.addresses[0].address,
+          careOf: citizen.addresses[0].co,
+          zipCode: citizen.addresses[0].postalCode,
+          city: citizen.addresses[0].city,
+          country: citizen.addresses[0].country,
+        },
+        personNumber: body.personNumber,
+      };
+
+      if (force_kivra) {
+        const checkKivraUrl = `${precheckUrl}/kivra`;
+        const { data: validIds } = await this.apiService.post<string[], KivraEligibilityRequest>(
+          { url: checkKivraUrl, data: { partyIds: [partyId] } },
+          req.user,
+        );
+        if (!validIds.includes(partyId)) {
+          data.deliveryMethod = RecipientDeliveryMethodEnum.DELIVERY_NOT_POSSIBLE;
+          data.reason = 'No kivra';
+        }
+      }
+
+      return response.send({ data, message: 'success' });
+    } catch (error) {
+      logger.error('Error getting recipient', error);
+      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal server error');
+    }
+  }
+
+  @Get('/recipient/:personId/name')
+  @OpenAPI({ summary: 'Return person name by personId' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(RecipientNameApiResponse)
+  async getCitizen(
+    @Req() req: RequestWithUser,
+    @Param('personId') personId: string,
+    @Res() response: Response<RecipientNameApiResponse>,
+  ): Promise<Response<RecipientNameApiResponse>> {
+    try {
+      const citizenUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${personId}`;
+      const { data: citizen } = await this.apiService.get<CitizenExtended>({ url: citizenUrl }, req.user);
+
+      return response.send({
+        data: `${citizen.givenname} ${citizen.lastname}`,
+        message: 'success',
+      });
+    } catch (error) {
+      logger.error('Error getting citizen', error);
+      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal server error');
+    }
+  }
+
+  @Post('/recipient/csv')
+  @OpenAPI({ summary: 'Check status of csv-file and save to session' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(CsvApiResponse)
+  async getCsvStatus(
+    @Req() req: RequestWithUser,
+    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
+    @Res() response: Response<CsvApiResponse>,
+  ): Promise<Response<CsvApiResponse>> {
+    try {
+      const url = `${this.postportalApi}/${MUNICIPALITY_ID}/precheck/csv`;
+      const data = new FormData();
+      appendCsvFile(csvFile, 'csv-file', data);
+
+      const csvcheck = await this.apiService.post<PrecheckCsvResponse, FormData>(
+        { url, data, headers: { 'Content-Type': 'multipart/form-data' } },
+        req.user,
+      );
+
+      const id = randomUUID();
+      if (csvcheck) {
+        const data: Csv = {
+          id,
+          status: CSVStatus.Ok,
+          name: csvFile.originalname,
+          duplicateEntries: csvcheck?.data?.duplicateEntries,
+          rejectedEntries: csvcheck?.data?.rejectedEntries,
+        };
+        req.session.csv = { ...data, file: csvFile };
+        return response.send({ message: 'success', data });
+      } else {
+        const data = {
+          id,
+          status: CSVStatus.Bad,
+          error: CSVError.Unknown,
+          name: csvFile.originalname,
+        };
+        return response.send({ message: 'success', data });
+      }
+    } catch (error) {
+      logger.error('Error checking csv-file', error);
+      const data = {
+        id: '',
+        status: CSVStatus.Bad,
+        error: error?.message.toLowerCase().startsWith('no valid partyids found')
+          ? CSVError.MissingValidIds
+          : CSVError.Unknown,
+        name: csvFile.originalname,
+      };
+      return response.send({ message: 'success', data });
+    }
   }
 }

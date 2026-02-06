@@ -1,0 +1,19 @@
+{
+  "status": "COMPLETED",
+  "signedAt": "2025-10-10T12:57:42+02:00",
+  "contentKey": "175991288193cf89fcd9d248ec9a8c62173c6d1f92",
+  "orderReference": "0199cdc4-da30-72ee-9295-994be283132d",
+  "ocspResponse": "MIIHgAoBAKCCBuXr/k5m1BE2k96HGGYdlv3yUhZmBhYSEfP9cZU2chubJrTMU4xdIT1e6d1/iioaCLvQ==",
+  "user": {
+    "personalIdentityNumber": "199011182475",
+    "name": "Test Testsson",
+    "givenName": "Test",
+    "surname": "Testsson"
+  },
+  "device": {
+    "ipAddress": "194.71.24.12"
+  },
+  "stepUp": {
+    "mrtd": false
+  }
+}

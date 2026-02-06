@@ -14,7 +14,28 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import { recipientcsv } from 'cypress/fixtures/recipientcsv';
+import './commands';
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+beforeEach(() => {
+  cy.intercept('GET', '**/api/me', { fixture: 'me.json' });
+  cy.fixture('my-department.txt', 'utf8').then((text) => {
+    cy.intercept('GET', '**/api/my-department', {
+      statusCode: 200,
+      headers: { 'content-type': 'text/plain; charset=utf8' },
+      body: text,
+    });
+  });
+  cy.intercept('POST', '**/api/message', { fixture: 'message.json' });
+  cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK')).as('csv');
+  cy.intercept('GET', '**/me', { fixture: 'me.json' }).as('getMe');
+  cy.intercept('GET', '**/api/statistics/departments*', {
+    fixture: 'departments-from-to.json',
+  });
+  cy.intercept('GET', '**/api/my-statistics', { fixture: 'my-statistics.json' });
+  cy.intercept('GET', '**/api/my-rec-letters', { fixture: 'my-rec-letters.json' });
+  cy.intercept('GET', '**/api/user/avatar*', (req) => {
+    req.destroy();
+  });
+  cy.viewport('macbook-16');
+});

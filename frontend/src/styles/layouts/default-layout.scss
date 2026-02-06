@@ -3,7 +3,7 @@
     @apply flex flex-col grow;
   }
   .main-container {
-    @apply flex pt-32 bg-transparent pb-20 px-12 md:px-32 xl:px-80 grow;
+    @apply flex bg-transparent pb-20 px-12 md:px-32 xl:px-80 grow;
 
     .container {
       @apply mx-auto flex flex-col;

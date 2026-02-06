@@ -1,72 +1,62 @@
-import { AUTHORIZED_GROUPS } from '@config';
-import { InternalRole, Permissions } from '@interfaces/users.interface';
-import { roleADMapping } from './ad-role.service';
-
-export function authorizeGroups(groups) {
-  console.log('authorizing groups', groups);
-  console.log('against', AUTHORIZED_GROUPS);
-  if (!AUTHORIZED_GROUPS) return true; // no authorization groups configured
-  const authorizedGroupsList = AUTHORIZED_GROUPS.split(',');
-  const groupsList = groups.split(',').map((g: string) => g.toLowerCase());
-  return authorizedGroupsList.some(authorizedGroup => groupsList.includes(authorizedGroup.toLowerCase()));
-}
+import { getApiBase, MUNICIPALITY_ID } from '@config';
+import { Permissions, User } from '@interfaces/users.interface';
+import ApiService, { ApiResponse } from './api.service';
+import { logError } from './message.service';
 
 export const defaultPermissions: () => Permissions = () => ({
-  canSendSMS: false,
+  canSendSMS: false, // NOTE: everyone can send SMS by default
+  canSendLetter: true,
+  canSendRegisteredLetter: false,
 });
-
-enum RoleOrderEnum {
-  'sms',
-}
-
-const roles = new Map<InternalRole, Partial<Permissions>>([
-  [
-    'sms',
-    {
-      canSendSMS: true,
-    },
-  ],
-]);
 
 /**
  *
  * @param groups Array of groups/roles
- * @param internalGroups Whether to use internal groups or external group-mappings
  * @returns collected permissions for all matching role groups
  */
-export const getPermissions = (groups: InternalRole[] | string[], internalGroups = false): Permissions => {
+export const getPermissions = async (user: User, apiService: ApiService): Promise<Permissions> => {
   const permissions: Permissions = defaultPermissions();
-  groups.forEach(group => {
-    const groupLower = group.toLowerCase();
-    const role = internalGroups ? (groupLower as InternalRole) : (roleADMapping[groupLower] as InternalRole);
-    if (roles.has(role)) {
-      const groupPermissions = roles.get(role);
-      Object.keys(groupPermissions).forEach(permission => {
-        if (groupPermissions[permission] === true) {
-          permissions[permission] = true;
-        }
-      });
-    }
-  });
+
+  const messagingSettings = await getMessagingUserSettings(user, apiService);
+  const values = messagingSettings?.[0]?.values || [];
+
+  const settingsMap = Object.fromEntries(values.map(v => [v.key, v.value?.toLowerCase()]));
+
+  permissions.canSendSMS = settingsMap['sms_enabled'] === 'true';
+  permissions.canSendRegisteredLetter = settingsMap['rek_enabled'] === 'true';
+
   return permissions;
 };
 
-/**
- * Ensures to return only the role with most permissions
- * @param groups List of AD roles
- * @returns role with most permissions
- */
-export const getRole = (groups: string[]) => {
-  if (groups.length == 1) return roleADMapping[groups[0]];
-
-  const roles: InternalRole[] = [];
-  groups.forEach(group => {
-    const groupLower = group.toLowerCase();
-    const role = roleADMapping[groupLower];
-    if (role) {
-      roles.push(role);
-    }
-  });
-
-  return roles.sort((a, b) => RoleOrderEnum[a] - RoleOrderEnum[b])[0];
+export const getMessagingUserSettings: (user: User, api: ApiService) => Promise<MessagingSettings[]> = async (
+  user,
+  api,
+) => {
+  const url = `${getApiBase('messaging-settings')}/${MUNICIPALITY_ID}/user`;
+  const headers = {
+    'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}`,
+  };
+  return api
+    .get<any>({ url, headers }, user)
+    .then(async (_res: ApiResponse<MessagingSettings[]>) => {
+      return _res.data;
+    })
+    .catch(e => {
+      logError('Error when getting messaging settings:', e);
+      throw new Error('Error when getting messaging settings');
+    });
 };
+
+export interface MessagingSettings {
+  id: string;
+  municipalityId: string;
+  created: string;
+  updated: string;
+  values: MessagingSettingsValue[];
+}
+
+export interface MessagingSettingsValue {
+  key: string;
+  value: string;
+  type: string;
+}

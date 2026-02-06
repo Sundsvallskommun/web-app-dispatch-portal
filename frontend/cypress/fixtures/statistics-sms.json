@@ -1,0 +1,16 @@
+{
+  "subject": "Another Test Letter",
+  "body": "This is the content of the second letter. Plain-text body",
+  "sentAt": "2025-10-08T10:41:21+02:00",
+  "attachments": [],
+  "recipients": [
+    {
+      "name": "John Joe",
+      "partyId": "00000000-0000-0000-0000-000000000000",
+      "messageType": "SMS",
+      "status": "SENT",
+      "personnummer": "199011182475",
+      "mobileNumber": "0762228666"
+    }
+  ]
+}

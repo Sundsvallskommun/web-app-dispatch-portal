@@ -1,7 +1,10 @@
-import { useDepartments } from '@services/departments-service';
-import { FormControl, FormLabel, Input, Spinner, Divider, Select } from '@sk-web-gui/react';
+import React, { useEffect } from 'react';
+import { useMyDepartment } from '@services/departments-service';
+import { FormControl, FormLabel, Input, Spinner, Divider } from '@sk-web-gui/react';
 import { useFormContext } from 'react-hook-form';
-import React from 'react';
+import { useTranslation } from 'react-i18next';
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 
 export interface SenderFormModel {
   department: string;
@@ -9,37 +12,49 @@ export interface SenderFormModel {
 }
 
 export const SenderHandler: React.FC = () => {
-  const { register, getValues } = useFormContext<SenderFormModel>();
-  const { departments, loaded } = useDepartments();
+  const { myDepartment, loaded } = useMyDepartment();
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = useFormContext<SenderFormModel>();
+  const { t } = useTranslation(['common', 'send-mail']);
+
+  useEffect(() => {
+    if (myDepartment) {
+      setValue('department', myDepartment, {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+    }
+  }, [myDepartment, setValue]);
 
   return !loaded ? (
     <Spinner />
   ) : (
-    <div className="w-full flex justify-center">
-      <div className="flex flex-col items-start w-full border-1 border-divider rounded-cards">
-        <h4 className="px-32 py-16">Ange avsändare</h4>
-        <Divider className="w-full" orientation="horizontal" strong={false} />
-
-        <div className="p-32">
-          <FormControl className="w-full">
-            <FormLabel>Förvaltning</FormLabel>
-            <Select {...register('department')} defaultValue={getValues('department')}>
-              {departments?.map((dep) => (
-                <Select.Option key={dep.organizationId} value={dep.orgDisplayName}>
-                  {dep.orgDisplayName}
-                </Select.Option>
-              ))}
-            </Select>
-          </FormControl>
-          <p className="text-small pb-32 pt-8">Välj vilken förvaltning som är avsändare.</p>
-
-          <FormControl className="w-full" size="md">
-            <FormLabel>Ämne</FormLabel>
-            <Input {...register('subject')} />
-          </FormControl>
-          <p className="text-small pt-8">Ange ett ämne som beskriver utskickets innehåll.</p>
+    <HandlerWrapper
+      title={t('send-mail:senderHandler.headerLabel')}
+      description={t('send-mail:senderHandler.headerDescription')}
+      gap={18}
+    >
+      <FormControl className="w-full" size="md">
+        <FormLabel className="text-label-medium">{t('send-mail:senderHandler.formLabelHeader')}</FormLabel>
+        <Input
+          invalid={!!errors?.subject}
+          data-cy="sender-subject"
+          className="max-w-[467px]"
+          {...register('subject')}
+        />
+        {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} />}
+      </FormControl>
+      <Divider className="w-full my-22" />
+      <FormControl className="w-full gap-24">
+        <div className="flex flex-col gap-6">
+          <h2 className="text-h4-sm">{t('send-mail:senderHandler.headerManagement')}</h2>
+          <p className="text-secondary">{t('send-mail:senderHandler.managementDescription')}</p>
         </div>
-      </div>
-    </div>
+        <div className="text-dark-primary font-bold">{myDepartment}</div>
+      </FormControl>
+    </HandlerWrapper>
   );
 };

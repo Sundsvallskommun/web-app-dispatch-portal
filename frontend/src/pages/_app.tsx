@@ -1,7 +1,9 @@
 import { FileUploadWrapper } from '@components/file-upload/file-upload.context';
 import LoginGuard from '@components/login-guard/login-guard';
-import { GuiProvider, defaultTheme, extendTheme } from '@sk-web-gui/react';
+import { GuiProvider, defaultTheme, extendTheme, ConfirmationDialogContextProvider } from '@sk-web-gui/react';
 import '@styles/tailwind.scss';
+import '@styles/global.scss';
+import '../../public/fonts/fonts.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
 import updateLocale from 'dayjs/plugin/updateLocale';
@@ -9,6 +11,7 @@ import utc from 'dayjs/plugin/utc';
 import type { AppProps } from 'next/app';
 import { useMemo, useState } from 'react';
 import { AppWrapper } from '../contexts/app.context';
+import { appWithTranslation } from 'next-i18next';
 
 dayjs.extend(utc);
 dayjs.locale('sv');
@@ -45,16 +48,17 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <GuiProvider theme={theme}>
-      <AppWrapper>
-        <LoginGuard>
-          <FileUploadWrapper>
-            {/* @ts-expect-error Server Component */}
-            <Component {...pageProps} />
-          </FileUploadWrapper>
-        </LoginGuard>
-      </AppWrapper>
+      <ConfirmationDialogContextProvider>
+        <AppWrapper>
+          <LoginGuard>
+            <FileUploadWrapper>
+              <Component {...pageProps} />
+            </FileUploadWrapper>
+          </LoginGuard>
+        </AppWrapper>
+      </ConfirmationDialogContextProvider>
     </GuiProvider>
   );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp);

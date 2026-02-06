@@ -1,6 +1,4 @@
-import Core from '@sk-web-gui/core';
-import Forms from '@tailwindcss/forms';
-import ContainerQueries from "@tailwindcss/container-queries";
+import { preset } from '@sk-web-gui/core';
 
 import type { Config } from 'tailwindcss';
 
@@ -22,12 +20,5 @@ export default {
   ],
 
   darkMode: 'class', // or 'media' or 'class'
-  plugins: [
-    Forms,
-    ContainerQueries,
-    Core({
-      cssBase: true,
-      colors: [],
-    }),
-  ],
+  presets: [preset()],
 } satisfies Config;

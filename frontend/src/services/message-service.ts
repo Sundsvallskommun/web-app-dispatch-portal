@@ -1,29 +1,9 @@
-import { BatchStatus, DeliveryInformation, MessageInformation } from '@interfaces/batch-status';
-import { FormModel } from '@pages/index';
+import { Attachment } from '@components/attachment-handler/attachment-handler';
+import { SMSRequest, SMSStatus } from '@interfaces/sms';
+import { FormModel } from '@pages/send/mail';
+import { Address, Message, MessageApiResponse, Recipient } from 'src/data-contracts/backend/data-contracts';
 import { ApiResponse, apiService } from './api-service';
-import { RecipientWithAddress, toBase64 } from './recipient-service';
-
-export const MAX_ATTACHMENT_FILE_SIZE_MB = 2;
-export interface Attachment {
-  name: string;
-  extension: string;
-  mimeType: string;
-  file: string;
-}
-
-export interface LetterResponse {
-  batchId: string;
-  messages: [
-    {
-      messageId: string;
-      deliveries: {
-        deliveryId: string;
-        messageType: 'DIGITAL_MAIL' | 'SNAIL_MAIL';
-        status: string;
-      }[];
-    }
-  ];
-}
+import { file2blob, FileInfo } from '@utils/file.utils';
 
 export const mapMessageType = (key: 'DIGITAL_MAIL' | 'SNAIL_MAIL') => {
   switch (key) {
@@ -36,103 +16,125 @@ export const mapMessageType = (key: 'DIGITAL_MAIL' | 'SNAIL_MAIL') => {
   }
 };
 
-const file2blob = async (fileItem: File) => {
-  if (fileItem.size / 1024 / 1024 > MAX_ATTACHMENT_FILE_SIZE_MB) {
-    console.error('File too large.');
-    return Promise.reject();
-  }
-  const fileData = await toBase64(fileItem);
-  const attachment: Attachment = {
-    name: fileItem.name,
-    extension: fileItem.name.split('.').pop() || '',
-    mimeType: fileItem.type,
-    file: fileData.split(',')[1],
-  };
-  const buf = Buffer.from(attachment.file, 'base64');
-  const blob = new Blob([buf], { type: attachment.mimeType });
-  return { attachment, blob };
+export const sendSms: (data: SMSRequest) => Promise<SMSStatus> = async (data) => {
+  const res = await apiService.post<ApiResponse<SMSStatus>, SMSRequest>(`sms`, data).catch((e) => {
+    console.error('Something went wrong when sending sms:', e);
+    throw e;
+  });
+
+  return res.data.data;
+};
+
+const getAttachmentsBlob = async (attachmentList: Attachment[]) => {
+  const attachmentPromises: Promise<{ attachment: FileInfo; blob: Blob }>[] =
+    attachmentList?.map(async (attachmentFile) => {
+      const fileItem = attachmentFile.file;
+      if (!fileItem) {
+        throw new Error('Attachment is missing its file.');
+      }
+      const blobObject = await file2blob(fileItem);
+      return blobObject;
+    }) || [];
+
+  return await Promise.allSettled(attachmentPromises);
 };
 
 // Use multipart/form-data
 export const sendMessage: (
   data: FormModel,
-  recipients: RecipientWithAddress[]
-) => Promise<{ recipients: RecipientWithAddress[]; response: LetterResponse }> = async (data, recipients) => {
+  recipients: Recipient[],
+  addresses: Partial<Recipient>[]
+) => Promise<Message> = async (data, recipients, _addresses) => {
   const messageFormData = new FormData();
-
+  const addresses: Address[] = _addresses.map((recipient) => recipient.address).filter((address) => !!address);
   const attachmentList = data.attachmentList;
-  const attachmentPromises: Promise<{ attachment: Attachment; blob: Blob }>[] =
-    attachmentList?.map(async (f) => {
-      const fileItem = f.file;
-      if (fileItem) {
-        const blobObject = file2blob(fileItem);
-        return Promise.resolve(blobObject);
-      } else {
-        return Promise.reject();
-      }
-    }) || [];
+  const attachmentResults = await getAttachmentsBlob(attachmentList);
 
-  const res = await Promise.allSettled(attachmentPromises)
-    .then((r) => {
-      r.forEach((r) => {
-        if (r.status === 'fulfilled') {
-          const attachment = r.value.attachment;
-          const blob = r.value.blob;
-          messageFormData.append(`files`, blob, attachment.name);
-        } else {
-          console.error(`Error: attachment could not be processed for the following reason: ${r.reason}`);
-        }
-      });
+  for (const result of attachmentResults) {
+    if (result.status === 'fulfilled') {
+      const attachment = result.value.attachment;
+      const blob = result.value.blob;
+      messageFormData.append(`files`, blob, attachment.name);
+    } else {
+      console.error(`Error: attachment could not be processed for the following reason: ${result.reason}`);
+    }
+  }
+
+  messageFormData.append('subject', data.subject);
+  messageFormData.append('recipients', JSON.stringify(recipients));
+  messageFormData.append('addresses', JSON.stringify(addresses));
+
+  const res = await apiService
+    .post<MessageApiResponse, FormData>(`message`, messageFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
-    .then(() => {
-      messageFormData.append('department', data.department);
-      messageFormData.append('subject', data.subject);
-      messageFormData.append('recipients', JSON.stringify(recipients));
-      return apiService
-        .post<ApiResponse<{ recipients: RecipientWithAddress[]; response: LetterResponse }>, FormData>(
-          `message`,
-          messageFormData,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        )
-        .catch((e) => {
-          console.error('Something went wrong when sending message:', e);
-          throw e;
-        });
+    .catch((e) => {
+      console.error('Something went wrong when sending message:', e);
+      throw e;
     });
+
   return res.data.data;
 };
 
-export const getBatchStatus: (id: string) => Promise<BatchStatus> = async (id) => {
-  if (!id) {
-    return Promise.reject('No id supplied');
+export const sendCsvMessage: (data: FormModel) => Promise<Message> = async (data) => {
+  if (!data.recipientList[0]) {
+    throw new Error('No csv file included');
   }
-  const res = await apiService.get<BatchStatus>(`batchstatus/${id}`).catch((e) => {
-    console.error('Something went wrong when fetching batch status:', e);
-    throw e;
-  });
-  return res.data;
+
+  const messageFormData = new FormData();
+  const attachmentList = data.attachmentList;
+  const attachmentResults = await getAttachmentsBlob(attachmentList);
+
+  for (const result of attachmentResults) {
+    if (result.status === 'fulfilled') {
+      const attachment = result.value.attachment;
+      const blob = result.value.blob;
+      messageFormData.append(`files`, blob, attachment.name);
+    } else {
+      console.error(`Error: attachment could not be processed for the following reason: ${result.reason}`);
+    }
+  }
+
+  messageFormData.append('subject', data.subject);
+  messageFormData.append('csvId', data.recipientList[0].id);
+
+  return apiService
+    .post<MessageApiResponse, FormData>(`csv-message`, messageFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .then((res) => res.data.data);
 };
 
-export const getMessageInformation: (id: string) => Promise<DeliveryInformation> = async (id) => {
-  if (!id) {
-    return Promise.reject('No id supplied');
-  }
-  const res = await apiService.get<DeliveryInformation>(`message/${id}`).catch((e) => {
-    console.error('Something went wrong when fetching message information:', e);
-    throw e;
-  });
-  return res.data;
-};
+export const sendRecMessage: (formData: FormModel, recipientPersonId: string) => Promise<Message> = async (
+  data,
+  recipientPersonId
+) => {
+  const messageFormData = new FormData();
 
-export const getMessagesForBatch: (id: string) => Promise<MessageInformation[]> = async (id) => {
-  if (!id) {
-    return Promise.reject('No id supplied');
+  const attachmentList = data.attachmentList;
+  const attachmentResults = await getAttachmentsBlob(attachmentList);
+
+  for (const result of attachmentResults) {
+    if (result.status === 'fulfilled') {
+      const attachment = result.value.attachment;
+      const blob = result.value.blob;
+      messageFormData.append(`files`, blob, attachment.name);
+    } else {
+      console.error(`Error: attachment could not be processed for the following reason: ${result.reason}`);
+    }
   }
-  const res = await apiService.get<MessageInformation[]>(`batchmessages/${id}`).catch((e) => {
-    console.error('Something went wrong when fetching message information:', e);
-    throw e;
-  });
-  return res.data;
+
+  messageFormData.append('subject', data.subject);
+  messageFormData.append('recipientPersonId', recipientPersonId);
+
+  const res = await apiService
+    .post<MessageApiResponse, FormData>(`rec-message`, messageFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .catch((e) => {
+      console.error('Something went wrong when sending message:', e);
+      throw e;
+    });
+
+  return res.data.data;
 };

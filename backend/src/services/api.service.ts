@@ -1,10 +1,11 @@
+import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+
+import ApiTokenService from './api-token.service';
 import { HttpException } from '@/exceptions/HttpException';
+import { User } from '@/interfaces/users.interface';
 import { apiURL } from '@/utils/util';
 import { logger } from '@utils/logger';
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import ApiTokenService from './api-token.service';
-import { User } from '@/interfaces/users.interface';
 
 export class ApiResponse<T> {
   data: T;
@@ -18,46 +19,28 @@ class ApiService {
   constructor() {
     this.instance = axios.create();
     this.instance.interceptors.request.use(
-      async function (request) {
-        if (request.url === apiURL('token')) {
-          return Promise.resolve(request);
-        }
+      async request => {
+        if (request.url === apiURL('token')) return request;
+
         const token = await apiTokenService.getToken();
-        const defaultHeaders = {
+
+        const defaultHeaders: Partial<AxiosRequestHeaders> = {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
           'X-Request-Id': uuidv4(),
         };
-        request.headers = request.headers.concat(defaultHeaders);
-        return Promise.resolve(request);
+
+        request.headers = AxiosHeaders.from({
+          ...defaultHeaders,
+          ...request.headers,
+        });
+
+        return request;
       },
-      function (error) {
+      error => {
         return Promise.reject(error);
       },
     );
-
-    // this.instance.interceptors.response.use(
-    //   async function (response) {
-    //     if (response.headers.location) {
-    //       logger.info(`Response contained location header: ${response.headers.location}`);
-    //       const token = await apiTokenService.getToken();
-    //       const defaultHeaders = {
-    //         Authorization: `Bearer ${token}`,
-    //         'Content-Type': 'application/json',
-    //         'X-Request-Id': uuidv4(),
-    //       };
-    //       return axios.get(response.headers.location, { headers: defaultHeaders }).catch(e => {
-    //         console.error('Error in location header request:', e);
-    //         logger.error('Error in location header request:', e);
-    //         throw e;
-    //       });
-    //     }
-    //     return Promise.resolve(response);
-    //   },
-    //   function (error) {
-    //     return Promise.reject(error);
-    //   },
-    // );
   }
   private async request<T>(config: AxiosRequestConfig, user: User): Promise<ApiResponse<T>> {
     const defaultParams = {};
@@ -65,11 +48,11 @@ class ApiService {
       ...config,
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
-      headers: { ...config.headers, 'x-issuer': user.username },
+      headers: { ...config.headers, 'X-Sent-By': `type=adAccount; ${user.username.toLowerCase()}` },
       params: { ...defaultParams, ...config.params },
       url: apiURL(config.url),
     };
-    console.log('REQUEST CONFIG HEADERS', preparedConfig.headers);
+
     try {
       const res = await this.instance(preparedConfig);
       return { data: res.data, message: 'success' };
@@ -90,6 +73,10 @@ class ApiService {
         logger.error('Error data:', error.response.config.data);
         logger.error('Error method:', error.response.config.method);
         logger.error('Error headers:', error.response.config.headers);
+        throw new HttpException(
+          error?.response?.status ?? 500,
+          error?.response?.data?.detail ?? 'Internal server error',
+        );
       } else {
         console.error('Unknown error:', error);
         logger.error('Unknown error:', error);

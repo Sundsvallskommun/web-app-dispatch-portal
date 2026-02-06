@@ -1,152 +1,78 @@
-import AttachmentHandler, { AttachmentFormModel } from '@components/attachment-handler/attachment-handler';
-import ContentCard from '@components/content-card/content-card';
-import { FormStepper } from '@components/form-stepper/form-stepper.component';
-import { Help } from '@components/help/help.component';
-import RecipientHandler, { RecipientListFormModel } from '@components/recipient-handler/recipient-handler';
-import { SenderFormModel, SenderHandler } from '@components/sender-handler/sender-handler.component';
-import SubmitHandler from '@components/submit-handler/submit-handler';
-import { yupResolver } from '@hookform/resolvers/yup';
-import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { useMessageStore } from '@services/recipient-service';
-import { useUserStore } from '@services/user-service/user-service';
-import { Button } from '@sk-web-gui/react';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import * as yup from 'yup';
+import { useEffect, useState } from 'react';
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import DefaultLayout from '@layouts/default-layout/default-layout.component';
+import { useUserStore } from '@services/user-service/user-service';
+import { useTranslation } from 'next-i18next';
+import { Mail, MailCheck, Smartphone } from 'lucide-react';
+import MainCard from '@components/main-card/main-card.component';
+import { Link } from '@sk-web-gui/react';
+import HeaderMenu from '@components/header-menu/header-menu.component';
 
-const formSchema = yup
-  .object({
-    message: yup.string().nullable(),
-    department: yup.string().required(),
-    subject: yup.string().required(),
-    body: yup.string().nullable(),
-    attachmentList: yup.array().test('HAS_MIN_ONE', 'Du måste bifoga ett dokument', (value) => {
-      return value && value.length > 0;
-    }),
-    recipientList: yup.array(),
-  })
-  .required();
-
-const initialValues = {
-  attachmentList: [],
-  message: '',
-  recipientList: [],
-  singleRecipient: '',
-  subject: '',
-  body: '',
-  department: '',
-};
-
-export interface FormModel extends AttachmentFormModel, RecipientListFormModel, SenderFormModel {}
-
-export default function Index() {
-  const [step, setStep] = useState<number>(0);
-  const recipients = useMessageStore((state) => state.recipients);
-  const setRecipients = useMessageStore((state) => state.setRecipients);
-  const response = useMessageStore((state) => state.response);
-  const setResponse = useMessageStore((state) => state.setResponse);
-  const [success, setSuccess] = useState(false);
+const Index = () => {
+  const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
   const user = useUserStore((state) => state.user);
+  const { canSendLetter, canSendRegisteredLetter, canSendSMS } = user?.permissions ?? {};
   const router = useRouter();
-
-  const myDepartment = user?.orgTree
-    ? user.orgTree
-        .split('¤')
-        ?.find((dep) => dep.charAt(0) === '2')
-        ?.split('|')[2]
-    : '';
-
-  const controls = useForm<Partial<FormModel>>({
-    resolver: yupResolver(formSchema),
-    values: initialValues,
-    mode: 'onChange', // NOTE: Needed if we want to disable submit until valid
-    reValidateMode: 'onChange',
-  });
-
-  const { watch, reset, setValue } = controls;
+  const { t } = useTranslation(['common', 'start-page']);
 
   useEffect(() => {
-    if (myDepartment) {
-      setValue('department', myDepartment, { shouldDirty: false, shouldValidate: false });
-    }
-  }, [myDepartment, setValue]);
-
-  const resetAll = useCallback(() => {
-    setRecipients([]);
-    reset({ ...initialValues, department: myDepartment, subject: `Utskick från ${myDepartment}` });
-    setResponse(undefined);
-  }, [myDepartment, reset, setRecipients, setResponse]);
-
-  const hasAtLeastOneAttachment = watch('attachmentList').length > 0;
-
-  useEffect(() => {
-    if (response) {
-      // router.push(`/status/${response.response.batchId}`);
-      setSuccess(true);
-      resetAll();
-    }
-  }, [resetAll, response, router]);
-
-  const hasValidRecipients = recipients?.some(
-    (recipient) => recipient.address && recipient?.address?.addresses?.length > 0 && !recipient.error
-  );
+    setIsCheckingPermissions(false);
+  }, [canSendSMS, canSendLetter, canSendRegisteredLetter, router]);
 
   return (
-    <DefaultLayout title={`Postportalen`}>
-      <h1 className="sr-only">
-        Skicka post.{' '}
-        {step === 0
-          ? 'Steg 1: Lägg till textdokument'
-          : step === 1
-            ? 'Steg 2: Lägg till mottagare'
-            : step === 2
-              ? 'Steg 3: Ange avsändare'
-              : undefined}
-      </h1>
-      <div className="text-lg mb-11 pt-48">
-        <div className="flex flex-row gap-32 lg:gap-48 xl:gap-80 flex-wrap lg:flex-nowrap justify-between">
-          <div className="w-full lg:w-7/12">
-            {success ? (
-              <>
-                <h2>Klart!</h2>
-                <p className="my-md text-base">Ditt utskick har gjorts.</p>
-                <Button
-                  className="mt-lg"
-                  color="vattjom"
-                  onClick={() => {
-                    resetAll();
-                    setSuccess(false);
-                  }}
-                >
-                  Gör ett nytt utskick
-                </Button>
-              </>
-            ) : (
-              <FormProvider {...controls}>
-                <FormStepper
-                  steps={[
-                    {
-                      label: 'Lägg till textdokument',
-                      component: <AttachmentHandler />,
-                      valid: hasAtLeastOneAttachment,
-                    },
-                    { label: 'Lägg till mottagare', component: <RecipientHandler />, valid: hasValidRecipients },
-                    { label: 'Ange avsändare', component: <SenderHandler /> },
-                  ]}
-                  onChangeStep={setStep}
-                  submitButton={<SubmitHandler />}
-                ></FormStepper>
-              </FormProvider>
-            )}
-          </div>
-          <div className="w-full lg:w-4/12">
-            <ContentCard>
-              <Help show={step === 0 ? 'documents' : step === 1 ? 'recipients' : step === 2 ? 'sender' : undefined} />
-            </ContentCard>
+    <DefaultLayout title={t('start-page:appTitle')} headerMenu={<HeaderMenu />}>
+      {!isCheckingPermissions && (
+        <div className="pt-[12.8rem] flex flex-col items-center gap-32 flex-1 self-stretch">
+          <div className="flex self-center items-center flex-col text-lg mb-11 max-w-max gap-56">
+            <div className="text-center flex flex-col gap-16 lining-nums proportional-nums">
+              <h1 className="text-large text-dark-secondary font-sans font-normal m-0">{t('start-page:subtitle')}</h1>
+              <p className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</p>
+            </div>
+            <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
+              {canSendLetter && (
+                <Link href={'/send/mail'} className="start-link flex-1 w-full">
+                  <MainCard
+                    icon={<Mail />}
+                    title={t('start-page:letter')}
+                    contentText={t('start-page:sendLetterDigitally')}
+                    subContentText={t('start-page:priceHalfKr')}
+                  />
+                </Link>
+              )}
+              {canSendRegisteredLetter && (
+                <Link href={'/send/rek-mail'} className="start-link flex-1 w-full">
+                  <MainCard
+                    icon={<MailCheck />}
+                    title={t('start-page:recLetter')}
+                    contentText={t('start-page:sendImportantDoc')}
+                    subContentText={t('start-page:price20kr')}
+                  />
+                </Link>
+              )}
+              {canSendSMS && (
+                <Link href="/send/sms" className="start-link flex-1 w-full">
+                  <MainCard
+                    icon={<Smartphone />}
+                    title={t('start-page:sms')}
+                    contentText={t('start-page:fastMethodToShare')}
+                    subContentText={t('start-page:priceHalfKr')}
+                  />
+                </Link>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </DefaultLayout>
   );
-}
+};
+
+export const getServerSideProps: GetServerSideProps<object> = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'sv', ['common', 'start-page'])),
+  },
+});
+
+export default Index;
