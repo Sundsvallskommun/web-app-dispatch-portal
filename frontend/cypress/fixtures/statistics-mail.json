@@ -14,7 +14,7 @@
           "lastName": "Testsson",
           "zipCode": "851 85"
         },
-        "personId": "199011182475",
+        "legalId": "199011182475",
         "messageType": "SNAIL_MAIL",
         "status": "SENT"
       }
