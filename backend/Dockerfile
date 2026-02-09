@@ -18,6 +18,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Generera Prisma Client
+RUN yarn run prisma:generate
+
 RUN yarn build
 
 # Production image, copy all the files and run next
@@ -38,5 +41,4 @@ USER nodejs
 EXPOSE 3000
 ENV PORT 3000
 
-RUN yarn run prisma:generate
 CMD ["node", "./dist/server.js"]
