@@ -6,7 +6,7 @@ FROM registry.access.redhat.com/ubi9/nodejs-20 AS deps
 WORKDIR /app
 COPY --chown=1001:0 package.json yarn.lock ./
 
-# Read-only manifests
+# Read-only manifests (Sonar-safe)
 RUN chmod 0444 package.json yarn.lock
 
 RUN npm install -g yarn \
@@ -18,20 +18,9 @@ RUN npm install -g yarn \
 FROM registry.access.redhat.com/ubi9/nodejs-20 AS builder
 
 WORKDIR /app
-
 COPY --from=deps --chown=1001:0 /app/node_modules ./node_modules
-
-# node_modules: readable but traversable, make .bin executable
-RUN find ./node_modules -type d -exec chmod 0555 {} + \
- && find ./node_modules -type f -exec chmod 0444 {} + \
- && find ./node_modules/.bin -type f -exec chmod 0555 {} +
-
 COPY --chown=1001:0 . .
-
-# Only lock down known static files
 RUN chmod 0444 package.json yarn.lock next.config.js || true
-
-# Build-time env placeholders
 COPY --chown=1001:0 .env-cicd .env.local
 RUN chmod 0444 .env-cicd .env.local
 
@@ -62,11 +51,11 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder --chown=1001:0 /app/.next/standalone ./
 COPY --from=builder --chown=1001:0 /app/.next/static ./.next/static
 
-# Allow runtime env replacement
+# Make .next directory group-writable for OpenShift
 RUN chmod -R g+w /app/.next
 
 # Entrypoint
-COPY --chown=1001:0 entrypoint.sh ./entrypoint.sh
+COPY --chown=1001:0 entrypoint.sh ./
 RUN chmod 0555 entrypoint.sh \
  && sed -i 's/\r$//' ./entrypoint.sh
 
