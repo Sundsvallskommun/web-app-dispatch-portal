@@ -9,7 +9,7 @@ import Main from '@layouts/main/main.component';
 import { useTranslation } from 'next-i18next';
 import { capitalize } from 'underscore.string';
 
-export default async function Start() {
+export default function Start() {
   const { t } = useTranslation();
 
   return (

@@ -35,9 +35,7 @@ export const EditResourceView: React.FC<EditResourceViewProps> = ({ resource: _r
   type UpdateType = Parameters<NonNullable<Resource<FieldValues>['update']>>[1];
   type DataType = CreateType | UpdateType;
 
-  const form = useForm<DataType>({
-    defaultValues: defaultValues,
-  });
+  const form = useForm<DataType>();
   const {
     handleSubmit,
     reset,
@@ -73,7 +71,7 @@ export const EditResourceView: React.FC<EditResourceViewProps> = ({ resource: _r
         setLoaded(true);
       });
     } else {
-      reset(defaultValues);
+      reset();
       setIsNew(true);
       setLoaded(true);
     }

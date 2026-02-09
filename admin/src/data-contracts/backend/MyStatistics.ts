@@ -34,7 +34,7 @@ export class MyStatistics<
    *
    * @tags Statistics
    * @name StatisticsControllerGetMyStatisticsMessage
-   * @summary Return my statistics
+   * @summary Return my statistics message
    * @request GET:/my-statistics/{id}
    */
   statisticsControllerGetMyStatisticsMessage = (
@@ -52,15 +52,14 @@ export class MyStatistics<
    * @tags Statistics
    * @name StatisticsControllerGetAttachment
    * @summary Return the attachment
-   * @request GET:/my-statistics/attachment/{messageId}/{fileName}
+   * @request GET:/my-statistics/attachment/{attachmentId}
    */
   statisticsControllerGetAttachment = (
-    messageId: string,
-    fileName: string,
+    attachmentId: string,
     params: RequestParams = {},
   ) =>
     this.request<void, any>({
-      path: `/my-statistics/attachment/${messageId}/${fileName}`,
+      path: `/my-statistics/attachment/${attachmentId}`,
       method: "GET",
       ...params,
     });
