@@ -1,28 +1,26 @@
 # Install dependencies only when needed
-FROM node:20-alpine AS deps
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY --chown=1001:0 package.json yarn.lock ./
+
+RUN npm install -g yarn
 RUN yarn install --frozen-lockfile
+RUN id
+RUN ls -al
 
 # Rebuild the source code only when needed
-FROM node:20-alpine AS builder
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-ARG NEXT_PUBLIC_API_URL
-ARG HEALTH_AUTH
-ARG HEALTH_USERNAME
-ARG HEALTH_PASSWORD
-
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV HEALTH_AUTH=$HEALTH_AUTH
-ENV HEALTH_USERNAME=$HEALTH_USERNAME
-ENV HEALTH_PASSWORD=$HEALTH_PASSWORD
+COPY --from=deps --chown=1001:0 /app/node_modules ./node_modules
+COPY --chown=1001:0 . .
+COPY --chown=1001:0 .env-cicd .env.local
+RUN id
+RUN ls -al
 
 ENV NEXT_TELEMETRY_DISABLED 1
+RUN npm install -g yarn
 RUN yarn build
 # Remove all the development dependencies since we don't
 # need them to run the actual server.
@@ -30,14 +28,14 @@ RUN rm -rf node_modules
 RUN yarn install --production --frozen-lockfile --ignore-scripts --prefer-offline
 
 # Production image, copy all the files and run next
-FROM node:20-alpine AS runner
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# RUN addgroup --system --gid 1001 nodejs
+# RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
@@ -45,12 +43,23 @@ COPY --from=builder /app/package.json ./package.json
 
 # Automatically leverage output traces to reduce image size 
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=1001:0 /app/.next/standalone ./
+COPY --from=builder --chown=1001:0 /app/.next/static ./.next/static
 
-USER nextjs
+# Make .next directory group-writable for OpenShift
+RUN chmod -R g+w /app/.next
 
-EXPOSE 3000
-ENV PORT 3000
+RUN id
 
-CMD ["node", "server.js"]
+# Copy entrypoint script
+COPY --chown=1001:0 entrypoint.sh ./entrypoint.sh
+USER 0
+RUN sed -i 's/\r$//' ./entrypoint.sh && chmod +x ./entrypoint.sh
+USER 1001
+RUN pwd
+RUN ls -al
+
+# Use entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]
