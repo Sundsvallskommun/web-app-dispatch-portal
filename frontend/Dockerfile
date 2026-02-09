@@ -6,7 +6,7 @@ FROM registry.access.redhat.com/ubi9/nodejs-20 AS deps
 WORKDIR /app
 COPY --chown=1001:0 package.json yarn.lock ./
 
-# Read-only manifests (Sonar-safe)
+# Read-only manifests
 RUN chmod 0444 package.json yarn.lock
 
 RUN npm install -g yarn \
@@ -21,9 +21,10 @@ WORKDIR /app
 
 COPY --from=deps --chown=1001:0 /app/node_modules ./node_modules
 
-# node_modules: readable but traversable
+# node_modules: readable but traversable, make .bin executable
 RUN find ./node_modules -type d -exec chmod 0555 {} + \
- && find ./node_modules -type f -exec chmod 0444 {} +
+ && find ./node_modules -type f -exec chmod 0444 {} + \
+ && find ./node_modules/.bin -type f -exec chmod 0555 {} +
 
 COPY --chown=1001:0 . .
 
