@@ -38,6 +38,5 @@ USER nodejs
 EXPOSE 3000
 ENV PORT 3000
 
-# RUN yarn run prisma:generate
-# RUN yarn run prisma:migrate
+RUN yarn run prisma:generate
 CMD ["node", "./dist/server.js"]
