@@ -29,7 +29,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import { isDigitalMessage } from '@utils/statistics-helpers';
 import HeaderMenu from '@components/header-menu/header-menu.component';
-import { formatPersonNumber } from '@utils/helpers';
+import { formatLegalId } from '@utils/helpers';
 import CustomAlert from '@components/custom-alert/custom-alert-component';
 import { capitalize } from 'underscore.string';
 
@@ -112,10 +112,10 @@ const MyStatisticsDetails = () => {
       recipient: (
         <>
           {r?.name ?? '-'}
-          {r?.personnummer && (
+          {r?.legalId && (
             <>
               <br />
-              {formatPersonNumber(r.personnummer.toString())}
+              {formatLegalId(r.legalId.toString())}
             </>
           )}
         </>

@@ -20,7 +20,7 @@ import { EnumLetterState, RecAttachment } from '@interfaces/statistics.interface
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import HeaderMenu from '@components/header-menu/header-menu.component';
-import { formatPersonNumber } from '@utils/helpers';
+import { formatLegalId } from '@utils/helpers';
 import { useRecipientName } from '@services/recipient-service';
 import { EnumColors } from '@interfaces/common';
 import CustomAlert from '@components/custom-alert/custom-alert-component';
@@ -122,11 +122,11 @@ const MyStatisticsDetails = () => {
       };
     }
 
-    const personnummer = formatPersonNumber(recipient.personnummer ?? '');
+    const legalId = formatLegalId(recipient.legalId ?? '');
     const name = recipientName;
 
     return {
-      recipient: [name, personnummer].filter(Boolean).join(', '),
+      recipient: [name, legalId].filter(Boolean).join(', '),
       status,
     };
   }, [recipient, recipientName, message, t]);
