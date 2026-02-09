@@ -12,279 +12,20 @@
 
 import {
   AdminUserApiResponse,
-  CreateMunicipalityDto,
-  CreateOrganizationDto,
-  LogotypeApiResponse,
-  LogotypesApiResponse,
-  MunicipalitiesApiResponse,
-  MunicipalityApiResponse,
-  OrganizationApiResponse,
-  OrganizationsApiResponse,
-  UpdateLogotypeDto,
-  UpdateMunicipalityDto,
-  UpdateOrganizationDto,
+  CreateHostDto,
+  CreateIdpDto,
+  HostApiResponse,
+  HostsApiResponse,
+  IDPApiResponse,
+  IDPsApiResponse,
+  UpdateHostDto,
+  UpdateIdpDto,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Admin<
   SecurityDataType = unknown,
 > extends HttpClient<SecurityDataType> {
-  /**
-   * No description
-   *
-   * @tags Admin Logotype
-   * @name AdminLogotypeControllerGetLogotypes
-   * @summary Get all logotypes
-   * @request GET:/admin/logotypes
-   */
-  adminLogotypeControllerGetLogotypes = (params: RequestParams = {}) =>
-    this.request<LogotypesApiResponse, any>({
-      path: `/admin/logotypes`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Logotype
-   * @name AdminLogotypeControllerCreateLogotype
-   * @summary Create logotype
-   * @request POST:/admin/logotypes
-   */
-  adminLogotypeControllerCreateLogotype = (params: RequestParams = {}) =>
-    this.request<LogotypeApiResponse, any>({
-      path: `/admin/logotypes`,
-      method: "POST",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Logotype
-   * @name AdminLogotypeControllerGetLogotype
-   * @summary Get logotype by id
-   * @request GET:/admin/logotypes/{id}
-   */
-  adminLogotypeControllerGetLogotype = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<LogotypeApiResponse, any>({
-      path: `/admin/logotypes/${id}`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Logotype
-   * @name AdminLogotypeControllerUpdateLogotype
-   * @summary Update logotype
-   * @request PATCH:/admin/logotypes/{id}
-   */
-  adminLogotypeControllerUpdateLogotype = (
-    id: number,
-    data?: UpdateLogotypeDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<LogotypeApiResponse, any>({
-      path: `/admin/logotypes/${id}`,
-      method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Logotype
-   * @name AdminLogotypeControllerDeleteLogotype
-   * @summary Update logotype
-   * @request DELETE:/admin/logotypes/{id}
-   */
-  adminLogotypeControllerDeleteLogotype = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<any, any>({
-      path: `/admin/logotypes/${id}`,
-      method: "DELETE",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Municipality
-   * @name AdminMunicipalityControllerGetMunicipalities
-   * @summary Get all municipalities
-   * @request GET:/admin/municipalities
-   */
-  adminMunicipalityControllerGetMunicipalities = (params: RequestParams = {}) =>
-    this.request<MunicipalitiesApiResponse, any>({
-      path: `/admin/municipalities`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Municipality
-   * @name AdminMunicipalityControllerCreateMunicipality
-   * @summary Create new municipality
-   * @request POST:/admin/municipalities
-   */
-  adminMunicipalityControllerCreateMunicipality = (
-    data?: CreateMunicipalityDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<MunicipalityApiResponse, any>({
-      path: `/admin/municipalities`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Municipality
-   * @name AdminMunicipalityControllerGetMunicipality
-   * @summary Get municipality by id
-   * @request GET:/admin/municipalities/{id}
-   */
-  adminMunicipalityControllerGetMunicipality = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<MunicipalityApiResponse, any>({
-      path: `/admin/municipalities/${id}`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Municipality
-   * @name AdminMunicipalityControllerUpdateMunicipality
-   * @summary Update a municipality
-   * @request PATCH:/admin/municipalities/{id}
-   */
-  adminMunicipalityControllerUpdateMunicipality = (
-    id: number,
-    data?: UpdateMunicipalityDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<MunicipalityApiResponse, any>({
-      path: `/admin/municipalities/${id}`,
-      method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Municipality
-   * @name AdminMunicipalityControllerDeleteMunicipality
-   * @summary Delete a municipality
-   * @request DELETE:/admin/municipalities/{id}
-   */
-  adminMunicipalityControllerDeleteMunicipality = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<any, any>({
-      path: `/admin/municipalities/${id}`,
-      method: "DELETE",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Organization
-   * @name AdminOrganizationControllerGetOrganizations
-   * @summary Get all organizations
-   * @request GET:/admin/organizations
-   */
-  adminOrganizationControllerGetOrganizations = (params: RequestParams = {}) =>
-    this.request<OrganizationsApiResponse, any>({
-      path: `/admin/organizations`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Organization
-   * @name AdminOrganizationControllerCreateOrganization
-   * @summary Create new organization
-   * @request POST:/admin/organizations
-   */
-  adminOrganizationControllerCreateOrganization = (
-    data?: CreateOrganizationDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<OrganizationApiResponse, any>({
-      path: `/admin/organizations`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Organization
-   * @name AdminOrganizationControllerGetOrganization
-   * @summary Get organization by id
-   * @request GET:/admin/organizations/{id}
-   */
-  adminOrganizationControllerGetOrganization = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<OrganizationApiResponse, any>({
-      path: `/admin/organizations/${id}`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Organization
-   * @name AdminOrganizationControllerUpdateOrganization
-   * @summary Update a organization
-   * @request PATCH:/admin/organizations/{id}
-   */
-  adminOrganizationControllerUpdateOrganization = (
-    id: number,
-    data?: UpdateOrganizationDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<OrganizationApiResponse, any>({
-      path: `/admin/organizations/${id}`,
-      method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Organization
-   * @name AdminOrganizationControllerDeleteOrganization
-   * @summary Delete a organization
-   * @request DELETE:/admin/organizations/{id}
-   */
-  adminOrganizationControllerDeleteOrganization = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<any, any>({
-      path: `/admin/organizations/${id}`,
-      method: "DELETE",
-      ...params,
-    });
   /**
    * No description
    *
@@ -297,6 +38,168 @@ export class Admin<
     this.request<AdminUserApiResponse, any>({
       path: `/admin/me`,
       method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Host
+   * @name AdminHostControllerGetAll
+   * @summary Get all hosts
+   * @request GET:/admin/hosts
+   */
+  adminHostControllerGetAll = (params: RequestParams = {}) =>
+    this.request<HostsApiResponse, any>({
+      path: `/admin/hosts`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Host
+   * @name AdminHostControllerCreate
+   * @summary Create new host
+   * @request POST:/admin/hosts
+   */
+  adminHostControllerCreate = (
+    data?: CreateHostDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<HostApiResponse, any>({
+      path: `/admin/hosts`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Host
+   * @name AdminHostControllerGetOne
+   * @summary Get host by id
+   * @request GET:/admin/hosts/{id}
+   */
+  adminHostControllerGetOne = (id: number, params: RequestParams = {}) =>
+    this.request<HostApiResponse, any>({
+      path: `/admin/hosts/${id}`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Host
+   * @name AdminHostControllerUpdate
+   * @summary Update a host
+   * @request PATCH:/admin/hosts/{id}
+   */
+  adminHostControllerUpdate = (
+    id: number,
+    data?: UpdateHostDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<HostApiResponse, any>({
+      path: `/admin/hosts/${id}`,
+      method: "PATCH",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Host
+   * @name AdminHostControllerRemove
+   * @summary Delete a host
+   * @request DELETE:/admin/hosts/{id}
+   */
+  adminHostControllerRemove = (id: number, params: RequestParams = {}) =>
+    this.request<any, any>({
+      path: `/admin/hosts/${id}`,
+      method: "DELETE",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Idp
+   * @name AdminIdpControllerGetAll
+   * @summary Get all idps
+   * @request GET:/admin/idps
+   */
+  adminIdpControllerGetAll = (params: RequestParams = {}) =>
+    this.request<IDPsApiResponse, any>({
+      path: `/admin/idps`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Idp
+   * @name AdminIdpControllerCreate
+   * @summary Create new idp
+   * @request POST:/admin/idps
+   */
+  adminIdpControllerCreate = (
+    data?: CreateIdpDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<IDPApiResponse, any>({
+      path: `/admin/idps`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Idp
+   * @name AdminIdpControllerGetOne
+   * @summary Get idp by id
+   * @request GET:/admin/idps/{id}
+   */
+  adminIdpControllerGetOne = (id: number, params: RequestParams = {}) =>
+    this.request<IDPApiResponse, any>({
+      path: `/admin/idps/${id}`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Idp
+   * @name AdminIdpControllerUpdate
+   * @summary Update a idp
+   * @request PATCH:/admin/idps/{id}
+   */
+  adminIdpControllerUpdate = (
+    id: number,
+    data?: UpdateIdpDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<IDPApiResponse, any>({
+      path: `/admin/idps/${id}`,
+      method: "PATCH",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Idp
+   * @name AdminIdpControllerRemove
+   * @summary Delete a idp
+   * @request DELETE:/admin/idps/{id}
+   */
+  adminIdpControllerRemove = (id: number, params: RequestParams = {}) =>
+    this.request<any, any>({
+      path: `/admin/idps/${id}`,
+      method: "DELETE",
       ...params,
     });
 }
