@@ -1,56 +1,74 @@
-# Install dependencies only when needed
-FROM node:20-alpine AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# =====================
+# Dependencies
+# =====================
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS deps
+
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY --chown=1001:0 package.json yarn.lock ./
 
-# Rebuild the source code only when needed
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Read-only manifests (Sonar-safe)
+RUN chmod 0444 package.json yarn.lock
 
-ARG NEXT_PUBLIC_API_URL
-ARG HEALTH_AUTH
-ARG HEALTH_USERNAME
-ARG HEALTH_PASSWORD
+RUN npm install -g yarn \
+ && yarn install --frozen-lockfile
 
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV HEALTH_AUTH=$HEALTH_AUTH
-ENV HEALTH_USERNAME=$HEALTH_USERNAME
-ENV HEALTH_PASSWORD=$HEALTH_PASSWORD
+# =====================
+# Build
+# =====================
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS builder
 
-ENV NEXT_TELEMETRY_DISABLED 1
-RUN yarn build
-# Remove all the development dependencies since we don't
-# need them to run the actual server.
-RUN rm -rf node_modules
-RUN yarn install --production --frozen-lockfile --ignore-scripts --prefer-offline
-
-# Production image, copy all the files and run next
-FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+COPY --from=deps --chown=1001:0 /app/node_modules ./node_modules
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# node_modules: readable but traversable
+RUN find ./node_modules -type d -exec chmod 0555 {} + \
+ && find ./node_modules -type f -exec chmod 0444 {} +
+
+COPY --chown=1001:0 . .
+
+# Only lock down known static files
+RUN chmod 0444 package.json yarn.lock next.config.js || true
+
+# Build-time env placeholders
+COPY --chown=1001:0 .env-cicd .env.local
+RUN chmod 0444 .env-cicd .env.local
+
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN npm install -g yarn \
+ && yarn build
+
+# Reduce image size
+RUN rm -rf node_modules \
+ && yarn install --production --frozen-lockfile --ignore-scripts --prefer-offline
+
+# =====================
+# Runtime
+# =====================
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package.json ./
 
-# Automatically leverage output traces to reduce image size 
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Next standalone output
+COPY --from=builder --chown=1001:0 /app/.next/standalone ./
+COPY --from=builder --chown=1001:0 /app/.next/static ./.next/static
 
-USER nextjs
+# Allow runtime env replacement
+RUN chmod -R g+w /app/.next
 
-EXPOSE 3000
-ENV PORT 3000
+# Entrypoint
+COPY --chown=1001:0 entrypoint.sh ./entrypoint.sh
+RUN chmod 0555 entrypoint.sh \
+ && sed -i 's/\r$//' ./entrypoint.sh
 
-CMD ["node", "server.js"]
+USER 1001
+
+ENTRYPOINT ["/app/entrypoint.sh"]
