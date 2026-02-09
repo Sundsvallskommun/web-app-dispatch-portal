@@ -5,7 +5,7 @@ import { formSendType } from 'src/constants';
 import { SendType } from 'src/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { createDeliveryMethodMap, formatPersonNumber } from '@utils/helpers';
+import { createDeliveryMethodMap, formatLegalId } from '@utils/helpers';
 import { Recipient } from 'src/data-contracts/backend/data-contracts';
 
 interface RecipientTableProps {
@@ -27,8 +27,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const setAddresses = useMessageStore((state) => state.setAddresses);
 
-  const handleRemoveOneRecipient = (personNumber: string) => {
-    const result = recipients.filter((recipient) => personNumber !== recipient.personNumber);
+  const handleRemoveOneRecipient = (legalId: string) => {
+    const result = recipients.filter((recipient) => legalId !== recipient.personNumber);
     setRecipients(result);
   };
 
@@ -76,7 +76,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
           <p data-cy="person-name">
             {item?.address?.firstName} {item?.address?.lastName}
           </p>
-          {item?.personNumber && <p data-cy="person-number">{formatPersonNumber(item?.personNumber)}</p>}
+          {item?.personNumber && <p data-cy="person-number">{formatLegalId(item?.personNumber)}</p>}
         </div>
       );
     },

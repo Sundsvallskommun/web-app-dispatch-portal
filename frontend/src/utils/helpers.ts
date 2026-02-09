@@ -1,6 +1,6 @@
-export const formatPersonNumber = (personnumber?: string | number) => {
-  if (!personnumber) return '';
-  const str = personnumber.toString();
+export const formatLegalId = (legalId?: string | number) => {
+  if (!legalId) return '';
+  const str = legalId.toString();
   const isValid = /\d/g.test(str) && (str.length === 10 || str.length === 12);
   if (!isValid) return str;
   return `${str.slice(0, -4)}-${str.slice(-4)}`;

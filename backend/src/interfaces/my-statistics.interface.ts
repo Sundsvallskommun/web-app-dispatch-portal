@@ -43,7 +43,7 @@ export interface Recipient {
   city?: string;
   messageType: EnumMessageType;
   status: EnumMessageStatus;
-  personnummer?: string;
+  legalId?: string;
 }
 
 export interface MessageAttachment {

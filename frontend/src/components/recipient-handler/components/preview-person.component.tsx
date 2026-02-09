@@ -1,5 +1,5 @@
 import { Button, cx, Icon, Spinner } from '@sk-web-gui/react';
-import { formatPersonNumber } from '@utils/helpers';
+import { formatLegalId } from '@utils/helpers';
 import { Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
@@ -55,7 +55,7 @@ const PreviewPerson = ({ person, loading, handleSubmit, sendType }: PreviewPerso
             <p className="text-body text-base font-bold">
               {person?.address?.firstName} {person?.address?.lastName}
             </p>
-            <p className="text-small">{formatPersonNumber(person?.personNumber ?? '')}</p>
+            <p className="text-small">{formatLegalId(person?.personNumber ?? '')}</p>
             {sendType === formSendType.MAIL && (
               <p className="text-small">
                 {person?.address?.street}, {person?.address?.city}

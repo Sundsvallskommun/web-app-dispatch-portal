@@ -396,6 +396,8 @@ export interface RecipientDetails {
   name?: string;
   /** The recipients party ID */
   partyId?: string;
+  /** The recipients legal ID */
+  legalId?: string;
   /** Mobile number */
   mobileNumber?: string;
   /** Street address */
