@@ -9,12 +9,20 @@ interface EditResourceInputProps extends Omit<InputProps, 'ref' | 'key'> {
   property: string;
   index: number;
   required?: boolean;
+  // eslint-disable-next-line no any
+  defaultValue?: any;
 }
 
-export const EditResourceInput: React.FC<EditResourceInputProps> = ({ label, property, required, ...rest }) => {
+export const EditResourceInput: React.FC<EditResourceInputProps> = ({
+  label,
+  property,
+  required,
+  defaultValue,
+  ...rest
+}) => {
   const { register, watch } = useFormContext();
   const data = watch(property);
-  const type = typeof data;
+  const type = typeof (defaultValue ?? data);
 
   return type === 'object' ?
       <></>

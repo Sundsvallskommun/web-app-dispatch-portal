@@ -1,0 +1,11 @@
+{
+  "name_zero": "värdar",
+  "name_one": "värd",
+  "name_many": "värdar",
+  "name_other": "värdar",
+  "properties": {
+    "name": "Namn",
+    "municipalityId": "Kommunkod",
+    "idpId": "IDP"
+  }
+}
