@@ -11,6 +11,8 @@ replace_env_var() {
     find /app/.next -type f -name "*.js" -exec sed -i \
       "s|${placeholder}|${value}|g" {} +
   fi
+
+  return 0
 }
 
 echo "Replacing runtime environment variables..."
