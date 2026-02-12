@@ -1,9 +1,8 @@
 # =====================
-# Dependencies + Prisma Client
+# Dependencies + Prisma
 # =====================
 FROM node:20-slim AS deps
 WORKDIR /app
-
 RUN apt-get update && apt-get install -y openssl
 
 COPY package.json yarn.lock ./
@@ -28,16 +27,21 @@ RUN yarn build
 # =====================
 FROM node:20-slim AS runner
 WORKDIR /app
-
 RUN apt-get update && apt-get install -y openssl
 
-ENV NODE_ENV=production
-
+# create user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
-COPY --from=builder --chown=nodejs:nodejs /app/ ./
-USER nodejs
+ENV NODE_ENV=production
+ENV PORT=3000
 
+# only copy what's needed
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+USER nodejs
 EXPOSE 3000
-CMD ["node", "./dist/server.js"]
+
+CMD ["node", "dist/server.js"]
