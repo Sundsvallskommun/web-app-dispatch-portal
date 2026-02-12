@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y openssl
 
 ENV NODE_ENV=production
 
-COPY --from=builder /app ./app
+COPY --from=builder --chown=nodejs:nodejs /app/ ./
 WORKDIR /app
 
 EXPOSE 3000
