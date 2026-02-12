@@ -33,6 +33,9 @@ RUN apt-get update && apt-get install -y openssl
 
 ENV NODE_ENV=production
 
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nodejs
+
 COPY --from=builder --chown=nodejs:nodejs /app/ ./
 USER nodejs
 
