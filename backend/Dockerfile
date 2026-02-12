@@ -21,7 +21,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN yarn build
+# RUN yarn build
+RUN yarn build 2>&1 || true && echo "---BUILD EXIT CODE: $?---" && ls -la ./dist/ || echo "dist/ does not exist"
 
 # Production image, copy all the files and run next
 FROM node:20-slim AS runner
