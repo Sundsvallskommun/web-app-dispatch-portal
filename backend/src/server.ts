@@ -13,6 +13,20 @@ import { AdminIdpController } from './controllers/admin/idp.controller';
 import { initRedis } from './utils/initRedis';
 import { createSessionStore } from './utils/createSessionStore';
 
+// --- GLOBAL PROCESS DEBUG HANDLERS ---
+process.on('exit', code => {
+  console.log(`[PROCESS EXIT] code=${code}`);
+});
+
+process.on('uncaughtException', err => {
+  console.error('[UNCAUGHT EXCEPTION]', err.stack || err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[UNHANDLED REJECTION]', reason);
+  console.error('Promise:', promise);
+});
+
 validateEnv();
 
 async function bootstrap() {
