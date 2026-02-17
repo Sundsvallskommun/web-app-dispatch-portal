@@ -1,4 +1,4 @@
-import { Link } from '@sk-web-gui/react';
+import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 
 export const userMenuGroups = [
@@ -8,7 +8,7 @@ export const userMenuGroups = [
       {
         label: 'Logga ut',
         element: () => (
-          <Link key={'logout'} href={`${process.env.NEXT_PUBLIC_API_URL}/saml/logout`}>
+          <Link key={'logout'} href="/logout">
             <LogOut /> Logga ut
           </Link>
         ),

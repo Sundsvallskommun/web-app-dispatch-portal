@@ -4,18 +4,21 @@ import { isValidOrigin } from './isValidOrigin';
 import { SAML_SUCCESS_REDIRECT } from '@/config';
 import { RelayState } from '@/interfaces/relaystate.interface';
 
-export const getRedirects = (req: Request): { successRedirect: URL; failureRedirect: URL; host: string } => {
+export const getRedirects = async (
+  req: Request,
+  fallBackUrl: string = SAML_SUCCESS_REDIRECT ?? '/',
+): Promise<{ successRedirect: URL; failureRedirect: URL; host: string }> => {
   let successRedirect: URL, failureRedirect: URL, host: string;
 
   const relayState: RelayState = typeof req.body?.RelayState === 'string' ? JSON.parse(req.body.RelayState) : undefined;
 
-  if (isValidUrl(relayState?.successRedirect) && isValidOrigin(relayState?.successRedirect)) {
+  if (isValidUrl(relayState?.successRedirect) && (await isValidOrigin(relayState?.successRedirect))) {
     successRedirect = new URL(relayState.successRedirect);
   } else {
-    successRedirect = new URL(SAML_SUCCESS_REDIRECT ?? '/');
+    successRedirect = new URL(fallBackUrl);
   }
 
-  if (isValidUrl(relayState?.failureRedirect) && isValidOrigin(relayState?.failureRedirect)) {
+  if (isValidUrl(relayState?.failureRedirect) && (await isValidOrigin(relayState?.failureRedirect))) {
     failureRedirect = new URL(relayState?.failureRedirect);
   } else {
     failureRedirect = successRedirect;
@@ -23,5 +26,6 @@ export const getRedirects = (req: Request): { successRedirect: URL; failureRedir
   if (relayState?.host) {
     host = relayState.host;
   }
+
   return { successRedirect, failureRedirect, host };
 };

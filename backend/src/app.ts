@@ -54,6 +54,7 @@ import { dataDir, dataPath } from './utils/util';
 import { isAllowedOrigin } from './utils/isAllowedOrigin';
 import { getMunicipalityId } from './utils/getMunicipalityId';
 import { RequestWithUser } from './interfaces/auth.interface';
+import { isValidOrigin } from './utils/isValidOrigin';
 
 const apiService = new ApiService();
 
@@ -252,8 +253,9 @@ class App {
     this.app.use(
       cors({
         credentials: CREDENTIALS,
-        origin: function (origin, callback) {
-          if (isAllowedOrigin(origin) || NODE_ENV == 'development') {
+        origin: async function (origin, callback) {
+          const allowed = await isAllowedOrigin(origin);
+          if (allowed || NODE_ENV == 'development') {
             callback(null, true);
           } else {
             callback(new Error('Not allowed by CORS'));
@@ -284,17 +286,21 @@ class App {
     this.app.get(
       `${BASE_URL_PREFIX}/saml/logout`,
       bodyParser.urlencoded({ extended: false }),
-      (req, res, next) => {
-        req.url = `${req.path}?RelayState=${getRelayState(req)}`;
+      (_req, _res, next) => {
         next();
       },
       (req, res, next) => {
         samlStrategy.logout(req as any, () => {
-          req.logout(err => {
+          req.logout(async err => {
             if (err) {
               return next(err);
             }
-            // FIXME: should we redirect here or should client do it?
+            const { successRedirect } = JSON.parse(getRelayState(req));
+            const allowed = await isValidOrigin(successRedirect);
+            if (allowed) {
+              res.redirect(successRedirect);
+            }
+
             res.redirect(SAML_LOGOUT_REDIRECT);
           });
         });
@@ -305,12 +311,12 @@ class App {
       `${BASE_URL_PREFIX}/saml/logout/callback`,
       bodyParser.urlencoded({ extended: false }),
       (req, res, next) => {
-        req.logout(err => {
+        req.logout(async err => {
           if (err) {
             return next(err);
           }
 
-          const { successRedirect, failureRedirect } = getRedirects(req);
+          const { successRedirect, failureRedirect } = await getRedirects(req, SAML_LOGOUT_REDIRECT ?? '/');
 
           const queries = new URLSearchParams(failureRedirect.searchParams);
 
@@ -333,8 +339,8 @@ class App {
       `${BASE_URL_PREFIX}/saml/login/callback`,
       samlLoginRateLimiter,
       bodyParser.urlencoded({ extended: false }),
-      (req, res, next) => {
-        const { successRedirect, failureRedirect } = getRedirects(req);
+      async (req, res, next) => {
+        const { successRedirect, failureRedirect } = await getRedirects(req);
 
         const redirectWithFailure = (message: string) => {
           const params = new URLSearchParams(failureRedirect.searchParams);
