@@ -36,4 +36,5 @@ export const {
   TEST_USERNAME,
   DEV,
   ADMIN_GROUP,
+  ENABLE_LOCAL_STORAGE,
 } = process.env;
