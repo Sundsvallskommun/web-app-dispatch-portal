@@ -74,7 +74,7 @@
     },
     "18": {
       "question": "Hur skapar jag en mottagarlista?",
-      "answer": "<p>Öppna ett nytt exceldokument och skriv in personnumren i den första kolumnen. Fyll i med tolv siffror, med eller utan bindestreck. Välj sedan att exportera excelfilen till formatet .csv och ange semikolon som separator. När du sparat filen kan du dra den till det markerade området, eller välja att bläddra fram den.</p><p>Kontrollera gärna din mottagarlista i t ex Notepad/Anteckningar efter du skapat den, för att se att den ser ut som den ska, eftersom Excel ibland formaterar om exempelvis personnummer.</p><p>Använd gärna <a>exempelfilen</a> när du skapar din mottagarlista.</p>"
+      "answer": "<p>Öppna ett nytt exceldokument och skriv in personnumren i den första kolumnen. Fyll i med tolv siffror, med eller utan bindestreck. Välj sedan att exportera excelfilen till formatet .csv. När du sparat filen kan du dra den till det markerade området, eller välja att bläddra fram den.</p><p>Kontrollera gärna din mottagarlista i t ex Notepad/Anteckningar efter du skapat den, för att se att den ser ut som den ska, eftersom Excel ibland formaterar om exempelvis personnummer.</p><p>Använd gärna <a>exempelfilen</a> när du skapar din mottagarlista.</p>"
     },
     "19": {
       "question": "Vad ska jag skriva i fältet för ämne?",
