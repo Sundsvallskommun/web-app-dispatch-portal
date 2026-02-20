@@ -3,6 +3,7 @@ import {
   BASE_URL_PREFIX,
   CREDENTIALS,
   DEV,
+  ENABLE_LOCAL_STORAGE,
   getApiBase,
   LOG_FORMAT,
   NODE_ENV,
@@ -424,17 +425,22 @@ class App {
   }
 
   private initializeDataFolders() {
-    const databaseDir: string = join(__dirname, '../data/database');
-    if (!existsSync(databaseDir)) {
-      mkdirSync(databaseDir, { recursive: true });
+    if (ENABLE_LOCAL_STORAGE === 'true') {
+      logger.info(`Database and Session data folders initialized (ENABLE_LOCAL_STORAGE: ${ENABLE_LOCAL_STORAGE})`);
+      const databaseDir: string = join(__dirname, '../data/database');
+      if (!existsSync(databaseDir)) {
+        mkdirSync(databaseDir, { recursive: true });
+      }
+
+      const sessionsDir: string = join(__dirname, '../data/sessions');
+      if (!existsSync(sessionsDir)) {
+        mkdirSync(sessionsDir, { recursive: true });
+      }
     }
+
     const logsDir: string = join(__dirname, '../data/logs');
     if (!existsSync(logsDir)) {
       mkdirSync(logsDir, { recursive: true });
-    }
-    const sessionsDir: string = join(__dirname, '../data/sessions');
-    if (!existsSync(sessionsDir)) {
-      mkdirSync(sessionsDir, { recursive: true });
     }
   }
 }
