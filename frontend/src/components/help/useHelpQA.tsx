@@ -52,15 +52,12 @@ export const useHelpQA = (): QAItem[] => {
     () =>
       [
         ...itemsFactory([27, 28], [EnumQATags.SMS]),
-        ...itemsFactory([12, 13, 14, 15], [EnumQATags.MAIL]),
+        ...itemsFactory([12, 13, 14], [EnumQATags.MAIL]),
         ...itemsFactory([18], [EnumQATags.MAIL], {
           p: <p className="mt-4 text-justify [hyphens:auto]" />,
           a: <Link href="/files/example.csv" />,
         }),
-        ...itemsFactory(
-          [2, 3, 4, 5, 7, 8, 9, 10, 11, 16, 17, 19, 20, 24, 25, 26],
-          [EnumQATags.MAIL, EnumQATags.REK_MAIL]
-        ),
+        ...itemsFactory([2, 3, 4, 5, 7, 8, 9, 10, 16, 17, 19, 20, 24, 25, 26], [EnumQATags.MAIL, EnumQATags.REK_MAIL]),
         ...itemsFactory([6], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
           p: <p className="mt-4 text-justify [hyphens:auto]" />,
           List: <List listStyle="bullet" />,
