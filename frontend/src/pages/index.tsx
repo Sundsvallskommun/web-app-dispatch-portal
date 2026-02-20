@@ -46,7 +46,6 @@ const Index = () => {
                     icon={<MailCheck />}
                     title={t('start-page:recLetter')}
                     contentText={t('start-page:sendImportantDoc')}
-                    subContentText={t('start-page:price20kr')}
                   />
                 </Link>
               )}
