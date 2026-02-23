@@ -37,4 +37,5 @@ export const {
   DEV,
   ADMIN_GROUP,
   ENABLE_LOCAL_STORAGE,
+  ADMIN_CMS_ENABLED,
 } = process.env;
