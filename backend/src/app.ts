@@ -239,6 +239,7 @@ class App {
         saveUninitialized: false,
         store: this.sessionStore,
         cookie: {
+          secure: NODE_ENV === 'production',
           sameSite: 'lax',
         },
       }),
