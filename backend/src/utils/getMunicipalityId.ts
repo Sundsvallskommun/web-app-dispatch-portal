@@ -7,21 +7,19 @@ import { ADMIN_CMS_ENABLED, MUNICIPALITY_ID } from '@/config';
 
 export const getMunicipalityId = async (req?: Request | RequestWithUser): Promise<string> => {
   if (ADMIN_CMS_ENABLED !== 'true') return MUNICIPALITY_ID;
-
-  if (req.session.municipalityId) return req.session.municipalityId;
-
-  try {
-    const { host } = getRedirects(req);
-
-    const hostData = await prisma.host.findUnique({ where: { name: host ?? '' } });
-    if (host && hostData) {
-      req.session.municipalityId = hostData.municipalityId.toString();
-      return hostData.municipalityId.toString();
+  if (req?.body?.RelayState) {
+    try {
+      const { host } = await getRedirects(req);
+      const hostData = await prisma.host.findUnique({ where: { name: host ?? '' } });
+      if (hostData) {
+        req.session.municipalityId = hostData.municipalityId.toString();
+        return hostData.municipalityId.toString();
+      }
+    } catch (e) {
+      logger.error('Error getting host:', e);
+      throw new Error(e);
     }
-
-    return MUNICIPALITY_ID;
-  } catch (e) {
-    logger.error('Error getting host:', e);
-    throw new Error(e);
   }
+  if (req.session.municipalityId) return req.session.municipalityId;
+  return MUNICIPALITY_ID;
 };

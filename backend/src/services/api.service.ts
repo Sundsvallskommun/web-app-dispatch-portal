@@ -5,7 +5,7 @@ import { HttpException } from '@/exceptions/HttpException';
 import { User } from '@/interfaces/users.interface';
 import { apiURL } from '@/utils/util';
 import { logger } from '@utils/logger';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 
 export class ApiResponse<T> {
   data: T;
@@ -27,7 +27,7 @@ class ApiService {
         const defaultHeaders: Partial<AxiosRequestHeaders> = {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'X-Request-Id': uuidv4(),
+          'X-Request-Id': randomUUID(),
         };
 
         request.headers = AxiosHeaders.from({
