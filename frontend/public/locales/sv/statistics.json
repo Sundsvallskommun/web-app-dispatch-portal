@@ -11,7 +11,10 @@
     },
     "status": {
       "default": "Fel",
+      "SENT": "Skickat",
       "NOT_SENT": "Ej skickat",
+      "PENDING": "Pågående",
+      "FAILED": "Misslyckat",
       "INELIGIBLE_MINOR": "Underårig"
     },
     "recipient": "mottagare",
