@@ -1,4 +1,4 @@
-import { ORIGIN } from '@/config';
+import { ADMIN_CMS_ENABLED, ORIGIN } from '@/config';
 import prisma from './prisma';
 
 export const isValidOrigin = async (url: string): Promise<boolean> => {
@@ -8,11 +8,14 @@ export const isValidOrigin = async (url: string): Promise<boolean> => {
     .map(origin => origin.trim())
     .filter(origin => origin !== '');
 
-  const hosts = (await prisma.host.findMany()).map(host => host.name);
+  if (ADMIN_CMS_ENABLED === 'true') {
+    const hosts = (await prisma.host.findMany()).map(host => host.name);
+    const urlObj = new URL(url);
+    const originFromUrl = urlObj.origin;
+    const host = urlObj.host;
 
-  const urlObj = new URL(url);
-  const origin = urlObj.origin;
-  const host = urlObj.host;
+    return allowedOrigins.includes(originFromUrl) || hosts.includes(host);
+  }
 
-  return allowedOrigins.includes(origin) || hosts.includes(host);
+  return allowedOrigins.includes(origin);
 };
