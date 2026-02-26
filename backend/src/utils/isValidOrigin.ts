@@ -17,5 +17,5 @@ export const isValidOrigin = async (url: string): Promise<boolean> => {
     return allowedOrigins.includes(originFromUrl) || hosts.includes(host);
   }
 
-  return allowedOrigins.includes(origin);
+  return allowedOrigins.includes(url);
 };
