@@ -8,7 +8,7 @@ const TOKEN_KEY = 'api_token';
 const LOCK_KEY = 'api_token_lock';
 
 export class RedisApiTokenService implements IApiTokenService {
-  private redis = getRedisClient();
+  private readonly redis = getRedisClient();
 
   async getToken(): Promise<string> {
     const cached = (await this.redis.get(TOKEN_KEY)) as string | null;
