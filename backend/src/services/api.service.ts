@@ -1,18 +1,18 @@
 import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
-import ApiTokenService from './api-token.service';
 import { HttpException } from '@/exceptions/HttpException';
 import { User } from '@/interfaces/users.interface';
 import { apiURL } from '@/utils/util';
 import { logger } from '@utils/logger';
 import { randomUUID } from 'node:crypto';
+import { createApiTokenService } from './api-token.service';
 
 export class ApiResponse<T> {
   data: T;
   message: string;
 }
 
-const apiTokenService = new ApiTokenService();
+const apiTokenService = createApiTokenService();
 
 class ApiService {
   private instance: AxiosInstance;
