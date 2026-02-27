@@ -6,13 +6,21 @@ import { apiURL } from '@/utils/util';
 import { logger } from '@utils/logger';
 import { randomUUID } from 'node:crypto';
 import { createApiTokenService } from './api-token.service';
+import { IApiTokenService } from '@/interfaces/api-token.interface';
 
 export class ApiResponse<T> {
   data: T;
   message: string;
 }
 
-const apiTokenService = createApiTokenService();
+let apiTokenService: IApiTokenService | null = null;
+
+function getApiTokenService(): IApiTokenService {
+  if (!apiTokenService) {
+    apiTokenService = createApiTokenService();
+  }
+  return apiTokenService;
+}
 
 class ApiService {
   private instance: AxiosInstance;
@@ -22,7 +30,7 @@ class ApiService {
       async request => {
         if (request.url === apiURL('token')) return request;
 
-        const token = await apiTokenService.getToken();
+        const token = await getApiTokenService().getToken();
 
         const defaultHeaders: Partial<AxiosRequestHeaders> = {
           Authorization: `Bearer ${token}`,
