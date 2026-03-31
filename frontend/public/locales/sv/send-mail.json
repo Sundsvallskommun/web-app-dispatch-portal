@@ -52,7 +52,8 @@
       "wrongFileType": "Fel filtyp - {fileName}",
       "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
       "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
-      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB."
+      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB.",
+      "duplicateFileName": "En fil med samma namn är redan uppladdad. Ändra filnamnet innan du laddar upp igen."
     }
   },
   "recipientHandler": {
