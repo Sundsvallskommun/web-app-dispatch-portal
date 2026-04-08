@@ -132,10 +132,28 @@ export const handleFiles = ({
   let runningTotalMB = existingTotalMB;
   const allErrors: string[] = [];
 
+  const existingFileNames: string[] = [];
+
+  for (const field of fields) {
+    if (field.file?.name) {
+      existingFileNames.push(field.file.name);
+    }
+  }
+
+  const existingNames = new Set(existingFileNames);
+
   for (const original of newFiles) {
     const file = new File([original], original.name, { type: original.type, lastModified: original.lastModified });
     const fileSizeMB = file.size / 1024 / 1024;
     const errors: string[] = [];
+
+    if (existingNames.has(file.name)) {
+      errors.push(
+        t('send-mail:attachmentHandler.validation.duplicateFileName', {
+          fileName: file.name,
+        })
+      );
+    }
 
     const sizeExceeded = validateTotalSize(runningTotalMB, fileSizeMB, maxFileSizeMB, t);
     if (sizeExceeded) errors.push(sizeExceeded);

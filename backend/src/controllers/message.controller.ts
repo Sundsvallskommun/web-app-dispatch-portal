@@ -62,7 +62,7 @@ export class MessageController {
       })
       .catch(e => {
         logError('Error when sending letter', e);
-        throw new Error('Error when sending message');
+        throw e;
       });
 
     return response.send({ data: res, message: 'success' });

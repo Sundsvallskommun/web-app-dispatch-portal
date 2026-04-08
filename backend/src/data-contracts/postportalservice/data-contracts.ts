@@ -31,16 +31,10 @@ export interface Problem {
   instance?: string;
   /** @format uri */
   type?: string;
-  parameters?: Record<string, any>;
-  status?: StatusType;
   title?: string;
   detail?: string;
-}
-
-export interface StatusType {
   /** @format int32 */
-  statusCode?: number;
-  reasonPhrase?: string;
+  status?: number;
 }
 
 export interface ConstraintViolationProblem {
@@ -76,6 +70,12 @@ export interface ConstraintViolationProblemSuppressedInner {
   stackTrace?: ConstraintViolationProblemStackTraceInner[];
   message?: string;
   localizedMessage?: string;
+}
+
+export interface StatusType {
+  /** @format int32 */
+  statusCode?: number;
+  reasonPhrase?: string;
 }
 
 export interface ThrowableProblem {
@@ -150,6 +150,15 @@ export interface SmsRequest {
   message: string;
   /** @minItems 1 */
   recipients: SmsRecipient[];
+}
+
+/** SMS CSV request model */
+export interface SmsCsvRequest {
+  /**
+   * The message to be sent
+   * @minLength 1
+   */
+  message: string;
 }
 
 /** Digital registered letter request model */
@@ -328,31 +337,26 @@ export interface PagingMetaData {
   /**
    * Current page
    * @format int32
-   * @example 5
    */
   page?: number;
   /**
    * Displayed objects per page
    * @format int32
-   * @example 20
    */
   limit?: number;
   /**
    * Displayed objects on current page
    * @format int32
-   * @example 13
    */
   count?: number;
   /**
    * Total amount of hits based on provided search parameters
    * @format int64
-   * @example 98
    */
   totalRecords?: number;
   /**
    * Total amount of pages based on provided search parameters
    * @format int32
-   * @example 23
    */
   totalPages?: number;
 }
