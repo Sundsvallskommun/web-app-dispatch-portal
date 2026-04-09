@@ -1,7 +1,6 @@
 import { getPermissions, getRoles } from '@/services/authorization.service';
 import {
   BASE_URL_PREFIX,
-  CREDENTIALS,
   DEV,
   ENABLE_LOCAL_STORAGE,
   getApiBase,
@@ -53,7 +52,7 @@ import { getRedirects } from './utils/getRedirects';
 import { getRelayState } from './utils/getRelayState';
 import { getHostData, getRequestHost, isAdminRequest, normalizeCertificate, resolveRequestHost } from './utils/getHostData';
 import { getMunicipalityId } from './utils/getMunicipalityId';
-import { isAllowedOrigin } from './utils/isAllowedOrigin';
+import { buildCorsOptions } from './utils/buildCorsOptions';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { normalizeGroup } from './utils/normalizeGroup';
 import { dataDir, dataPath } from './utils/util';
@@ -273,21 +272,9 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-
-
-    this.app.use(
-      cors({
-        credentials: CREDENTIALS,
-        origin: async function (origin, callback) {
-          const allowed = await isAllowedOrigin(origin);
-          if (allowed || NODE_ENV == 'development') {
-            callback(null, true);
-          } else {
-            callback(new Error('Not allowed by CORS'));
-          }
-        },
-      }),
-    );
+    this.app.use((req, res, next) => {
+      cors(buildCorsOptions(req.path))(req, res, next);
+    });
 
     this.app.use(`${BASE_URL_PREFIX}${dataPath()}`, express.static(dataDir('uploads')));
 
