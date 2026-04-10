@@ -10,6 +10,7 @@ declare module 'express-session' {
     messages: string[];
     municipalityId?: string;
     host?: string;
+    domain?: string;
     csv: CSV;
   }
 }
