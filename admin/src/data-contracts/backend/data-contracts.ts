@@ -109,12 +109,14 @@ export interface AdminUserApiResponse {
 export interface CreateHostDto {
   name: string;
   municipalityId: number;
+  domain?: string;
   idpId: number;
 }
 
 export interface UpdateHostDto {
   name?: string;
   municipalityId?: number;
+  domain?: string;
   idpId?: number;
 }
 
@@ -143,6 +145,7 @@ export interface Host {
   id: number;
   name?: string;
   municipalityId: number;
+  domain?: string;
   idpId: number;
   idp?: IDP;
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */

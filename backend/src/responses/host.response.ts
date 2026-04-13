@@ -12,6 +12,9 @@ export class Host implements HostModel {
   name: string;
   @IsInt()
   municipalityId: number;
+  @IsString()
+  @IsOptional()
+  domain: string;
   @IsInt()
   idpId: number;
   @ValidateNested()

@@ -50,8 +50,14 @@ import { User } from './interfaces/users.interface';
 import ApiService from './services/api.service';
 import { getRedirects } from './utils/getRedirects';
 import { getRelayState } from './utils/getRelayState';
-import { getHostData, getRequestHost, isAdminRequest, normalizeCertificate, resolveRequestHost } from './utils/getHostData';
-import { getMunicipalityId } from './utils/getMunicipalityId';
+import {
+  getHostData,
+  getRequestHost,
+  isAdminRequest,
+  normalizeCertificate,
+  resolveRequestHost,
+} from './utils/getHostData';
+import { getMunicipalityInfo } from './utils/getMunicipalityId';
 import { buildCorsOptions } from './utils/buildCorsOptions';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { normalizeGroup } from './utils/normalizeGroup';
@@ -182,10 +188,10 @@ const samlStrategy = new MultiSamlStrategy(
         },
       };
 
-      const municipalityId = await getMunicipalityId(req);
+      const { municipalityId, domain } = await getMunicipalityInfo(req);
 
       const employeeDetails = await apiService.get<any>(
-        { url: `${getApiBase('employee')}/${municipalityId}/portalpersondata/PERSONAL/${employee}` },
+        { url: `${getApiBase('employee')}/${municipalityId}/portalpersondata/${domain}/${employee}` },
         dummyUser,
       );
       const { personid, orgTree } = employeeDetails.data;
@@ -330,7 +336,6 @@ class App {
       });
     });
 
-
     this.app.get(
       `${BASE_URL_PREFIX}/saml/login`,
       (req, _res, next) => {
@@ -436,7 +441,7 @@ class App {
             }
 
             try {
-              const municipalityId = await getMunicipalityId(req);
+              const { municipalityId, domain } = await getMunicipalityInfo(req);
               const sessionHost = await resolveRequestHost(req);
 
               if (!sessionHost) {
@@ -445,6 +450,7 @@ class App {
               }
 
               req.session.municipalityId = municipalityId;
+              req.session.domain = domain;
               req.session.host = sessionHost.toLowerCase();
               req.session.user = user;
 

@@ -6,6 +6,7 @@
   "properties": {
     "name": "Namn",
     "municipalityId": "Kommunkod",
+    "domain": "Domän",
     "idpId": "IDP"
   }
 }
