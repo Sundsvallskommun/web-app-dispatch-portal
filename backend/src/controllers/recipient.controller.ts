@@ -124,18 +124,15 @@ export class RecipientController {
     }
   }
 
-  @Post('/recipient/csv')
-  @OpenAPI({ summary: 'Check status of csv-file and save to session' })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(CsvApiResponse)
-  async getCsvStatus(
-    @Req() req: RequestWithUser,
-    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
-    @Res() response: Response<CsvApiResponse>,
+  private async handleCsvUpload(
+    req: RequestWithUser,
+    csvFile: Express.Multer.File,
+    response: Response<CsvApiResponse>,
+    urlPath?: string,
   ): Promise<Response<CsvApiResponse>> {
     try {
       const municipalityId = await getMunicipalityId(req);
-      const url = `${this.postportalApi}/${municipalityId}/precheck/csv`;
+      const url = `${this.postportalApi}/${municipalityId}/precheck/csv${urlPath ?? ''}`;
       const data = new FormData();
       appendCsvFile(csvFile, 'csv-file', data);
 
@@ -176,5 +173,29 @@ export class RecipientController {
       };
       return response.send({ message: 'success', data });
     }
+  }
+
+  @Post('/recipient/csv')
+  @OpenAPI({ summary: 'Check status of csv-file and save to session' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(CsvApiResponse)
+  async getCsvStatus(
+    @Req() req: RequestWithUser,
+    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
+    @Res() response: Response<CsvApiResponse>,
+  ): Promise<Response<CsvApiResponse>> {
+    return this.handleCsvUpload(req, csvFile, response);
+  }
+
+  @Post('/recipient/csv/sms')
+  @OpenAPI({ summary: 'Check status of sms csv-file and save to session' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(CsvApiResponse)
+  async getCsvSmsStatus(
+    @Req() req: RequestWithUser,
+    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
+    @Res() response: Response<CsvApiResponse>,
+  ): Promise<Response<CsvApiResponse>> {
+    return this.handleCsvUpload(req, csvFile, response, '/sms');
   }
 }
