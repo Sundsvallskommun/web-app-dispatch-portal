@@ -176,7 +176,7 @@ export class RecipientController {
   }
 
   @Post('/recipient/csv')
-  @OpenAPI({ summary: 'Check status of csv-file and save to session' })
+  @OpenAPI({ summary: 'Check status of csv-file (personal numbers) and save to session' })
   @UseBefore(authMiddleware)
   @ResponseSchema(CsvApiResponse)
   async getCsvStatus(
@@ -188,7 +188,7 @@ export class RecipientController {
   }
 
   @Post('/recipient/csv/sms')
-  @OpenAPI({ summary: 'Check status of sms csv-file and save to session' })
+  @OpenAPI({ summary: 'Check status of sms csv-file (mobile numbers) and save to session' })
   @UseBefore(authMiddleware)
   @ResponseSchema(CsvApiResponse)
   async getCsvSmsStatus(

@@ -71,12 +71,12 @@ const POSTPORTALSERVICE_PATH = getApiBase('postportalservice');
 
 interface Message {
   subject: string;
-  body?: string;
+  body: string;
   files: Express.Multer.File[];
 }
 interface CsvLetterMessage {
   subject: string;
-  body?: string;
+  body: string;
   files: Express.Multer.File[];
   csvFile: Express.Multer.File;
 }
@@ -86,7 +86,7 @@ interface CsvSmsMessage {
 }
 interface RecMessage {
   subject: string;
-  body?: string;
+  body: string;
   recipientPersonId: string;
   files: Express.Multer.File[];
 }

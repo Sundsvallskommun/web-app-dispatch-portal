@@ -53,7 +53,7 @@ export class MessageController {
 
       return response.send({ data: res, message: 'success' });
     } catch (error) {
-      logger.error('Error sending csv message', error);
+      logger.error('Error sending csv sms message', error);
       throw new HttpException(500, 'Internal server error');
     }
   }
