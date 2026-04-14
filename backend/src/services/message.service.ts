@@ -283,7 +283,7 @@ export const sendLetterCsv: (
     subject: subject,
     contentType: 'text/plain',
     body: body ?? '-',
-  } as CsvRequest;
+  } as CsvLetterRequest;
 
   const form = new FormData();
   // Append request
