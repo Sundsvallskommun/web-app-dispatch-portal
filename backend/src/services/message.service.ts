@@ -122,6 +122,26 @@ export const sendSmsMessage: (
     });
 };
 
+async function postFormDataRequest(
+  req: RequestWithUser,
+  api: ApiService,
+  url: string,
+  form: FormData,
+  errorMessage: string,
+): Promise<void> {
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
+  };
+
+  try {
+    await api.post<string, FormData>({ url, data: form, headers }, req.user);
+  } catch (e) {
+    logError(errorMessage, e);
+    throw e;
+  }
+}
+
 export const sendSmsMessageCsv: (
   req: RequestWithUser,
   api: ApiService,
@@ -144,22 +164,8 @@ export const sendSmsMessageCsv: (
 
   appendCsvFile(csvFile, 'csv-file', form);
 
-  const headers = {
-    ...form.getHeaders(),
-    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
-  };
-
-  return api
-    .post<string, FormData>({ url, data: form, headers }, req.user)
-    .then(async () => {
-      return { csv: true };
-    })
-    .catch(e => {
-      const errorMessage = 'Error when sending message';
-      console.error(`${errorMessage}:`, e);
-      logger.error(`${errorMessage}:`, e);
-      throw e;
-    });
+  await postFormDataRequest(req, api, url, form, 'Error when sending message');
+  return { csv: true };
 };
 
 function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
@@ -297,22 +303,8 @@ export const sendLetterCsv: (
   // Append csv file
   appendCsvFile(csvFile, 'csv-file', form);
 
-  const headers = {
-    ...form.getHeaders(),
-    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
-  };
-
-  return api
-    .post<string, FormData>({ url, data: form, headers }, req.user)
-    .then(async () => {
-      return { csv: true };
-    })
-    .catch(e => {
-      const errorMessage = 'Error when sending message';
-      console.error(`${errorMessage}:`, e);
-      logger.error(`${errorMessage}:`, e);
-      throw e;
-    });
+  await postFormDataRequest(req, api, url, form, 'Error when sending message');
+  return { csv: true };
 };
 
 export const logError = (errorMessage: string, e: any) => {
