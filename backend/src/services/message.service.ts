@@ -27,7 +27,7 @@ export interface RecLetterRequest {
   body: string;
   partyId: string;
 }
-export interface CsvRequest {
+export interface CsvLetterRequest {
   subject: string;
   body: string;
   contentType: 'text/plain';
