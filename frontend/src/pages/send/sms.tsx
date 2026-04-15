@@ -163,7 +163,7 @@ export default function SendEmailPage() {
       }
     } else {
       if (!formData.recipientList?.length) {
-        setFormError('recipientList', { message: t('send-sms:errors.minOneRecipient') });
+        setFormError('recipientList', { message: t('send-sms:errors.missingCsv') });
         return;
       }
     }
@@ -330,7 +330,10 @@ export default function SendEmailPage() {
                           )}
                         </FormControl>
                       ) : (
-                        <CsvSmsRecipients />
+                        <div className='flex flex-col gap-8'>
+                          <p className='text-label-medium'>{t('send-sms:fileUploadLabel')}</p>
+                          <CsvSmsRecipients />
+                        </div>
                       )}
 
                       {current === 0 ? (
@@ -356,9 +359,7 @@ export default function SendEmailPage() {
                         </div>
                       ) : (
                         <div className="flex flex-col w-full">
-                          <h3 className="text-label-medium font-sans">
-                            {t('send-sms:addedFileTitle')}
-                          </h3>
+                          <h3 className="text-label-medium font-sans">{t('send-sms:addedFileTitle')}</h3>
                           {(recipientList?.length ?? 0) < 1 ? (
                             <p className="text-base">{`${t('send-sms:noFileAdded')}`}</p>
                           ) : (

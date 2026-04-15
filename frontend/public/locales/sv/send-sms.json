@@ -6,14 +6,12 @@
   "add": "Lägg till",
   "addedRecipients": "Tillagda mottagare",
   "youDidNotAddSomeRecipients": "Du har inte lagt till några mottagare än",
-
+  "fileUploadLabel": "Bifoga en mottagarlista med mobilnummer",
   "addedFileTitle": "Bifogad fil",
   "noFileAdded": "Du har inte bifogat någon fil än.",
-
   "howAddRecipient": "Hur vill du lägga till mottagare?",
   "optionPersonalNumberOrAddress": "Ange telefonummer",
   "optionRecipientList": "Bifoga mottagarlista",
-
   "changeTo": {
     "list": {
       "label": "Vill du lägga till mottagare med mottagarlista?",
@@ -24,7 +22,6 @@
       "text": "Listan du lagt till kommer att försvinna"
     }
   },
-
   "csvWarning": {
     "title": "Filen innehåller problem.",
     "duplicates_one": "Filen innehåller {count} telefonnummer med dubbletter.",
@@ -35,12 +32,12 @@
     "confirm": "Fortsätt ändå",
     "cancel": "Avbryt"
   },
-
   "message": "Meddelande",
   "characters": "tecken",
   "errors": {
     "messageEmpty": "Meddelandet får inte vara tomt.",
     "minOneRecipient": "Du måste lägg till en mottagare.",
+    "missingCsv": "Du måste lägga till en CSV-fil",
     "giveMin10DigitsMobileNumber": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
     "numberAlreadyAdded": "Numret är redan tillagt!",
     "wrongMobileNumberFormat": "Formatet på telefonnumret är felaktigt.",
