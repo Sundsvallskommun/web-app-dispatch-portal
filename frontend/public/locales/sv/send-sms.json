@@ -10,12 +10,12 @@
   "addedFileTitle": "Bifogad fil",
   "noFileAdded": "Du har inte bifogat någon fil än.",
   "howAddRecipient": "Hur vill du lägga till mottagare?",
-  "optionPersonalNumberOrAddress": "Ange telefonummer",
+  "optionPersonalNumberOrAddress": "Ange telefonnummer",
   "optionRecipientList": "Bifoga mottagarlista",
   "changeTo": {
     "list": {
       "label": "Vill du lägga till mottagare med mottagarlista?",
-      "text": "Alla mottagare du har lagt till med telefonummer kommer att försvinna"
+      "text": "Alla mottagare du har lagt till med telefonnummer kommer att försvinna"
     },
     "person": {
       "label": "Vill du lägga till mottagare med personnummer eller adress?",

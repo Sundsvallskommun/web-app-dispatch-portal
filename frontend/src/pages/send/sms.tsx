@@ -131,7 +131,7 @@ export default function SendEmailPage() {
         message = t('send-sms:errors.wrongMobileNumberFormat');
       }
 
-      setFormError('singleRecipient', { message: message });
+      setFormError('singleRecipient', { message });
       return;
     }
 
