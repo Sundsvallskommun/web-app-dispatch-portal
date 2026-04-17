@@ -293,81 +293,81 @@ export default function SendEmailPage() {
                       </div>
 
                       {current === 0 ? (
-                        <FormControl
-                          invalid={!!errors.singleRecipient?.message || !!errors.singleRecipientList}
-                          id="recipient"
-                          size="md"
-                        >
-                          <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums w-full">
-                            {t('send-sms:addMobileNumber')}
-                          </FormLabel>
-                          <div
-                            data-cy="mobile-number-input"
-                            className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full"
+                        <>
+                          <FormControl
+                            invalid={!!errors.singleRecipient?.message || !!errors.singleRecipientList}
+                            id="recipient"
+                            size="md"
                           >
-                            <Input
-                              className="flex items-center gap-8 flex-1 w-full min-w-[25rem]"
-                              {...register('singleRecipient')}
-                            />
-                            <Button
-                              className="self-end"
-                              variant="tertiary"
-                              onClick={() => {
-                                addRecipient();
-                              }}
+                            <FormLabel className="text-label-medium text-dark-primary lining-nums proportional-nums w-full">
+                              {t('send-sms:addMobileNumber')}
+                            </FormLabel>
+                            <div
+                              data-cy="mobile-number-input"
+                              className="flex justify-end items-end gap-16 self-stretch flex-wrap w-full"
                             >
-                              {t('send-sms:add')}
-                            </Button>
-                          </div>
-                          {errors?.singleRecipientList && (
-                            <CustomFormErrorMessage message={errors.singleRecipientList.message} />
-                          )}
-                          {errors?.singleRecipient && (
-                            <CustomFormErrorMessage message={errors.singleRecipient.message} />
-                          )}
-                        </FormControl>
-                      ) : (
-                        <div className="flex flex-col gap-8">
-                          <p className="text-label-medium">{t('send-sms:fileUploadLabel')}</p>
-                          <CsvSmsRecipients />
-                        </div>
-                      )}
-
-                      {current === 0 ? (
-                        <div className="flex flex-col items-start gap-12 self-stretch">
-                          <div className="flex flex-col items-start gap-12 self-stretch">
-                            <div className="text-label-medium text-dark-primary lining-nums proportional-nums">
-                              {t('send-sms:addedRecipients')}
+                              <Input
+                                className="flex items-center gap-8 flex-1 w-full min-w-[25rem]"
+                                {...register('singleRecipient')}
+                              />
+                              <Button
+                                className="self-end"
+                                variant="tertiary"
+                                onClick={() => {
+                                  addRecipient();
+                                }}
+                              >
+                                {t('send-sms:add')}
+                              </Button>
                             </div>
-                            {singleRecipientList && singleRecipientList.length > 0 ? (
-                              <div data-cy="phone-numbers" className="flex flex-col justify-center items-start gap-8">
-                                {singleRecipientList?.map((recipient) => (
-                                  <CustomChip key={recipient} onRemove={() => handleRemove(recipient)}>
-                                    {formatMobileNumberDisplay(recipient)}
-                                  </CustomChip>
-                                ))}
+                            {errors?.singleRecipientList && (
+                              <CustomFormErrorMessage message={errors.singleRecipientList.message} />
+                            )}
+                            {errors?.singleRecipient && (
+                              <CustomFormErrorMessage message={errors.singleRecipient.message} />
+                            )}
+                          </FormControl>
+                          <div className="flex flex-col items-start gap-12 self-stretch">
+                            <div className="flex flex-col items-start gap-12 self-stretch">
+                              <div className="text-label-medium text-dark-primary lining-nums proportional-nums">
+                                {t('send-sms:addedRecipients')}
                               </div>
+                              {singleRecipientList && singleRecipientList.length > 0 ? (
+                                <div data-cy="phone-numbers" className="flex flex-col justify-center items-start gap-8">
+                                  {singleRecipientList?.map((recipient) => (
+                                    <CustomChip key={recipient} onRemove={() => handleRemove(recipient)}>
+                                      {formatMobileNumberDisplay(recipient)}
+                                    </CustomChip>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-dark-secondary lining-nums proportional-nums text-label-medium font-normal">
+                                  {t('send-sms:youDidNotAddSomeRecipients')}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex flex-col gap-8">
+                            <p className="text-label-medium">{t('send-sms:fileUploadLabel')}</p>
+                            <CsvSmsRecipients />
+                          </div>
+                          <div className="flex flex-col w-full">
+                            <h3 className="text-label-medium font-sans">{t('send-sms:addedFileTitle')}</h3>
+                            {(recipientList?.length ?? 0) < 1 ? (
+                              <p className="text-base">{`${t('send-sms:noFileAdded')}`}</p>
                             ) : (
-                              <div className="text-dark-secondary lining-nums proportional-nums text-label-medium font-normal">
-                                {t('send-sms:youDidNotAddSomeRecipients')}
-                              </div>
+                              <FileListItemComponent
+                                data-cy="recipientlist"
+                                noBorder
+                                data={recipientList![0]}
+                                handleRemove={handleRemoveFile}
+                              />
                             )}
                           </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col w-full">
-                          <h3 className="text-label-medium font-sans">{t('send-sms:addedFileTitle')}</h3>
-                          {(recipientList?.length ?? 0) < 1 ? (
-                            <p className="text-base">{`${t('send-sms:noFileAdded')}`}</p>
-                          ) : (
-                            <FileListItemComponent
-                              data-cy="recipientlist"
-                              noBorder
-                              data={recipientList![0]}
-                              handleRemove={handleRemoveFile}
-                            />
-                          )}
-                        </div>
+                        </>
                       )}
 
                       <FormControl
