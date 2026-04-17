@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
 import Link from 'next/link';
 import { formSendType } from 'src/constants';
+import { LetterStateLabel } from '@components/letter-state-label/letter-state-label.component';
 
 interface ListItemComponentProps {
   data: LetterListItem;
@@ -71,7 +72,9 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
             </p>
           </div>
         </div>
-        <div className="flex flex-1 justify-end ">
+
+        <div className="flex flex-1 justify-end gap-x-80">
+          {data?.letterState ? <LetterStateLabel state={data.letterState} /> : null}
           <Icon icon={<ChevronRight />} />
         </div>
       </div>
