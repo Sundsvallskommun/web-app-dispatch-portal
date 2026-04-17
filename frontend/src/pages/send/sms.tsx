@@ -17,9 +17,8 @@ import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import CustomChip from '@components/custom-chip/custom-chip.component';
 import { MobileNumberError, formatMobileNumberDisplay, tryNormalizeMobileNumber } from '@utils/phone-number.helpers';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
@@ -161,11 +160,9 @@ export default function SendEmailPage() {
         setFormError('singleRecipientList', { message: t('send-sms:errors.minOneRecipient') });
         return;
       }
-    } else {
-      if (!formData.recipientList?.length) {
-        setFormError('recipientList', { message: t('send-sms:errors.missingCsv') });
-        return;
-      }
+    } else if (!formData.recipientList?.length) {
+      setFormError('recipientList', { message: t('send-sms:errors.missingCsv') });
+      return;
     }
 
     setIsSending(true);
@@ -330,8 +327,8 @@ export default function SendEmailPage() {
                           )}
                         </FormControl>
                       ) : (
-                        <div className='flex flex-col gap-8'>
-                          <p className='text-label-medium'>{t('send-sms:fileUploadLabel')}</p>
+                        <div className="flex flex-col gap-8">
+                          <p className="text-label-medium">{t('send-sms:fileUploadLabel')}</p>
                           <CsvSmsRecipients />
                         </div>
                       )}
