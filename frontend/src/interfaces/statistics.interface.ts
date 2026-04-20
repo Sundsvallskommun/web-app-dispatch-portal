@@ -83,6 +83,7 @@ export interface LetterListItem {
   messageType: string;
   subject: string;
   sent: string;
+  letterState?: EnumLetterState;
 }
 
 export interface RecAttachment {
