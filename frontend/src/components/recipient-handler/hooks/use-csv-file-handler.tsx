@@ -39,49 +39,58 @@ export const useCsvRecipientFileHandler = ({ checkCsv, warningKeys, errorKeys }:
     formState: { errors },
   } = useFormContext<CsvRecipientFileFormModel>();
 
-  const handleFiles = async (event: CustomOnChangeEventUploadFile) => {
-    const files = event.target.value;
-    if (!files?.[0]) return;
-    try {
-      const csvData = await checkCsv(files[0].file);
-      if (csvData.status === 'OK') {
-        const countDuplicates = Object.keys(csvData.duplicateEntries ?? {}).length;
-        const countRejections = (csvData.rejectedEntries ?? []).length;
-        if (countDuplicates > 0 || countRejections > 0) {
-          const message = (
-            <>
-              {countDuplicates > 0 ? <p>{t(warningKeys.duplicates, { count: countDuplicates })}</p> : <></>}
-              {countRejections > 0 ? <p>{t(warningKeys.rejections, { count: countRejections })}</p> : <></>}
-              <p>{t(warningKeys.description)}</p>
-            </>
-          );
+  const handleWarningMessage = (csvData: Csv) => {
+    const countDuplicates = Object.keys(csvData.duplicateEntries ?? {}).length;
+    const countRejections = (csvData.rejectedEntries ?? []).length;
+    const hasWarnings = countDuplicates > 0 || countRejections > 0;
 
-          showConfirmation(
-            t(warningKeys.title),
-            message,
-            t(warningKeys.confirm),
-            t(warningKeys.cancel),
-            'warning'
-          ).then((confirm) => {
-            if (confirm) {
-              setValue('recipientList', [{ ...csvData, file: files[0].file }]);
-            } else {
-              setValue('recipientList', []);
-            }
-          });
-        } else {
-          setValue('recipientList', [{ ...csvData, file: files[0].file }]);
-        }
-        clearErrors('recipientList');
-      } else {
-        setValue('recipientList', []);
-        setError('recipientList', {
-          message: `${errorKeys.csvPrefix}.${csvData.error ?? 'UNKNOWN'}`,
-        });
-      }
+    if (!hasWarnings) return null;
+
+    return (
+      <>
+        {countDuplicates > 0 && <p>{t(warningKeys.duplicates, { count: countDuplicates })}</p>}
+        {countRejections > 0 && <p>{t(warningKeys.rejections, { count: countRejections })}</p>}
+        <p>{t(warningKeys.description)}</p>
+      </>
+    );
+  };
+
+  const handleFiles = async (event: CustomOnChangeEventUploadFile) => {
+    const file = event.target.value?.[0]?.file;
+    if (!file) return;
+
+    let csvData: Csv;
+    try {
+      csvData = await checkCsv(file);
     } catch {
       setError('recipientList', { message: errorKeys.csvFetch });
+      return;
     }
+
+    if (csvData.status !== 'OK') {
+      setValue('recipientList', []);
+      setError('recipientList', {
+        message: `${errorKeys.csvPrefix}.${csvData.error ?? 'UNKNOWN'}`,
+      });
+      return;
+    }
+
+    clearErrors('recipientList');
+
+    const warningMessage = handleWarningMessage(csvData);
+    if (!warningMessage) {
+      setValue('recipientList', [{ ...csvData, file }]);
+      return;
+    }
+
+    const confirmed = await showConfirmation(
+      t(warningKeys.title),
+      warningMessage,
+      t(warningKeys.confirm),
+      t(warningKeys.cancel),
+      'warning'
+    );
+    setValue('recipientList', confirmed ? [{ ...csvData, file }] : []);
   };
 
   const handleError = () => {
