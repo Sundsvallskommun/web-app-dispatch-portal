@@ -25,13 +25,11 @@ export const sendSms: (data: SMSRequest) => Promise<SMSStatus> = async (data) =>
   return res.data.data;
 };
 
-export const sendCsvSms: (message: string, csvId: string) => Promise<MessageApiResponse> = async (message, csvId) => {
-  const res = await apiService
-    .post<MessageApiResponse, { message: string; csvId: string }>(`csv-sms`, { message, csvId })
-    .catch((e) => {
-      console.error('Something went wrong when sending csv sms:', e);
-      throw e;
-    });
+export const sendCsvSms = async (message: string, csvId: string): Promise<MessageApiResponse> => {
+  const res = await apiService.post<MessageApiResponse, { message: string; csvId: string }>('csv-sms', {
+    message,
+    csvId,
+  });
 
   return res.data;
 };
