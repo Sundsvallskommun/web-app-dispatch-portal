@@ -41,7 +41,7 @@
     "giveMin10DigitsMobileNumber": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
     "numberAlreadyAdded": "Numret är redan tillagt!",
     "wrongMobileNumberFormat": "Formatet på telefonnumret är felaktigt.",
-    "somethingWrongWhenSendSms": "Något gick fel när jag skickade sms:et:",
+    "somethingWrongWhenSendSms": "Något gick fel när sms:et skickades.",
     "badFile": "Felaktig fil",
     "csvError": "Du måste lägga till en fil",
     "csvFile": "Kunde inte kontrollera CSV-filen. Kontrollera din fil och försök igen.",
