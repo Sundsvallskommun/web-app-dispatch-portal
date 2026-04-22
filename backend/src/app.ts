@@ -7,14 +7,8 @@ import {
   LOG_FORMAT,
   NODE_ENV,
   PORT,
-  SAML_CALLBACK_URL,
-  SAML_ENTRY_SSO,
   SAML_FAILURE_REDIRECT,
-  SAML_IDP_PUBLIC_CERT,
-  SAML_ISSUER,
-  SAML_LOGOUT_CALLBACK_URL,
   SAML_LOGOUT_REDIRECT,
-  SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
   SECRET_KEY,
   SWAGGER_ENABLED,
@@ -50,13 +44,8 @@ import { User } from './interfaces/users.interface';
 import ApiService from './services/api.service';
 import { getRedirects } from './utils/getRedirects';
 import { getRelayState } from './utils/getRelayState';
-import {
-  getHostData,
-  getRequestHost,
-  isAdminRequest,
-  normalizeCertificate,
-  resolveRequestHost,
-} from './utils/getHostData';
+import { getRequestHost, resolveRequestHost } from './utils/getHostData';
+import { baseSamlConfig, getSamlOptionsForRequest } from './utils/getSamlOptions';
 import { getMunicipalityInfo } from './utils/getMunicipalityId';
 import { buildCorsOptions } from './utils/buildCorsOptions';
 import { isValidOrigin } from './utils/isValidOrigin';
@@ -79,20 +68,6 @@ passport.deserializeUser(function (user, done) {
   done(null, user);
 });
 
-const baseSamlConfig = {
-  passReqToCallback: true,
-  disableRequestedAuthnContext: true,
-  identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
-  callbackUrl: SAML_CALLBACK_URL,
-  privateKey: SAML_PRIVATE_KEY,
-  issuer: SAML_ISSUER,
-  wantAssertionsSigned: false,
-  wantAuthnResponseSigned: false,
-  audience: false as const,
-  logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL,
-  acceptedClockSkewMs: -1,
-};
-
 const getProfileGroups = (profile: Profile): string[] => {
   const rawGroups = profile['http://schemas.xmlsoap.org/claims/Group'] ?? profile?.groups;
 
@@ -101,37 +76,6 @@ const getProfileGroups = (profile: Profile): string[] => {
   const normalizedGroups = Array.isArray(rawGroups) ? rawGroups : rawGroups.split(',');
 
   return normalizedGroups.map(normalizeGroup).filter(Boolean);
-};
-
-export const getSamlOptionsForRequest = async (req: Request) => {
-  if (await isAdminRequest(req)) {
-    logger.info('[SAML] admin branch');
-    return {
-      ...baseSamlConfig,
-      entryPoint: SAML_ENTRY_SSO,
-      idpCert: normalizeCertificate(SAML_IDP_PUBLIC_CERT) ?? SAML_IDP_PUBLIC_CERT,
-    };
-  }
-
-  const hostData = await getHostData(req);
-  const idpConfig = hostData?.idp;
-
-  if (idpConfig?.entryPoint && idpConfig?.idpCert) {
-    logger.info(`[SAML] db branch host=${hostData?.name} idpId=${hostData?.idpId}`);
-    return {
-      ...baseSamlConfig,
-      entryPoint: idpConfig.entryPoint,
-      idpCert: idpConfig.idpCert,
-    };
-  }
-
-  logger.info('[SAML] fallback branch');
-
-  return {
-    ...baseSamlConfig,
-    entryPoint: SAML_ENTRY_SSO,
-    idpCert: normalizeCertificate(SAML_IDP_PUBLIC_CERT) ?? SAML_IDP_PUBLIC_CERT,
-  };
 };
 
 const samlStrategy = new MultiSamlStrategy(
@@ -144,7 +88,6 @@ const samlStrategy = new MultiSamlStrategy(
     },
   },
   async function (req: Request, profile: Profile, done: VerifiedCallback) {
-    console.log('🚀 ~ profile:', profile);
     if (!profile) {
       return done({
         name: 'SAML_MISSING_PROFILE',
@@ -170,7 +113,6 @@ const samlStrategy = new MultiSamlStrategy(
     }
 
     const appGroups = getProfileGroups(profile);
-    console.log('🚀 ~ appGroups:', appGroups);
 
     try {
       let employee = username;

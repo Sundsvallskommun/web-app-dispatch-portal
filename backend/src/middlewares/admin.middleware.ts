@@ -7,7 +7,6 @@ import { NextFunction, Response } from 'express';
 const adminMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
     const roles = req.user?.roles;
-    console.log('🚀 ~ adminMiddleware ~ roles:', roles);
 
     if (Array.isArray(roles) && roles.includes(InternalRoleEnum.Admin)) {
       next();
