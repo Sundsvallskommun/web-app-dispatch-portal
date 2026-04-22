@@ -1,5 +1,6 @@
 import { Attachment } from '@components/attachment-handler/attachment-handler';
 import { CustomOnChangeEventUploadFile, useConfirm } from '@sk-web-gui/react';
+import { ReactElement } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Csv } from 'src/data-contracts/backend/data-contracts';
@@ -10,7 +11,6 @@ interface CsvRecipientFileFormModel {
 
 interface CsvWarningKeys {
   title: string;
-  duplicates: string;
   rejections: string;
   description: string;
   confirm: string;
@@ -39,20 +39,36 @@ export const useCsvRecipientFileHandler = ({ checkCsv, warningKeys, errorKeys }:
     formState: { errors },
   } = useFormContext<CsvRecipientFileFormModel>();
 
-  const handleWarningMessage = (csvData: Csv) => {
-    const countDuplicates = Object.keys(csvData.duplicateEntries ?? {}).length;
-    const countRejections = (csvData.rejectedEntries ?? []).length;
-    const hasWarnings = countDuplicates > 0 || countRejections > 0;
 
-    if (!hasWarnings) return null;
+  const handleWarningMessage = (
+    csvData: Csv
+  ): {
+    countRejections: number;
+    warningMessage: ReactElement | null;
+  } => {
+    const rejectedEntries = (csvData.rejectedEntries ?? []).filter(Boolean);
+    const countRejections = rejectedEntries.length;
 
-    return (
-      <>
-        {countDuplicates > 0 && <p>{t(warningKeys.duplicates, { count: countDuplicates })}</p>}
-        {countRejections > 0 && <p>{t(warningKeys.rejections, { count: countRejections })}</p>}
-        <p>{t(warningKeys.description)}</p>
-      </>
-    );
+    if (countRejections === 0) {
+      return { countRejections: 0, warningMessage: null };
+    }
+
+    return {
+      countRejections,
+      warningMessage: (
+        <>
+          <p>{t(warningKeys.description)}</p>
+
+          {countRejections > 0 && (
+            <div>
+              {rejectedEntries.map((entry) => (
+                <p key={entry}>{entry}</p>
+              ))}
+            </div>
+          )}
+        </>
+      ),
+    };
   };
 
   const handleFiles = async (event: CustomOnChangeEventUploadFile) => {
@@ -77,18 +93,18 @@ export const useCsvRecipientFileHandler = ({ checkCsv, warningKeys, errorKeys }:
 
     clearErrors('recipientList');
 
-    const warningMessage = handleWarningMessage(csvData);
+    const { warningMessage, countRejections } = handleWarningMessage(csvData);
+
     if (!warningMessage) {
       setValue('recipientList', [{ ...csvData, file }]);
       return;
     }
 
     const confirmed = await showConfirmation(
-      t(warningKeys.title),
+      t(warningKeys.title, { csvFile: csvData.name, count: countRejections }),
       warningMessage,
       t(warningKeys.confirm),
-      t(warningKeys.cancel),
-      'warning'
+      t(warningKeys.cancel)
     );
     setValue('recipientList', confirmed ? [{ ...csvData, file }] : []);
   };

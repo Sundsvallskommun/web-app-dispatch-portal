@@ -8,7 +8,6 @@ export const CsvRecipients: React.FC = () => {
     checkCsv,
     warningKeys: {
       title: 'send-mail:recipientHandler.csvWarning.title',
-      duplicates: 'send-mail:recipientHandler.csvWarning.duplicates',
       rejections: 'send-mail:recipientHandler.csvWarning.rejections',
       description: 'send-mail:recipientHandler.csvWarning.description',
       confirm: 'send-mail:recipientHandler.csvWarning.confirm',
