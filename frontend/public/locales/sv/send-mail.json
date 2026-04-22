@@ -70,7 +70,7 @@
     "csvWarning": {
       "title_one": "Filen {csvFile} innehåller {count} ogiltigt personnummer.",
       "title_other": "Filen {csvFile} innehåller {count} ogiltiga personnummer.",
-      "description": "Personnumren kommer tas bort från utskicket. Vill du fortsätta utan dessa?",
+      "description": "Vill du fortsätta utan dessa mottagare?",
       "confirm": "Fortsätt ändå",
       "cancel": "Avbryt"
     },
