@@ -85,17 +85,15 @@ pages.forEach((p) => {
           cy.get('.sk-form-error-message').contains('Kunde inte hitta några giltiga mottagare.');
         });
 
-        it('should show dialog when adding a csv file with duplicate recipients', () => {
-          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { duplicates: true, rejections: true })).as(
+        it('should show dialog when adding a csv file with rejected recipients', () => {
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as(
             'csv'
           );
           addCsv();
           cy.get('.sk-modal-dialog.sk-dialog')
             .eq(0)
             .within(() => {
-              cy.get('h1').should('include.text', 'Filen innehåller problem');
-              cy.get('p').contains('Filen innehåller 2 personnummer med dubbletter.');
-              cy.get('p').contains('Filen innehåller 2 felaktiga personnummer.');
+              cy.get('h1').should('include.text', 'Filen personal-numbers.csv innehåller 2 ogiltiga personnummer.');
               cy.get('button').contains('Fortsätt ändå').click();
             });
           cy.get('[data-cy="recipientlist"]').contains('personal-numbers.csv').should('be.visible');
