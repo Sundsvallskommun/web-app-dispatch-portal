@@ -23,12 +23,8 @@
     }
   },
   "csvWarning": {
-    "title": "Filen innehåller problem.",
-    "duplicates_one": "Filen innehåller {count} telefonnummer med dubbletter.",
-    "duplicates_other": "Filen innehåller {count} telefonnummer med dubbletter.",
-    "rejections_one": "Filen innehåller {count} felaktigt telefonnummer.",
-    "rejections_other": "Filen innehåller {count} felaktiga telefonnummer.",
-    "description": "Du kan välja att fortsätta ändå. Utskicket kommer endast skickas en gång per mottagare.",
+    "title": "Filen {csvFile} innehåller {count} ogiltiga mobilnummer.",
+    "description": "Mobilnumren kommer tas bort från utskicket. Vill du fortsätta utan dessa?",
     "confirm": "Fortsätt ändå",
     "cancel": "Avbryt"
   },
