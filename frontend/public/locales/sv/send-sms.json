@@ -34,13 +34,13 @@
   "errors": {
     "messageEmpty": "Meddelandet får inte vara tomt.",
     "minOneRecipient": "Du måste lägg till en mottagare.",
-    "missingCsv": "Du måste lägga till en CSV-fil",
+    "missingCsv": "Du måste lägga till en CSV-fil.",
     "giveMin10DigitsMobileNumber": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
     "numberAlreadyAdded": "Numret är redan tillagt!",
     "wrongMobileNumberFormat": "Formatet på mobilnumret är felaktigt.",
     "somethingWrongWhenSendSms": "Något gick fel när sms:et skickades.",
-    "badFile": "Felaktig fil",
-    "csvError": "Du måste lägga till en fil",
+    "badFile": "Felaktig fil.",
+    "csvError": "Du måste lägga till en fil.",
     "csvFile": "Kunde inte kontrollera CSV-filen. Kontrollera din fil och försök igen.",
     "csv": {
       "UNKNOWN": "Felaktig CSV-fil. Får endast innehålla mobilnummer.",
