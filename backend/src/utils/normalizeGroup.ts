@@ -1,7 +1,7 @@
 export const normalizeGroup = (group?: string | null): string => {
   if (!group) return '';
 
-  return group.trim().replace(/^['"']+|['"']+$/g, '').toLowerCase();
+  return group.trim().replace(/^['"‘’“”]+|['"‘’“”]+$/g, '').toLowerCase();
 };
 
 export const parseConfiguredGroups = (groups?: string | null): string[] => {
