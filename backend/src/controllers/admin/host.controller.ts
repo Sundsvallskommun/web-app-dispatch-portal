@@ -50,9 +50,9 @@ export class AdminHostController {
   @ResponseSchema(HostApiResponse)
   async create(@Body() body: CreateHostDto, @Res() res: Response<HostApiResponse>): Promise<Response<HostApiResponse>> {
     try {
-      const { municipalityId, name, idpId } = body;
+      const { municipalityId, name, idpId, domain } = body;
       const host = await prisma.host.create({
-        data: { municipalityId, name, idpId },
+        data: { municipalityId, name, idpId, domain },
         include: { idp: true },
       });
       return res.send({ message: 'success', data: host });
@@ -71,10 +71,10 @@ export class AdminHostController {
     @Res() res: Response<HostApiResponse>,
   ): Promise<Response<HostApiResponse>> {
     try {
-      const { municipalityId, name, idpId } = body;
+      const { municipalityId, name, idpId, domain } = body;
       const host = await prisma.host.update({
         where: { id },
-        data: { municipalityId, name, idpId },
+        data: { municipalityId, name, idpId, domain },
         include: { idp: true },
       });
       return res.send({ message: 'success', data: host });
@@ -83,6 +83,7 @@ export class AdminHostController {
       throw new HttpException(500, 'Could not updating host');
     }
   }
+
   @Delete('/admin/hosts/:id')
   @OpenAPI({ summary: 'Delete a host' })
   @ResponseSchema(ApiResponse<null>)

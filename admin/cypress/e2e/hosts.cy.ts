@@ -25,7 +25,7 @@ describe('Hosts', () => {
       });
 
     cy.get('[data-cy="table-settings-button"]').click();
-    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 6);
+    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 7);
     cy.get('[data-cy="table-settings-panel"]').children().eq(0).click();
     cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Namn');
     cy.get('[data-cy="table-settings-panel"]').children().eq(1).click();

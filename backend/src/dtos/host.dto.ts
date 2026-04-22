@@ -6,6 +6,9 @@ export class CreateHostDto implements Pick<Host, 'name' | 'municipalityId' | 'id
   name: string;
   @IsInt()
   municipalityId: number;
+  @IsString()
+  @IsOptional()
+  domain?: string;
   @IsInt()
   idpId: number;
 }
@@ -17,6 +20,9 @@ export class UpdateHostDto implements Partial<Host> {
   @IsInt()
   @IsOptional()
   municipalityId?: number;
+  @IsString()
+  @IsOptional()
+  domain?: string;
   @IsInt()
   @IsOptional()
   idpId?: number;

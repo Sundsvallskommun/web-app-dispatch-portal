@@ -9,6 +9,8 @@ declare module 'express-session' {
     passport?: any;
     messages: string[];
     municipalityId?: string;
+    host?: string;
+    domain?: string;
     csv: CSV;
   }
 }

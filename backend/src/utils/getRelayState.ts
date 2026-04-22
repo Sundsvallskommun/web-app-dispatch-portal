@@ -1,6 +1,7 @@
 import { SAML_SUCCESS_REDIRECT } from '@/config';
 import { RelayState } from '@/interfaces/relaystate.interface';
 import { Request } from 'express';
+import { getRequestHost } from './getHostData';
 
 export const getRelayState = (req: Request): string => {
   let successRedirect = SAML_SUCCESS_REDIRECT ?? '/';
@@ -18,7 +19,7 @@ export const getRelayState = (req: Request): string => {
     failureRedirect = req.query.failureRedirect;
   }
 
-  const host = typeof req?.query?.host === 'string' ? req.query.host : undefined;
+  const host = typeof req?.query?.host === 'string' ? req.query.host : getRequestHost(req);
 
   const relayState: RelayState = { successRedirect, failureRedirect, host };
 

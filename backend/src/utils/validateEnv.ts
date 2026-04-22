@@ -21,6 +21,7 @@ const validateEnv = () => {
     SAML_PRIVATE_KEY: str(),
     SAML_PUBLIC_KEY: str(),
     TEST_EMAIL: str(),
+    ADMIN_URL: url(),
   });
 };
 
