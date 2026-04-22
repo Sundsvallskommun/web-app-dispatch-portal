@@ -6,15 +6,49 @@
   "add": "Lägg till",
   "addedRecipients": "Tillagda mottagare",
   "youDidNotAddSomeRecipients": "Du har inte lagt till några mottagare än",
+  "fileUploadLabel": "Bifoga en mottagarlista med mobilnummer",
+  "addedFileTitle": "Bifogad fil",
+  "noFileAdded": "Du har inte bifogat någon fil än.",
+  "howAddRecipient": "Hur vill du lägga till mottagare?",
+  "optionPersonalNumberOrAddress": "Ange telefonnummer",
+  "optionRecipientList": "Bifoga mottagarlista",
+  "changeTo": {
+    "list": {
+      "label": "Vill du lägga till mottagare med mottagarlista?",
+      "text": "Alla mottagare du har lagt till med telefonnummer kommer att försvinna"
+    },
+    "person": {
+      "label": "Vill du lägga till mottagare med personnummer eller adress?",
+      "text": "Listan du lagt till kommer att försvinna"
+    }
+  },
+  "csvWarning": {
+    "title": "Filen innehåller problem.",
+    "duplicates_one": "Filen innehåller {count} telefonnummer med dubbletter.",
+    "duplicates_other": "Filen innehåller {count} telefonnummer med dubbletter.",
+    "rejections_one": "Filen innehåller {count} felaktigt telefonnummer.",
+    "rejections_other": "Filen innehåller {count} felaktiga telefonnummer.",
+    "description": "Du kan välja att fortsätta ändå. Utskicket kommer endast skickas en gång per mottagare.",
+    "confirm": "Fortsätt ändå",
+    "cancel": "Avbryt"
+  },
   "message": "Meddelande",
   "characters": "tecken",
   "errors": {
     "messageEmpty": "Meddelandet får inte vara tomt.",
     "minOneRecipient": "Du måste lägg till en mottagare.",
+    "missingCsv": "Du måste lägga till en CSV-fil",
     "giveMin10DigitsMobileNumber": "Ange ett mobilnummer med 10 siffror, till exempel 0701234567.",
     "numberAlreadyAdded": "Numret är redan tillagt!",
     "wrongMobileNumberFormat": "Formatet på telefonnumret är felaktigt.",
-    "somethingWrongWhenSendSms": "Något gick fel när jag skickade sms:et:"
+    "somethingWrongWhenSendSms": "Något gick fel när sms:et skickades.",
+    "badFile": "Felaktig fil",
+    "csvError": "Du måste lägga till en fil",
+    "csvFile": "Kunde inte kontrollera CSV-filen. Kontrollera din fil och försök igen.",
+    "csv": {
+      "UNKNOWN": "Felaktig CSV-fil. Får endast innehålla telefonnummer.",
+      "MISSING_VALID_IDS": "Kunde inte hitta några giltiga mottagare. Kontrollera din fil."
+    }
   },
   "messages": {
     "somethingWrong": "Något gick fel",
