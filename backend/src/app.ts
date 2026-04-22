@@ -105,6 +105,7 @@ const getProfileGroups = (profile: Profile): string[] => {
 
 export const getSamlOptionsForRequest = async (req: Request) => {
   if (await isAdminRequest(req)) {
+    logger.info('[SAML] admin branch');
     return {
       ...baseSamlConfig,
       entryPoint: SAML_ENTRY_SSO,
@@ -116,12 +117,15 @@ export const getSamlOptionsForRequest = async (req: Request) => {
   const idpConfig = hostData?.idp;
 
   if (idpConfig?.entryPoint && idpConfig?.idpCert) {
+    logger.info(`[SAML] db branch host=${hostData?.name} idpId=${hostData?.idpId}`);
     return {
       ...baseSamlConfig,
       entryPoint: idpConfig.entryPoint,
       idpCert: idpConfig.idpCert,
     };
   }
+
+  logger.info('[SAML] fallback branch');
 
   return {
     ...baseSamlConfig,
