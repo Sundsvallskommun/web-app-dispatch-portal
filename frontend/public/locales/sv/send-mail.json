@@ -68,7 +68,8 @@
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
     "csvAddedFile": "Tillagd fil",
     "csvWarning": {
-      "title": "Filen {csvFile} innehåller {count} ogiltiga personnummer.",
+      "title_one": "Filen {csvFile} innehåller {count} ogiltigt personnummer.",
+      "title_other": "Filen {csvFile} innehåller {count} ogiltiga personnummer.",
       "description": "Personnumren kommer tas bort från utskicket. Vill du fortsätta utan dessa?",
       "confirm": "Fortsätt ändå",
       "cancel": "Avbryt"

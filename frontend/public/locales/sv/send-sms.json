@@ -23,7 +23,8 @@
     }
   },
   "csvWarning": {
-    "title": "Filen {csvFile} innehåller {count} ogiltiga mobilnummer.",
+    "title_one": "Filen {csvFile} innehåller {count} ogiltigt mobilnummer.",
+    "title_other": "Filen {csvFile} innehåller {count} ogiltiga mobilnummer.",
     "description": "Mobilnumren kommer tas bort från utskicket. Vill du fortsätta utan dessa?",
     "confirm": "Fortsätt ändå",
     "cancel": "Avbryt"
