@@ -23,3 +23,21 @@ export const recipientcsv = (
     message: 'success',
   };
 };
+
+export const recipientCsvSms = (
+  status: Csv['status'],
+  options: csvOptions = { duplicates: false, rejections: false, error: 'UNKNOWN' }
+): CsvApiResponse => {
+  const { duplicates = false, rejections = false, error = 'UNKNOWN' } = options;
+  return {
+    data: {
+      name: 'mobile-numbers.csv',
+      id: '1234-2345-3456',
+      status,
+      error: status === 'BAD' ? error : undefined,
+      duplicateEntries: duplicates ? { '0701234567': 2, '0707654321': 3 } : undefined,
+      rejectedEntries: rejections ? ['07012345678', '070123456'] : undefined,
+    },
+    message: 'success',
+  };
+};

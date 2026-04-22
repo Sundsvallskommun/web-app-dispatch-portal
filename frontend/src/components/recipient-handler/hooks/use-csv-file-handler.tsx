@@ -104,7 +104,8 @@ export const useCsvRecipientFileHandler = ({ checkCsv, warningKeys, errorKeys }:
       t(warningKeys.title, { csvFile: csvData.name, count: countRejections }),
       warningMessage,
       t(warningKeys.confirm),
-      t(warningKeys.cancel)
+      t(warningKeys.cancel),
+      'info'
     );
     setValue('recipientList', confirmed ? [{ ...csvData, file }] : []);
   };
