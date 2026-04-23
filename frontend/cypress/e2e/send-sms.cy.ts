@@ -1,6 +1,23 @@
 import { recipientCsvSms } from 'cypress/fixtures/recipientcsv';
 
+const getMockPhoneNumber = (): string => {
+  const value = Cypress.env('mockPhoneNumber') as string | undefined;
+
+  if (!value) {
+    throw new Error('Missing Cypress env value: mockPhoneNumber');
+  }
+
+  return value;
+};
+
+const formatPhoneNumberForUi = (phoneNumber: string): string => {
+  return `+46 ${phoneNumber.slice(1, 3)}-${phoneNumber.slice(3, 6)} ${phoneNumber.slice(6, 8)} ${phoneNumber.slice(8, 10)}`;
+};
+
 describe('Send SMS flow', () => {
+  const mockPhoneNumber = getMockPhoneNumber();
+  const mockPhoneNumberDisplay = formatPhoneNumberForUi(mockPhoneNumber);
+
   beforeEach(() => {
     cy.intercept('GET', '**/api/me', { fixture: 'me.json' });
     cy.intercept('POST', '**/api/sms', { fixture: 'sms.json' }).as('sendSms');
@@ -11,15 +28,15 @@ describe('Send SMS flow', () => {
   });
 
   it('should add a phone number', () => {
-    addPhoneNumber('0701740635');
+    addPhoneNumber(mockPhoneNumber);
     cy.get('[data-cy="phone-numbers"]').should('exist');
-    cy.get('[data-cy="phone-numbers"]').contains('+46 70-174 06 35').should('exist');
+    cy.get('[data-cy="phone-numbers"]').contains(mockPhoneNumberDisplay).should('exist');
   });
 
   it('should remove a phone number', () => {
-    addPhoneNumber('0701740635');
+    addPhoneNumber(mockPhoneNumber);
     cy.get('[data-cy="phone-numbers"]').should('exist');
-    cy.get('[data-cy="phone-numbers"]').contains('+46 70-174 06 35').should('exist');
+    cy.get('[data-cy="phone-numbers"]').contains(mockPhoneNumberDisplay).should('exist');
     cy.get('[data-cy="phone-numbers"]').find('[data-cy="delete-number-button"]').first().click();
     cy.get('[data-cy="phone-numbers"]').should('not.exist');
   });
@@ -39,7 +56,7 @@ describe('Send SMS flow', () => {
   });
 
   it('should show validation error if no message is added', () => {
-    addPhoneNumber('0701740635');
+    addPhoneNumber(mockPhoneNumber);
     cy.get('[data-cy="phone-numbers"]').should('exist');
     cy.get('[data-cy="send-sms-button"]').click();
     cy.get('[data-cy="form-error-message"]').should('be.visible').and('contain.text', 'Meddelandet får inte vara tomt');
@@ -80,9 +97,9 @@ describe('Send SMS flow', () => {
   });
 
   it('should warn and reset if changing to csv from added person', () => {
-    addPhoneNumber('0701740635');
+    addPhoneNumber(mockPhoneNumber);
     cy.get('[data-cy="phone-numbers"]').should('exist');
-    cy.get('[data-cy="phone-numbers"]').contains('+46 70-174 06 35').should('exist');
+    cy.get('[data-cy="phone-numbers"]').contains(mockPhoneNumberDisplay).should('exist');
     cy.get('input[type="radio"][value="1"]').check();
     cy.get('.sk-modal-wrapper')
       .first()
@@ -106,7 +123,7 @@ describe('Send SMS flow', () => {
       });
     addMessage();
     cy.get('[data-cy="send-sms-button"]').click();
-    cy.get('[data-cy="form-error-message"]').contains('Du måste lägg till en mottagare.');
+    cy.get('[data-cy="form-error-message"]').contains('Du måste lägga till en mottagare.');
   });
 
   it('should send message if a csv-file is added and "send" is clicked', () => {
@@ -116,13 +133,13 @@ describe('Send SMS flow', () => {
   });
 
   it('should send message if a manual phone number is added and "send" is clicked', () => {
-    addPhoneNumber('0701740635');
+    addPhoneNumber(mockPhoneNumber);
     sendMessage();
     assertSuccessView();
   });
 
   it('should send sms and show success view', () => {
-    addPhoneNumber('0701740635');
+    addPhoneNumber(mockPhoneNumber);
     cy.get('[data-cy="phone-numbers"]').should('exist');
     sendMessage();
     assertSuccessView();

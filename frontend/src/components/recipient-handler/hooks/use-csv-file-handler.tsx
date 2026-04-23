@@ -39,7 +39,6 @@ export const useCsvRecipientFileHandler = ({ checkCsv, warningKeys, errorKeys }:
     formState: { errors },
   } = useFormContext<CsvRecipientFileFormModel>();
 
-
   const handleWarningMessage = (
     csvData: Csv
   ): {
@@ -57,14 +56,16 @@ export const useCsvRecipientFileHandler = ({ checkCsv, warningKeys, errorKeys }:
       countRejections,
       warningMessage: (
         <>
-          <p>{t(warningKeys.description)}</p>
+          {t(warningKeys.description)}
 
           {countRejections > 0 && (
-            <div>
+            <>
               {rejectedEntries.map((entry) => (
-                <p key={entry}>{entry}</p>
+                <span key={entry} style={{ display: 'block' }}>
+                  {entry}
+                </span>
               ))}
-            </div>
+            </>
           )}
         </>
       ),
