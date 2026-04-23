@@ -171,7 +171,7 @@ pages.forEach((p) => {
 
       it('should navigate to next step if a recipient is added and "next" is clicked', () => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        navigateToAttachmentHandler(personalNumber.isEligible);
+        navigateToAttachmentHandler(personalNumber.isNotEligible);
         cy.get('.sk-progress-stepper-step[data-progress="current"]').should('exist').and('contain.text', 'Filer');
       });
     });
