@@ -89,8 +89,8 @@ describe('Send SMS flow', () => {
       .within(() => {
         cy.get('h1').should('include.text', 'Filen mobile-numbers.csv innehåller 2 ogiltiga mobilnummer.');
         cy.get('p').contains('Vill du fortsätta utan dessa mottagare?');
-        cy.get('p').contains('07012345678');
-        cy.get('p').contains('070123456');
+        cy.get('p').contains('07017406351');
+        cy.get('p').contains('07017406352');
         cy.get('button').contains('Fortsätt ändå').click();
       });
     cy.get('[data-cy="recipientlist"]').contains('mobile-numbers.csv').should('be.visible');
