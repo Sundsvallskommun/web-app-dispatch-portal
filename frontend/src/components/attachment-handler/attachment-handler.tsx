@@ -95,7 +95,7 @@ const AttachmentHandler: React.FC = () => {
             limit: MAX_ATTACHMENT_FILE_SIZE_MB.toString().replace('.', ','),
           })}
         </p>
-        <ProgressBar steps={progressBarValues.steps} current={progressBarValues.current} />
+        <ProgressBar size="md" color="vattjom" steps={progressBarValues.steps} current={progressBarValues.current} />
       </div>
       <div className="w-full">
         <h3 className="text-label-medium font-sans">{t('send-mail:attachmentHandler.addedFilesHeader')}</h3>
