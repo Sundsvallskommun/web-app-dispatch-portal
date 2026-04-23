@@ -35,8 +35,8 @@ export const recipientCsvSms = (
       id: '1234-2345-3456',
       status,
       error: status === 'BAD' ? error : undefined,
-      duplicateEntries: duplicates ? { '0701234567': 2, '0707654321': 3 } : undefined,
-      rejectedEntries: rejections ? ['07012345678', '070123456'] : undefined,
+      duplicateEntries: duplicates ? { '0701740635': 2, '0701740605': 3 } : undefined,
+      rejectedEntries: rejections ? ['07017406351', '07017406352'] : undefined,
     },
     message: 'success',
   };
