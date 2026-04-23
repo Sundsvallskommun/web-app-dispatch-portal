@@ -6,7 +6,9 @@ import { NextFunction, Response } from 'express';
 
 const adminMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
-    if (req.user.roles.includes(InternalRoleEnum.Admin)) {
+    const roles = req.user?.roles;
+
+    if (Array.isArray(roles) && roles.includes(InternalRoleEnum.Admin)) {
       next();
     } else {
       next(new HttpException(401, 'MISSING_PERMISSIONS'));
