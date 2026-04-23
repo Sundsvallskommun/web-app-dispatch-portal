@@ -1,21 +1,14 @@
 import { getPermissions, getRoles } from '@/services/authorization.service';
 import {
   BASE_URL_PREFIX,
-  CREDENTIALS,
   DEV,
   ENABLE_LOCAL_STORAGE,
   getApiBase,
   LOG_FORMAT,
   NODE_ENV,
   PORT,
-  SAML_CALLBACK_URL,
-  SAML_ENTRY_SSO,
   SAML_FAILURE_REDIRECT,
-  SAML_IDP_PUBLIC_CERT,
-  SAML_ISSUER,
-  SAML_LOGOUT_CALLBACK_URL,
   SAML_LOGOUT_REDIRECT,
-  SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
   SECRET_KEY,
   SWAGGER_ENABLED,
@@ -23,7 +16,7 @@ import {
   TEST_USERNAME,
 } from '@config';
 import errorMiddleware from '@middlewares/error.middleware';
-import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
+import { MultiSamlStrategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
@@ -45,16 +38,19 @@ import { getMetadataArgsStorage, useExpressServer } from 'routing-controllers';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
+import { RequestWithUser } from './interfaces/auth.interface';
 import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import ApiService from './services/api.service';
 import { getRedirects } from './utils/getRedirects';
 import { getRelayState } from './utils/getRelayState';
-import { dataDir, dataPath } from './utils/util';
-import { isAllowedOrigin } from './utils/isAllowedOrigin';
-import { getMunicipalityId } from './utils/getMunicipalityId';
-import { RequestWithUser } from './interfaces/auth.interface';
+import { getRequestHost, resolveRequestHost } from './utils/getHostData';
+import { baseSamlConfig, getSamlOptionsForRequest } from './utils/getSamlOptions';
+import { getMunicipalityInfo } from './utils/getMunicipalityId';
+import { buildCorsOptions } from './utils/buildCorsOptions';
 import { isValidOrigin } from './utils/isValidOrigin';
+import { normalizeGroup } from './utils/normalizeGroup';
+import { dataDir, dataPath } from './utils/util';
 
 const apiService = new ApiService();
 
@@ -72,21 +68,24 @@ passport.deserializeUser(function (user, done) {
   done(null, user);
 });
 
-const samlStrategy = new Strategy(
+const getProfileGroups = (profile: Profile): string[] => {
+  const rawGroups = profile['http://schemas.xmlsoap.org/claims/Group'] ?? profile?.groups;
+
+  if (!rawGroups) return [];
+
+  const normalizedGroups = Array.isArray(rawGroups) ? rawGroups : rawGroups.split(',');
+
+  return normalizedGroups.map(normalizeGroup).filter(Boolean);
+};
+
+const samlStrategy = new MultiSamlStrategy(
   {
-    passReqToCallback: true,
-    disableRequestedAuthnContext: true,
-    identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
-    callbackUrl: SAML_CALLBACK_URL,
-    entryPoint: SAML_ENTRY_SSO,
-    privateKey: SAML_PRIVATE_KEY,
-    idpCert: SAML_IDP_PUBLIC_CERT,
-    issuer: SAML_ISSUER,
-    wantAssertionsSigned: false,
-    wantAuthnResponseSigned: false,
-    audience: false,
-    logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL,
-    acceptedClockSkewMs: -1,
+    ...baseSamlConfig,
+    getSamlOptions: (req, done) => {
+      getSamlOptionsForRequest(req)
+        .then(samlOptions => done(null, samlOptions))
+        .catch(error => done(error));
+    },
   },
   async function (req: Request, profile: Profile, done: VerifiedCallback) {
     if (!profile) {
@@ -104,7 +103,6 @@ const samlStrategy = new Strategy(
       profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ?? profile['givenName'];
     const sn = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] ?? profile['sn'];
     const email = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ?? profile['email'];
-    const groups = profile['http://schemas.xmlsoap.org/claims/Group']?.join(',') ?? profile['groups'];
     const username = profile['urn:oid:0.9.2342.19200300.100.1.1'];
 
     if (!givenName || !sn || !email || !username) {
@@ -114,9 +112,7 @@ const samlStrategy = new Strategy(
       });
     }
 
-    const groupList: string[] = groups !== undefined ? (groups.split(',').map(x => x.toLowerCase()) as string[]) : [];
-
-    const appGroups: string[] = groupList.length > 0 ? groupList : [];
+    const appGroups = getProfileGroups(profile);
 
     try {
       let employee = username;
@@ -138,10 +134,10 @@ const samlStrategy = new Strategy(
         },
       };
 
-      const municipalityId = await getMunicipalityId(req);
+      const { municipalityId, domain } = await getMunicipalityInfo(req);
 
       const employeeDetails = await apiService.get<any>(
-        { url: `${getApiBase('employee')}/${municipalityId}/portalpersondata/PERSONAL/${employee}` },
+        { url: `${getApiBase('employee')}/${municipalityId}/portalpersondata/${domain}/${employee}` },
         dummyUser,
       );
       const { personid, orgTree } = employeeDetails.data;
@@ -173,13 +169,13 @@ const samlStrategy = new Strategy(
         logger.error('Error when getting user:');
         logger.error(err);
       }
-      done({ ...err, name: 'AUTH_FAILED' }, {});
+      done({ ...err, name: 'AUTH_FAILED' });
     }
     // eslint-disable-next-line Strategy does not like its own typing
   } as any,
-  async function (_profile: Profile, done: VerifiedCallback) {
+  async function (_req: Request, _profile: Profile, done: VerifiedCallback) {
     return done(null, {});
-  },
+  } as any,
 );
 
 class App {
@@ -228,6 +224,9 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.use((req, res, next) => {
+      cors(buildCorsOptions(req.path))(req, res, next);
+    });
 
     this.app.use(`${BASE_URL_PREFIX}${dataPath()}`, express.static(dataDir('uploads')));
 
@@ -239,10 +238,6 @@ class App {
         resave: false,
         saveUninitialized: false,
         store: this.sessionStore,
-        cookie: {
-          secure: NODE_ENV === 'production',
-          sameSite: 'lax',
-        },
       }),
     );
 
@@ -250,19 +245,42 @@ class App {
     this.app.use(passport.session());
     passport.use('saml', samlStrategy);
 
-    this.app.use(
-      cors({
-        credentials: CREDENTIALS,
-        origin: async function (origin, callback) {
-          const allowed = await isAllowedOrigin(origin);
-          if (allowed || NODE_ENV == 'development') {
-            callback(null, true);
-          } else {
-            callback(new Error('Not allowed by CORS'));
+    this.app.use((req, res, next) => {
+      if (req.path.startsWith(`${BASE_URL_PREFIX}/saml`)) {
+        return next();
+      }
+
+      if (!req.isAuthenticated?.() || !req.user) {
+        return next();
+      }
+
+      const requestHost = getRequestHost(req);
+      const sessionHost = req.session.host?.toLowerCase();
+
+      if (!requestHost || !sessionHost || requestHost === sessionHost) {
+        return next();
+      }
+
+      logger.warn(
+        `Rejecting authenticated request because host does not match session host: requestHost=${requestHost}, sessionHost=${sessionHost}, path=${req.path}`,
+      );
+
+      req.logout(logoutError => {
+        if (logoutError) {
+          logger.error('Could not clear mismatched host session', logoutError);
+          return next(new HttpException(401, 'AUTH_FAILED'));
+        }
+
+        req.session.destroy(destroyError => {
+          if (destroyError) {
+            logger.error('Could not destroy mismatched host session', destroyError);
           }
-        },
-      }),
-    );
+
+          res.clearCookie('connect.sid');
+          return next(new HttpException(401, 'SESSION_HOST_MISMATCH'));
+        });
+      });
+    });
 
     this.app.get(
       `${BASE_URL_PREFIX}/saml/login`,
@@ -277,10 +295,15 @@ class App {
       },
     );
 
-    this.app.get(`${BASE_URL_PREFIX}/saml/metadata`, (_req, res) => {
+    this.app.get(`${BASE_URL_PREFIX}/saml/metadata`, (req, res, next) => {
       res.type('application/xml');
-      const metadata = samlStrategy.generateServiceProviderMetadata(SAML_PUBLIC_KEY, SAML_PUBLIC_KEY);
-      res.status(200).send(metadata);
+      samlStrategy.generateServiceProviderMetadata(req, SAML_PUBLIC_KEY, SAML_PUBLIC_KEY, (err, metadata) => {
+        if (err) {
+          return next(err);
+        }
+
+        res.status(200).send(metadata);
+      });
     });
 
     this.app.get(
@@ -298,10 +321,10 @@ class App {
             const { successRedirect } = JSON.parse(getRelayState(req));
             const allowed = await isValidOrigin(successRedirect);
             if (allowed) {
-              res.redirect(successRedirect);
+              return res.redirect(successRedirect);
             }
 
-            res.redirect(SAML_LOGOUT_REDIRECT);
+            return res.redirect(SAML_LOGOUT_REDIRECT);
           });
         });
       },
@@ -327,10 +350,10 @@ class App {
           }
 
           if (failureRedirect) {
-            res.redirect(failureRedirect.toString());
-          } else {
-            res.redirect(successRedirect.toString());
+            return res.redirect(failureRedirect.toString());
           }
+
+          return res.redirect(successRedirect.toString());
         });
       },
     );
@@ -350,23 +373,45 @@ class App {
         };
 
         const handleLogin = (err, user) => {
-          if (err) return redirectWithFailure(err.name);
+          if (err) {
+            logger.error('SAML callback authentication error', err);
+            return redirectWithFailure(err?.message || err?.name || 'SAML_UNKNOWN_ERROR');
+          }
 
           if (!user) return redirectWithFailure('NO_USER');
 
           req.login(user, async loginErr => {
-            const municipalityId = await getMunicipalityId(req);
-            req.session.municipalityId = municipalityId;
+            if (loginErr) {
+              logger.error('Error during req.login', loginErr);
+              return redirectWithFailure('SAML_UNKNOWN_ERROR');
+            }
 
-            if (loginErr) return redirectWithFailure('SAML_UNKNOWN_ERROR');
+            try {
+              const { municipalityId, domain } = await getMunicipalityInfo(req);
+              const sessionHost = await resolveRequestHost(req);
 
-            req.session.user = user;
-            req.session.save(err => {
-              if (err) {
-                console.log('Could not save session: ', err);
+              if (!sessionHost) {
+                logger.error('Could not resolve host for login session');
+                return redirectWithFailure('INVALID_HOST');
               }
-              res.redirect(successRedirect.toString());
-            });
+
+              req.session.municipalityId = municipalityId;
+              req.session.domain = domain;
+              req.session.host = sessionHost.toLowerCase();
+              req.session.user = user;
+
+              req.session.save(err => {
+                if (err) {
+                  logger.error('Could not save session', err);
+                  return redirectWithFailure('SAML_UNKNOWN_ERROR');
+                }
+
+                return res.redirect(successRedirect.toString());
+              });
+            } catch (sessionError) {
+              logger.error('Error finalizing login session', sessionError);
+              return redirectWithFailure('SAML_UNKNOWN_ERROR');
+            }
           });
         };
 
