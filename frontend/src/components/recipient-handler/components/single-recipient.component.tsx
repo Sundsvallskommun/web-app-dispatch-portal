@@ -1,6 +1,6 @@
 import { getRecipient, useMessageStore } from '@services/recipient-service';
-import { FormControl, FormLabel, SearchField, useConfirm, useSnackbar } from '@sk-web-gui/react';
-import { KeyboardEvent, useEffect, useState } from 'react';
+import { FormControl, FormLabel, SearchField, Spinner, useConfirm } from '@sk-web-gui/react';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
@@ -19,7 +19,6 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   const [foundPerson, setFoundPerson] = useState<Recipient | undefined>(undefined);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const { recipients, setRecipients } = useMessageStore();
-  const snackbar = useSnackbar();
   const confirm = useConfirm();
   const [value, setValue] = useState<string>('');
   const { t } = useTranslation();
@@ -44,7 +43,6 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
     setError(undefined);
     getRecipient(value.replace('-', '').replace(' ', ''), sendType === formSendType.REK_MAIL)
       .then((res) => {
-        // check for duplicates
         const alreadyExists = recipients.find((rec) => rec?.partyId === res?.partyId);
         if (alreadyExists) {
           setError(t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'));
@@ -54,8 +52,8 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
         setError(undefined);
       })
       .catch(() => {
-        snackbar({ message: t('send-mail:recipientHandler.fetchRecipientError.singleRecipient'), status: 'error' });
         setIsLoadingRecipients(false);
+        setFoundPerson(undefined);
         setError(t('send-mail:recipientHandler.fetchRecipientError.singleRecipient'));
       })
       .finally(() => setIsLoadingRecipients(false));
@@ -112,16 +110,13 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   };
 
   return (
-    <FormControl className="relative w-full medium-device:w-[365px]" invalid={!!error}>
+    <FormControl className="w-full medium-device:w-[365px]" invalid={!!error}>
       <div className="flex flex-col w-full gap-8 pb-24">
         <FormLabel>{t('send-mail:recipientHandler.searchPersonalNumber')}</FormLabel>
         <SearchField
           data-cy="person-search-field"
           onChange={(e) => setValue(e.target.value)}
           value={value}
-          className="w-full"
-          showResetButton={value.length > 0}
-          type="text"
           size="md"
           maxLength={13}
           minLength={12}
@@ -136,11 +131,19 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
         />
         {renderFormMessage()}
 
+        {isLoadingRecipients ? (
+          <div className="my-md flex flex-col items-center">
+            <Spinner size={2.4} />
+            <p>{t('send-mail:recipientHandler.fetchingRecipient')}</p>
+          </div>
+        ) : null}
+
         <PreviewPerson
           loading={isLoadingRecipients}
           person={foundPerson}
           handleSubmit={handleSubmitSingleRecipient}
           sendType={sendType}
+          searchValue={value}
         />
       </div>
     </FormControl>
