@@ -1,21 +1,11 @@
 import { recipientCsvSms } from 'cypress/fixtures/recipientcsv';
 
-const getMockPhoneNumber = (): string => {
-  const value = Cypress.env('mockPhoneNumber') as string | undefined;
-
-  if (!value) {
-    throw new Error('Missing Cypress env value: mockPhoneNumber');
-  }
-
-  return value;
-};
-
 const formatPhoneNumberForUi = (phoneNumber: string): string => {
   return `+46 ${phoneNumber.slice(1, 3)}-${phoneNumber.slice(3, 6)} ${phoneNumber.slice(6, 8)} ${phoneNumber.slice(8, 10)}`;
 };
 
 describe('Send SMS flow', () => {
-  const mockPhoneNumber = getMockPhoneNumber();
+  const mockPhoneNumber = Cypress.env('mockPhoneNumber');
   const mockPhoneNumberDisplay = formatPhoneNumberForUi(mockPhoneNumber);
 
   beforeEach(() => {
