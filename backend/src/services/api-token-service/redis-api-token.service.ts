@@ -13,27 +13,34 @@ export class RedisApiTokenService implements IApiTokenService {
   }
 
   async getToken(): Promise<string> {
-    const cached = (await this.redis.get(TOKEN_KEY)) as string | null;
-    if (cached) return cached;
+    try {
+      const cached = (await this.redis.get(TOKEN_KEY)) as string | null;
+      if (cached) return cached;
 
-    const lock = await this.redis.set(LOCK_KEY, '1', { NX: true, EX: 10 });
+      const lock = await this.redis.set(LOCK_KEY, '1', { NX: true, EX: 10 });
 
-    if (lock === 'OK') {
-      try {
-        const token = await this.fetchTokenFromApi();
-        await this.redis.set(TOKEN_KEY, token.access_token, {
-          EX: token.expires_in - 10,
-        });
-        return token.access_token;
-      } finally {
-        await this.redis.del(LOCK_KEY);
+      if (lock === 'OK') {
+        try {
+          const token = await this.fetchTokenFromApi();
+          await this.redis.set(TOKEN_KEY, token.access_token, {
+            EX: token.expires_in - 10,
+          });
+          return token.access_token;
+        } finally {
+          await this.redis.del(LOCK_KEY).catch(err => logger.warn(`Failed to release token lock: ${(err as Error).message}`));
+        }
       }
+
+      const waited = await this.waitForToken();
+      if (waited) return waited;
+
+      throw new HttpException(500, 'Token fetch failed');
+    } catch (err) {
+      if (err instanceof HttpException) throw err;
+      logger.warn(`[REDIS] token path failed, falling back to direct fetch: ${(err as Error).message}`);
+      const token = await this.fetchTokenFromApi();
+      return token.access_token;
     }
-
-    const waited = await this.waitForToken();
-    if (waited) return waited;
-
-    throw new HttpException(500, 'Token fetch failed');
   }
 
   private async waitForToken(timeoutMs = 10000): Promise<string | null> {
