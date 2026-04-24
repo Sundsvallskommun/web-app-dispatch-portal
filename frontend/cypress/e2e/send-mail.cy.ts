@@ -179,10 +179,8 @@ pages.forEach((p) => {
     describe('Attachment handler', () => {
       beforeEach(() => {
         const eligiblePn = personalNumber.isEligible.replace('-', '');
-        const notEligiblePn = personalNumber.isNotEligible.replace('-', '');
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        const isRecommended = p.route === '/send/rek-mail';
-        navigateToAttachmentHandler(isRecommended ? eligiblePn : notEligiblePn);
+        navigateToAttachmentHandler(eligiblePn);
       });
 
       it('should add two documents', () => {
