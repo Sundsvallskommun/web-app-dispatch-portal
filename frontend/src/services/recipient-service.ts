@@ -104,7 +104,7 @@ export const useRecipientName = (recipient?: StatisticsRecipient) => {
   return name;
 };
 
-export const checkCsv: (csvFile: File) => Promise<Csv> = async (csvFile) => {
+const checkCsvByPath = async (csvFile: File, path: string): Promise<Csv> => {
   const messageFormData = new FormData();
 
   const csvBlob = await file2blob(csvFile);
@@ -112,7 +112,7 @@ export const checkCsv: (csvFile: File) => Promise<Csv> = async (csvFile) => {
   messageFormData.append('csv', csvBlob.blob, csvBlob.attachment.name);
 
   const res = await apiService
-    .post<CsvApiResponse, FormData>(`recipient/csv`, messageFormData, {
+    .post<CsvApiResponse, FormData>(path, messageFormData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .catch((e) => {
@@ -121,4 +121,12 @@ export const checkCsv: (csvFile: File) => Promise<Csv> = async (csvFile) => {
     });
 
   return res.data.data;
+};
+
+export const checkCsv: (csvFile: File) => Promise<Csv> = async (csvFile) => {
+  return checkCsvByPath(csvFile, 'recipient/csv');
+};
+
+export const checkCsvSms: (csvFile: File) => Promise<Csv> = async (csvFile) => {
+  return checkCsvByPath(csvFile, 'recipient/csv/sms');
 };

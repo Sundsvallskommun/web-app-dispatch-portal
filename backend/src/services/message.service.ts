@@ -33,6 +33,10 @@ export interface CsvLetterRequest {
   contentType: 'text/plain';
 }
 
+export interface CsvSmsRequest {
+  message: string;
+}
+
 export interface EmailMessageAttachment {
   content: string;
   name?: string;
@@ -70,10 +74,14 @@ interface Message {
   body: string;
   files: Express.Multer.File[];
 }
-interface CsvMessage {
+interface CsvLetterMessage {
   subject: string;
   body: string;
   files: Express.Multer.File[];
+  csvFile: Express.Multer.File;
+}
+interface CsvSmsMessage {
+  message: string;
   csvFile: Express.Multer.File;
 }
 interface RecMessage {
@@ -112,6 +120,52 @@ export const sendSmsMessage: (
       logError('Error when sending sms:', e);
       throw new Error('Error when sending sms');
     });
+};
+
+async function postFormDataRequest(
+  req: RequestWithUser,
+  api: ApiService,
+  url: string,
+  form: FormData,
+  errorMessage: string,
+): Promise<void> {
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
+  };
+
+  try {
+    await api.post<string, FormData>({ url, data: form, headers }, req.user);
+  } catch (e) {
+    logError(errorMessage, e);
+    throw e;
+  }
+}
+
+export const sendSmsMessageCsv: (
+  req: RequestWithUser,
+  api: ApiService,
+  message: CsvSmsMessage,
+) => Promise<MessageResponseData> = async (req, api, message) => {
+  const municipalityId = await getMunicipalityId(req);
+  const { message: smsMessage, csvFile } = message;
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/sms/csv`;
+
+  const requestContentType = 'application/json';
+
+  const request: CsvSmsRequest = {
+    message: smsMessage,
+  };
+
+  const form = new FormData();
+  form.append('request', JSON.stringify(request), {
+    contentType: requestContentType,
+  });
+
+  appendCsvFile(csvFile, 'csv-file', form);
+
+  await postFormDataRequest(req, api, url, form, 'Error when sending message');
+  return { csv: true };
 };
 
 function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
@@ -223,7 +277,7 @@ export const sendRecLetter: (
 export const sendLetterCsv: (
   req: RequestWithUser,
   api: ApiService,
-  message: CsvMessage,
+  message: CsvLetterMessage,
 ) => Promise<MessageResponseData> = async (req, api, message) => {
   const municipalityId = await getMunicipalityId(req);
   const { subject, files, body, csvFile } = message;
@@ -249,22 +303,8 @@ export const sendLetterCsv: (
   // Append csv file
   appendCsvFile(csvFile, 'csv-file', form);
 
-  const headers = {
-    ...form.getHeaders(),
-    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
-  };
-
-  return api
-    .post<string, FormData>({ url, data: form, headers }, req.user)
-    .then(async () => {
-      return { csv: true };
-    })
-    .catch(e => {
-      const errorMessage = 'Error when sending message';
-      console.error(`${errorMessage}:`, e);
-      logger.error(`${errorMessage}:`, e);
-      throw e;
-    });
+  await postFormDataRequest(req, api, url, form, 'Error when sending message');
+  return { csv: true };
 };
 
 export const logError = (errorMessage: string, e: any) => {

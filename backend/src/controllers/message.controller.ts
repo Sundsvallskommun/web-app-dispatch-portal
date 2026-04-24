@@ -1,12 +1,12 @@
 import { Address, Recipient } from '@/data-contracts/postportalservice/data-contracts';
-import { RequestBodyCsvMail, RequestBodyMail, RequestBodyRecMail, RequestBodySMS } from '@/dtos/message.dto';
+import { RequestBodyCsvMail, RequestBodyCsvSMS, RequestBodyMail, RequestBodyRecMail, RequestBodySMS } from '@/dtos/message.dto';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { MessageResponse } from '@/interfaces/message.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import { MessageApiResponse } from '@/responses/message.response';
 import ApiService from '@/services/api.service';
-import { logError, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage } from '@/services/message.service';
+import { logError, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage, sendSmsMessageCsv } from '@/services/message.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
 import authMiddleware from '@middlewares/auth.middleware';
@@ -29,6 +29,33 @@ export class MessageController {
     });
 
     return response.send({ data: res, message: 'success' }).status(200);
+  }
+
+  @Post('/csv-sms/')
+  @OpenAPI({ summary: 'Send sms to recipients from csv file' })
+  @UseBefore(authMiddleware, hasPermissions(['canSendSMS']))
+  async sendCsvSMS(
+    @Req() req: RequestWithUser,
+    @Body() body: RequestBodyCsvSMS,
+    @Res() response: Response<MessageResponse>,
+  ): Promise<Response<MessageResponse>> {
+    try {
+      const csvFile = req.session.csv.id === body.csvId ? req.session.csv.file : null;
+
+      if (!csvFile) {
+        throw new HttpException(400, 'Csv file missing');
+      }
+
+      const res = await sendSmsMessageCsv(req, this.apiService, {
+        message: body.message,
+        csvFile,
+      });
+
+      return response.send({ data: res, message: 'success' });
+    } catch (error) {
+      logger.error('Error sending csv sms message', error);
+      throw new HttpException(500, 'Internal server error');
+    }
   }
 
   @Post('/message/')

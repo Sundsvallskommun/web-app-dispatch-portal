@@ -32,6 +32,13 @@ export class RequestBodyCsvMail {
   body?: string;
 }
 
+export class RequestBodyCsvSMS {
+  @IsString()
+  csvId: string;
+  @IsString()
+  message: string;
+}
+
 export class RequestBodySMS {
   @IsArray()
   @IsString({ each: true })

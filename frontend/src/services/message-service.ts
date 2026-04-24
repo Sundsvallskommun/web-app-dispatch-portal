@@ -25,6 +25,15 @@ export const sendSms: (data: SMSRequest) => Promise<SMSStatus> = async (data) =>
   return res.data.data;
 };
 
+export const sendCsvSms = async (message: string, csvId: string): Promise<Message> => {
+  const res = await apiService.post<MessageApiResponse, { message: string; csvId: string }>('csv-sms', {
+    message,
+    csvId,
+  });
+
+  return res.data.data;
+};
+
 const getAttachmentsBlob = async (attachmentList: Attachment[]) => {
   const attachmentPromises: Promise<{ attachment: FileInfo; blob: Blob }>[] =
     attachmentList?.map(async (attachmentFile) => {

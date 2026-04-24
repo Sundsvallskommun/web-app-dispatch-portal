@@ -40,7 +40,7 @@ export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
           header: t('help-menu:categoryHeaders.recommended'),
           items: qaItems.filter((q) => [19, 20, 21].includes(Number(q.id))),
         },
-        { header: t('help-menu:categoryHeaders.sms'), items: qaItems.filter((q) => [22, 23].includes(Number(q.id))) },
+        { header: t('help-menu:categoryHeaders.sms'), items: qaItems.filter((q) => [22, 23, 24].includes(Number(q.id))) },
       ],
     [t, i18n.language]
   );

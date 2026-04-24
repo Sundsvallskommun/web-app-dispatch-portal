@@ -68,7 +68,11 @@ export const useHelpQA = (): QAItem[] => {
         }),
         ...itemsFactory([11], [EnumQATags.MAIL], {
           p: <p className="mt-4 leading-normal text-justify [hyphens:auto]" />,
-          a: <Link href="/files/example.csv" />,
+          a: <Link href="/files/example-personnummer.csv" />,
+        }),
+        ...itemsFactory([24], [EnumQATags.SMS], {
+          p: <p className="mt-4 leading-normal text-justify [hyphens:auto]" />,
+          a: <Link href="/files/example-mobilnummer.csv" />,
         }),
         ...itemsFactory([19, 20, 21], [EnumQATags.REK_MAIL]),
         ...itemsFactory([22, 23], [EnumQATags.SMS]),

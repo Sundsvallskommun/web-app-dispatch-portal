@@ -105,7 +105,11 @@
     },
     "23": {
       "question": "Hur lägger jag till flera mottagare i sms-tjänsten?",
-      "answer": "När du skrivit ditt meddelande kan du lägga till ett eller flera telefonnummer innan du klickar på skicka."
+      "answer": "När du skrivit ditt meddelande kan du lägga till ett eller flera mobilnummer innan du klickar på skicka."
+    },
+    "24": {
+      "question": "Hur skapar jag en mottagarlista?",
+      "answer": "<p>Öppna ett nytt exceldokument eller textdokument och skriv in mobilnumren i den första kolumnen eller raden. Fyll i med tio siffror, med eller utan bindestreck. Välj sedan att exportera eller spara filen till formatet .csv. När du sparat filen kan du dra den till det markerade området, eller välja att bläddra fram den.</p><p>Kontrollera gärna din mottagarlista i t ex Notepad/Anteckningar efter du skapat den, för att se att den ser ut som den ska, eftersom Excel ibland formaterar om exempelvis mobilnummer.</p><p>Använd gärna <a>exempelfilen</a> när du skapar din mottagarlista.</p>"
     }
   },
   "closeHelp": "Stäng hjälp"

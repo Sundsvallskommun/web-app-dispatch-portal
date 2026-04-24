@@ -1,27 +1,27 @@
-import { checkCsv, MAX_RECIPIENT_FILE_SIZE_MB } from '@services/recipient-service';
+import { checkCsvSms, MAX_RECIPIENT_FILE_SIZE_MB } from '@services/recipient-service';
 import { FileUpload, FormControl } from '@sk-web-gui/react';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 import { useCsvRecipientFileHandler } from '../hooks/use-csv-file-handler';
 
-export const CsvRecipients: React.FC = () => {
+export const CsvSmsRecipients: React.FC = () => {
   const { handleFiles, handleError, recipientListError } = useCsvRecipientFileHandler({
-    checkCsv,
+    checkCsv: checkCsvSms,
     warningKeys: {
-      title: 'send-mail:recipientHandler.csvWarning.title',
-      rejections: 'send-mail:recipientHandler.csvWarning.rejections',
-      description: 'send-mail:recipientHandler.csvWarning.description',
-      confirm: 'send-mail:recipientHandler.csvWarning.confirm',
-      cancel: 'send-mail:recipientHandler.csvWarning.cancel',
+      title: 'send-sms:csvWarning.title',
+      rejections: 'send-sms:csvWarning.rejections',
+      description: 'send-sms:csvWarning.description',
+      confirm: 'send-sms:csvWarning.confirm',
+      cancel: 'send-sms:csvWarning.cancel',
     },
     errorKeys: {
-      csvPrefix: 'send-mail:recipientHandler.errorHandler.csv',
-      csvFetch: 'send-mail:recipientHandler.fetchRecipientError.csvFile',
-      badFile: 'send-mail:recipientHandler.errorHandler.badFile',
+      csvPrefix: 'send-sms:errors.csv',
+      csvFetch: 'send-sms:errors.csvFetch',
+      badFile: 'send-sms:errors.badFile',
     },
   });
 
   return (
-    <div className="flex flex-col gap-32 w-full pt-32">
+    <div className="flex flex-col gap-32 w-full">
       <FormControl id="attachment" className="w-full">
         <FileUpload.Field
           className="w-full"
