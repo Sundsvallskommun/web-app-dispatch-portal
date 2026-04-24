@@ -6,6 +6,7 @@ export default defineConfig({
     baseUrl: `http://localhost:${process.env.PORT ?? '3000'}${process.env.NEXT_PUBLIC_BASEPATH || ''}`,
     env: {
       apiUrl: process.env.NEXT_PUBLIC_API_URL,
+      mockPhoneNumber: '0701740635',
     },
     experimentalRunAllSpecs: true,
     video: false,
