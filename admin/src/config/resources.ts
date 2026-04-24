@@ -42,6 +42,7 @@ const hosts: Resource<Host, CreateHostDto, UpdateHostDto> = {
   defaultValues: {
     name: '',
     municipalityId: 0,
+    domain: '',
     idpId: 0,
   },
   hiddenFields: ['idp'],

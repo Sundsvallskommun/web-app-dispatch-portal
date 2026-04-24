@@ -155,7 +155,7 @@ pages.forEach((p) => {
       // ALLA
       it('should remove the added person', () => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        addRecipient(personalNumber.isNotEligible, true);
+        addRecipient(personalNumber.isEligible, true);
         cy.get('[data-cy="recipient-table"]').should('exist');
         cy.get('[data-cy="recipient-table"]').find('[data-cy="delete-person-button"]').first().click();
         cy.get('[data-cy="recipient-table"]').should('not.exist');
@@ -169,7 +169,7 @@ pages.forEach((p) => {
 
       it('should navigate to next step if a recipient is added and "next" is clicked', () => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        navigateToAttachmentHandler(personalNumber.isNotEligible);
+        navigateToAttachmentHandler(personalNumber.isEligible);
         cy.get('.sk-progress-stepper-step[data-progress="current"]').should('exist').and('contain.text', 'Filer');
       });
     });
@@ -177,10 +177,8 @@ pages.forEach((p) => {
     describe('Attachment handler', () => {
       beforeEach(() => {
         const eligiblePn = personalNumber.isEligible.replace('-', '');
-        const notEligiblePn = personalNumber.isNotEligible.replace('-', '');
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        const isRecommended = p.route === '/send/rek-mail';
-        navigateToAttachmentHandler(isRecommended ? eligiblePn : notEligiblePn);
+        navigateToAttachmentHandler(eligiblePn);
       });
 
       it('should add two documents', () => {

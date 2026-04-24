@@ -58,6 +58,7 @@ export const useMyStatistics = (): {
     const items = letters.map<LetterListItem>((letter) => ({
       id: letter.messageId,
       messageType: letter.type,
+      letterState: letter.signingStatus?.letterState ?? undefined,
       sent: letter.sentAt,
       subject: letter.subject,
     }));

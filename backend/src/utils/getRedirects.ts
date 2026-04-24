@@ -7,12 +7,19 @@ import { RelayState } from '@/interfaces/relaystate.interface';
 export const getRedirects = async (
   req: Request,
   fallBackUrl: string = SAML_SUCCESS_REDIRECT ?? '/',
-): Promise<{ successRedirect: URL; failureRedirect: URL; host: string }> => {
-  let successRedirect: URL, failureRedirect: URL, host: string;
+): Promise<{ successRedirect: URL; failureRedirect: URL; host?: string }> => {
+  let successRedirect: URL, failureRedirect: URL, host: string | undefined;
 
-  const relayState: RelayState = typeof req.body?.RelayState === 'string' ? JSON.parse(req.body.RelayState) : undefined;
+  const relayStateValue =
+    typeof req.body?.RelayState === 'string'
+      ? req.body.RelayState
+      : typeof req.query?.RelayState === 'string'
+        ? req.query.RelayState
+        : undefined;
 
-  if (isValidUrl(relayState?.successRedirect) && (await isValidOrigin(relayState?.successRedirect))) {
+  const relayState: RelayState | undefined = relayStateValue ? JSON.parse(relayStateValue) : undefined;
+
+  if (isValidUrl(relayState?.successRedirect) && (await isValidOrigin(relayState.successRedirect))) {
     successRedirect = new URL(relayState.successRedirect);
   } else {
     successRedirect = new URL(fallBackUrl);
@@ -23,6 +30,7 @@ export const getRedirects = async (
   } else {
     failureRedirect = successRedirect;
   }
+
   if (relayState?.host) {
     host = relayState.host;
   }
