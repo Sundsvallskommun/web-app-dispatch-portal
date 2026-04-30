@@ -37,6 +37,7 @@ pages.forEach((p) => {
 
         it('should add a correct personal number without Kivra in the search input, show dialog and add a person on enter', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
+          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           addRecipient(notEligiblePn, true);
           cy.get('[data-cy="recipient-table"]>tbody>tr')
             .eq(0)
@@ -48,6 +49,7 @@ pages.forEach((p) => {
         });
 
         it('should add a minor personal number, show dialog with error message', () => {
+          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE', true)).as(
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE', true)).as(
             'recipient'
           );
@@ -101,6 +103,7 @@ pages.forEach((p) => {
 
         it('should warn and reset if changing to csv from added person', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
+          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           addRecipient(notEligiblePn, true);
           cy.get('input[type="radio"][value="1"]').check();
           cy.get('.sk-modal-wrapper')
@@ -141,11 +144,13 @@ pages.forEach((p) => {
         // REKOMMENDERAT BREV
         it('should show validation error if test person does not have Kivra', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
+          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
           addRecipient(notEligiblePn, false);
           cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan inte ta emot via Kivra');
         });
 
         it('should show success message if test person has Kivra', () => {
+          cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
           cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
           addRecipient(eligiblePn, false);
           cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan ta emot via Kivra');
@@ -162,6 +167,7 @@ pages.forEach((p) => {
       });
 
       it('should add an incorrect (too young) personal number in the search input and show dialog', () => {
+        cy.intercept('POST', '**/api/recipient?*', recipient(invalidPn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
         cy.intercept('POST', '**/api/recipient?*', recipient(invalidPn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
         addRecipient(invalidPn, true);
         cy.get('[data-cy="recipient-table"]').should('not.exist');
@@ -220,6 +226,7 @@ pages.forEach((p) => {
       beforeEach(() => {
         const eligiblePn = personalNumber.isEligible.replace('-', '');
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
+        cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(eligiblePn, true);
         cy.get('[data-cy="next-button"]').click();
         cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
@@ -240,6 +247,7 @@ pages.forEach((p) => {
       cy.visit('/send/mail');
       const eligiblePn = personalNumber.isEligible.replace('-', '');
       if (variant === 'person') {
+        cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(eligiblePn, true);
       } else if (variant === 'address') {
