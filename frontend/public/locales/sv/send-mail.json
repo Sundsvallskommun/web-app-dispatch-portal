@@ -52,7 +52,8 @@
       "wrongFileType": "Fel filtyp - {fileName}",
       "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
       "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
-      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB."
+      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB.",
+      "duplicateFileName": "En fil med samma namn är redan uppladdad. Ändra filnamnet innan du laddar upp igen."
     }
   },
   "recipientHandler": {
@@ -67,12 +68,9 @@
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
     "csvAddedFile": "Tillagd fil",
     "csvWarning": {
-      "title": "Filen innehåller problem.",
-      "duplicates_one": "Filen innehåller {count} personnummer med dubbletter.",
-      "duplicates_other": "Filen innehåller {count} personnummer med dubbletter.",
-      "rejections_one": "Filen innehåller {count} felaktigt personnummer.",
-      "rejections_other": "Filen innehåller {count} felaktiga personnummer.",
-      "description": "Du kan välja att fortsätta ändå. Utskicket kommer endast skickas en gång per mottagare.",
+      "title_one": "Filen {csvFile} innehåller {count} ogiltigt personnummer.",
+      "title_other": "Filen {csvFile} innehåller {count} ogiltiga personnummer.",
+      "description": "Vill du fortsätta utan dessa mottagare?",
       "confirm": "Fortsätt ändå",
       "cancel": "Avbryt"
     },

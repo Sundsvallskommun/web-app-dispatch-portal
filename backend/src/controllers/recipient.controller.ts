@@ -1,4 +1,4 @@
-import { getApiBase, MUNICIPALITY_ID } from '@/config';
+import { getApiBase } from '@/config';
 import { CitizenExtended } from '@/data-contracts/citizen/data-contracts';
 import {
   KivraEligibilityRequest,
@@ -22,6 +22,7 @@ import { randomUUID } from 'node:crypto';
 import { Body, Controller, Get, Param, Post, QueryParam, Req, Res, UploadedFile, UseBefore } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 import FormData from 'form-data';
+import { getMunicipalityId } from '@/utils/getMunicipalityId';
 
 @Controller()
 export class RecipientController {
@@ -40,16 +41,17 @@ export class RecipientController {
     @Res() response: Response<RecipientApiResponse>,
   ): Promise<Response<RecipientApiResponse>> {
     try {
-      const partyIdUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${body.personNumber}/guid`;
+      const municipalityId = await getMunicipalityId(req);
+      const partyIdUrl = `${this.citizenApi}/${municipalityId}/${body.personNumber}/guid`;
       const { data: partyId } = await this.apiService.get<string>({ url: partyIdUrl }, req.user);
-      const citizenUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${partyId}`;
+      const citizenUrl = `${this.citizenApi}/${municipalityId}/${partyId}`;
       const { data: citizen } = await this.apiService.get<CitizenExtended>({ url: citizenUrl }, req.user);
 
       if (!citizen) {
         throw new HttpException(404, 'Citizen not found');
       }
 
-      const precheckUrl = `${this.postportalApi}/${MUNICIPALITY_ID}/precheck`;
+      const precheckUrl = `${this.postportalApi}/${municipalityId}/precheck`;
       const {
         data: { recipients },
       } = await this.apiService.post<PrecheckResponse, PrecheckRequest>(
@@ -108,7 +110,8 @@ export class RecipientController {
     @Res() response: Response<RecipientNameApiResponse>,
   ): Promise<Response<RecipientNameApiResponse>> {
     try {
-      const citizenUrl = `${this.citizenApi}/${MUNICIPALITY_ID}/${personId}`;
+      const municipalityId = await getMunicipalityId(req);
+      const citizenUrl = `${this.citizenApi}/${municipalityId}/${personId}`;
       const { data: citizen } = await this.apiService.get<CitizenExtended>({ url: citizenUrl }, req.user);
 
       return response.send({
@@ -121,17 +124,15 @@ export class RecipientController {
     }
   }
 
-  @Post('/recipient/csv')
-  @OpenAPI({ summary: 'Check status of csv-file and save to session' })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(CsvApiResponse)
-  async getCsvStatus(
-    @Req() req: RequestWithUser,
-    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
-    @Res() response: Response<CsvApiResponse>,
+  private async handleCsvUpload(
+    req: RequestWithUser,
+    csvFile: Express.Multer.File,
+    response: Response<CsvApiResponse>,
+    urlPath?: string,
   ): Promise<Response<CsvApiResponse>> {
     try {
-      const url = `${this.postportalApi}/${MUNICIPALITY_ID}/precheck/csv`;
+      const municipalityId = await getMunicipalityId(req);
+      const url = `${this.postportalApi}/${municipalityId}/precheck/csv${urlPath ?? ''}`;
       const data = new FormData();
       appendCsvFile(csvFile, 'csv-file', data);
 
@@ -172,5 +173,29 @@ export class RecipientController {
       };
       return response.send({ message: 'success', data });
     }
+  }
+
+  @Post('/recipient/csv')
+  @OpenAPI({ summary: 'Check status of csv-file (personal numbers) and save to session' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(CsvApiResponse)
+  async getCsvStatus(
+    @Req() req: RequestWithUser,
+    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
+    @Res() response: Response<CsvApiResponse>,
+  ): Promise<Response<CsvApiResponse>> {
+    return this.handleCsvUpload(req, csvFile, response);
+  }
+
+  @Post('/recipient/csv/sms')
+  @OpenAPI({ summary: 'Check status of sms csv-file (mobile numbers) and save to session' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(CsvApiResponse)
+  async getCsvSmsStatus(
+    @Req() req: RequestWithUser,
+    @UploadedFile('csv', { options: fileUploadOptions, required: true }) csvFile: Express.Multer.File,
+    @Res() response: Response<CsvApiResponse>,
+  ): Promise<Response<CsvApiResponse>> {
+    return this.handleCsvUpload(req, csvFile, response, '/sms');
   }
 }

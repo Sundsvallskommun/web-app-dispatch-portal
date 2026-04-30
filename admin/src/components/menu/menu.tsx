@@ -1,6 +1,7 @@
 import resources from '@config/resources';
 import { MenuIndex, MenuVertical } from '@sk-web-gui/react';
 import NextLink from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
@@ -9,8 +10,8 @@ export const Menu = () => {
   const [current, setCurrent] = useState<string>('');
   const { t } = useTranslation();
 
+  const path = usePathname();
   useEffect(() => {
-    const path = globalThis.location.pathname;
     const resource = Object.keys(resources).find((resource) => {
       return path.startsWith(`${process.env.NEXT_PUBLIC_BASE_PATH}/${resource}`);
     });
@@ -20,7 +21,7 @@ export const Menu = () => {
       setCurrent('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalThis]);
+  }, [path]);
 
   useEffect(() => {
     if (current.includes('-parent')) {

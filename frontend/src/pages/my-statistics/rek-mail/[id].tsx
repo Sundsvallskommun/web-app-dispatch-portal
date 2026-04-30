@@ -2,17 +2,7 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import {
-  Icon,
-  Breadcrumb,
-  AutoTable,
-  AutoTableHeader,
-  Button,
-  Spinner,
-  useSnackbar,
-  Divider,
-  Label,
-} from '@sk-web-gui/react';
+import { Icon, Breadcrumb, AutoTable, AutoTableHeader, Button, Spinner, useSnackbar, Divider } from '@sk-web-gui/react';
 import { File, Download } from 'lucide-react';
 import { useMessage, getAttachmentFile, useGetSigningInfo, useDownloadReceipt } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
@@ -20,11 +10,11 @@ import { EnumLetterState, RecAttachment } from '@interfaces/statistics.interface
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import HeaderMenu from '@components/header-menu/header-menu.component';
-import { formatPersonNumber } from '@utils/helpers';
+import { formatLegalId } from '@utils/helpers';
 import { useRecipientName } from '@services/recipient-service';
-import { EnumColors } from '@interfaces/common';
 import CustomAlert from '@components/custom-alert/custom-alert-component';
 import { capitalize } from 'underscore.string';
+import { LetterStateLabel } from '@components/letter-state-label/letter-state-label.component';
 
 const MyStatisticsDetails = () => {
   const router = useRouter();
@@ -46,13 +36,6 @@ const MyStatisticsDetails = () => {
     });
   };
 
-  const makeStatusInfo = (state: EnumLetterState, messageKey: string, color: EnumColors) => ({
-    [state]: {
-      label: t(`statistics:myStatistics.signingInfo.${messageKey}`),
-      color,
-    },
-  });
-
   const headers: Array<AutoTableHeader | string> = [
     {
       label: capitalize(t('statistics:myStatistics.recipient')),
@@ -62,27 +45,7 @@ const MyStatisticsDetails = () => {
       label: 'Status',
       property: 'status',
       renderColumn: (status: EnumLetterState) => {
-        const statusInfoMap = {
-          ...makeStatusInfo(EnumLetterState.NEW, 'new', EnumColors.TERTIARY),
-          ...makeStatusInfo(EnumLetterState.SENT, 'sent', EnumColors.VATTJOM),
-          ...makeStatusInfo(EnumLetterState.PENDING, 'pending', EnumColors.WARNING),
-          ...makeStatusInfo(EnumLetterState.FAILED, 'failed', EnumColors.ERROR),
-          ...makeStatusInfo(EnumLetterState.FAILED_Server_Error, 'failed', EnumColors.ERROR),
-          ...makeStatusInfo(EnumLetterState.FAILED_Client_Error, 'failed', EnumColors.ERROR),
-          ...makeStatusInfo(EnumLetterState.FAILED_Unknown_Error, 'failed', EnumColors.ERROR),
-          ...makeStatusInfo(EnumLetterState.SIGNED, 'signed', EnumColors.GRONSTA),
-          ...makeStatusInfo(EnumLetterState.EXPIRED, 'expired', EnumColors.TERTIARY),
-        };
-
-        const info = statusInfoMap[status];
-        const displayValue = info?.label ?? '';
-        const displayColor = info?.color ?? EnumColors.TERTIARY;
-
-        return (
-          <Label color={displayColor} inverted rounded>
-            {displayValue}
-          </Label>
-        );
+        return <LetterStateLabel state={status} />;
       },
     },
     {
@@ -122,11 +85,11 @@ const MyStatisticsDetails = () => {
       };
     }
 
-    const personnummer = formatPersonNumber(recipient.personnummer ?? '');
+    const legalId = formatLegalId(recipient.legalId ?? '');
     const name = recipientName;
 
     return {
-      recipient: [name, personnummer].filter(Boolean).join(', '),
+      recipient: [name, legalId].filter(Boolean).join(', '),
       status,
     };
   }, [recipient, recipientName, message, t]);

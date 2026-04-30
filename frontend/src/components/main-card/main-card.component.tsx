@@ -10,7 +10,7 @@ const MainCard = ({
   icon: ReactElement;
   title: string;
   contentText: string;
-  subContentText: string;
+  subContentText?: string;
 }) => {
   return (
     <Card className="main-card main-card-button" color="vattjom" invert={true} useHoverEffect>
@@ -21,7 +21,7 @@ const MainCard = ({
         </Card.Header>
         <Card.Text className="flex flex-col gap-12 justify-center items-start self-stretch overflow-hidden text-dark-secondary">
           <div className="h-max">{contentText}</div>
-          <div className="h-max">{subContentText}</div>
+          {subContentText && <div className="h-max">{subContentText}</div>}
         </Card.Text>
       </Card.Body>
     </Card>

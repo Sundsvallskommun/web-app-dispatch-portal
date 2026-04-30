@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import { RequestBodyMail } from "./data-contracts";
+import { MessageApiResponse, RequestBodyMail } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Message<
@@ -30,25 +30,11 @@ export class Message<
     },
     params: RequestParams = {},
   ) =>
-    this.request<void, any>({
+    this.request<MessageApiResponse, any>({
       path: `/message/`,
       method: "POST",
       body: data,
       type: ContentType.FormData,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Message
-   * @name MessageControllerMessageInfo
-   * @summary Return message information
-   * @request GET:/message/{id}
-   */
-  messageControllerMessageInfo = (id: string, params: RequestParams = {}) =>
-    this.request<void, any>({
-      path: `/message/${id}`,
-      method: "GET",
       ...params,
     });
 }

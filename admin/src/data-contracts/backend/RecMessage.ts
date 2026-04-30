@@ -21,7 +21,7 @@ export class RecMessage<
    *
    * @tags Message
    * @name MessageControllerSendRecMessage
-   * @summary Send attachment to recipients
+   * @summary Send attachment as registered letter to recipients
    * @request POST:/rec-message/
    */
   messageControllerSendRecMessage = (

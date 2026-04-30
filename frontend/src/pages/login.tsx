@@ -26,11 +26,13 @@ export function Start() {
   const onLogin = () => {
     // NOTE: send user to login with SSO
     const path = searchParams?.get('path') || '';
+    const host = globalThis.location.host;
 
     const url = new URL(apiURL('/saml/login'));
     const queries = new URLSearchParams({
-      successRedirect: `${appURL(path as string)}`,
-      failureRedirect: `${appURL()}/login`,
+      successRedirect: appURL(path as string),
+      failureRedirect: appURL('/login'),
+      host,
     });
     url.search = queries.toString();
     // NOTE: send user to login with SSO

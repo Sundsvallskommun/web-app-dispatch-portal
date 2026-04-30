@@ -1,18 +1,26 @@
 import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
-import ApiTokenService from './api-token.service';
 import { HttpException } from '@/exceptions/HttpException';
 import { User } from '@/interfaces/users.interface';
 import { apiURL } from '@/utils/util';
 import { logger } from '@utils/logger';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
+import { createApiTokenService } from './api-token.service';
+import { IApiTokenService } from '@/interfaces/api-token.interface';
 
 export class ApiResponse<T> {
   data: T;
   message: string;
 }
 
-const apiTokenService = new ApiTokenService();
+let apiTokenService: IApiTokenService | null = null;
+
+function getApiTokenService(): IApiTokenService {
+  if (!apiTokenService) {
+    apiTokenService = createApiTokenService();
+  }
+  return apiTokenService;
+}
 
 class ApiService {
   private instance: AxiosInstance;
@@ -22,12 +30,12 @@ class ApiService {
       async request => {
         if (request.url === apiURL('token')) return request;
 
-        const token = await apiTokenService.getToken();
+        const token = await getApiTokenService().getToken();
 
         const defaultHeaders: Partial<AxiosRequestHeaders> = {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'X-Request-Id': uuidv4(),
+          'X-Request-Id': randomUUID(),
         };
 
         request.headers = AxiosHeaders.from({
@@ -75,7 +83,8 @@ class ApiService {
         logger.error('Error headers:', error.response.config.headers);
         throw new HttpException(
           error?.response?.status ?? 500,
-          error?.response?.data?.detail ?? 'Internal server error',
+          error?.response?.data?.detail ?? error?.response?.data?.title ?? 'Internal server error',
+          error.response?.data?.violations,
         );
       } else {
         console.error('Unknown error:', error);

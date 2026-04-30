@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-import { RequestBodyRecMail } from "./data-contracts";
+import { RequestBodyCsvMail } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class CsvMessage<
@@ -21,13 +21,12 @@ export class CsvMessage<
    *
    * @tags Message
    * @name MessageControllerSendCsvMessage
-   * @summary Send attachment to recipients
+   * @summary Send attachment to recipients from csv file
    * @request POST:/csv-message/
    */
   messageControllerSendCsvMessage = (
-    data?: RequestBodyRecMail & {
+    data?: RequestBodyCsvMail & {
       files?: File[];
-      "csv-file"?: File[];
     },
     params: RequestParams = {},
   ) =>

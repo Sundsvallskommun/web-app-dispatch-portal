@@ -31,7 +31,7 @@ export interface Recipient {
   city?: string;
   messageType: EnumMessageType;
   status: EnumMessageStatus;
-  personnummer?: string;
+  legalId?: string;
 }
 export interface PagingMetaData {
   page: number;
@@ -83,6 +83,7 @@ export interface LetterListItem {
   messageType: string;
   subject: string;
   sent: string;
+  letterState?: EnumLetterState;
 }
 
 export interface RecAttachment {

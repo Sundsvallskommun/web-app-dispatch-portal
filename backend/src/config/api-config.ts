@@ -5,10 +5,6 @@ export const APIS = [
     version: '2.0',
   },
   {
-    name: 'messaging',
-    version: '7.10',
-  },
-  {
     name: 'company',
     version: '1.0',
   },
@@ -26,7 +22,7 @@ export const APIS = [
   },
   {
     name: 'postportalservice',
-    version: '1.3',
+    version: '1.6',
   },
 ] as const;
 

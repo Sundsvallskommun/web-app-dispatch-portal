@@ -37,7 +37,6 @@ const Index = () => {
                     icon={<Mail />}
                     title={t('start-page:letter')}
                     contentText={t('start-page:sendLetterDigitally')}
-                    subContentText={t('start-page:priceHalfKr')}
                   />
                 </Link>
               )}
@@ -47,7 +46,6 @@ const Index = () => {
                     icon={<MailCheck />}
                     title={t('start-page:recLetter')}
                     contentText={t('start-page:sendImportantDoc')}
-                    subContentText={t('start-page:price20kr')}
                   />
                 </Link>
               )}
@@ -57,7 +55,6 @@ const Index = () => {
                     icon={<Smartphone />}
                     title={t('start-page:sms')}
                     contentText={t('start-page:fastMethodToShare')}
-                    subContentText={t('start-page:priceHalfKr')}
                   />
                 </Link>
               )}

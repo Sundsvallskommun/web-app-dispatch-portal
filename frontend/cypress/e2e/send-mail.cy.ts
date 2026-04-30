@@ -37,6 +37,7 @@ pages.forEach((p) => {
 
         it('should add a correct personal number without Kivra in the search input, show dialog and add a person on enter', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
+          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           addRecipient(notEligiblePn, true);
           cy.get('[data-cy="recipient-table"]>tbody>tr')
             .eq(0)
@@ -85,23 +86,20 @@ pages.forEach((p) => {
           cy.get('.sk-form-error-message').contains('Kunde inte hitta några giltiga mottagare.');
         });
 
-        it('should show dialog when adding a csv file with duplicate recipients', () => {
-          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { duplicates: true, rejections: true })).as(
-            'csv'
-          );
+        it('should show dialog when adding a csv file with rejected recipients', () => {
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as('csv');
           addCsv();
           cy.get('.sk-modal-dialog.sk-dialog')
             .eq(0)
             .within(() => {
-              cy.get('h1').should('include.text', 'Filen innehåller problem');
-              cy.get('p').contains('Filen innehåller 2 personnummer med dubbletter.');
-              cy.get('p').contains('Filen innehåller 2 felaktiga personnummer.');
+              cy.get('h1').should('include.text', 'Filen personal-numbers.csv innehåller 2 ogiltiga personnummer.');
               cy.get('button').contains('Fortsätt ändå').click();
             });
           cy.get('[data-cy="recipientlist"]').contains('personal-numbers.csv').should('be.visible');
         });
 
         it('should warn and reset if changing to csv from added person', () => {
+          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'SNAIL_MAIL')).as('recipient');
           addRecipient(notEligiblePn, true);
           cy.get('input[type="radio"][value="1"]').check();
@@ -143,11 +141,13 @@ pages.forEach((p) => {
         // REKOMMENDERAT BREV
         it('should show validation error if test person does not have Kivra', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
+          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
           addRecipient(notEligiblePn, false);
           cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan inte ta emot via Kivra');
         });
 
         it('should show success message if test person has Kivra', () => {
+          cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
           cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
           addRecipient(eligiblePn, false);
           cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan ta emot via Kivra');
@@ -157,7 +157,7 @@ pages.forEach((p) => {
       // ALLA
       it('should remove the added person', () => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        addRecipient(personalNumber.isNotEligible, true);
+        addRecipient(personalNumber.isEligible, true);
         cy.get('[data-cy="recipient-table"]').should('exist');
         cy.get('[data-cy="recipient-table"]').find('[data-cy="delete-person-button"]').first().click();
         cy.get('[data-cy="recipient-table"]').should('not.exist');
@@ -165,13 +165,14 @@ pages.forEach((p) => {
 
       it('should add an incorrect (too young) personal number in the search input and show dialog', () => {
         cy.intercept('POST', '**/api/recipient?*', recipient(invalidPn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
+        cy.intercept('POST', '**/api/recipient?*', recipient(invalidPn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
         addRecipient(invalidPn, true);
         cy.get('[data-cy="recipient-table"]').should('not.exist');
       });
 
       it('should navigate to next step if a recipient is added and "next" is clicked', () => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        navigateToAttachmentHandler(personalNumber.isNotEligible);
+        navigateToAttachmentHandler(personalNumber.isEligible);
         cy.get('.sk-progress-stepper-step[data-progress="current"]').should('exist').and('contain.text', 'Filer');
       });
     });
@@ -179,10 +180,8 @@ pages.forEach((p) => {
     describe('Attachment handler', () => {
       beforeEach(() => {
         const eligiblePn = personalNumber.isEligible.replace('-', '');
-        const notEligiblePn = personalNumber.isNotEligible.replace('-', '');
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
-        const isRecommended = p.route === '/send/rek-mail';
-        navigateToAttachmentHandler(isRecommended ? eligiblePn : notEligiblePn);
+        navigateToAttachmentHandler(eligiblePn);
       });
 
       it('should add two documents', () => {
@@ -224,6 +223,7 @@ pages.forEach((p) => {
       beforeEach(() => {
         const eligiblePn = personalNumber.isEligible.replace('-', '');
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
+        cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(eligiblePn, true);
         cy.get('[data-cy="next-button"]').click();
         cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
@@ -244,6 +244,7 @@ pages.forEach((p) => {
       cy.visit('/send/mail');
       const eligiblePn = personalNumber.isEligible.replace('-', '');
       if (variant === 'person') {
+        cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(eligiblePn, true);
       } else if (variant === 'address') {

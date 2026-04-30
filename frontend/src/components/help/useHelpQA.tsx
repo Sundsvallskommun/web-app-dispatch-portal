@@ -51,27 +51,14 @@ export const useHelpQA = (): QAItem[] => {
   const items = useMemo(
     () =>
       [
-        ...itemsFactory([27, 28], [EnumQATags.SMS]),
-        ...itemsFactory([12, 13, 14, 15], [EnumQATags.MAIL]),
-        ...itemsFactory([18], [EnumQATags.MAIL], {
-          p: <p className="mt-4 text-justify [hyphens:auto]" />,
-          a: <Link href="/files/example.csv" />,
-        }),
-        ...itemsFactory(
-          [2, 3, 4, 5, 7, 8, 9, 10, 11, 16, 17, 19, 20, 24, 25, 26],
-          [EnumQATags.MAIL, EnumQATags.REK_MAIL]
-        ),
-        ...itemsFactory([6], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
-          p: <p className="mt-4 text-justify [hyphens:auto]" />,
+        ...itemsFactory([1], [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL]),
+        ...itemsFactory([2, 4, 5, 6, 7, 9, 12, 13, 16, 17, 18], [EnumQATags.MAIL, EnumQATags.REK_MAIL]),
+        ...itemsFactory([3, 8, 10, 14, 15], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
+          p: <p className="mt-4 mb-4 leading-normal text-justify [hyphens:auto]" />,
+          br: <br />,
           List: <List listStyle="bullet" />,
           ListItem: <List.Item />,
           ListText: <List.Text />,
-        }),
-        ...itemsFactory([21, 22], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
-          p: <p className="mt-4 text-justify [hyphens:auto]" />,
-        }),
-        ...itemsFactory([23], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
-          p: <p className="mt-4 text-justify [hyphens:auto]" />,
           strong: <strong />,
           a: (
             <a className="text-vattjom-text-primary underline" href="mailto:support@sundsvall.se">
@@ -79,7 +66,16 @@ export const useHelpQA = (): QAItem[] => {
             </a>
           ),
         }),
-        ...itemsFactory([1], [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL]),
+        ...itemsFactory([11], [EnumQATags.MAIL], {
+          p: <p className="mt-4 leading-normal text-justify [hyphens:auto]" />,
+          a: <Link href="/files/example-personnummer.csv" />,
+        }),
+        ...itemsFactory([24], [EnumQATags.SMS], {
+          p: <p className="mt-4 leading-normal text-justify [hyphens:auto]" />,
+          a: <Link href="/files/example-mobilnummer.csv" />,
+        }),
+        ...itemsFactory([19, 20, 21], [EnumQATags.REK_MAIL]),
+        ...itemsFactory([22, 23], [EnumQATags.SMS]),
       ].sort((a, b) => Number(a.id) - Number(b.id)),
     [i18n.language]
   );
