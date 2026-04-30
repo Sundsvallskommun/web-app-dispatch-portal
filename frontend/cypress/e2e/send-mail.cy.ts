@@ -50,7 +50,6 @@ pages.forEach((p) => {
 
         it('should add a minor personal number, show dialog with error message', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE', true)).as(
-          cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE', true)).as(
             'recipient'
           );
           addRecipient(notEligiblePn, false);
@@ -88,9 +87,7 @@ pages.forEach((p) => {
         });
 
         it('should show dialog when adding a csv file with rejected recipients', () => {
-          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as(
-            'csv'
-          );
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as('csv');
           addCsv();
           cy.get('.sk-modal-dialog.sk-dialog')
             .eq(0)
