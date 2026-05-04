@@ -143,7 +143,7 @@ const FileUpload: React.FC<{
                   }}
                 />
               </div>
-              {helperText && <FormErrorMessage>{helperText}</FormErrorMessage>}
+              {helperText && <p className="text-small font-normal">{helperText}</p>}
             </div>
           </div>
           <Input
