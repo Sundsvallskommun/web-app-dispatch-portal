@@ -386,7 +386,7 @@ export default function SendEmailPage() {
                         </div>
                         <Textarea
                           data-cy="sms-message-input"
-                          className="flex min-h-[18.2rem] flex-col items-start gap-8 self-stretch w-full text-dark-placeholder"
+                          className="flex min-h-[18.2rem] flex-col items-start gap-8 self-stretch w-full"
                           maxLength={459}
                           {...register('message')}
                         />
