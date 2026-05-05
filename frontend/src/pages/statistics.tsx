@@ -14,6 +14,7 @@ const headers: Array<AutoTableHeader | string> = [
   {
     property: 'department',
     label: 'Förvaltning',
+    renderColumn: (value: string) => <p className="font-bold">{value}</p>,
   },
   {
     property: 'snailMail',
@@ -32,15 +33,21 @@ const headers: Array<AutoTableHeader | string> = [
     label: 'Sms',
   },
 ];
+
 const generateMonthOptions = () => {
   const options = [];
   const today = dayjs();
+  const earliest = dayjs('2026-01-01');
 
-  for (let i = 0; i < 12; i++) {
+  const monthsSinceEarliest = today.diff(earliest, 'month');
+  const limit = Math.min(12, monthsSinceEarliest + 1);
+
+  for (let i = 0; i < limit; i++) {
     const date = today.subtract(i, 'month');
-    const value = date.format('YYYY-MM');
-    const label = date.format('MMMM YYYY');
-    options.push({ value, label });
+    options.push({
+      value: date.format('YYYY-MM'),
+      label: date.format('MMMM YYYY'),
+    });
   }
 
   return options;
@@ -84,52 +91,50 @@ export const StatisticsPage = () => {
   };
 
   return (
-    <DefaultLayout title={`Postportal`} headerMenu={<HeaderMenu />}>
-      <div className="text-lg mb-11 pt-32">
-        <h1 className="text-h1-lg mb-8">{t('statistics:title')}</h1>
-        <p className="text-large text-dark-secondary mt-0">{`${t('statistics:description')}.`}</p>
+    <DefaultLayout title={t('common:appTitle')} headerMenu={<HeaderMenu />}>
+      <h1 className="mt-64">{t('statistics:title')}</h1>
+      <p className="text-large">{`${t('statistics:description')}`}</p>
 
-        <div className="lg:flex flex-row justify-start mb-16 mt-56 gap-12 items-end">
-          <div className="flex flex-col gap-8">
-            <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
-              {t('statistics:showPerMonth')}
-            </label>
-            <Select id="month" size="sm" onSelectValue={handleDateChange} value={`${selectedYear}-${selectedMonth}`}>
-              {generateMonthOptions().map((option) => (
-                <Select.Option key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </div>
-          <span className="justify-self-end ml-auto text-dark-secondary text-small">
-            {selectedYear &&
-              selectedMonth &&
-              t('statistics:fromToDates', {
-                from: getMonthFirstDayDate(Number(selectedYear), Number(selectedMonth)),
-                to: getMonthLastDayDate(Number(selectedYear), Number(selectedMonth)),
-              })}
-          </span>
+      <div className="lg:flex flex-row justify-between mb-24 mt-56">
+        <div className="flex flex-col gap-8">
+          <label className="sk-table-bottom-section-label font-bold" htmlFor="month">
+            {t('statistics:showPerMonth')}
+          </label>
+          <Select
+            className="w-[200px]"
+            id="month"
+            size="sm"
+            onSelectValue={handleDateChange}
+            value={`${selectedYear}-${selectedMonth}`}
+          >
+            {generateMonthOptions().map((option) => (
+              <Select.Option key={option.value} value={option.value}>
+                {option.label}
+              </Select.Option>
+            ))}
+          </Select>
         </div>
+        <p className="self-end text-dark-secondary text-small">
+          {selectedYear &&
+            selectedMonth &&
+            t('statistics:fromToDates', {
+              from: getMonthFirstDayDate(Number(selectedYear), Number(selectedMonth)),
+              to: getMonthLastDayDate(Number(selectedYear), Number(selectedMonth)),
+            })}
+        </p>
+      </div>
 
-        <div className="max-w-full mb-80">
-          {!loaded && <Spinner />}
-          {loaded && departmentStatistics.length === 0 && (
-            <div>
-              <p className="text-h4-medium md:text-lead leading-lead text-primary font-bold m-0 header-font">
-                {t('statistics:noStatisticsFound')}
-              </p>
-            </div>
-          )}
-          {loaded && departmentStatistics.length > 0 && (
-            <AutoTable
-              footer={departmentStatistics.length >= 12}
-              pageSize={11}
-              autodata={departmentStatistics.length > 0 ? departmentStatistics : []}
-              autoheaders={headers}
-            />
-          )}
-        </div>
+      <div className="max-w-full mb-80">
+        {!loaded && <Spinner />}
+        {loaded && departmentStatistics.length === 0 && <p>{t('statistics:noStatisticsFound')}</p>}
+        {loaded && departmentStatistics.length > 0 && (
+          <AutoTable
+            footer={departmentStatistics.length >= 12}
+            pageSize={11}
+            autodata={departmentStatistics.length > 0 ? departmentStatistics : []}
+            autoheaders={headers}
+          />
+        )}
       </div>
     </DefaultLayout>
   );
