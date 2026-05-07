@@ -24,7 +24,7 @@
     "i18next": "^25.6.2",
     "i18next-resources-to-backend": "^1.2.1",
     "lucide-react": "^0.553.0",
-    "next": "15.5.3",
+    "next": "15.5.10",
     "next-i18n-router": "^5.5.5",
     "next-i18next": "^15.4.2",
     "next-navigation-guard": "^0.2.0",
