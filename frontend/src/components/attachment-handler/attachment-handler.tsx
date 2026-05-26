@@ -15,7 +15,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { FormControl, Icon, ProgressBar } from '@sk-web-gui/react';
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@utils/file.utils';
 import { Menu } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -33,10 +33,6 @@ const AttachmentHandler: React.FC = () => {
   const { register, watch, setValue, getValues } = useFormContext<AttachmentFormModel>();
   const attachmentList = watch('attachmentList').map((attach, index) => ({ ...attach, index }));
   const { t } = useTranslation(['send-mail']);
-
-  useEffect(() => {
-    setValue('attachmentList', []);
-  }, [setValue]);
 
   const fileStorageLimit = useMemo(() => {
     const totalBytes = attachmentList.reduce((sum, a) => sum + (a.file?.size || 0), 0);
