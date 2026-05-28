@@ -60,7 +60,7 @@ const AttachmentHandler: React.FC = () => {
             <div className="w-full" data-cy="attachments">
               <p className="text-small">{t('send-mail:attachmentHandler.addedFilesDescription')}</p>
               <FileUpload.List
-                files={attachmentList}
+                name="attachmentList"
                 sortable
                 actionsProps={{ showRemove: true, onRemove: handleRemove }}
               />
