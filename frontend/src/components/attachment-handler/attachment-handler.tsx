@@ -1,7 +1,8 @@
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 import { ProgressBar, FileUpload, UploadFile } from '@sk-web-gui/react';
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@utils/file.utils';
-import { useEffect, useMemo } from 'react';
+import { Menu } from 'lucide-react';
+import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PdfUploadHandler } from '@components/file-upload/pdf-upload.component';
@@ -18,10 +19,6 @@ const AttachmentHandler: React.FC = () => {
   const { watch, setValue, getValues } = useFormContext<AttachmentFormModel>();
   const attachmentList = watch('attachmentList') ?? [];
   const { t } = useTranslation(['send-mail']);
-
-  useEffect(() => {
-    setValue('attachmentList', []);
-  }, [setValue]);
 
   const fileStorageLimit = useMemo(() => {
     const totalBytes = attachmentList.reduce((sum, a) => sum + (a.file?.size || 0), 0);
