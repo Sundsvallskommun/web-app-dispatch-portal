@@ -30,6 +30,30 @@ export const usePdfFileHandler = ({ errorKeys, maxFileSizeMB, maxFiles }: UsePdf
   } = useFormContext<FileAttachmentFormModel>();
   const { t } = useTranslation();
 
+  const getFileErrors = (
+    item: UploadFile,
+    {
+      currentNames,
+      currentBytes,
+      totalCount,
+      maxBytes,
+    }: { currentNames: Set<string>; currentBytes: number; totalCount: number; maxBytes: number }
+  ): string[] => {
+    const file = item.file;
+    const name = file?.name;
+    const nextBytes = currentBytes + (file?.size ?? 0);
+    const errors: string[] = [];
+
+    if (file?.size === 0) errors.push(t(errorKeys.emptyFile));
+    if (name && currentNames.has(name)) errors.push(t(errorKeys.duplicateFileName, { fileName: name }));
+    if (totalCount >= maxFiles) errors.push(t(errorKeys.maxNumberFiles, { allowMax: maxFiles }));
+    if (nextBytes > maxBytes) {
+      errors.push(t(errorKeys.totalSize, { total: (nextBytes / 1024 / 1024).toFixed(1), maxMB: maxFileSizeMB }));
+    }
+
+    return errors;
+  };
+
   const handleFiles = (event: CustomOnChangeEventUploadFile) => {
     const incoming = event.target.value ?? [];
     if (incoming.length === 0) return;
@@ -38,36 +62,17 @@ export const usePdfFileHandler = ({ errorKeys, maxFileSizeMB, maxFiles }: UsePdf
     const accepted: UploadFile[] = [];
     const messages: string[] = [];
 
-    const currentNames = new Set(current.map((a) => a.file?.name).filter(Boolean));
+    const currentNames = new Set(current.map((a) => a.file?.name).filter(Boolean) as string[]);
     const maxBytes = maxFileSizeMB * 1024 * 1024;
     let currentBytes = current.reduce((sum, a) => sum + (a.file?.size ?? 0), 0);
 
     for (const item of incoming) {
-      const file = item.file;
-      const name = file?.name;
-      const fileErrors: string[] = [];
-
-      if (file?.size === 0) {
-        fileErrors.push(t(errorKeys.emptyFile));
-      }
-
-      if (name && currentNames.has(name)) {
-        fileErrors.push(t(errorKeys.duplicateFileName, { fileName: name }));
-      }
-
-      if (current.length + accepted.length >= maxFiles) {
-        fileErrors.push(t(errorKeys.maxNumberFiles, { allowMax: maxFiles }));
-      }
-      
-      const nextBytes = currentBytes + (file?.size ?? 0);
-      if (nextBytes > maxBytes) {
-        fileErrors.push(
-          t(errorKeys.totalSize, {
-            total: (nextBytes / 1024 / 1024).toFixed(1),
-            maxMB: maxFileSizeMB,
-          })
-        );
-      }
+      const fileErrors = getFileErrors(item, {
+        currentNames,
+        currentBytes,
+        totalCount: current.length + accepted.length,
+        maxBytes,
+      });
 
       if (fileErrors.length > 0) {
         messages.push(...fileErrors);
@@ -75,8 +80,8 @@ export const usePdfFileHandler = ({ errorKeys, maxFileSizeMB, maxFiles }: UsePdf
       }
 
       accepted.push(item);
-      if (name) currentNames.add(name);
-      currentBytes += file?.size ?? 0;
+      if (item.file?.name) currentNames.add(item.file.name);
+      currentBytes += item.file?.size ?? 0;
     }
 
     const errorMessages = Array.from(new Set(messages));

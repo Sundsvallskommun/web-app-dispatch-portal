@@ -1,7 +1,6 @@
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
 import { ProgressBar, FileUpload, UploadFile } from '@sk-web-gui/react';
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@utils/file.utils';
-import { Menu } from 'lucide-react';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
