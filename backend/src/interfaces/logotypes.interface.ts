@@ -4,4 +4,6 @@ export interface Logotype {
   display_name: string;
   logotype_lightmode: string;
   logotype_darkmode: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

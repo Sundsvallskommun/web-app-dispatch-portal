@@ -12,29 +12,29 @@ import { RequestWithUser } from '@interfaces/auth.interface';
 import { MessagingSettingsApiResponse, MessagingSettingApiResponse } from '@/responses/messaging-settings.response';
 import { Logotype } from '@interfaces/logotypes.interface';
 
-const structureLogotypeData = (data: MessagingSettings[]) => {
-  const LOGOTYPE_KEYS = ['host', 'display_name', 'logotype_lightmode', 'logotype_darkmode'] as const;
-  type LogotypeKey = (typeof LOGOTYPE_KEYS)[number];
+const LOGOTYPE_KEYS = ['host', 'display_name', 'logotype_lightmode', 'logotype_darkmode'] as const;
+type LogotypeKey = (typeof LOGOTYPE_KEYS)[number];
 
-  return data.map(d => {
-    const fields = d.values.reduce<Partial<Record<LogotypeKey, string>>>((acc, v) => {
-      if ((LOGOTYPE_KEYS as readonly string[]).includes(v.key)) {
-        acc[v.key as LogotypeKey] = v.value;
-      }
-      return acc;
-    }, {});
+const structureLogotype = (d: MessagingSettings): Logotype => {
+  const fields = d.values.reduce<Partial<Record<LogotypeKey, string>>>((acc, v) => {
+    if ((LOGOTYPE_KEYS as readonly string[]).includes(v.key)) {
+      acc[v.key as LogotypeKey] = v.value;
+    }
+    return acc;
+  }, {});
 
-    return {
-      id: d.id,
-      host: fields.host ?? '',
-      display_name: fields.display_name ?? '',
-      logotype_lightmode: fields.logotype_lightmode,
-      logotype_darkmode: fields.logotype_darkmode,
-      createdAt: d.created,
-      updatedAt: d.updated,
-    };
-  });
+  return {
+    id: d.id,
+    host: fields.host ?? '',
+    display_name: fields.display_name ?? '',
+    logotype_lightmode: fields.logotype_lightmode,
+    logotype_darkmode: fields.logotype_darkmode,
+    createdAt: d.created,
+    updatedAt: d.updated,
+  };
 };
+
+const structureLogotypeData = (data: MessagingSettings[]): Logotype[] => data.map(structureLogotype);
 
 @Controller()
 @UseBefore(authMiddleware)
@@ -75,29 +75,7 @@ export class AdminMessagingSettingsController {
       const result = await this.apiService.get<MessagingSettings>({ url }, req.user);
 
       if (result) {
-        const LOGOTYPE_KEYS = ['host', 'display_name', 'logotype_lightmode', 'logotype_darkmode'] as const;
-        type LogotypeKey = (typeof LOGOTYPE_KEYS)[number];
-
-        const fields = result.data.values.reduce<Partial<Record<LogotypeKey, string>>>((acc, v) => {
-          if ((LOGOTYPE_KEYS as readonly string[]).includes(v.key)) {
-            acc[v.key as LogotypeKey] = v.value;
-          }
-          return acc;
-        }, {});
-
-        const logotype = {
-          id: result.data.id,
-          host: fields.host ?? '',
-          display_name: fields.display_name ?? '',
-          logotype_lightmode: fields.logotype_lightmode,
-          logotype_darkmode: fields.logotype_darkmode,
-          createdAt: result.data.created,
-          updatedAt: result.data.updated,
-        };
-
-        return res.send({ message: 'success', data: logotype });
-      } else {
-        throw new HttpException(404, 'Could not find logotype');
+        return res.send({ message: 'success', data: structureLogotype(result.data) });
       }
     } catch (error) {
       logger.error('Error getting host', error);
@@ -141,7 +119,7 @@ export class AdminMessagingSettingsController {
       return res.send({ message: 'success', data: result.data });
     } catch (error) {
       logger.error('Error updating logotype', error);
-      throw new HttpException(500, 'Could not updating logotype');
+      throw new HttpException(500, 'Could not update logotype');
     }
   }
 
