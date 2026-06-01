@@ -11,30 +11,7 @@ import { MessagingSettings, MessagingSettingsRequest } from '@/data-contracts/me
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { MessagingSettingsApiResponse, MessagingSettingApiResponse } from '@/responses/messaging-settings.response';
 import { Logotype } from '@interfaces/logotypes.interface';
-
-const LOGOTYPE_KEYS = ['host', 'display_name', 'logotype_lightmode', 'logotype_darkmode'] as const;
-type LogotypeKey = (typeof LOGOTYPE_KEYS)[number];
-
-const structureLogotype = (d: MessagingSettings): Logotype => {
-  const fields = d.values.reduce<Partial<Record<LogotypeKey, string>>>((acc, v) => {
-    if ((LOGOTYPE_KEYS as readonly string[]).includes(v.key)) {
-      acc[v.key as LogotypeKey] = v.value;
-    }
-    return acc;
-  }, {});
-
-  return {
-    id: d.id,
-    host: fields.host ?? '',
-    display_name: fields.display_name ?? '',
-    logotype_lightmode: fields.logotype_lightmode,
-    logotype_darkmode: fields.logotype_darkmode,
-    createdAt: d.created,
-    updatedAt: d.updated,
-  };
-};
-
-const structureLogotypeData = (data: MessagingSettings[]): Logotype[] => data.map(structureLogotype);
+import { structureLogotype, structureLogotypeData } from '@services/messaging-settings.service';
 
 @Controller()
 @UseBefore(authMiddleware)
