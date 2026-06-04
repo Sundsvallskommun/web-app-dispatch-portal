@@ -97,8 +97,12 @@ export const usePdfFileHandler = ({ errorKeys, maxFileSizeMB, maxFiles }: UsePdf
     }
   };
 
-  const handleError = () => {
-    setError('attachmentList', { message: errorKeys.badFile });
+  const handleError = (msg: string) => {
+    if (msg.startsWith('Filen är för stor')) {
+      setError('attachmentList', { message: msg });
+      return;
+    }
+    setError('attachmentList', { message: t(errorKeys.badFile) });
   };
 
   const pdfError = errors?.attachmentList;

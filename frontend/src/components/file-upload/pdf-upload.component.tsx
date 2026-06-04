@@ -1,5 +1,4 @@
-import { FileUpload, FormControl } from '@sk-web-gui/react';
-import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
+import { FileUpload, FormControl, FormErrorMessage } from '@sk-web-gui/react';
 import { usePdfFileHandler } from '@components/file-upload/hooks/use-pdf-file-handler';
 import { MAX_ATTACHMENT_FILE_SIZE_MB } from '@utils/file.utils';
 
@@ -27,8 +26,9 @@ export const PdfUploadHandler: React.FC = () => {
           onChange={handleFiles}
           onInvalid={handleError}
           allowMultiple={true}
+          appendToContext={false}
         />
-        {pdfError && <CustomFormErrorMessage message={pdfError.message} />}
+        {pdfError && <FormErrorMessage>{pdfError.message}</FormErrorMessage>}
       </FormControl>
     </div>
   );
