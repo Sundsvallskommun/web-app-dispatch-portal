@@ -28,7 +28,7 @@ export const PdfUploadHandler: React.FC = () => {
           allowMultiple={true}
           appendToContext={false}
         />
-        {pdfError && <FormErrorMessage>{pdfError.message}</FormErrorMessage>}
+        {pdfError && <FormErrorMessage data-cy="form-error-message">{pdfError.message}</FormErrorMessage>}
       </FormControl>
     </div>
   );
