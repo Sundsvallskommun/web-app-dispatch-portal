@@ -24,6 +24,9 @@ export const APIS = [
     name: 'postportalservice',
     version: '1.6',
   },
+  { name: 'legalentity', 
+    version: '2.0' 
+  },
 ] as const;
 
 type ApiName = (typeof APIS)[number]['name'];

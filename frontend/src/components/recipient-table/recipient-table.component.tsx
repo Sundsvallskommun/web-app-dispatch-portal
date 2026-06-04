@@ -27,8 +27,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
   const setRecipients = useMessageStore((state) => state.setRecipients);
   const setAddresses = useMessageStore((state) => state.setAddresses);
 
-  const handleRemoveOneRecipient = (legalId: string) => {
-    const result = recipients.filter((recipient) => legalId !== recipient.personNumber);
+  const handleRemoveOneRecipient = (partyId: string) => {
+    const result = recipients.filter((recipient) => partyId !== recipient.partyId);
     setRecipients(result);
   };
 
@@ -46,13 +46,13 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
           renderColumn: (_value, item) => (
             <div className="flex flex-1 justify-end text-right">
               <Button
-                data-cy="delete-person-button"
+                data-cy="delete-recipient-button"
                 aria-label="Ta bort mottagare"
                 variant="tertiary"
                 className="relative"
                 onClick={() =>
-                  item?.personNumber
-                    ? handleRemoveOneRecipient(item?.personNumber ?? '')
+                  item?.partyId
+                    ? handleRemoveOneRecipient(item?.partyId ?? '')
                     : handleRemoveOneWidthAddress(item as Recipient)
                 }
                 leftIcon={<Icon icon={<Trash />} />}
@@ -74,9 +74,15 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
       return (
         <div data-cy="person">
           <p data-cy="person-name">
-            {item?.address?.firstName} {item?.address?.lastName}
+            {item?.personNumber
+              ? `${item?.address?.firstName} ${item?.address?.lastName}`
+              : item?.address?.organizationName}
           </p>
-          {item?.personNumber && <p data-cy="person-number">{formatLegalId(item?.personNumber)}</p>}
+          {item?.personNumber ? (
+            <p data-cy="person-number">{formatLegalId(item?.personNumber)}</p>
+          ) : (
+            <p data-cy="org-number">{formatLegalId(item?.orgNumber)}</p>
+          )}
         </div>
       );
     },
@@ -92,8 +98,9 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
         return (
           <>
-            <span>{street},</span>
-            <span>{[zipCode, city].join(' ')}</span>
+            <span>
+              {street}, {[zipCode, city].join(' ')}
+            </span>
           </>
         );
       }

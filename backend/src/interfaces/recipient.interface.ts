@@ -3,6 +3,7 @@ import { PrecheckRecipient, Recipient } from '@/data-contracts/postportalservice
 export interface ExtendedRecipient extends Recipient {
   reason?: PrecheckRecipient['reason'];
   personNumber?: string;
+  orgNumber?: string;
 }
 
 export enum CSVStatus {

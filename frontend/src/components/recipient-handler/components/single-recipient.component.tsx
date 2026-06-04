@@ -1,4 +1,4 @@
-import { getRecipient, useMessageStore } from '@services/recipient-service';
+import { getOrgRecipient, getRecipient, useMessageStore } from '@services/recipient-service';
 import { FormControl, FormLabel, SearchField, Spinner, useConfirm } from '@sk-web-gui/react';
 import React, { KeyboardEvent, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -16,7 +16,7 @@ interface SingleRecipientProps {
 
 export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) => {
   const [error, setError] = useState<string | undefined>(undefined);
-  const [foundPerson, setFoundPerson] = useState<Recipient | undefined>(undefined);
+  const [foundRecipient, setFoundRecipient] = useState<Recipient | undefined>(undefined);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const { recipients, setRecipients } = useMessageStore();
   const confirm = useConfirm();
@@ -28,54 +28,77 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
     formState: { errors },
   } = useFormContext<RecipientListFormModel>();
 
+  const isRek = sendType === formSendType.REK_MAIL;
+
   const renderFormMessage = () => {
     if (errors.storeRecipients?.message) {
       return <CustomFormErrorMessage message={errors.storeRecipients.message} />;
     } else if (error) {
       return <CustomFormErrorMessage message={error} />;
     } else {
-      return <p className="text-small">{t('send-mail:recipientHandler.searchPersonalNumberHelper')}</p>;
+      return (
+        <p className="text-small">
+          {t(
+            isRek
+              ? 'send-mail:recipientHandler.searchIdentityNumberHelperRek'
+              : 'send-mail:recipientHandler.searchIdentityNumberHelper'
+          )}
+        </p>
+      );
     }
   };
 
   const fetchRecipient = () => {
     setIsLoadingRecipients(true);
     setError(undefined);
-    getRecipient(value.replace('-', '').replace(' ', ''), sendType === formSendType.REK_MAIL)
+
+    const digits = value.replace(/\D/g, '');
+    const isCitizen = digits.length === 12;
+
+    if (isRek && !isCitizen) {
+      setIsLoadingRecipients(false);
+      setFoundRecipient(undefined);
+      setError(t('send-mail:recipientHandler.fetchRecipientError.organizationNotAllowedForRek'));
+      return;
+    }
+
+    (isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits, isRek))
       .then((res) => {
         const alreadyExists = recipients.find((rec) => rec?.partyId === res?.partyId);
         if (alreadyExists) {
           setError(t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'));
           return;
         }
-        setFoundPerson(res);
+        setFoundRecipient(res);
         setError(undefined);
       })
       .catch(() => {
         setIsLoadingRecipients(false);
-        setFoundPerson(undefined);
+        setFoundRecipient(undefined);
         setError(t('send-mail:recipientHandler.fetchRecipientError.singleRecipient'));
       })
       .finally(() => setIsLoadingRecipients(false));
   };
 
   useEffect(() => {
-    if (value && value?.replace('-', '').length === 12) {
+    const digits = value.replace(/\D/g, '');
+    const readyToFetch = isRek ? digits.length === 12 : digits.length === 10 || digits.length === 12;
+    if (readyToFetch) {
       fetchRecipient();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const handleSubmitSingleRecipient = () => {
-    if (!foundPerson) {
-      if (value.length < 12) {
+    if (!foundRecipient) {
+      if (value.length < 10) {
         setError(t('send-mail:recipientHandler.personalNumberError.fewNumber'));
       } else if (value.length > 13) {
         setError(t('send-mail:recipientHandler.personalNumberError.tooManyNumbers'));
       }
       return;
     }
-    if (foundPerson?.deliveryMethod === 'DELIVERY_NOT_POSSIBLE') return;
+    if (foundRecipient?.deliveryMethod === 'DELIVERY_NOT_POSSIBLE') return;
 
     if (sendType === formSendType.REK_MAIL && recipients.length > 0) {
       confirm
@@ -88,14 +111,14 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
         )
         .then((confirm: boolean) => {
           if (confirm) {
-            setRecipients([foundPerson]);
+            setRecipients([foundRecipient]);
           }
-          setFoundPerson(undefined);
+          setFoundRecipient(undefined);
           setValue('');
         });
     } else {
-      setRecipients(recipients.concat(foundPerson));
-      setFoundPerson(undefined);
+      setRecipients(recipients.concat(foundRecipient));
+      setFoundRecipient(undefined);
       clearErrors('storeRecipients');
       setValue('');
       setError(undefined);
@@ -110,23 +133,29 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   };
 
   return (
-    <FormControl className="w-full medium-device:w-[365px]" invalid={!!error}>
+    <FormControl className="w-full" invalid={!!error}>
       <div className="flex flex-col w-full gap-8 pb-24">
-        <FormLabel>{t('send-mail:recipientHandler.searchPersonalNumber')}</FormLabel>
+        <FormLabel>
+          {t(
+            isRek
+              ? 'send-mail:recipientHandler.searchIdentityNumberRek'
+              : 'send-mail:recipientHandler.searchIdentityNumber'
+          )}
+        </FormLabel>
         <SearchField
-          data-cy="person-search-field"
+          data-cy="recipient-search-field"
           onChange={(e) => setValue(e.target.value)}
           value={value}
           size="md"
           maxLength={13}
-          minLength={12}
+          minLength={10}
           placeholder="Sök"
           showSearchButton={false}
           onKeyDown={handleEnter}
           onReset={() => {
             setValue('');
             setError(undefined);
-            setFoundPerson(undefined);
+            setFoundRecipient(undefined);
           }}
         />
         {renderFormMessage()}
@@ -140,7 +169,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
 
         <PreviewPerson
           loading={isLoadingRecipients}
-          person={foundPerson}
+          recipient={foundRecipient}
           handleSubmit={handleSubmitSingleRecipient}
           sendType={sendType}
           searchValue={value}

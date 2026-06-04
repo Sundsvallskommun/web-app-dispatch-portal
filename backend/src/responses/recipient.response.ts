@@ -27,6 +27,9 @@ export class Address implements AddressType {
   city: string;
   @IsString()
   country: string;
+  @IsString()
+  @IsOptional()
+  organizationName?: string;
 }
 
 export class Recipient implements ExtendedRecipient {
@@ -45,6 +48,9 @@ export class Recipient implements ExtendedRecipient {
   @IsString()
   @IsOptional()
   personNumber?: string;
+  @IsString()
+  @IsOptional()
+  orgNumber?: string;
 }
 
 export class Csv implements Omit<CSV, 'file'>, Pick<PrecheckCsvResponse, 'duplicateEntries' | 'rejectedEntries'> {

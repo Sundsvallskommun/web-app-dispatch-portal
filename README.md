@@ -12,6 +12,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 | Citizen           |     3.0 |
 | PostPortalService |     1.6 |
 | MessagingSettings |     3.0 |
+| LegalEntity       |     2.0 |
 
 ## Utveckling
 

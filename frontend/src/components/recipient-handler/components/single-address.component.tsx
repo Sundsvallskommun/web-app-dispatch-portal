@@ -56,7 +56,7 @@ export const SingleAddress: React.FC<SingleAddressProps> = ({ sendType }) => {
       {sendType === formSendType.MAIL && (
         <div className="my-32">
           <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-          <p className="font-bold">{t('send-mail:recipientHandler.missingPersonalNumber')}</p>
+          <p className="font-bold">{t('send-mail:recipientHandler.missingIdentityNumber')}</p>
           <Button
             data-cy="add-with-address-button"
             leftIcon={<Icon icon={<Plus />} />}
