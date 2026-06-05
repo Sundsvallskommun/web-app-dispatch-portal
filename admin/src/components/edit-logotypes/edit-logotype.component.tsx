@@ -30,10 +30,8 @@ export const EditLogotype: React.FC<EditLogotypesProps> = ({ property }) => {
     setLocalUrl('');
   }, [logotype]);
 
-  const previewSrc =
-    logotype instanceof File ? localUrl
-    : typeof logotype === 'string' ? logotype
-    : '';
+  const fallbackSrc = typeof logotype === 'string' ? logotype : '';
+  const previewSrc = logotype instanceof File ? localUrl : fallbackSrc;
 
   return (
     <div className="flex flex-col gap-32 grow mb-32 max-w-[60rem] mt-32">
