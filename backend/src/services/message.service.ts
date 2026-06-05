@@ -1,5 +1,5 @@
 import { getApiBase } from '@/config';
-import { Address, Recipient } from '@/data-contracts/postportalservice/data-contracts';
+import { Address, Recipient, RecipientDeliveryMethodEnum } from '@/data-contracts/postportalservice/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { MessageResponseData } from '@/interfaces/message.interface';
 import { appendCsvFile } from '@/utils/csv-service/csv-service';
@@ -198,10 +198,17 @@ export const sendLetter: (
   const municipalityId = await getMunicipalityId(req);
   const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/letter`;
 
+  // Adress is only required for SNAIL_MAIL
+  const sanitizedRecipients: Recipient[] = recipients.map(recipient =>
+    recipient.deliveryMethod === RecipientDeliveryMethodEnum.SNAIL_MAIL || recipient.address?.street
+      ? recipient
+      : { ...recipient, address: undefined },
+  );
+
   const request: LetterRequest = {
     subject: subject,
     contentType: 'text/plain',
-    recipients: recipients,
+    recipients: sanitizedRecipients,
     addresses: addresses,
     body: body ?? '-',
   };

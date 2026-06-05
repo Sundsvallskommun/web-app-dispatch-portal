@@ -7,7 +7,7 @@ import { formSendType } from 'src/constants';
 import { Recipient } from 'src/data-contracts/backend/data-contracts';
 import { SendType } from 'src/types';
 import { RecipientListFormModel } from '../recipient-handler';
-import PreviewPerson from './preview-person.component';
+import PreviewRecipient from './preview-recipient.component';
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 
 interface SingleRecipientProps {
@@ -62,7 +62,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
       return;
     }
 
-    (isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits, isRek))
+    (isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits))
       .then((res) => {
         const alreadyExists = recipients.find((rec) => rec?.partyId === res?.partyId);
         if (alreadyExists) {
@@ -167,7 +167,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
           </div>
         ) : null}
 
-        <PreviewPerson
+        <PreviewRecipient
           loading={isLoadingRecipients}
           recipient={foundRecipient}
           handleSubmit={handleSubmitSingleRecipient}

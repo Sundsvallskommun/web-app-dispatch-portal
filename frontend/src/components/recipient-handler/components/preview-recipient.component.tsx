@@ -6,7 +6,7 @@ import { formSendType } from 'src/constants';
 import { Recipient } from 'src/data-contracts/backend/data-contracts';
 import { SendType } from 'src/types';
 
-interface PreviewPersonProps {
+interface PreviewRecipientProps {
   recipient: Recipient | undefined;
   loading?: boolean;
   handleSubmit: () => void;
@@ -14,7 +14,7 @@ interface PreviewPersonProps {
   searchValue: string;
 }
 
-const PreviewPerson = ({ recipient, loading, handleSubmit, sendType, searchValue }: PreviewPersonProps) => {
+const PreviewRecipient = ({ recipient, loading, handleSubmit, sendType, searchValue }: PreviewRecipientProps) => {
   const isEligible = recipient?.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE';
   const successClasses = 'border-gronsta-surface-primary bg-gronsta-background-100';
   const errorClasses = 'border-error-surface-primary bg-error-background-100';
@@ -28,7 +28,7 @@ const PreviewPerson = ({ recipient, loading, handleSubmit, sendType, searchValue
 
   const alert = (
     <div
-      data-cy="preview-person-error"
+      data-cy="preview-recipient-error"
       className={cx(
         'flex items-center gap-6 border-1 rounded-utility p-8 mt-16',
         isEligible ? successClasses : errorClasses
@@ -45,7 +45,7 @@ const PreviewPerson = ({ recipient, loading, handleSubmit, sendType, searchValue
 
   return show ? (
     <div
-      data-cy="preview-person"
+      data-cy="preview-recipient"
       className="shadow-50 bg-background-content -mt-32 p-16 rounded-button border-1 border-divider w-full z-10"
     >
       <p className="text-body text-base font-bold">
@@ -54,7 +54,7 @@ const PreviewPerson = ({ recipient, loading, handleSubmit, sendType, searchValue
           : `${recipient?.address?.firstName ?? ''} ${recipient?.address?.lastName ?? ''}`.trim()}
       </p>
       <p className="text-small">{formatLegalId(recipient?.personNumber ?? recipient?.orgNumber ?? '')}</p>
-      {sendType === formSendType.MAIL && (
+      {sendType === formSendType.MAIL && recipient?.address?.street && (
         <p className="text-small">
           {recipient?.address?.street}, {recipient?.address?.city}
         </p>
@@ -72,4 +72,4 @@ const PreviewPerson = ({ recipient, loading, handleSubmit, sendType, searchValue
   ) : null;
 };
 
-export default PreviewPerson;
+export default PreviewRecipient;

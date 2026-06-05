@@ -72,8 +72,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
     isColumnSortable: false,
     renderColumn: (_value, item: Recipient) => {
       return (
-        <div data-cy="person">
-          <p data-cy="person-name">
+        <div data-cy="recipient">
+          <p data-cy="recipient-name">
             {item?.personNumber
               ? `${item?.address?.firstName} ${item?.address?.lastName}`
               : item?.address?.organizationName}
@@ -98,9 +98,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
 
         return (
           <>
-            <span>
-              {street}, {[zipCode, city].join(' ')}
-            </span>
+            <span>{street ? `${street}, ${[zipCode, city].filter(Boolean).join(' ')}` : '-'}</span>
           </>
         );
       }

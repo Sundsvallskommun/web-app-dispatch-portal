@@ -109,7 +109,6 @@ export class RecipientController {
   async orgRecipient(
     @Req() req: RequestWithUser,
     @Body() body: OrgRecipientDto,
-    @QueryParam('force_kivra') force_kivra: boolean,
     @Res() response: Response<RecipientApiResponse>,
   ): Promise<Response<RecipientApiResponse>> {
     try {
@@ -137,31 +136,19 @@ export class RecipientController {
         throw new HttpException(404, 'Legal entity message settings not found');
       }
 
-      let data: ExtendedRecipient = {
+      const data: ExtendedRecipient = {
         partyId,
         deliveryMethod: recipient.deliveryMethod as unknown as RecipientDeliveryMethodEnum,
         reason: recipient.reason,
         address: {
           organizationName: legalEntity.name,
-          street: legalEntity.address?.addressArea,
+          street: [legalEntity.address?.addressArea, legalEntity.address?.adressNumber].filter(Boolean).join(' '),
           zipCode: legalEntity.address?.postalCode,
           city: legalEntity.address?.city,
           country: legalEntity.postAddress?.country,
         },
         orgNumber: body.orgNumber,
       };
-
-      if (force_kivra) {
-        const checkKivraUrl = `${precheckUrl}/kivra`;
-        const { data: validIds } = await this.apiService.post<string[], KivraEligibilityRequest>(
-          { url: checkKivraUrl, data: { partyIds: [partyId] } },
-          req.user,
-        );
-        if (!validIds.includes(partyId)) {
-          data.deliveryMethod = RecipientDeliveryMethodEnum.DELIVERY_NOT_POSSIBLE;
-          data.reason = 'No kivra';
-        }
-      }
 
       return response.send({ data, message: 'success' });
     } catch (error) {
