@@ -4,10 +4,11 @@ import {
   CreateIdpDto,
   Host,
   IDP,
+  MessagingSettings,
+  MessagingSettingsRequest,
   UpdateHostDto,
   UpdateIdpDto,
 } from '@data-contracts/backend/data-contracts';
-
 import { Resource } from '@interfaces/resource';
 
 const apiService = new Admin({
@@ -49,6 +50,15 @@ const hosts: Resource<Host, CreateHostDto, UpdateHostDto> = {
   requiredFields: ['name', 'municipalityId', 'idpId'],
 };
 
-const resources = { idps, hosts };
+const logotypes: Resource<MessagingSettings, MessagingSettingsRequest, MessagingSettingsRequest> = {
+  name: 'logotypes',
+  getOne: apiService.adminMessagingSettingsControllerGetOne,
+  getMany: apiService.adminMessagingSettingsControllerGetAll,
+  create: apiService.adminMessagingSettingsControllerCreate,
+  update: apiService.adminMessagingSettingsControllerUpdate,
+  remove: apiService.adminMessagingSettingsControllerRemove,
+};
+
+const resources = { idps, hosts, logotypes };
 
 export default resources;
