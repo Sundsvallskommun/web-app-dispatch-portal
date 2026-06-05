@@ -55,13 +55,6 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
     const digits = value.replace(/\D/g, '');
     const isCitizen = digits.length === 12;
 
-    if (isRek && !isCitizen) {
-      setIsLoadingRecipients(false);
-      setFoundRecipient(undefined);
-      setError(t('send-mail:recipientHandler.fetchRecipientError.organizationNotAllowedForRek'));
-      return;
-    }
-
     (isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits))
       .then((res) => {
         const alreadyExists = recipients.find((rec) => rec?.partyId === res?.partyId);
@@ -83,9 +76,11 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   useEffect(() => {
     const digits = value.replace(/\D/g, '');
     const readyToFetch = isRek ? digits.length === 12 : digits.length === 10 || digits.length === 12;
-    if (readyToFetch) {
-      fetchRecipient();
+    if (!readyToFetch) {
+      return;
     }
+    const timeout = setTimeout(() => fetchRecipient(), 300);
+    return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 

@@ -27,3 +27,23 @@ export const recipient = (
   },
   message: 'success',
 });
+
+export const orgRecipient = (
+  orgNumber: string,
+  deliveryMethod: Recipient['deliveryMethod'] = 'SNAIL_MAIL'
+): RecipientApiResponse => ({
+  data: {
+    orgNumber: orgNumber,
+    deliveryMethod: deliveryMethod,
+    address: {
+      firstName: '',
+      lastName: '',
+      organizationName: 'Företaget AB',
+      street: 'FÖRETAGSVÄGEN 1',
+      zipCode: '123 45',
+      city: 'STADEN',
+      country: 'SVERIGE',
+    },
+  },
+  message: 'success',
+});

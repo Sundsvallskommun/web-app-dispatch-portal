@@ -74,15 +74,15 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
       return (
         <div data-cy="recipient">
           <p data-cy="recipient-name">
-            {item?.personNumber
-              ? `${item?.address?.firstName} ${item?.address?.lastName}`
-              : item?.address?.organizationName}
+            {item?.orgNumber
+              ? item?.address?.organizationName
+              : `${item?.address?.firstName ?? ''} ${item?.address?.lastName ?? ''}`.trim()}
           </p>
           {item?.personNumber ? (
             <p data-cy="person-number">{formatLegalId(item?.personNumber)}</p>
-          ) : (
+          ) : item?.orgNumber ? (
             <p data-cy="org-number">{formatLegalId(item?.orgNumber)}</p>
-          )}
+          ) : null}
         </div>
       );
     },

@@ -95,8 +95,7 @@
     "fetchRecipientError": {
       "alreadyExists": "Personen är redan tillagd",
       "singleRecipient": "Kunde inte hämta mottagare. Har du angivit identitetsnumret korrekt?",
-      "csvFile": "Kunde inte kontrollera CSV-fil. Kontrollera din fil, och försök igen.",
-      "organizationNotAllowedForRek": "Organisationer kan inte ta emot rekommenderade brev."
+      "csvFile": "Kunde inte kontrollera CSV-fil. Kontrollera din fil, och försök igen."
     },
     "personalNumberError": {
       "fewNumber": "För få siffror - ange 10 siffror för att söka efter organisationer och 12 siffror för att söka efter personer.",
