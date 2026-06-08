@@ -41,6 +41,7 @@
     "description": "Bifoga upp till 4 filer som ska ingå i brevet. Den totala storleken får vara högst 1,5 MB.",
     "helperText": "Tillåtna filtyper: PDF",
     "addedFilesHeader": "Bifogade filer",
+    "addedFilesDescription": "Sortera filerna i den ordning du vill att dom ska synas i utskicket.",
     "noFiles": "Du har inte bifogat några filer än",
     "sort": "Sortera filerna i den ordning du vill att dom ska synas i utskicket",
     "progressStepper": "Använt utrymme: {files} MB av {limit} MB",
@@ -49,7 +50,7 @@
     "uploadInputPlaceHolder": "Välj fil att lägga till",
     "errorMessage": "Du måste bifoga minst ett dokument.",
     "validation": {
-      "wrongFileType": "Fel filtyp - {fileName}",
+      "wrongFileType": "Ogiltigt filformat. Endast PDF-filer kan laddas upp.",
       "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
       "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
       "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB.",

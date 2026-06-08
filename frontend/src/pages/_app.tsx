@@ -1,4 +1,3 @@
-import { FileUploadWrapper } from '@components/file-upload/file-upload.context';
 import LoginGuard from '@components/login-guard/login-guard';
 import { GuiProvider, defaultTheme, extendTheme, ConfirmationDialogContextProvider } from '@sk-web-gui/react';
 import '@styles/tailwind.scss';
@@ -51,9 +50,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ConfirmationDialogContextProvider>
         <AppWrapper>
           <LoginGuard>
-            <FileUploadWrapper>
-              <Component {...pageProps} />
-            </FileUploadWrapper>
+            <Component {...pageProps} />
           </LoginGuard>
         </AppWrapper>
       </ConfirmationDialogContextProvider>

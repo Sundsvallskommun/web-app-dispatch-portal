@@ -205,17 +205,17 @@ pages.forEach((p) => {
       });
 
       it('should add two documents', () => {
-        cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
+        cy.get('#file-upload-files').selectFile('cypress/files/document1.pdf', { force: true });
         cy.get('[data-cy="attachments"]').contains('document1.pdf').should('be.visible');
-        cy.get('[data-cy="file-input"]').selectFile('cypress/files/document2.pdf', { force: true });
+        cy.get('#file-upload-files').selectFile('cypress/files/document2.pdf', { force: true });
         cy.get('[data-cy="attachments"]').contains('document2.pdf').should('be.visible');
       });
 
       it('should add two documents and remove first document', () => {
-        cy.get('[data-cy="file-input"]').selectFile(['cypress/files/document1.pdf', 'cypress/files/document2.pdf'], {
+        cy.get('#file-upload-files').selectFile(['cypress/files/document1.pdf', 'cypress/files/document2.pdf'], {
           force: true,
         });
-        cy.get('[data-cy="file-list"]').find('[data-cy="delete-file-button"]').first().click();
+        cy.get('[data-cy="attachments"]').find('button[aria-label="Ta bort bifogad fil"]').first().click();
         cy.get('[data-cy="attachments"]').contains('document2.pdf').should('be.visible');
       });
 
@@ -225,12 +225,12 @@ pages.forEach((p) => {
       });
 
       it('should show validation error when an attachment that is larger than 1.5 MB is added and "next" is clicked', () => {
-        cy.get('[data-cy="file-input"]').selectFile('cypress/files/document3.pdf', { force: true });
+        cy.get('#file-upload-files').selectFile('cypress/files/document3.pdf', { force: true });
         cy.get('[data-cy="form-error-message"]').should('be.visible');
       });
 
       it('should navigate to next step if a file is added and "next" is clicked', () => {
-        cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
+        cy.get('#file-upload-files').selectFile('cypress/files/document1.pdf', { force: true });
         cy.get('[data-cy="attachments"]').should('exist');
         cy.get('[data-cy="next-button"]').click();
         cy.get('.sk-progress-stepper-step[data-progress="current"]')
@@ -245,7 +245,7 @@ pages.forEach((p) => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(eligiblePn, true);
         cy.get('[data-cy="next-button"]').click();
-        cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
+        cy.get('#file-upload-files').selectFile('cypress/files/document1.pdf', { force: true });
         cy.get('[data-cy="next-button"]').click();
       });
 
@@ -276,7 +276,7 @@ pages.forEach((p) => {
       }
 
       cy.get('[data-cy="next-button"]').click();
-      cy.get('[data-cy="file-input"]').selectFile('cypress/files/document1.pdf', { force: true });
+      cy.get('#file-upload-files').selectFile('cypress/files/document1.pdf', { force: true });
       cy.get('[data-cy="next-button"]').click();
       cy.get('[data-cy="sender-subject"]').type('Min rubrik');
       cy.get('[data-cy="next-button"]').click();
