@@ -126,7 +126,10 @@ pages.forEach((p) => {
           cy.get('.sk-modal-dialog.sk-dialog')
             .eq(0)
             .within(() => {
-              cy.get('h1').should('include.text', 'Filen personal-numbers.csv innehåller 2 ogiltiga identitetsnummer.');
+              cy.get('h1').should(
+                'include.text',
+                'Filen personal-numbers.csv innehåller 2 ogiltiga person- eller organisationsnummer.'
+              );
               cy.get('button').contains('Fortsätt ändå').click();
             });
           cy.get('[data-cy="recipientlist"]').contains('personal-numbers.csv').should('be.visible');
@@ -152,7 +155,7 @@ pages.forEach((p) => {
           cy.get('.sk-modal-wrapper')
             .first()
             .within(() => {
-              cy.get('h1').should('have.text', 'Vill du lägga till mottagare med identitetsnummer eller adress?');
+              cy.get('h1').should('have.text', 'Vill du lägga till mottagare med address, person- eller organisationsnummer?');
               cy.get('button').contains('Ja').click();
             });
           cy.get('button').contains('Nästa').click();

@@ -69,8 +69,8 @@
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
     "csvAddedFile": "Tillagd fil",
     "csvWarning": {
-      "title_one": "Filen {csvFile} innehåller {count} ogiltigt identitetsnummer.",
-      "title_other": "Filen {csvFile} innehåller {count} ogiltiga identitetsnummer.",
+      "title_one": "Filen {csvFile} innehåller {count} ogiltigt person- eller organisationsnummer.",
+      "title_other": "Filen {csvFile} innehåller {count} ogiltiga person- eller organisationsnummer.",
       "description": "Vill du fortsätta utan dessa mottagare?",
       "confirm": "Fortsätt ändå",
       "cancel": "Avbryt"
@@ -84,7 +84,7 @@
       "maxRow": "Filen får inte innehålla fler än {rows} rader",
       "default": "Något gick fel när mottagarlistan hanterades",
       "invalidRecipient": "Ogiltiga mottagare ({num})",
-      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att identitetsnumren är fullständiga och korrekt skrivna. Format: ÅÅÅÅMMDD-XXXX (personnummer) eller XXXXXX-XXXX (organisationsnummer). Ladda sedan upp filen igen.",
+      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att person- eller organisationsnumren är fullständiga och korrekt skrivna. Format: ÅÅÅÅMMDD-XXXX (personnummer) eller XXXXXX-XXXX (organisationsnummer). Ladda sedan upp filen igen.",
       "singleRecipientError": "Du måste lägga till en mottagare.",
       "badFile": "Felaktig fil",
       "csvError": "Du måste lägga till en fil",
@@ -95,7 +95,7 @@
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är redan tillagd",
-      "singleRecipient": "Kunde inte hämta mottagare. Har du angivit identitetsnumret korrekt?",
+      "singleRecipient": "Kunde inte hämta mottagare. Har du angivit person- eller organisationsnumret korrekt?",
       "csvFile": "Kunde inte kontrollera CSV-fil. Kontrollera din fil, och försök igen."
     },
     "personalNumberError": {
@@ -105,10 +105,10 @@
     "changeTo": {
       "list": {
         "label": "Vill du lägga till mottagare med mottagarlista?",
-        "text": "Alla mottagare du har lagt till med identitetsnummer eller adress kommer att försvinna"
+        "text": "Alla mottagare du har lagt till med address, person- eller organisationsnummer kommer att försvinna"
       },
       "person": {
-        "label": "Vill du lägga till mottagare med identitetsnummer eller adress?",
+        "label": "Vill du lägga till mottagare med address, person- eller organisationsnummer?",
         "text": "Listan du lagt till kommer att försvinna"
       }
     },
