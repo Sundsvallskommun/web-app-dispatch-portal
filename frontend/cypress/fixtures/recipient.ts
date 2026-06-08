@@ -13,6 +13,7 @@ export const recipient = (
   minor?: boolean
 ): RecipientApiResponse => ({
   data: {
+    partyId: `party-${personnumber}`,
     personNumber: personnumber,
     deliveryMethod: deliveryMethod,
     address: {
@@ -33,6 +34,7 @@ export const orgRecipient = (
   deliveryMethod: Recipient['deliveryMethod'] = 'SNAIL_MAIL'
 ): RecipientApiResponse => ({
   data: {
+    partyId: `party-${orgNumber}`,
     orgNumber: orgNumber,
     deliveryMethod: deliveryMethod,
     address: {

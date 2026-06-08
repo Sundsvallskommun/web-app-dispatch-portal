@@ -70,6 +70,15 @@ pages.forEach((p) => {
             });
         });
 
+        it('should remove the added organization', () => {
+          const orgNumber = organizationNumber.replace('-', '');
+          cy.intercept('POST', '**/api/org-recipient*', orgRecipient(orgNumber, 'SNAIL_MAIL')).as('orgRecipient');
+          addOrgRecipient(orgNumber, true);
+          cy.get('[data-cy="recipient-table"]').should('exist');
+          cy.get('[data-cy="recipient-table"]').find('[data-cy="delete-recipient-button"]').first().click();
+          cy.get('[data-cy="recipient-table"]').should('not.exist');
+        });
+
         it('should add persons with address', () => {
           addAddress();
           cy.get('[data-cy="recipient-table"]>tbody>tr')
@@ -100,10 +109,19 @@ pages.forEach((p) => {
           cy.get('.sk-form-error-message').contains('Kunde inte hitta några giltiga mottagare.');
         });
 
+        it('should add persons and organizations from csv', () => {
+          cy.intercept('POST', '**/api/recipient/csv', {
+            data: { name: 'mixed-numbers.csv', id: '1234-2345-3456', status: 'OK' },
+            message: 'success',
+          }).as('csv');
+          cy.get('input[type="radio"][value="1"]').check();
+          cy.get('#file-upload-files').selectFile('cypress/files/mixed-numbers.csv', { force: true });
+          cy.wait('@csv');
+          cy.get('[data-cy="recipientlist"]').contains('mixed-numbers.csv').should('be.visible');
+        });
+
         it('should show dialog when adding a csv file with rejected recipients', () => {
-          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as(
-            'csv'
-          );
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as('csv');
           addCsv();
           cy.get('.sk-modal-dialog.sk-dialog')
             .eq(0)
