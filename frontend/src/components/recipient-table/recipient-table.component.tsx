@@ -78,11 +78,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
               ? item?.address?.organizationName
               : `${item?.address?.firstName ?? ''} ${item?.address?.lastName ?? ''}`.trim()}
           </p>
-          {item?.personNumber ? (
-            <p data-cy="person-number">{formatLegalId(item?.personNumber)}</p>
-          ) : item?.orgNumber ? (
-            <p data-cy="org-number">{formatLegalId(item?.orgNumber)}</p>
-          ) : null}
+          {item?.personNumber && <p data-cy="person-number">{formatLegalId(item.personNumber)}</p>}
+          {item?.orgNumber && <p data-cy="org-number">{formatLegalId(item.orgNumber)}</p>}
         </div>
       );
     },
@@ -96,11 +93,7 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
       if (item?.address) {
         const { street, zipCode, city } = item.address;
 
-        return (
-          <>
-            <span>{street ? `${street}, ${[zipCode, city].filter(Boolean).join(' ')}` : '-'}</span>
-          </>
-        );
+        return <span>{street ? `${street}, ${[zipCode, city].filter(Boolean).join(' ')}` : '-'}</span>;
       }
     },
   } as AutoTableHeader;
