@@ -11,10 +11,10 @@ import { IsEnum, IsObject, IsOptional, IsString, ValidateNested } from 'class-va
 export class Address implements AddressType {
   @IsString()
   @IsOptional()
-  firstName: string;
+  firstName?: string;
   @IsString()
   @IsOptional()
-  lastName: string;
+  lastName?: string;
   @IsString()
   street: string;
   @IsString()
