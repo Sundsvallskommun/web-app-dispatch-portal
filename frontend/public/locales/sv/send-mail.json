@@ -138,6 +138,7 @@
       "description": "När du lägger till en mottagare med adress skickas brevet som vanlig papperspost.",
       "firstName": "Förnamn",
       "lastName": "Efternamn",
+      "orgName": "Företagets namn",
       "address": "Adress",
       "careOf": "C/o adress (valfri)",
       "zipCode": "Postnummer",
@@ -145,6 +146,7 @@
       "error": {
         "firstName": "Förnamn måste anges",
         "lastName": "Efternamn måste anges",
+        "orgName": "Företagets namn måste anges",
         "address": "Adress måste anges",
         "zipCode": "Postnummer måste anges",
         "city": "Ort måste anges"

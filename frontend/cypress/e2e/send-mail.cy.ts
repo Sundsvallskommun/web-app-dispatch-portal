@@ -90,6 +90,17 @@ pages.forEach((p) => {
             });
         });
 
+        it('should add organization with address', () => {
+          addOrgName();
+          cy.get('[data-cy="recipient-table"]>tbody>tr')
+            .eq(0)
+            .children()
+            .each((child, index) => {
+              if (index === 0) cy.wrap(child).contains('Företag AB');
+              if (index === 2) cy.wrap(child).contains('Post');
+            });
+        });
+
         it('should add persons from csv', () => {
           addCsv();
           cy.get('[data-cy="recipientlist"]').contains('personal-numbers.csv').should('be.visible');
@@ -155,7 +166,10 @@ pages.forEach((p) => {
           cy.get('.sk-modal-wrapper')
             .first()
             .within(() => {
-              cy.get('h1').should('have.text', 'Vill du lägga till mottagare med address, person- eller organisationsnummer?');
+              cy.get('h1').should(
+                'have.text',
+                'Vill du lägga till mottagare med address, person- eller organisationsnummer?'
+              );
               cy.get('button').contains('Ja').click();
             });
           cy.get('button').contains('Nästa').click();
@@ -343,6 +357,16 @@ const addAddress = () => {
   cy.get('[data-cy="add-with-address-modal"]').within(() => {
     cy.get('#firstName').type('Manuel');
     cy.get('#lastName').type('Manuelsson');
+    cy.get('#address').type('Gata 1');
+    cy.get('#zipCode').type('123 45');
+    cy.get('#city').type('Staden{enter}');
+  });
+};
+
+const addOrgName = () => {
+  cy.get('[data-cy="add-with-address-button"]').click();
+  cy.get('[data-cy="add-with-address-modal"]').within(() => {
+    cy.get('#orgName').type('Företag AB');
     cy.get('#address').type('Gata 1');
     cy.get('#zipCode').type('123 45');
     cy.get('#city').type('Staden{enter}');

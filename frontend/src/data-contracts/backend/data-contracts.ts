@@ -19,8 +19,8 @@ export interface OrgRecipientDto {
 }
 
 export interface Address {
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   street: string;
   apartmentNumber?: string;
   careOf?: string;

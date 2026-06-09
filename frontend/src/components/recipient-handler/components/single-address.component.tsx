@@ -37,7 +37,8 @@ export const SingleAddress: React.FC<SingleAddressProps> = ({ sendType }) => {
           recipient?.address?.lastName === newAdress?.address?.lastName &&
           recipient?.address?.zipCode === newAdress?.address?.zipCode &&
           recipient?.address?.city === newAdress?.address?.city &&
-          recipient?.address?.careOf === newAdress?.address?.careOf
+          recipient?.address?.careOf === newAdress?.address?.careOf &&
+          recipient?.address?.organizationName === newAdress?.address?.organizationName
       );
 
       if (alreadyExists) {

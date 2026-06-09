@@ -51,7 +51,8 @@ const PreviewRecipient = ({ recipient, loading, handleSubmit, sendType, searchVa
       <p className="text-body text-base font-bold">
         {isOrganization
           ? recipient?.address?.organizationName
-          : `${recipient?.address?.firstName ?? ''} ${recipient?.address?.lastName ?? ''}`.trim()}
+          : `${recipient?.address?.firstName ?? ''} ${recipient?.address?.lastName ?? ''}`.trim() ||
+            recipient?.address?.organizationName}
       </p>
       <p className="text-small">{formatLegalId(recipient?.personNumber ?? recipient?.orgNumber ?? '')}</p>
       {sendType === formSendType.MAIL && recipient?.address?.street && (

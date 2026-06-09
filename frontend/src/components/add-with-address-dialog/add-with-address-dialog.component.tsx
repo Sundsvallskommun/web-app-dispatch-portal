@@ -13,15 +13,34 @@ interface AddWithAddressDialogProps {
   addWithAddressDialogForm?: Address;
 }
 
-const formSchema = yup.object({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  street: yup.string().required(),
-  careOf: yup.string().optional(),
-  zipCode: yup.string().required(),
-  city: yup.string().required(),
-  country: yup.string().required(),
-});
+const formSchema = yup.object().shape(
+  {
+    firstName: yup.string().when('organizationName', {
+      is: (organizationName: string) => !organizationName,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.optional(),
+    }),
+    lastName: yup.string().when('organizationName', {
+      is: (organizationName: string) => !organizationName,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.optional(),
+    }),
+    street: yup.string().required(),
+    careOf: yup.string().optional(),
+    zipCode: yup.string().required(),
+    city: yup.string().required(),
+    country: yup.string().required(),
+    organizationName: yup.string().when(['firstName', 'lastName'], {
+      is: (firstName: string, lastName: string) => !firstName && !lastName,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.optional(),
+    }),
+  },
+  [
+    ['organizationName', 'firstName'],
+    ['organizationName', 'lastName'],
+  ]
+);
 
 const defaultValues = {
   firstName: '',
@@ -31,6 +50,7 @@ const defaultValues = {
   zipCode: '',
   city: '',
   country: 'SVERIGE',
+  organizationName: '',
 };
 
 export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
@@ -93,6 +113,14 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
               <Input {...register('lastName')} aria-describedby="lastName-error" />
               {errors.lastName && (
                 <CustomFormErrorMessage message={t('send-mail:recipientHandler.addWithAddress.error.lastName')} />
+              )}
+            </FormControl>
+
+            <FormControl className="w-full col-span-2" id="orgName" invalid={!!errors.organizationName}>
+              <FormLabel>{t('send-mail:recipientHandler.addWithAddress.orgName')}</FormLabel>
+              <Input {...register('organizationName')} aria-describedby="orgName-error" />
+              {errors.organizationName && (
+                <CustomFormErrorMessage message={t('send-mail:recipientHandler.addWithAddress.error.orgName')} />
               )}
             </FormControl>
 
