@@ -35,12 +35,7 @@ export const EditLogotype: React.FC<EditLogotypesProps> = ({ property }) => {
 
   return (
     <div className="flex flex-col gap-32 grow mb-32 max-w-[60rem] mt-32">
-      <EditResourceInput
-        data-cy="edit-images-name"
-        property={property}
-        required
-        label={t(`logotypes:properties.${property}`)}
-      />
+      <EditResourceInput property={property} required label={t(`logotypes:properties.${property}`)} />
 
       {previewSrc && (
         <>

@@ -101,10 +101,10 @@ export default function LogotypePage() {
           <EditorToolbar resource={RESOURCE} id={id} />
           <Input {...register('id')} hidden />
           <FormLabel>{t('logotypes:properties.host')}</FormLabel>
-          <Input {...register('host')} />
+          <Input data-cy={`edit-logotype-host`} {...register('host')} />
           {errors.host && <FormErrorMessage>{errors.host.message}</FormErrorMessage>}
           <FormLabel>{t('logotypes:properties.display_name')}</FormLabel>
-          <Input {...register('display_name')} />
+          <Input data-cy={`edit-logotype-display_name`} {...register('display_name')} />
           {errors.display_name && <FormErrorMessage>{errors.display_name?.message}</FormErrorMessage>}
           <EditLogotype isNew={isNew} property="logotype_lightmode" />
           <EditLogotype isNew={isNew} property="logotype_darkmode" />

@@ -5,6 +5,7 @@ import me from '../fixtures/me';
 import { apiResponse } from 'cypress/fixtures/apiresponse';
 import { idp1, idp2 } from 'cypress/fixtures/idps';
 import { host1, host2, host3 } from 'cypress/fixtures/hosts';
+import { logotype1, logotype2 } from '../fixtures/logotypes';
 
 export const DEFAULT_COOKIE_VALUE = 'necessary%2Cstats';
 
@@ -21,4 +22,5 @@ beforeEach(() => {
   cy.intercept('GET', '**/api/admin/me', me).as('me');
   cy.intercept('GET', '**/api/admin/hosts', apiResponse([host1, host2, host3])).as('hosts');
   cy.intercept('GET', '**/api/admin/idps', apiResponse([idp1, idp2])).as('idps');
+  cy.intercept('GET', '**/api/admin/logotypes', apiResponse([logotype1, logotype2])).as('logotypes');
 });
