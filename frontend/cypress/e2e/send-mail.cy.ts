@@ -355,6 +355,8 @@ pages.forEach((p) => {
 const addAddress = () => {
   cy.get('[data-cy="add-with-address-button"]').click();
   cy.get('[data-cy="add-with-address-modal"]').within(() => {
+    cy.get('input[type="radio"][value="0"]').check();
+    cy.get('button').contains('Nästa').click();
     cy.get('#firstName').type('Manuel');
     cy.get('#lastName').type('Manuelsson');
     cy.get('#address').type('Gata 1');
@@ -366,6 +368,8 @@ const addAddress = () => {
 const addOrgName = () => {
   cy.get('[data-cy="add-with-address-button"]').click();
   cy.get('[data-cy="add-with-address-modal"]').within(() => {
+    cy.get('input[type="radio"][value="1"]').check();
+    cy.get('button').contains('Nästa').click();
     cy.get('#orgName').type('Företag AB');
     cy.get('#address').type('Gata 1');
     cy.get('#zipCode').type('123 45');
