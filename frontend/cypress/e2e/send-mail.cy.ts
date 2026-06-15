@@ -166,10 +166,7 @@ pages.forEach((p) => {
           cy.get('.sk-modal-wrapper')
             .first()
             .within(() => {
-              cy.get('h1').should(
-                'have.text',
-                'Vill du lägga till mottagare med address, person- eller organisationsnummer?'
-              );
+              cy.get('h1').should('have.text', 'Vill du lägga till mottagare med adress, person- eller organisationsnummer?');
               cy.get('button').contains('Ja').click();
             });
           cy.get('button').contains('Nästa').click();
