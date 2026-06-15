@@ -22,6 +22,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   const confirm = useConfirm();
   const [value, setValue] = useState<string>('');
   const { t } = useTranslation();
+  const digits = value.replace(/\D/g, '');
 
   const {
     clearErrors,
@@ -38,11 +39,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
     } else {
       return (
         <p className="text-small">
-          {t(
-            isRek
-              ? 'send-mail:recipientHandler.searchIdentityNumberHelperRek'
-              : 'send-mail:recipientHandler.searchIdentityNumberHelper'
-          )}
+          {t(`send-mail:recipientHandler.searchIdentity${isRek ? 'NumberHelperRek' : 'NumberHelper'}`)}
         </p>
       );
     }
@@ -52,7 +49,6 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
     setIsLoadingRecipients(true);
     setError(undefined);
 
-    const digits = value.replace(/\D/g, '');
     const isCitizen = digits.length === 12;
 
     (isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits))
@@ -74,7 +70,6 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   };
 
   useEffect(() => {
-    const digits = value.replace(/\D/g, '');
     const readyToFetch = isRek ? digits.length === 12 : digits.length === 10 || digits.length === 12;
     if (!readyToFetch) {
       return;

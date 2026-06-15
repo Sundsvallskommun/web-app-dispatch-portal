@@ -105,10 +105,10 @@
     "changeTo": {
       "list": {
         "label": "Vill du lägga till mottagare med mottagarlista?",
-        "text": "Alla mottagare du har lagt till med address, person- eller organisationsnummer kommer att försvinna"
+        "text": "Alla mottagare du har lagt till med adress, person- eller organisationsnummer kommer att försvinna"
       },
       "person": {
-        "label": "Vill du lägga till mottagare med address, person- eller organisationsnummer?",
+        "label": "Vill du lägga till mottagare med adress, person- eller organisationsnummer?",
         "text": "Listan du lagt till kommer att försvinna"
       }
     },
