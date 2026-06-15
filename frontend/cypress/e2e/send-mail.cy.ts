@@ -1,5 +1,5 @@
 import { Pages } from './types';
-import { recipient } from '../fixtures/recipient';
+import { orgRecipient, recipient } from '../fixtures/recipient';
 import { recipientcsv } from 'cypress/fixtures/recipientcsv';
 
 const pages = [
@@ -8,6 +8,7 @@ const pages = [
 ] as Pages[];
 
 const personalNumber = { isEligible: '19901118-2475', isNotEligible: '19230101-0159', invalid: '20240101-0000' };
+const organizationNumber = '556677-8899';
 
 pages.forEach((p) => {
   describe(p.description, () => {
@@ -52,7 +53,30 @@ pages.forEach((p) => {
             'recipient'
           );
           addRecipient(notEligiblePn, false);
-          cy.get('[data-cy="preview-person-error"]').should('include.text', 'Mottagaren är underårig');
+          cy.get('[data-cy="preview-recipient-error"]').should('include.text', 'Mottagaren är underårig');
+        });
+
+        it('should add an organization with org number, show preview and add it on enter', () => {
+          const orgNumber = organizationNumber.replace('-', '');
+          cy.intercept('POST', '**/api/org-recipient*', orgRecipient(orgNumber, 'SNAIL_MAIL')).as('orgRecipient');
+          addOrgRecipient(orgNumber, true);
+          cy.get('[data-cy="recipient-table"]>tbody>tr')
+            .eq(0)
+            .children()
+            .each((child, index) => {
+              if (index === 0) cy.wrap(child).contains('Företaget AB');
+              if (index === 0) cy.wrap(child).contains(organizationNumber);
+              if (index === 2) cy.wrap(child).contains('Post');
+            });
+        });
+
+        it('should remove the added organization', () => {
+          const orgNumber = organizationNumber.replace('-', '');
+          cy.intercept('POST', '**/api/org-recipient*', orgRecipient(orgNumber, 'SNAIL_MAIL')).as('orgRecipient');
+          addOrgRecipient(orgNumber, true);
+          cy.get('[data-cy="recipient-table"]').should('exist');
+          cy.get('[data-cy="recipient-table"]').find('[data-cy="delete-recipient-button"]').first().click();
+          cy.get('[data-cy="recipient-table"]').should('not.exist');
         });
 
         it('should add persons with address', () => {
@@ -85,15 +109,27 @@ pages.forEach((p) => {
           cy.get('.sk-form-error-message').contains('Kunde inte hitta några giltiga mottagare.');
         });
 
+        it('should add persons and organizations from csv', () => {
+          cy.intercept('POST', '**/api/recipient/csv', {
+            data: { name: 'mixed-numbers.csv', id: '1234-2345-3456', status: 'OK' },
+            message: 'success',
+          }).as('csv');
+          cy.get('input[type="radio"][value="1"]').check();
+          cy.get('#file-upload-files').selectFile('cypress/files/mixed-numbers.csv', { force: true });
+          cy.wait('@csv');
+          cy.get('[data-cy="recipientlist"]').contains('mixed-numbers.csv').should('be.visible');
+        });
+
         it('should show dialog when adding a csv file with rejected recipients', () => {
-          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as(
-            'csv'
-          );
+          cy.intercept('POST', '**/api/recipient/csv', recipientcsv('OK', { rejections: true })).as('csv');
           addCsv();
           cy.get('.sk-modal-dialog.sk-dialog')
             .eq(0)
             .within(() => {
-              cy.get('h1').should('include.text', 'Filen personal-numbers.csv innehåller 2 ogiltiga personnummer.');
+              cy.get('h1').should(
+                'include.text',
+                'Filen personal-numbers.csv innehåller 2 ogiltiga person- eller organisationsnummer.'
+              );
               cy.get('button').contains('Fortsätt ändå').click();
             });
           cy.get('[data-cy="recipientlist"]').contains('personal-numbers.csv').should('be.visible');
@@ -119,7 +155,7 @@ pages.forEach((p) => {
           cy.get('.sk-modal-wrapper')
             .first()
             .within(() => {
-              cy.get('h1').should('have.text', 'Vill du lägga till mottagare med personnummer eller adress?');
+              cy.get('h1').should('have.text', 'Vill du lägga till mottagare med adress, person- eller organisationsnummer?');
               cy.get('button').contains('Ja').click();
             });
           cy.get('button').contains('Nästa').click();
@@ -142,13 +178,21 @@ pages.forEach((p) => {
         it('should show validation error if test person does not have Kivra', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(notEligiblePn, 'DELIVERY_NOT_POSSIBLE')).as('recipient');
           addRecipient(notEligiblePn, false);
-          cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan inte ta emot via Kivra');
+          cy.get('[data-cy="preview-recipient"]').should('contain.text', 'Kan inte ta emot via Kivra');
         });
 
         it('should show success message if test person has Kivra', () => {
           cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
           addRecipient(eligiblePn, false);
-          cy.get('[data-cy="preview-person"]').should('contain.text', 'Kan ta emot via Kivra');
+          cy.get('[data-cy="preview-recipient"]').should('contain.text', 'Kan ta emot via Kivra');
+        });
+
+        it('should only allow personal numbers and not preview an organization number', () => {
+          const orgNumber = organizationNumber.replace('-', '');
+          cy.intercept('POST', '**/api/org-recipient*', orgRecipient(orgNumber, 'SNAIL_MAIL')).as('orgRecipient');
+          cy.get('.sk-form-label').should('contain.text', 'Sök mottagare med personnummer');
+          cy.get('[data-cy="recipient-search-field"]').type(orgNumber, { force: true });
+          cy.get('[data-cy="preview-recipient"]').should('not.exist');
         });
       }
 
@@ -157,7 +201,7 @@ pages.forEach((p) => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(personalNumber.isEligible, true);
         cy.get('[data-cy="recipient-table"]').should('exist');
-        cy.get('[data-cy="recipient-table"]').find('[data-cy="delete-person-button"]').first().click();
+        cy.get('[data-cy="recipient-table"]').find('[data-cy="delete-recipient-button"]').first().click();
         cy.get('[data-cy="recipient-table"]').should('not.exist');
       });
 
@@ -234,16 +278,20 @@ pages.forEach((p) => {
   });
 });
 
-['person', 'address', 'csv'].forEach((variant) => {
+['person', 'address', 'org', 'csv'].forEach((variant) => {
   describe(`Review handler - ${variant}`, () => {
     beforeEach(() => {
       cy.visit('/send/mail');
       const eligiblePn = personalNumber.isEligible.replace('-', '');
+      const orgNumber = organizationNumber.replace('-', '');
       if (variant === 'person') {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(eligiblePn, true);
       } else if (variant === 'address') {
         addAddress();
+      } else if (variant === 'org') {
+        cy.intercept('POST', '**/api/org-recipient*', orgRecipient(orgNumber, 'SNAIL_MAIL')).as('orgRecipient');
+        addOrgRecipient(orgNumber, true);
       } else if (variant === 'csv') {
         addCsv();
       }
@@ -265,13 +313,18 @@ pages.forEach((p) => {
         cy.get('[data-cy="recipient-table"]')
           .first()
           .within(() => {
-            cy.get('[data-cy="delete-person-button"]').should('not.exist');
+            cy.get('[data-cy="delete-recipient-button"]').should('not.exist');
             if (variant === 'person') {
-              cy.get('[data-cy="person-name"]').should('include.text', 'Person Personsson');
+              cy.get('[data-cy="recipient-name"]').should('include.text', 'Person Personsson');
               cy.get('[data-cy="person-number"]').should('include.text', personalNumber.isEligible);
               cy.get('[data-cy="delivery-method"]').should('include.text', 'Digitalt');
+            } else if (variant === 'org') {
+              cy.get('[data-cy="recipient-name"]').should('include.text', 'Företaget AB');
+              cy.get('[data-cy="person-number"]').should('not.exist');
+              cy.get('[data-cy="org-number"]').should('include.text', organizationNumber);
+              cy.get('[data-cy="delivery-method"]').should('include.text', 'Post');
             } else {
-              cy.get('[data-cy="person-name"]').should('include.text', 'Manuel Manuelsson');
+              cy.get('[data-cy="recipient-name"]').should('include.text', 'Manuel Manuelsson');
               cy.get('[data-cy="person-number"]').should('not.exist');
               cy.get('[data-cy="delivery-method"]').should('include.text', 'Post');
             }
@@ -303,11 +356,19 @@ const addCsv = () => {
 };
 
 const addRecipient = (personNumber: string, enter: boolean) => {
-  cy.get('[data-cy="person-search-field"]').should('exist');
-  cy.get('[data-cy="person-search-field"]').type(personNumber, { force: true });
+  cy.get('[data-cy="recipient-search-field"]').should('exist');
+  cy.get('[data-cy="recipient-search-field"]').type(personNumber, { force: true });
   cy.wait('@recipient');
-  cy.get('[data-cy="preview-person"]').should('be.visible');
-  if (enter) cy.get('[data-cy="person-search-field"]').type('{enter}', { force: true });
+  cy.get('[data-cy="preview-recipient"]').should('be.visible');
+  if (enter) cy.get('[data-cy="recipient-search-field"]').type('{enter}', { force: true });
+};
+
+const addOrgRecipient = (orgNumber: string, enter: boolean) => {
+  cy.get('[data-cy="recipient-search-field"]').should('exist');
+  cy.get('[data-cy="recipient-search-field"]').type(orgNumber, { force: true });
+  cy.wait('@orgRecipient');
+  cy.get('[data-cy="preview-recipient"]').should('be.visible');
+  if (enter) cy.get('[data-cy="recipient-search-field"]').type('{enter}', { force: true });
 };
 
 const navigateToAttachmentHandler = (personNumber?: string) => {

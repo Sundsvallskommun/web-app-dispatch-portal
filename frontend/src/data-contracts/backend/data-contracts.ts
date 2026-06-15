@@ -14,6 +14,10 @@ export interface RecipientDto {
   personNumber: string;
 }
 
+export interface OrgRecipientDto {
+  orgNumber: string;
+}
+
 export interface Address {
   firstName: string;
   lastName: string;
@@ -23,21 +27,23 @@ export interface Address {
   zipCode: string;
   city: string;
   country: string;
+  organizationName?: string;
 }
 
 export interface Recipient {
   partyId?: string;
-  deliveryMethod: 'DIGITAL_MAIL' | 'SNAIL_MAIL' | 'DELIVERY_NOT_POSSIBLE';
+  deliveryMethod: "DIGITAL_MAIL" | "SNAIL_MAIL" | "DELIVERY_NOT_POSSIBLE";
   address?: Address;
   reason?: string;
   personNumber?: string;
+  orgNumber?: string;
 }
 
 export interface Csv {
   name: string;
   id: string;
-  status: 'OK' | 'BAD';
-  error?: 'UNKNOWN' | 'MISSING_VALID_IDS';
+  status: "OK" | "BAD";
+  error?: "UNKNOWN" | "MISSING_VALID_IDS";
   duplicateEntries?: object;
   rejectedEntries?: string[];
 }
@@ -76,6 +82,11 @@ export interface RequestBodyCsvMail {
   body?: string;
 }
 
+export interface RequestBodyCsvSMS {
+  csvId: string;
+  message: string;
+}
+
 export interface RequestBodySMS {
   /** @minItems 1 */
   recipients: string[];
@@ -94,152 +105,6 @@ export interface MessageApiResponse {
   message: string;
 }
 
-export interface UpdateLogotypeDto {
-  name?: string;
-  removeDarkMode?: 'true' | 'false';
-}
-
-export interface CreateLogotypeDto {
-  logotypeLightMode: object;
-  logotypeDarkMode?: object;
-}
-
-export interface Municipality {
-  id: number;
-  municipalityId: number;
-  name?: string;
-  logotypeId?: number;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  createdAt: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  updatedAt: string;
-}
-
-export interface MunicipalityExtended {
-  logotype?: Logotype;
-  id: number;
-  municipalityId: number;
-  name?: string;
-  logotypeId?: number;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  createdAt: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  updatedAt: string;
-}
-
-export interface MunicipalityApiResponse {
-  data: MunicipalityExtended;
-  message: string;
-}
-
-export interface MunicipalitiesApiResponse {
-  data: MunicipalityExtended[];
-  message: string;
-}
-
-export interface Logotype {
-  id: number;
-  name: string;
-  filenameLightMode: string;
-  urlLightMode: string;
-  filenameDarkMode?: string;
-  urlDarkMode?: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  createdAt: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  updatedAt: string;
-}
-
-export interface LogotypeExtended {
-  municipalities: Municipality[];
-  id: number;
-  name: string;
-  filenameLightMode: string;
-  urlLightMode: string;
-  filenameDarkMode?: string;
-  urlDarkMode?: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  createdAt: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  updatedAt: string;
-}
-
-export interface LogotypeApiResponse {
-  data: Logotype;
-  message: string;
-}
-
-export interface LogotypesApiResponse {
-  data: Logotype[];
-  message: string;
-}
-
-export interface CreateMunicipalityDto {
-  municipalityId: number;
-  name?: string;
-  logotypeId?: number;
-}
-
-export interface UpdateMunicipalityDto {
-  municipalityId?: number;
-  name?: string;
-  logotypeId?: number;
-}
-
-export interface CreateOrganizationDto {
-  orgId: number;
-  host: string;
-  name?: string;
-  logotypeId?: number;
-  municipalityId: number;
-}
-
-export interface UpdateOrganizationDto {
-  orgId?: number;
-  host?: string;
-  name?: string;
-  logotypeId?: number;
-  municipalityId?: number;
-}
-
-export interface Organization {
-  id: number;
-  host: string;
-  orgId: number;
-  name?: string;
-  logotypeId?: number;
-  municipalityId?: number;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  createdAt: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  updatedAt: string;
-}
-
-export interface OrganizationExtended {
-  municipality: Municipality;
-  logotype: Logotype;
-  id: number;
-  host: string;
-  orgId: number;
-  name?: string;
-  logotypeId?: number;
-  municipalityId?: number;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  createdAt: string;
-  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
-  updatedAt: string;
-}
-
-export interface OrganizationApiResponse {
-  data: OrganizationExtended;
-  message: string;
-}
-
-export interface OrganizationsApiResponse {
-  data: OrganizationExtended[];
-  message: string;
-}
-
 export interface AdminUser {
   name: string;
   givenName: string;
@@ -250,4 +115,74 @@ export interface AdminUser {
 export interface AdminUserApiResponse {
   data: AdminUser;
   message: string;
+}
+
+export interface CreateHostDto {
+  name: string;
+  municipalityId: number;
+  domain?: string;
+  idpId: number;
+}
+
+export interface UpdateHostDto {
+  name?: string;
+  municipalityId?: number;
+  domain?: string;
+  idpId?: number;
+}
+
+export interface IDP {
+  id: number;
+  name?: string;
+  entryPoint: string;
+  idpCert: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  createdAt: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  updatedAt: string;
+}
+
+export interface IDPApiResponse {
+  data: IDP;
+  message: string;
+}
+
+export interface IDPsApiResponse {
+  data: IDP[];
+  message: string;
+}
+
+export interface Host {
+  id: number;
+  name?: string;
+  municipalityId: number;
+  domain?: string;
+  idpId: number;
+  idp?: IDP;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  createdAt: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  updatedAt: string;
+}
+
+export interface HostApiResponse {
+  data: Host;
+  message: string;
+}
+
+export interface HostsApiResponse {
+  data: Host[];
+  message: string;
+}
+
+export interface CreateIdpDto {
+  name?: string;
+  entryPoint: string;
+  idpCert: string;
+}
+
+export interface UpdateIdpDto {
+  name?: string;
+  entryPoint?: string;
+  idpCert?: string;
 }

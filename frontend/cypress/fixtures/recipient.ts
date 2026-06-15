@@ -13,6 +13,7 @@ export const recipient = (
   minor?: boolean
 ): RecipientApiResponse => ({
   data: {
+    partyId: `party-${personnumber}`,
     personNumber: personnumber,
     deliveryMethod: deliveryMethod,
     address: {
@@ -24,6 +25,27 @@ export const recipient = (
       country: 'SVERIGE',
     },
     reason: deliveryMethod === 'DELIVERY_NOT_POSSIBLE' ? getReason(minor) : undefined,
+  },
+  message: 'success',
+});
+
+export const orgRecipient = (
+  orgNumber: string,
+  deliveryMethod: Recipient['deliveryMethod'] = 'SNAIL_MAIL'
+): RecipientApiResponse => ({
+  data: {
+    partyId: `party-${orgNumber}`,
+    orgNumber: orgNumber,
+    deliveryMethod: deliveryMethod,
+    address: {
+      firstName: '',
+      lastName: '',
+      organizationName: 'Företaget AB',
+      street: 'FÖRETAGSVÄGEN 1',
+      zipCode: '123 45',
+      city: 'STADEN',
+      country: 'SVERIGE',
+    },
   },
   message: 'success',
 });
