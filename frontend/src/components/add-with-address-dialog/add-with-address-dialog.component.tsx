@@ -95,53 +95,11 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
     <Modal
       show={open}
       onClose={handleClose}
-      className="max-w-[60rem]"
+      className="md:w-[60rem]"
       data-cy="add-with-address-modal"
       label={t('send-mail:recipientHandler.addWithAddress.title')}
     >
-      {!isAdding ? (
-        <form key="recipient-type-step">
-          <Modal.Content>
-            <div className="flex flex-col">
-              <h3 className="text-label-medium pb-16">
-                {t('send-mail:recipientHandler.addWithAddress.recipientTypeTitle')}
-              </h3>
-              <div className="flex flex-col md:flex-row items-start w-full gap-y-24 gap-x-16">
-                <div
-                  className={cx(
-                    'flex-1 border rounded-groups p-16',
-                    current === 0 ? 'border-dark-primary' : 'border-divider'
-                  )}
-                >
-                  <RadioButton value="0" onChange={() => setCurrent(0)} checked={current === 0}>
-                    {t('send-mail:recipientHandler.addWithAddress.recipientTypePrivate')}
-                  </RadioButton>
-                </div>
-                {
-                  <div
-                    className={cx(
-                      'flex-1 border rounded-groups p-16',
-                      current === 1 ? 'border-dark-primary' : 'border-divider'
-                    )}
-                  >
-                    <RadioButton value="1" onChange={() => setCurrent(1)} checked={current === 1}>
-                      {t('send-mail:recipientHandler.addWithAddress.recipientTypeOrg')}
-                    </RadioButton>
-                  </div>
-                }
-              </div>
-            </div>
-          </Modal.Content>
-          <Modal.Footer>
-            <Button variant="secondary" ref={initialFocus} onClick={() => handleClose()}>
-              {t('common:cancel')}
-            </Button>
-            <Button variant="primary" color="primary" onClick={() => setIsAdding(true)}>
-              {t('common:next')}
-            </Button>
-          </Modal.Footer>
-        </form>
-      ) : (
+      {isAdding ? (
         <form key="address-step" onSubmit={handleSubmit(onSubmit)}>
           <Modal.Content>
             <p className="pb-16">{t('send-mail:recipientHandler.addWithAddress.description')}</p>
@@ -211,12 +169,54 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
               </FormControl>
             </div>
           </Modal.Content>
-          <Modal.Footer>
+          <Modal.Footer className="pt-16">
             <Button variant="secondary" ref={initialFocus} onClick={() => handleClose()}>
               {t('common:cancel')}
             </Button>
             <Button variant="primary" color="primary" type="submit">
               {t('send-mail:recipientHandler.title')}
+            </Button>
+          </Modal.Footer>
+        </form>
+      ) : (
+        <form key="recipient-type-step">
+          <Modal.Content>
+            <div className="flex flex-col">
+              <h3 className="text-label-medium pb-16">
+                {t('send-mail:recipientHandler.addWithAddress.recipientTypeTitle')}
+              </h3>
+              <div className="flex flex-col md:flex-row items-start w-full gap-y-16 md:gap-y-24 gap-x-16">
+                <div
+                  className={cx(
+                    'flex-1 w-full border rounded-groups p-16',
+                    current === 0 ? 'border-dark-primary' : 'border-divider'
+                  )}
+                >
+                  <RadioButton value="0" onChange={() => setCurrent(0)} checked={current === 0}>
+                    {t('send-mail:recipientHandler.addWithAddress.recipientTypePrivate')}
+                  </RadioButton>
+                </div>
+                {
+                  <div
+                    className={cx(
+                      'flex-1 w-full border rounded-groups p-16',
+                      current === 1 ? 'border-dark-primary' : 'border-divider'
+                    )}
+                  >
+                    <RadioButton value="1" onChange={() => setCurrent(1)} checked={current === 1}>
+                      {t('send-mail:recipientHandler.addWithAddress.recipientTypeOrg')}
+                    </RadioButton>
+                  </div>
+                }
+              </div>
+            </div>
+          </Modal.Content>
+          <Modal.Footer className="pt-16">
+            <Button variant="secondary" ref={initialFocus} onClick={() => handleClose()}>
+              {t('common:cancel')}
+            </Button>
+            <Button variant="primary" color="primary" onClick={() => setIsAdding(true)}>
+              {t('common:next')}
             </Button>
           </Modal.Footer>
         </form>

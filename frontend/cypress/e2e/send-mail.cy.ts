@@ -80,7 +80,7 @@ pages.forEach((p) => {
         });
 
         it('should add persons with address', () => {
-          addAddress();
+          addPrivateAddress();
           cy.get('[data-cy="recipient-table"]>tbody>tr')
             .eq(0)
             .children()
@@ -91,7 +91,7 @@ pages.forEach((p) => {
         });
 
         it('should add organization with address', () => {
-          addOrgName();
+          addOrgAddress();
           cy.get('[data-cy="recipient-table"]>tbody>tr')
             .eq(0)
             .children()
@@ -180,7 +180,7 @@ pages.forEach((p) => {
         });
 
         it('should navigate to next step if a manual address is added and "next" is clicked', () => {
-          addAddress();
+          addPrivateAddress();
           navigateToAttachmentHandler();
           cy.get('.sk-progress-stepper-step[data-progress="current"]').should('exist').and('contain.text', 'Filer');
         });
@@ -299,7 +299,7 @@ pages.forEach((p) => {
         cy.intercept('POST', '**/api/recipient?*', recipient(eligiblePn, 'DIGITAL_MAIL')).as('recipient');
         addRecipient(eligiblePn, true);
       } else if (variant === 'address') {
-        addAddress();
+        addPrivateAddress();
       } else if (variant === 'org') {
         cy.intercept('POST', '**/api/org-recipient*', orgRecipient(orgNumber, 'SNAIL_MAIL')).as('orgRecipient');
         addOrgRecipient(orgNumber, true);
@@ -349,7 +349,7 @@ pages.forEach((p) => {
   });
 });
 
-const addAddress = () => {
+const addPrivateAddress = () => {
   cy.get('[data-cy="add-with-address-button"]').click();
   cy.get('[data-cy="add-with-address-modal"]').within(() => {
     cy.get('input[type="radio"][value="0"]').check();
@@ -362,7 +362,7 @@ const addAddress = () => {
   });
 };
 
-const addOrgName = () => {
+const addOrgAddress = () => {
   cy.get('[data-cy="add-with-address-button"]').click();
   cy.get('[data-cy="add-with-address-modal"]').within(() => {
     cy.get('input[type="radio"][value="1"]').check();
