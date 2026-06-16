@@ -31,4 +31,15 @@ module.exports = withBundleAnalyzer({
   async rewrites() {
     return [{ source: '/napi/:path*', destination: '/api/:path*' }];
   },
+  async redirects() {
+    const adminUrl = process.env.ADMIN_URL;
+    if (!adminUrl || !adminUrl.startsWith('http')) {
+      return [];
+    }
+
+    return [
+      { source: '/admin', destination: adminUrl, permanent: false, basePath: false },
+      { source: '/admin/:path*', destination: `${adminUrl}/:path*`, permanent: false, basePath: false },
+    ];
+  },
 });
