@@ -17,7 +17,7 @@ export const Logotype: React.FC = () => {
     logotype.logotype_darkmode;
 
   return (
-    <NextLink href="/" className="flex justify-center items-center gap-8">
+    <NextLink data-cy="logotype-component" href="/" className="flex justify-center items-center gap-8">
       {logo ? (
         <>
           <img
