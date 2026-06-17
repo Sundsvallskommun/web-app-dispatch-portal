@@ -198,7 +198,8 @@ export const sendLetter: (
   const municipalityId = await getMunicipalityId(req);
   const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/letter`;
 
-  const carriesName = (address?: Address) => !!(address?.organizationName || address?.firstName || address?.lastName);
+  const carriesName = (address?: Address): address is Address =>
+    !!(address?.organizationName || address?.firstName || address?.lastName);
 
   const PLACEHOLDER = '-';
 
@@ -211,13 +212,13 @@ export const sendLetter: (
   });
 
   const sanitizedRecipients: Recipient[] = recipients.map(recipient => {
-    // address is required for snail mail
-    if (recipient.deliveryMethod === RecipientDeliveryMethodEnum.SNAIL_MAIL) {
+    const addressRequiredForSnailMail = recipient.deliveryMethod === RecipientDeliveryMethodEnum.SNAIL_MAIL;
+
+    if (addressRequiredForSnailMail) {
       return recipient;
     }
 
-    // otherwise pad address with what is necessary so name gets passed
-    if (recipient.address && carriesName(recipient.address)) {
+    if (carriesName(recipient.address)) {
       return { ...recipient, address: padForDigital(recipient.address) };
     }
 
