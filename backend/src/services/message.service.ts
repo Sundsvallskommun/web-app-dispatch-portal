@@ -198,12 +198,32 @@ export const sendLetter: (
   const municipalityId = await getMunicipalityId(req);
   const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/letter`;
 
-  // Adress is only required for SNAIL_MAIL
-  const sanitizedRecipients: Recipient[] = recipients.map(recipient =>
-    recipient.deliveryMethod === RecipientDeliveryMethodEnum.SNAIL_MAIL || recipient.address?.street
-      ? recipient
-      : { ...recipient, address: undefined },
-  );
+  const carriesName = (address?: Address): address is Address =>
+    !!(address?.organizationName || address?.firstName || address?.lastName);
+
+  const PLACEHOLDER = '-';
+
+  const padForDigital = (address: Address): Address => ({
+    ...address,
+    street: address.street || PLACEHOLDER,
+    zipCode: address.zipCode || PLACEHOLDER,
+    city: address.city || PLACEHOLDER,
+    country: address.country || PLACEHOLDER,
+  });
+
+  const sanitizedRecipients: Recipient[] = recipients.map(recipient => {
+    const addressRequiredForSnailMail = recipient.deliveryMethod === RecipientDeliveryMethodEnum.SNAIL_MAIL;
+
+    if (addressRequiredForSnailMail) {
+      return recipient;
+    }
+
+    if (carriesName(recipient.address)) {
+      return { ...recipient, address: padForDigital(recipient.address) };
+    }
+
+    return { ...recipient, address: undefined };
+  });
 
   const request: LetterRequest = {
     subject: subject,
