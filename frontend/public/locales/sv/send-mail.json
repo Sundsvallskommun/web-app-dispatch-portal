@@ -59,18 +59,19 @@
   },
   "recipientHandler": {
     "title": "Lägg till mottagare",
-    "contentFirstRow": "Du kan antingen skriva in personnummer eller bifoga en mottagarlista i csv-format.",
+    "contentFirstRow": "Lägg till mottagare genom att ange person- eller organisationsnummer, adress, eller ladda upp en mottagarlista i csv-format.",
     "howAddRecipient": "Hur vill du lägga till mottagare?",
-    "optionPersonalNumberOrAddress": "Med personnummer eller adress",
+    "optionPersonalNumberOrAddress": "Ange person- eller organisationsnummer",
     "optionRecipientList": "Bifoga mottagarlista",
     "addRecipient": "Lägg till",
-    "missingPersonalNumber": "Saknar du personnummer?",
+    "missingIdentityNumber": "Saknas person- eller organisationsnummer?",
+    "missingIdentityNumberDescription": "Eller vill du skicka ett brev till en specifik person på ett företag?",
     "addRecipientWithAddress": "Lägg till mottagare med adress",
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
     "csvAddedFile": "Tillagd fil",
     "csvWarning": {
-      "title_one": "Filen {csvFile} innehåller {count} ogiltigt personnummer.",
-      "title_other": "Filen {csvFile} innehåller {count} ogiltiga personnummer.",
+      "title_one": "Filen {csvFile} innehåller {count} ogiltigt person- eller organisationsnummer.",
+      "title_other": "Filen {csvFile} innehåller {count} ogiltiga person- eller organisationsnummer.",
       "description": "Vill du fortsätta utan dessa mottagare?",
       "confirm": "Fortsätt ändå",
       "cancel": "Avbryt"
@@ -84,36 +85,38 @@
       "maxRow": "Filen får inte innehålla fler än {rows} rader",
       "default": "Något gick fel när mottagarlistan hanterades",
       "invalidRecipient": "Ogiltiga mottagare ({num})",
-      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att personnumren är fullständiga och korrekt skrivna, ååååmmddxxxx. Ladda sedan upp filen igen",
+      "addRecipientError": "Mottagarna kunde inte läggas till. Kontrollera att person- eller organisationsnumren är fullständiga och korrekt skrivna. Format: ÅÅÅÅMMDD-XXXX (personnummer) eller XXXXXX-XXXX (organisationsnummer). Ladda sedan upp filen igen.",
       "singleRecipientError": "Du måste lägga till en mottagare.",
       "badFile": "Felaktig fil",
       "csvError": "Du måste lägga till en fil",
       "csv": {
-        "UNKNOWN": "Felaktig CSV-fil. Får endast innehålla personnummer.",
+        "UNKNOWN": "Felaktig CSV-fil. Får endast innehålla personnummer eller organisationsnummer.",
         "MISSING_VALID_IDS": "Kunde inte hitta några giltiga mottagare. Kontrollera din fil."
       }
     },
     "fetchRecipientError": {
       "alreadyExists": "Personen är redan tillagd",
-      "singleRecipient": "Kunde inte hämta person. Har du angivit personnumret korrekt?",
-      "csvFile": "Kunde inte kontroller CSV-fil. Kontrollera din fil, och försök igen."
+      "singleRecipient": "Kunde inte hämta mottagare. Har du angivit person- eller organisationsnumret korrekt?",
+      "csvFile": "Kunde inte kontrollera CSV-fil. Kontrollera din fil, och försök igen."
     },
     "personalNumberError": {
-      "fewNumber": "För få siffror i personnumret",
-      "tooManyNumbers": "För många siffror i personnumret"
+      "fewNumber": "För få siffror - ange 10 siffror för att söka efter organisationer och 12 siffror för att söka efter personer.",
+      "tooManyNumbers": "För många siffror - ange 10 siffror för att söka efter organisationer och 12 siffror för att söka efter personer."
     },
     "changeTo": {
       "list": {
         "label": "Vill du lägga till mottagare med mottagarlista?",
-        "text": "Alla mottagare du har lagt till med personnummer eller adress kommer att försvinna"
+        "text": "Alla mottagare du har lagt till med adress, person- eller organisationsnummer kommer att försvinna"
       },
       "person": {
-        "label": "Vill du lägga till mottagare med personnummer eller adress?",
+        "label": "Vill du lägga till mottagare med adress, person- eller organisationsnummer?",
         "text": "Listan du lagt till kommer att försvinna"
       }
     },
-    "searchPersonalNumber": "Sök mottagare med personnummer",
-    "searchPersonalNumberHelper": "Ange personnumret i formatet ååååmmddxxxx",
+    "searchIdentityNumber": "Sök mottagare med person- eller organisationsnummer",
+    "searchIdentityNumberHelper": "Format: ÅÅÅÅMMDD-XXXX (personnummer) eller XXXXXX-XXXX (organisationsnummer).",
+    "searchIdentityNumberRek": "Sök mottagare med personnummer",
+    "searchIdentityNumberHelperRek": "Format: ÅÅÅÅMMDD-XXXX (personnummer).",
     "addedRecipientsTitle": "Tillagda mottagare",
     "noRecipientAdded": "Du har inte lagt till några mottagare än",
     "addedFileTitle": "Bifogad fil",
@@ -133,9 +136,15 @@
     },
     "addWithAddress": {
       "title": "Lägg till mottagare med adress",
-      "description": "När du lägger till en mottagare med adress skickas brevet som vanlig papperspost.",
+      "recipientTypeTitle": "Vem skickar du till?",
+      "recipientTypePrivate": "Privatperson",
+      "recipientTypeOrg": "Företag",
+      "description": "Brevet skickas som fysisk post till den adress du anger.",
       "firstName": "Förnamn",
+      "firstName_optional": "Förnamn (valfri)",
       "lastName": "Efternamn",
+      "lastName_optional": "Efternamn (valfri)",
+      "orgName": "Företagets namn",
       "address": "Adress",
       "careOf": "C/o adress (valfri)",
       "zipCode": "Postnummer",
@@ -143,6 +152,7 @@
       "error": {
         "firstName": "Förnamn måste anges",
         "lastName": "Efternamn måste anges",
+        "orgName": "Företagets namn måste anges",
         "address": "Adress måste anges",
         "zipCode": "Postnummer måste anges",
         "city": "Ort måste anges"

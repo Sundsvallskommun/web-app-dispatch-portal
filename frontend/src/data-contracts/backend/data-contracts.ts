@@ -14,15 +14,20 @@ export interface RecipientDto {
   personNumber: string;
 }
 
+export interface OrgRecipientDto {
+  orgNumber: string;
+}
+
 export interface Address {
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   street: string;
   apartmentNumber?: string;
   careOf?: string;
   zipCode: string;
   city: string;
   country: string;
+  organizationName?: string;
 }
 
 export interface Recipient {
@@ -31,6 +36,7 @@ export interface Recipient {
   address?: Address;
   reason?: string;
   personNumber?: string;
+  orgNumber?: string;
 }
 
 export interface Csv {
