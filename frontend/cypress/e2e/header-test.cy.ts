@@ -1,4 +1,5 @@
 import { Pages } from './types';
+import { logotypes } from '../fixtures/logotypes';
 
 const pages = [
   { description: 'Index', route: '/' },
@@ -15,6 +16,7 @@ const sendTypePages = [
 describe('Header', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/api/me', { fixture: 'me.json' });
+    cy.intercept('GET', '**/api/logotypes', logotypes);
     cy.viewport('macbook-16');
   });
 
@@ -26,9 +28,7 @@ describe('Header', () => {
 
       it('should contain a header with logo, navigation and user menu', () => {
         cy.get('[data-cy="header"]').should('exist').find('li').should('have.length', 3);
-        cy.get('[data-cy="header"] a.sk-link-primary')
-          .should('exist')
-          .should('have.attr', 'aria-label', 'Postportalen Sundsvalls kommun. Gå till startsidan.');
+        cy.get('[data-cy="logotype-component"]').should('exist');
         cy.get('[data-cy="usermenu"]').should('exist').find('button').first().click();
         cy.get('[data-cy="usermenu"] .sk-popup-menu').should('exist').should('have.attr', 'data-open', 'true');
       });
