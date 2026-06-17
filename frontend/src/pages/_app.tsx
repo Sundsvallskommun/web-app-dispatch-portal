@@ -8,9 +8,10 @@ import 'dayjs/locale/sv';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import utc from 'dayjs/plugin/utc';
 import type { AppProps } from 'next/app';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AppWrapper } from '../contexts/app.context';
 import { appWithTranslation } from 'next-i18next';
+import { useLogotypeStore } from '@services/logotypes-service';
 
 dayjs.extend(utc);
 dayjs.locale('sv');
@@ -44,6 +45,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       }),
     [colorScheme]
   );
+
+  useEffect(() => {
+    useLogotypeStore.getState().getLogotype();
+  }, []);
 
   return (
     <GuiProvider theme={theme}>

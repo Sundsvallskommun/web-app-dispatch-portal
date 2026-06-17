@@ -18,14 +18,14 @@ import {
   HostsApiResponse,
   IDPApiResponse,
   IDPsApiResponse,
+  MessagingSettingApiResponse,
+  MessagingSettingsApiResponse,
   UpdateHostDto,
   UpdateIdpDto,
-} from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+} from './data-contracts';
+import { ContentType, HttpClient, RequestParams } from './http-client';
 
-export class Admin<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class Admin<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -37,7 +37,7 @@ export class Admin<
   adminUserControllerGetUser = (params: RequestParams = {}) =>
     this.request<AdminUserApiResponse, any>({
       path: `/admin/me`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -51,7 +51,7 @@ export class Admin<
   adminHostControllerGetAll = (params: RequestParams = {}) =>
     this.request<HostsApiResponse, any>({
       path: `/admin/hosts`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -62,13 +62,10 @@ export class Admin<
    * @summary Create new host
    * @request POST:/admin/hosts
    */
-  adminHostControllerCreate = (
-    data?: CreateHostDto,
-    params: RequestParams = {},
-  ) =>
+  adminHostControllerCreate = (data?: CreateHostDto, params: RequestParams = {}) =>
     this.request<HostApiResponse, any>({
       path: `/admin/hosts`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -84,7 +81,7 @@ export class Admin<
   adminHostControllerGetOne = (id: number, params: RequestParams = {}) =>
     this.request<HostApiResponse, any>({
       path: `/admin/hosts/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -95,14 +92,10 @@ export class Admin<
    * @summary Update a host
    * @request PATCH:/admin/hosts/{id}
    */
-  adminHostControllerUpdate = (
-    id: number,
-    data?: UpdateHostDto,
-    params: RequestParams = {},
-  ) =>
+  adminHostControllerUpdate = (id: number, data?: UpdateHostDto, params: RequestParams = {}) =>
     this.request<HostApiResponse, any>({
       path: `/admin/hosts/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -118,7 +111,7 @@ export class Admin<
   adminHostControllerRemove = (id: number, params: RequestParams = {}) =>
     this.request<any, any>({
       path: `/admin/hosts/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       ...params,
     });
   /**
@@ -132,7 +125,7 @@ export class Admin<
   adminIdpControllerGetAll = (params: RequestParams = {}) =>
     this.request<IDPsApiResponse, any>({
       path: `/admin/idps`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -143,13 +136,10 @@ export class Admin<
    * @summary Create new idp
    * @request POST:/admin/idps
    */
-  adminIdpControllerCreate = (
-    data?: CreateIdpDto,
-    params: RequestParams = {},
-  ) =>
+  adminIdpControllerCreate = (data?: CreateIdpDto, params: RequestParams = {}) =>
     this.request<IDPApiResponse, any>({
       path: `/admin/idps`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -165,7 +155,7 @@ export class Admin<
   adminIdpControllerGetOne = (id: number, params: RequestParams = {}) =>
     this.request<IDPApiResponse, any>({
       path: `/admin/idps/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -176,14 +166,10 @@ export class Admin<
    * @summary Update a idp
    * @request PATCH:/admin/idps/{id}
    */
-  adminIdpControllerUpdate = (
-    id: number,
-    data?: UpdateIdpDto,
-    params: RequestParams = {},
-  ) =>
+  adminIdpControllerUpdate = (id: number, data?: UpdateIdpDto, params: RequestParams = {}) =>
     this.request<IDPApiResponse, any>({
       path: `/admin/idps/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -199,7 +185,81 @@ export class Admin<
   adminIdpControllerRemove = (id: number, params: RequestParams = {}) =>
     this.request<any, any>({
       path: `/admin/idps/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Messaging Settings
+   * @name AdminMessagingSettingsControllerGetAll
+   * @summary Get all logotypes
+   * @request GET:/admin/logotypes
+   */
+  adminMessagingSettingsControllerGetAll = (params: RequestParams = {}) =>
+    this.request<MessagingSettingsApiResponse, any>({
+      path: `/admin/logotypes`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Messaging Settings
+   * @name AdminMessagingSettingsControllerCreate
+   * @summary Create new logotype
+   * @request POST:/admin/logotypes
+   */
+  adminMessagingSettingsControllerCreate = (data?: any, params: RequestParams = {}) =>
+    this.request<any, any>({
+      path: `/admin/logotypes`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Messaging Settings
+   * @name AdminMessagingSettingsControllerGetOne
+   * @summary Get logotype by id
+   * @request GET:/admin/logotypes/{id}
+   */
+  adminMessagingSettingsControllerGetOne = (id: number, params: RequestParams = {}) =>
+    this.request<MessagingSettingApiResponse, any>({
+      path: `/admin/logotypes/${id}`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Messaging Settings
+   * @name AdminMessagingSettingsControllerUpdate
+   * @summary Update a logotype
+   * @request PATCH:/admin/logotypes/{id}
+   */
+  adminMessagingSettingsControllerUpdate = (id: number, data?: any, params: RequestParams = {}) =>
+    this.request<MessagingSettingApiResponse, any>({
+      path: `/admin/logotypes/${id}`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Messaging Settings
+   * @name AdminMessagingSettingsControllerRemove
+   * @summary Delete a logotype
+   * @request DELETE:/admin/logotypes/{id}
+   */
+  adminMessagingSettingsControllerRemove = (id: number, params: RequestParams = {}) =>
+    this.request<any, any>({
+      path: `/admin/logotypes/${id}`,
+      method: 'DELETE',
       ...params,
     });
 }

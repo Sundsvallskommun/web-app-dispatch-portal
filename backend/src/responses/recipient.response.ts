@@ -10,9 +10,11 @@ import { IsEnum, IsObject, IsOptional, IsString, ValidateNested } from 'class-va
 
 export class Address implements AddressType {
   @IsString()
-  firstName: string;
+  @IsOptional()
+  firstName?: string;
   @IsString()
-  lastName: string;
+  @IsOptional()
+  lastName?: string;
   @IsString()
   street: string;
   @IsString()
@@ -27,6 +29,9 @@ export class Address implements AddressType {
   city: string;
   @IsString()
   country: string;
+  @IsString()
+  @IsOptional()
+  organizationName?: string;
 }
 
 export class Recipient implements ExtendedRecipient {
@@ -45,6 +50,9 @@ export class Recipient implements ExtendedRecipient {
   @IsString()
   @IsOptional()
   personNumber?: string;
+  @IsString()
+  @IsOptional()
+  orgNumber?: string;
 }
 
 export class Csv implements Omit<CSV, 'file'>, Pick<PrecheckCsvResponse, 'duplicateEntries' | 'rejectedEntries'> {

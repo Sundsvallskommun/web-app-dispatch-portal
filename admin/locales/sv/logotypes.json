@@ -1,0 +1,21 @@
+{
+  "name": "logotyp",
+  "name_zero": "logotyper",
+  "name_one": "logotyp",
+  "name_many": "logotyper",
+  "name_other": "logotyper",
+  "properties": {
+    "host": "Värd",
+    "display_name": "Visningsnamn",
+    "logotype_lightmode": "Logotyp i light mode",
+    "logotype_darkmode": "Logotyp i dark mode"
+  },
+  "errors": {
+    "host_required": "Värd måste anges",
+    "display_name_required": "Visningsnamn måste anges",
+    "lightmode_required": "Logotyp i light mode måste laddas upp",
+    "darkmode_required": "Logotyp i dark mode måste laddas upp",
+    "mime": "Endast SVG eller PNG är tillåtet",
+    "size": "Filen är för stor (max 4 MB)"
+  }
+}

@@ -66,7 +66,7 @@ export class Recipient<
    *
    * @tags Recipient
    * @name RecipientControllerGetCsvStatus
-   * @summary Check status of csv-file and save to session
+   * @summary Check status of csv-file (personal numbers) and save to session
    * @request POST:/recipient/csv
    */
   recipientControllerGetCsvStatus = (
@@ -78,6 +78,28 @@ export class Recipient<
   ) =>
     this.request<CsvApiResponse, any>({
       path: `/recipient/csv`,
+      method: "POST",
+      body: data,
+      type: ContentType.FormData,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Recipient
+   * @name RecipientControllerGetCsvSmsStatus
+   * @summary Check status of sms csv-file (mobile numbers) and save to session
+   * @request POST:/recipient/csv/sms
+   */
+  recipientControllerGetCsvSmsStatus = (
+    data: {
+      /** @format binary */
+      csv: File;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CsvApiResponse, any>({
+      path: `/recipient/csv/sms`,
       method: "POST",
       body: data,
       type: ContentType.FormData,
