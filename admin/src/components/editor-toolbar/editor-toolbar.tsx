@@ -7,10 +7,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
+import React from 'react';
+import { useResource } from '@utils/use-resource';
 
 interface ToolbarProps {
   resource: ResourceName;
-  id?: number;
+  id?: number | string;
 }
 
 export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
@@ -20,6 +22,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
   const { remove } = resources[resource];
   const { handleRemove } = useCrudHelper(resource);
   const confirm = useConfirm();
+  const { refresh } = useResource(resource);
 
   const {
     reset,
@@ -40,6 +43,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
           if (confirm) {
             handleRemove(() => remove(id)).then(() => {
               reset();
+              refresh();
               router.push(parentPath);
             });
           }
@@ -62,7 +66,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, id }) => {
         disabled={!isDirty}
         iconButton
         aria-label={capitalize(t('common:save'))}
-      ></Button>
+      />
 
       {((!!remove && id) || !id) && (
         <Button

@@ -76,6 +76,11 @@ export interface RequestBodyCsvMail {
   body?: string;
 }
 
+export interface RequestBodyCsvSMS {
+  csvId: string;
+  message: string;
+}
+
 export interface RequestBodySMS {
   /** @minItems 1 */
   recipients: string[];
@@ -174,4 +179,38 @@ export interface UpdateIdpDto {
   name?: string;
   entryPoint?: string;
   idpCert?: string;
+}
+
+export interface MessagingSettingValueRequest {
+  key: string;
+  value: string;
+  type: string;
+}
+
+export interface MessagingSettingsRequest {
+  values: MessagingSettingValueRequest[];
+}
+
+export interface MessagingSettingValue {
+  key?: string;
+  value?: string;
+  type?: string;
+}
+
+export interface MessagingSettings {
+  id?: string;
+  municipalityId?: string;
+  created?: string;
+  updated?: string;
+  values: MessagingSettingValue[];
+}
+
+export interface MessagingSettingApiResponse {
+  data: MessagingSettings;
+  message: string;
+}
+
+export interface MessagingSettingsApiResponse {
+  data: MessagingSettings[];
+  message: string;
 }

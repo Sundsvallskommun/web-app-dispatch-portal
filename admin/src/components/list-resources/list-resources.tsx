@@ -8,7 +8,7 @@ import { getFormattedFields } from '@utils/formatted-field';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { Check, Pencil } from 'lucide-react';
 import NextLink from 'next/link';
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
 import { useShallow } from 'zustand/react/shallow';
@@ -56,6 +56,24 @@ export const ListResources: React.FC<ListResourcesProps> = ({ properties, resour
                 label: getHeader(key),
                 property: key,
                 renderColumn: (_value, item) => <span>{item.idp?.name ?? item.idp?.id ?? item.idpId}</span>,
+              },
+            ];
+          }
+          if (key === 'logotype_lightmode' || key === 'logotype_darkmode') {
+            return [
+              ...headers,
+              {
+                label: getHeader(key),
+                property: key,
+                renderColumn: (value) => (
+                  <img
+                    src={value}
+                    width={50}
+                    height={50}
+                    alt={getHeader(key)}
+                    className="max-w-[200px] max-h-[50px] object-contain"
+                  />
+                ),
               },
             ];
           }

@@ -1,42 +1,39 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { mainMenuItems } from '@components/main-menu/main-menu-items';
 import { MainMenu } from '@components/main-menu/main-menu.component';
 import { useUserStore } from '@services/user-service/user-service';
-import { Button, Header, Icon, PopupMenu, UserMenu, useThemeQueries } from '@sk-web-gui/react';
+import { Header, Icon, PopupMenu, UserMenu, useThemeQueries } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
 import NextLink from 'next/link';
 import { useShallow } from 'zustand/shallow';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { userMenuGroups } from '@layouts/default-layout/userMenuGroups';
-import { useRouter } from 'next/router';
+import { Logotype } from '@components/logotype/logotype.component';
 
 const HeaderMenu = () => {
-  const initialFocus = useRef<HTMLElement>(null);
   const { isMinMd } = useThemeQueries();
   const user = useUserStore(useShallow((state) => state.user));
   const { t } = useTranslation(['common']);
-  const router = useRouter();
 
-  const setInitialFocus = () => {
-    setTimeout(() => {
-      initialFocus.current?.focus();
-    });
+  const setFocusToMain = () => {
+    const contentElement = document.getElementById('content');
+    contentElement?.focus();
   };
 
   return (
     <React.Fragment>
-      <NextLink legacyBehavior={true} href="#content" passHref>
-        <Button tabIndex={0} onClick={setInitialFocus} onKeyDown={setInitialFocus} className="next-link-a">
-          {t('common:goToContent')}
-        </Button>
+      <NextLink
+        onClick={setFocusToMain}
+        className="sr-only focus:not-sr-only bg-primary-light border-2 border-black p-4 text-black inline-block focus:absolute focus:top-0 focus:left-0 focus:right-0 focus:m-auto focus:w-80 text-center"
+        href="#content"
+      >
+        {t('common:goToContent')}
       </NextLink>
       <div className="z-10 header-container">
         <Header
           data-cy="header"
           title={t('common:appTitle')}
-          subtitle={t('common:appSubTitle')}
-          logoLinkOnClick={() => router.push('/')}
           userMenu={
             <span data-cy="usermenu">
               <UserMenu
@@ -74,6 +71,7 @@ const HeaderMenu = () => {
               </PopupMenu.Panel>
             </PopupMenu>
           }
+          logo={<Logotype />}
         >
           {isMinMd && <MainMenu />}
         </Header>

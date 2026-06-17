@@ -12,6 +12,8 @@ import { AdminHostController } from './controllers/admin/host.controller';
 import { AdminIdpController } from './controllers/admin/idp.controller';
 import { initRedis } from './utils/initRedis';
 import { createSessionStore } from './utils/createSessionStore';
+import { AdminMessagingSettingsController } from '@controllers/admin/messaging-settings.controller';
+import { MessagingSettingsController } from '@controllers/messaging-settings.controller';
 
 // --- GLOBAL PROCESS DEBUG HANDLERS ---
 process.on('exit', code => {
@@ -42,9 +44,11 @@ async function bootstrap() {
       MessageController,
       DepartmentsController,
       StatisticsController,
+      MessagingSettingsController,
       AdminHostController,
       AdminIdpController,
       AdminUserController,
+      AdminMessagingSettingsController,
     ],
     sessionStore,
   );
