@@ -18,6 +18,9 @@
 /.next
 /out
 
+# generated at build time by scripts/generate-version.js
+/public/version.json
+
 # production
 /build
 
