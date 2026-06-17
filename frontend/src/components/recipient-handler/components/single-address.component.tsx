@@ -37,7 +37,8 @@ export const SingleAddress: React.FC<SingleAddressProps> = ({ sendType }) => {
           recipient?.address?.lastName === newAdress?.address?.lastName &&
           recipient?.address?.zipCode === newAdress?.address?.zipCode &&
           recipient?.address?.city === newAdress?.address?.city &&
-          recipient?.address?.careOf === newAdress?.address?.careOf
+          recipient?.address?.careOf === newAdress?.address?.careOf &&
+          recipient?.address?.organizationName === newAdress?.address?.organizationName
       );
 
       if (alreadyExists) {
@@ -56,9 +57,11 @@ export const SingleAddress: React.FC<SingleAddressProps> = ({ sendType }) => {
       {sendType === formSendType.MAIL && (
         <div className="my-32">
           <AddWithAddressDialog open={isAddWithAddressOpen} onClose={handleCloseAddWithAddressDialog} />
-          <p className="font-bold">{t('send-mail:recipientHandler.missingPersonalNumber')}</p>
+          <p className="font-bold">{t('send-mail:recipientHandler.missingIdentityNumber')}</p>
+          <p>{t('send-mail:recipientHandler.missingIdentityNumberDescription')}</p>
           <Button
             data-cy="add-with-address-button"
+            className="mt-4"
             leftIcon={<Icon icon={<Plus />} />}
             onClick={() => setIsAddWithAddressOpen(true)}
             color="vattjom"

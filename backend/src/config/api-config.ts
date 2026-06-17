@@ -22,7 +22,10 @@ export const APIS = [
   },
   {
     name: 'postportalservice',
-    version: '1.6',
+    version: '1.7',
+  },
+  { name: 'legalentity', 
+    version: '2.0' 
   },
 ] as const;
 

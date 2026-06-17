@@ -5,6 +5,7 @@ import {
   Csv,
   CsvApiResponse,
   Message,
+  OrgRecipientDto,
   Recipient,
   RecipientApiResponse,
   RecipientDto,
@@ -24,14 +25,26 @@ export interface ErrorMessageObj {
 
 export const ssnPattern = /^$|^((19|20)[0-9]{6}-?[0-9]{4})$/gi;
 
-export const getRecipient = async (personNumber: string, rek?: boolean): Promise<Recipient> => {
+const getRecipientByPath = async <T extends RecipientDto | OrgRecipientDto>(
+  path: string,
+  body: T,
+  rek?: boolean
+): Promise<Recipient> => {
   return apiService
-    .post<RecipientApiResponse, RecipientDto>('recipient', { personNumber }, { params: { force_kivra: rek } })
+    .post<RecipientApiResponse, T>(path, body, { params: { force_kivra: rek } })
     .then((r) => r.data.data)
     .catch((e) => {
       console.error('Something went wrong when posting recipient list.');
       throw e;
     });
+};
+
+export const getRecipient = async (personNumber: string, rek?: boolean): Promise<Recipient> => {
+  return getRecipientByPath('recipient', { personNumber }, rek);
+};
+
+export const getOrgRecipient = async (orgNumber: string): Promise<Recipient> => {
+  return getRecipientByPath('org-recipient', { orgNumber });
 };
 
 interface State {

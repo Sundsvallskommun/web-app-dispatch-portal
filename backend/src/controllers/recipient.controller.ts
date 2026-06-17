@@ -7,7 +7,7 @@ import {
   PrecheckResponse,
   RecipientDeliveryMethodEnum,
 } from '@/data-contracts/postportalservice/data-contracts';
-import { RecipientDto } from '@/dtos/recipient.dto';
+import { OrgRecipientDto, RecipientDto } from '@/dtos/recipient.dto';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { CSVError, CSVStatus, ExtendedRecipient } from '@/interfaces/recipient.interface';
@@ -23,12 +23,14 @@ import { Body, Controller, Get, Param, Post, QueryParam, Req, Res, UploadedFile,
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 import FormData from 'form-data';
 import { getMunicipalityId } from '@/utils/getMunicipalityId';
+import { LegalEntity2 } from '@/data-contracts/legalentity/data-contracts';
 
 @Controller()
 export class RecipientController {
   private readonly apiService = new ApiService();
   private readonly citizenApi = getApiBase('citizen');
   private readonly postportalApi = getApiBase('postportalservice');
+  private readonly legalEntityApi = getApiBase('legalentity');
 
   @Post('/recipient')
   @OpenAPI({ summary: 'Get single recipient from personal number' })
@@ -92,6 +94,61 @@ export class RecipientController {
           data.reason = 'No kivra';
         }
       }
+
+      return response.send({ data, message: 'success' });
+    } catch (error) {
+      logger.error('Error getting recipient', error);
+      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal server error');
+    }
+  }
+
+  @Post('/org-recipient')
+  @OpenAPI({ summary: 'Get single org recipient from organization number' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(RecipientApiResponse)
+  async orgRecipient(
+    @Req() req: RequestWithUser,
+    @Body() body: OrgRecipientDto,
+    @Res() response: Response<RecipientApiResponse>,
+  ): Promise<Response<RecipientApiResponse>> {
+    try {
+      const municipalityId = await getMunicipalityId(req);
+      const partyIdUrl = `${this.legalEntityApi}/${municipalityId}/${body.orgNumber}/guid`;
+      const { data: partyId } = await this.apiService.get<string>({ url: partyIdUrl }, req.user);
+      const legalEntityUrl = `${this.legalEntityApi}/${municipalityId}/${partyId}`;
+      const { data: legalEntity } = await this.apiService.get<LegalEntity2>({ url: legalEntityUrl }, req.user);
+
+      if (!legalEntity) {
+        throw new HttpException(404, 'Legal entity not found');
+      }
+
+      const precheckUrl = `${this.postportalApi}/${municipalityId}/precheck`;
+      const {
+        data: { recipients },
+      } = await this.apiService.post<PrecheckResponse, PrecheckRequest>(
+        { url: precheckUrl, data: { partyIds: [partyId] } },
+        req.user,
+      );
+
+      const recipient = recipients[0];
+
+      if (!recipient) {
+        throw new HttpException(404, 'Legal entity message settings not found');
+      }
+
+      const data: ExtendedRecipient = {
+        partyId,
+        deliveryMethod: recipient.deliveryMethod as unknown as RecipientDeliveryMethodEnum,
+        reason: recipient.reason,
+        address: {
+          organizationName: legalEntity.name,
+          street: [legalEntity.address?.addressArea, legalEntity.address?.adressNumber].filter(Boolean).join(' '),
+          zipCode: legalEntity.address?.postalCode,
+          city: legalEntity.address?.city,
+          country: legalEntity.postAddress?.country,
+        },
+        orgNumber: body.orgNumber,
+      };
 
       return response.send({ data, message: 'success' });
     } catch (error) {

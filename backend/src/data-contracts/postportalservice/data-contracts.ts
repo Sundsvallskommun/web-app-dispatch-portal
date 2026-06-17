@@ -41,62 +41,62 @@ export interface ConstraintViolationProblem {
   cause?: ThrowableProblem;
   stackTrace?: ConstraintViolationProblemStackTraceInner[];
   /** @format uri */
-  type?: string;
+  type?: string | null;
   status?: StatusType;
   violations?: Violation[];
-  title?: string;
-  message?: string;
+  title?: string | null;
+  message?: string | null;
   /** @format uri */
-  instance?: string;
+  instance?: string | null;
   parameters?: Record<string, any>;
-  detail?: string;
+  detail?: string | null;
   suppressed?: ConstraintViolationProblemSuppressedInner[];
-  localizedMessage?: string;
+  localizedMessage?: string | null;
 }
 
 export interface ConstraintViolationProblemStackTraceInner {
-  classLoaderName?: string;
-  moduleName?: string;
-  moduleVersion?: string;
-  methodName?: string;
-  fileName?: string;
+  classLoaderName?: string | null;
+  moduleName?: string | null;
+  moduleVersion?: string | null;
+  methodName?: string | null;
+  fileName?: string | null;
   /** @format int32 */
-  lineNumber?: number;
-  className?: string;
-  nativeMethod?: boolean;
+  lineNumber?: number | null;
+  className?: string | null;
+  nativeMethod?: boolean | null;
 }
 
 export interface ConstraintViolationProblemSuppressedInner {
   stackTrace?: ConstraintViolationProblemStackTraceInner[];
-  message?: string;
-  localizedMessage?: string;
+  message?: string | null;
+  localizedMessage?: string | null;
 }
 
 export interface StatusType {
   /** @format int32 */
-  statusCode?: number;
-  reasonPhrase?: string;
+  statusCode?: number | null;
+  reasonPhrase?: string | null;
 }
 
 export interface ThrowableProblem {
-  cause?: any;
+  cause?: null;
   stackTrace?: ConstraintViolationProblemStackTraceInner[];
-  message?: string;
+  message?: string | null;
   /** @format uri */
-  instance?: string;
+  instance?: string | null;
   /** @format uri */
-  type?: string;
+  type?: string | null;
   parameters?: Record<string, any>;
-  title?: string;
-  detail?: string;
+  title?: string | null;
+  detail?: string | null;
   status?: StatusType;
   suppressed?: ConstraintViolationProblemSuppressedInner[];
-  localizedMessage?: string;
+  localizedMessage?: string | null;
 }
 
 export interface Violation {
-  field?: string;
-  message?: string;
+  field?: string | null;
+  message?: string | null;
 }
 
 /** Per-recipient delivery capability */
@@ -181,16 +181,12 @@ export interface DigitalRegisteredLetterRequest {
 
 /** Address model */
 export interface Address {
-  /**
-   * First name of the recipient
-   * @minLength 1
-   */
-  firstName: string;
-  /**
-   * Last name of the recipient
-   * @minLength 1
-   */
-  lastName: string;
+  /** First name of the recipient. Required together with lastName if organizationName is not provided. */
+  firstName?: string;
+  /** Last name of the recipient. Required together with firstName if organizationName is not provided. */
+  lastName?: string;
+  /** Organization name of the recipient. Required if firstName and lastName are not provided. */
+  organizationName?: string;
   /**
    * Street address
    * @minLength 1
