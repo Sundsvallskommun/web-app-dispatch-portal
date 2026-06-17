@@ -40,5 +40,8 @@
     }
   },
   "month": "Månad",
-  "chooseMonth": "Välj månad"
+  "chooseMonth": "Välj månad",
+  "logotype": {
+    "alt": "{{display_name}}s logotyp"
+  }
 }

@@ -186,3 +186,37 @@ export interface UpdateIdpDto {
   entryPoint?: string;
   idpCert?: string;
 }
+
+export interface MessagingSettingValueRequest {
+  key: string;
+  value: string;
+  type: string;
+}
+
+export interface MessagingSettingsRequest {
+  values: MessagingSettingValueRequest[];
+}
+
+export interface MessagingSettingValue {
+  key?: string;
+  value?: string;
+  type?: string;
+}
+
+export interface MessagingSettings {
+  id?: string;
+  municipalityId?: string;
+  created?: string;
+  updated?: string;
+  values: MessagingSettingValue[];
+}
+
+export interface MessagingSettingApiResponse {
+  data: MessagingSettings;
+  message: string;
+}
+
+export interface MessagingSettingsApiResponse {
+  data: MessagingSettings[];
+  message: string;
+}
