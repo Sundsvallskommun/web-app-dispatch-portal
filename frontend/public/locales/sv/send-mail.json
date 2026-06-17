@@ -65,6 +65,7 @@
     "optionRecipientList": "Bifoga mottagarlista",
     "addRecipient": "Lägg till",
     "missingIdentityNumber": "Saknas person- eller organisationsnummer?",
+    "missingIdentityNumberDescription": "Eller vill du skicka ett brev till en specifik person på ett företag?",
     "addRecipientWithAddress": "Lägg till mottagare med adress",
     "csvHelperText": "Tillåtna filtyper: csv. Maximalt antal rader: 250",
     "csvAddedFile": "Tillagd fil",
@@ -135,9 +136,15 @@
     },
     "addWithAddress": {
       "title": "Lägg till mottagare med adress",
-      "description": "När du lägger till en mottagare med adress skickas brevet som vanlig papperspost.",
+      "recipientTypeTitle": "Vem skickar du till?",
+      "recipientTypePrivate": "Privatperson",
+      "recipientTypeOrg": "Företag",
+      "description": "Brevet skickas som fysisk post till den adress du anger.",
       "firstName": "Förnamn",
+      "firstName_optional": "Förnamn (valfri)",
       "lastName": "Efternamn",
+      "lastName_optional": "Efternamn (valfri)",
+      "orgName": "Företagets namn",
       "address": "Adress",
       "careOf": "C/o adress (valfri)",
       "zipCode": "Postnummer",
@@ -145,6 +152,7 @@
       "error": {
         "firstName": "Förnamn måste anges",
         "lastName": "Efternamn måste anges",
+        "orgName": "Företagets namn måste anges",
         "address": "Adress måste anges",
         "zipCode": "Postnummer måste anges",
         "city": "Ort måste anges"

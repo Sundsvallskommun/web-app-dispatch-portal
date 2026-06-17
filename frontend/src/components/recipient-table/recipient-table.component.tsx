@@ -76,7 +76,8 @@ export const RecipientTable: React.FC<RecipientTableProps> = ({
           <p data-cy="recipient-name">
             {item?.orgNumber
               ? item?.address?.organizationName
-              : `${item?.address?.firstName ?? ''} ${item?.address?.lastName ?? ''}`.trim()}
+              : `${item?.address?.firstName ?? ''} ${item?.address?.lastName ?? ''}`.trim() ||
+                item?.address?.organizationName}
           </p>
           {item?.personNumber && <p data-cy="person-number">{formatLegalId(item.personNumber)}</p>}
           {item?.orgNumber && <p data-cy="org-number">{formatLegalId(item.orgNumber)}</p>}
