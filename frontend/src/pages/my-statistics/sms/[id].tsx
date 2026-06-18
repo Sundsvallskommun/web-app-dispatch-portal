@@ -1,7 +1,7 @@
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
-import { Breadcrumb, Spinner, Tooltip } from '@sk-web-gui/react';
+import { Breadcrumb, Spinner, Label } from '@sk-web-gui/react';
 import { useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { createEmptyUserMessage, UserMessage } from '@interfaces/statistics.interface';
@@ -49,16 +49,12 @@ const MyStatisticsDetails = () => {
           </h3>
           <div className="flex flex-col items-start gap-6 mb-40">
             {recipients?.map((recipient, index) => (
-              <div className="flex flex-row group relative" key={`${index}-${recipient?.mobileNumber}`}>
+              <div className="flex flex-row items-center" key={`${index}-${recipient?.mobileNumber}`}>
                 <div className="py-6 px-12 border-1 border-divider rounded-button">
                   {formatMobileNumberDisplay(recipient?.mobileNumber ?? '') ??
                     t('statistics:myStatistics.unknownNumber')}
                 </div>
-                <span className="hidden group-hover:block absolute left-full">
-                  <Tooltip position="right">
-                    {t(`statistics:myStatistics:status.${recipient?.status ?? 'default'}`)}
-                  </Tooltip>
-                </span>
+                <Label className="ml-8">{t(`statistics:myStatistics.status.${recipient?.status ?? 'default'}`)}</Label>
               </div>
             ))}
           </div>
