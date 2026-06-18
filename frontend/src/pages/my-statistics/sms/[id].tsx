@@ -1,7 +1,7 @@
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { PageHeader } from '@layouts/page-header/page-header.component';
 import { useRouter } from 'next/router';
-import { Breadcrumb, Spinner } from '@sk-web-gui/react';
+import { Breadcrumb, Spinner, Tooltip } from '@sk-web-gui/react';
 import { useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { createEmptyUserMessage, UserMessage } from '@interfaces/statistics.interface';
@@ -20,8 +20,6 @@ const MyStatisticsDetails = () => {
 
   const { message, loaded } = useMessage(id ?? '');
   const { recipients, sentAt } = message ?? defaultMessageInfo;
-
-  const recipientList = recipients?.filter((r) => r.status === 'SENT');
 
   return (
     <DefaultLayout
@@ -47,15 +45,20 @@ const MyStatisticsDetails = () => {
           <p className="mb-40">{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
 
           <h3 className="pb-16 text-label-medium">
-            {capitalize(t('statistics:myStatistics.recipient'))} ({recipientList.length})
+            {capitalize(t('statistics:myStatistics.recipient'))} ({recipients.length})
           </h3>
           <div className="flex flex-col items-start gap-6 mb-40">
-            {recipientList?.map((recipient, index) => (
-              <div
-                className="py-6 px-12 border-1 border-divider rounded-button"
-                key={`${index}-${recipient?.mobileNumber}`}
-              >
-                {formatMobileNumberDisplay(recipient?.mobileNumber ?? '') ?? t('statistics:myStatistics.unknownNumber')}
+            {recipients?.map((recipient, index) => (
+              <div className="flex flex-row group relative" key={`${index}-${recipient?.mobileNumber}`}>
+                <div className="py-6 px-12 border-1 border-divider rounded-button">
+                  {formatMobileNumberDisplay(recipient?.mobileNumber ?? '') ??
+                    t('statistics:myStatistics.unknownNumber')}
+                </div>
+                <span className="hidden group-hover:block absolute left-full">
+                  <Tooltip position="right">
+                    {t(`statistics:myStatistics:status.${recipient?.status ?? 'default'}`)}
+                  </Tooltip>
+                </span>
               </div>
             ))}
           </div>
