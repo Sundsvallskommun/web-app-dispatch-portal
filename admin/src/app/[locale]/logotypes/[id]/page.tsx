@@ -16,6 +16,7 @@ import { MessagingSettingsDto } from '@interfaces/messaging-settings';
 import { FormErrorMessage, FormLabel, Input } from '@sk-web-gui/react';
 import { createLogotypeRequestDto, createLogotypeSchema } from '@services/logotype-service';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { HostSelect } from '@components/host-select/host-select.component';
 
 const defaultValues = {
   id: '',
@@ -100,9 +101,7 @@ export default function LogotypePage() {
         <form className="flex flex-col gap-16 w-1/2" onSubmit={handleSubmit(onSubmit)}>
           <EditorToolbar resource={RESOURCE} id={id} />
           <Input {...register('id')} hidden />
-          <FormLabel>{t('logotypes:properties.host')}</FormLabel>
-          <Input data-cy={`edit-logotype-host`} {...register('host')} />
-          {errors.host && <FormErrorMessage>{errors.host.message}</FormErrorMessage>}
+          <HostSelect field="host" currentHost={getValues('host')} />
           <FormLabel>{t('logotypes:properties.display_name')}</FormLabel>
           <Input data-cy={`edit-logotype-display_name`} {...register('display_name')} />
           {errors.display_name && <FormErrorMessage>{errors.display_name?.message}</FormErrorMessage>}

@@ -13,13 +13,13 @@ describe('Logotypes', () => {
     cy.get('[data-cy="resource-table"]')
       .eq(0)
       .within(() => {
-        cy.get('tbody').children().eq(0).contains('logotyp1');
-        cy.get('tbody').children().eq(1).contains('logotyp2');
+        cy.get('tbody').children().eq(0).contains('host1');
+        cy.get('tbody').children().eq(1).contains('host2');
 
         cy.get('thead>tr').children().eq(0).find('button.sk-table-sortbutton').click();
 
-        cy.get('tbody').children().eq(0).contains('logotyp2');
-        cy.get('tbody').children().eq(1).contains('logotyp1');
+        cy.get('tbody').children().eq(0).contains('host2');
+        cy.get('tbody').children().eq(1).contains('host1');
       });
 
     cy.get('[data-cy="table-settings-button"]').click();
@@ -38,7 +38,7 @@ describe('Logotypes', () => {
     cy.contains('Skapa ny logotyp').click();
     cy.get('h1').should('have.text', 'Skapa ny logotyp');
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="edit-logotype-host"]').type('ny');
+    cy.get('[data-cy="edit-logotype-host"]').select(1);
     cy.get('[data-cy="edit-logotype-display_name"]').type('Ny kommun');
 
     cy.get('input[type=file]').eq(0).selectFile(logotypeFile, { force: true });
@@ -71,9 +71,9 @@ describe('Logotypes', () => {
     cy.get('h1').should('have.text', 'Redigera logotyp');
     cy.get('header').should('include.text', 'Id: 1');
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="edit-logotype-host"]').should('have.value', 'logotyp1');
-    cy.get('[data-cy="edit-logotype-host"]').clear();
-    cy.get('[data-cy="edit-logotype-host"]').type('new_name');
+    cy.get('[data-cy="edit-logotype-host"]').should('have.value', 'host1');
+    cy.get('[data-cy="edit-logotype-host"]').select(2);
+    cy.get('[data-cy="edit-logotype-host"]').should('have.value', 'host3');
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
