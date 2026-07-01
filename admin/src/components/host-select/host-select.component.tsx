@@ -1,9 +1,10 @@
 import resources from '@config/resources';
-import { Host, MessagingSettings } from '@data-contracts/backend/data-contracts';
+import { Host } from '@data-contracts/backend/data-contracts';
 import { FormControl, FormErrorMessage, FormLabel, Select, Spinner, useSnackbar } from '@sk-web-gui/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { MessagingSettingsDto } from '@interfaces/messaging-settings';
 
 interface HostSelectProps extends React.ComponentPropsWithoutRef<typeof Select> {
   field: string;
@@ -26,13 +27,16 @@ export const HostSelect: React.FC<HostSelectProps> = ({ field, currentHost, ...r
     Promise.all([resources.hosts.getMany(), resources.logotypes.getMany()])
       .then(([hostsRes, logosRes]) => {
         setHosts(hostsRes.data.data ?? []);
-        const taken = (logosRes.data.data ?? [])
-          .map((l: MessagingSettings & { host?: string }) => l.host)
+        const taken = ((logosRes.data.data ?? []) as unknown as MessagingSettingsDto[])
+          .map((l) => l.host)
           .filter((h): h is string => Boolean(h));
         setTakenHosts(new Set(taken));
         setLoaded(true);
       })
-      .catch(() => message({ message: t('logotypes:error.loading_hosts'), status: 'error' }));
+      .catch(() => {
+        message({ message: t('logotypes:error.loading_hosts'), status: 'error' });
+        setLoaded(true);
+      });
   }, []);
 
   const options = useMemo(
@@ -45,7 +49,7 @@ export const HostSelect: React.FC<HostSelectProps> = ({ field, currentHost, ...r
   return (
     <FormControl className="w-full" required>
       <FormLabel>{t('logotypes:properties.host')}</FormLabel>
-      <Select className="w-full" data-cy="edit-logotype-host" {...register(field)} {...rest}>
+      <Select className="w-full" data-cy="edit-logotype-host" {...rest} {...register(field)}>
         <Select.Option value="">{t('logotypes:select_host_placeholder')}</Select.Option>
         {options.map((host) => (
           <Select.Option key={`host-select-${host.id}`} value={host.name}>
