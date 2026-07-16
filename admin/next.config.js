@@ -30,16 +30,6 @@ module.exports = withBundleAnalyzer({
     dangerouslyAllowSVG: true,
   },
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  sassOptions: {
-    functions: {
-      'env($variable)': (variable) => {
-        const value = variable.getValue();
-        const envValue = process.env[value];
-        const sassValue = new nodeSass.SassString(envValue);
-        return sassValue;
-      },
-    },
-  },
   transpilePackages: ['lucide-react'],
   experimental: {
     swcPlugins: process.env.TEST === 'true' ? [['swc-plugin-coverage-instrument', {}]] : [],
