@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@next/bundle-analyzer": "^15.5.3",
+    "@next/bundle-analyzer": "16.2.6",
     "@sk-web-gui/core": "4.5.1",
     "@sk-web-gui/next": "^1.2.0",
     "@sk-web-gui/react": "^3.0.4",
@@ -75,6 +75,6 @@
     "typescript": "5.9.3"
   },
   "resolutions": {
-    "string-width": "^4.2.3"
+    "cypress/**/string-width": "^4.2.3"
   }
 }
