@@ -18,7 +18,19 @@ export default [
       globals: { ...globals.node, ...globals.browser, ...globals.jest },
     },
     rules: {
-      'react-refresh/only-export-components': ['error', { allowExportNames: ['getServerSideProps'] }],
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowExportNames: [
+            'generateMetadata',
+            'generateStaticParams',
+            'metadata',
+            'dynamic',
+            'revalidate',
+            'getServerSideProps',
+          ],
+        },
+      ],
       '@typescript-eslint/no-explicit-any': 'error',
     },
   },
