@@ -63,6 +63,10 @@ export const EditResourceView: React.FC<EditResourceViewProps> = ({ resource: _r
   useEffect(() => {
     if (id) {
       handleGetOne(() => (getOne as NonNullable<Resource<FieldValues>['getOne']>)(id)).then((res) => {
+        if (!res) {
+          setLoaded(true);
+          return;
+        }
         const mappedRes = Object.keys(res).reduce((data, key) => {
           return { ...data, [key]: res?.[key] ?? (defaultValues as any)?.[key] };
         }, {});

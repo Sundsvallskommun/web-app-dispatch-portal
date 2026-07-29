@@ -1,4 +1,5 @@
 import resources from '@config/resources';
+import { ResourceData } from '@interfaces/resource';
 import { ResourceName } from '@interfaces/resource-name';
 import 'dotenv';
 import { useCallback, useEffect } from 'react';
@@ -21,7 +22,7 @@ export const useResource = (resource: ResourceName) => {
   const refresh = useCallback(() => {
     if (getMany) {
       setLoading(resource, true);
-      handleGetMany<ReturnType<typeof getMany>>(getMany)
+      handleGetMany<ResourceData[]>(getMany)
         .then((res) => {
           if (res) {
             setData(resource, res);
