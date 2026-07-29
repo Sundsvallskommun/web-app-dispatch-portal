@@ -93,28 +93,28 @@ export const getCitizenName = async (personId: string): Promise<string> => {
 };
 
 export const useRecipientName = (recipient?: StatisticsRecipient) => {
-  const [name, setName] = useState('');
+  const partyId = recipient?.partyId;
+  const [resolved, setResolved] = useState<{ partyId: string; name: string } | null>(null);
 
   useEffect(() => {
-    if (!recipient?.partyId) {
-      setName('');
+    if (!partyId) {
       return;
     }
 
     let cancelled = false;
 
-    getCitizenName(recipient.partyId).then((name) => {
+    getCitizenName(partyId).then((name) => {
       if (!cancelled && name) {
-        setName(name);
+        setResolved({ partyId, name });
       }
     });
 
     return () => {
       cancelled = true;
     };
-  }, [recipient?.partyId]);
+  }, [partyId]);
 
-  return name;
+  return partyId && resolved?.partyId === partyId ? resolved.name : '';
 };
 
 const checkCsvByPath = async (csvFile: File, path: string): Promise<Csv> => {
