@@ -68,7 +68,7 @@ export const EditResourceView: React.FC<EditResourceViewProps> = ({ resource: _r
           return;
         }
         const mappedRes = Object.keys(res).reduce((data, key) => {
-          return { ...data, [key]: res?.[key] ?? (defaultValues as any)?.[key] };
+          return { ...data, [key]: res?.[key] ?? (defaultValues as Record<string, unknown> | undefined)?.[key] };
         }, {});
         reset(mappedRes);
         setIsNew(false);
