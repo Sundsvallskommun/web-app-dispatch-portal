@@ -5,13 +5,12 @@ import { EditResourceImage } from '@components/edit-resource/edit-resource-image
 
 type InputProps = React.ComponentPropsWithoutRef<typeof Input.Component>;
 
-interface EditResourceInputProps extends Omit<InputProps, 'ref' | 'key'> {
+interface EditResourceInputProps extends Omit<InputProps, 'ref' | 'key' | 'defaultValue'> {
   label: string;
   property: string;
   index?: number;
   required?: boolean;
-  // eslint-disable-next-line no any
-  defaultValue?: any;
+  defaultValue?: unknown;
 }
 
 export const EditResourceInput: React.FC<EditResourceInputProps> = ({

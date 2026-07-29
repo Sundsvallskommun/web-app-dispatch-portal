@@ -1,6 +1,6 @@
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
-import { Resource } from '@interfaces/resource';
+import { Resource, ResourceData } from '@interfaces/resource';
 import { ResourceName } from '@interfaces/resource-name';
 import { Fragment } from 'react';
 import { FieldValues, useFormContext } from 'react-hook-form';
@@ -18,8 +18,7 @@ interface EditResourceProps {
 
 export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
   const { t } = useTranslation();
-  //eslint-disable-next-line implicit-any
-  const { requiredFields, hiddenFields, defaultValues } = resources[resource] as Resource<any>;
+  const { requiredFields, hiddenFields, defaultValues } = resources[resource] as Resource<ResourceData>;
 
   type CreateType = Parameters<NonNullable<Resource<FieldValues>['create']>>[0];
   type UpdateType = Parameters<NonNullable<Resource<FieldValues>['update']>>[1];
