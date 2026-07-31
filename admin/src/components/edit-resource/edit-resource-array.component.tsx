@@ -88,7 +88,6 @@ export const EditResourceArray: React.FC<EditResourceArrayProps> = ({
           | Merge<FieldError, FieldErrorsImpl<DataType>>
           | undefined;
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return errors?.[key];
     }, undefined);
 

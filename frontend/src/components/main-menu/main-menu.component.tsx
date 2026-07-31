@@ -1,26 +1,21 @@
 import { NavigationBar } from '@sk-web-gui/react';
 import NextLink from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { mainMenuItems } from './main-menu-items';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
+const getActiveItem = (pathname: string) => {
+  if (pathname.startsWith('/my-statistics')) return 1;
+  if (pathname === '/statistics') return 2;
+  return 0;
+};
+
 export const MainMenu: React.FC = () => {
-  const [active, setActive] = useState<number>(0);
   const pathname = usePathname();
   const { t } = useTranslation(['common']);
 
-  useEffect(() => {
-    if (pathname.startsWith('/send')) {
-      setActive(0);
-    } else if (pathname.startsWith('/my-statistics')) {
-      setActive(1);
-    } else if (pathname === '/statistics') {
-      setActive(2);
-    } else {
-      setActive(0);
-    }
-  }, [pathname]);
+  const active = getActiveItem(pathname);
 
   return (
     <div className="w-full shrink flex justify-end">

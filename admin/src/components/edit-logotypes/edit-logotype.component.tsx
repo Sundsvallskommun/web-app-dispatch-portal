@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { EditResourceInput } from '../edit-resource/edit-resource-input.component';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 interface EditLogotypesProps {
   isNew?: boolean;
@@ -12,7 +12,6 @@ interface EditLogotypesProps {
 
 export const EditLogotype: React.FC<EditLogotypesProps> = ({ property }) => {
   const { t } = useTranslation();
-  const [localUrl, setLocalUrl] = useState<string>('');
 
   type CreateType = Parameters<NonNullable<Resource<FieldValues>['create']>>[0];
   type UpdateType = Parameters<NonNullable<Resource<FieldValues>['update']>>[1];
@@ -21,14 +20,12 @@ export const EditLogotype: React.FC<EditLogotypesProps> = ({ property }) => {
   const { watch } = useFormContext<DataType>();
   const logotype = watch(property);
 
+  const localUrl = useMemo(() => (logotype instanceof File ? URL.createObjectURL(logotype) : ''), [logotype]);
+
   useEffect(() => {
-    if (logotype instanceof File) {
-      const url = URL.createObjectURL(logotype);
-      setLocalUrl(url);
-      return () => URL.revokeObjectURL(url);
-    }
-    setLocalUrl('');
-  }, [logotype]);
+    if (!localUrl) return;
+    return () => URL.revokeObjectURL(localUrl);
+  }, [localUrl]);
 
   const fallbackSrc = typeof logotype === 'string' ? logotype : '';
   const previewSrc = logotype instanceof File ? localUrl : fallbackSrc;

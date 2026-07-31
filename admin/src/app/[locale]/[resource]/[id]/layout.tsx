@@ -17,7 +17,7 @@ export const generateMetadata = async ({ params }: Readonly<EditResourceLayoutPr
   const resource = stringToResourceName(typeof _resource === 'object' ? _resource[0] : _resource);
   const isNew = !id || id === 'new';
 
-  let title =
+  const title =
     isNew ?
       capitalize(t('common:create_new', { resource: t(`${resource}:name`, { count: 1 }) }))
     : capitalize(t('common:edit', { resource: t(`${resource}:name`, { count: 1 }) }));
