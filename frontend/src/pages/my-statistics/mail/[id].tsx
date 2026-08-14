@@ -143,7 +143,7 @@ const MyStatisticsDetails = () => {
   const getAttachment = (file: MessageAttachment, index: number) => {
     setLoadingAttachmentIndex(index);
 
-    getAttachmentFile(file.attachmentId)
+    getAttachmentFile(id ?? '', file.attachmentId)
       .then((d) => {
         if (typeof d.error === 'undefined') {
           const bufferArray = new Uint8Array(d.data).buffer;
