@@ -12,12 +12,14 @@
 // assignment below. Everything that touches config is therefore imported dynamically.
 
 import session from 'express-session';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { startServer, TestServer } from './helpers/server';
 
-jest.mock('@/services/api.service', () => {
-  const stub = jest.fn(() => Promise.resolve({ data: {} }));
+vi.mock('@/services/api.service', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/services/api.service')>();
+  const stub = vi.fn(() => Promise.resolve({ data: {} }));
   return {
-    __esModule: true,
+    ...actual,
     default: class {
       get = stub;
       post = stub;
@@ -28,11 +30,10 @@ jest.mock('@/services/api.service', () => {
   };
 });
 
-jest.mock('@/utils/prisma', () => ({
-  __esModule: true,
+vi.mock('@/utils/prisma', () => ({
   default: {
-    host: { findFirst: jest.fn(), findMany: jest.fn() },
-    iDP: { findFirst: jest.fn(), findMany: jest.fn() },
+    host: { findFirst: vi.fn(), findMany: vi.fn() },
+    iDP: { findFirst: vi.fn(), findMany: vi.fn() },
   },
 }));
 
@@ -43,8 +44,13 @@ describe('default-deny auth (swagger)', () => {
   beforeAll(async () => {
     process.env.SWAGGER_ENABLED = 'true';
 
-    const { default: App } = (await import('@/app')) as typeof import('@/app');
-    const { CONTROLLERS } = (await import('@/controllers')) as typeof import('@/controllers');
+    // The casts are load-bearing. `nodenext` models this package as CommonJS, so it types a
+    // dynamic import as { default: <module.exports> } - one wrapper deeper than reality here,
+    // because Vitest executes the same file as ESM where `default` is the export itself.
+    // Hence going through `unknown`. web-app-starter carries the same casts but never
+    // type-checks them: its tsconfig excludes src/tests, which this one deliberately does not.
+    const { default: App } = (await import('@/app.js')) as unknown as typeof import('@/app.js');
+    const { CONTROLLERS } = (await import('@/controllers.js')) as unknown as typeof import('@/controllers.js');
 
     server = await startServer(new App(CONTROLLERS, new session.MemoryStore()).getServer());
   });

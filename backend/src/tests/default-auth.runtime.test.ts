@@ -13,14 +13,16 @@ import App from '@/app';
 import { BASE_URL_PREFIX } from '@/config';
 import { CONTROLLERS } from '@/controllers';
 import session from 'express-session';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { GuardFixtureController, PublicControllerFixture } from './fixtures/guard.fixture.controller';
 import { collectRegisteredRoutes, toConcretePath } from './helpers/routes';
 import { startServer, TestServer } from './helpers/server';
 
-jest.mock('@/services/api.service', () => {
-  const stub = jest.fn(() => Promise.resolve({ data: {} }));
+vi.mock('@/services/api.service', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/services/api.service')>();
+  const stub = vi.fn(() => Promise.resolve({ data: {} }));
   return {
-    __esModule: true,
+    ...actual,
     default: class {
       get = stub;
       post = stub;
@@ -33,11 +35,10 @@ jest.mock('@/services/api.service', () => {
 
 // The Prisma client talks to a SQLite file that a test run has no business touching -
 // host/IDP lookups only happen on the authenticated paths this suite never reaches.
-jest.mock('@/utils/prisma', () => ({
-  __esModule: true,
+vi.mock('@/utils/prisma', () => ({
   default: {
-    host: { findFirst: jest.fn(), findMany: jest.fn() },
-    iDP: { findFirst: jest.fn(), findMany: jest.fn() },
+    host: { findFirst: vi.fn(), findMany: vi.fn() },
+    iDP: { findFirst: vi.fn(), findMany: vi.fn() },
   },
 }));
 
