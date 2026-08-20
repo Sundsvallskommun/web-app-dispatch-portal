@@ -123,7 +123,7 @@ export class MessageController {
 
   @Post('/csv-message/')
   @OpenAPI({ summary: 'Send attachment to recipients from csv file' })
-  @UseBefore(authMiddleware)
+  @UseBefore(authMiddleware, hasPermissions(['canSendLetter']))
   async sendCsvMessage(
     @Req() req: RequestWithUser,
     @Body() body: RequestBodyCsvMail,

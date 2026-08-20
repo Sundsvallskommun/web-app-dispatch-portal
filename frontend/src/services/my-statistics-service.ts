@@ -189,10 +189,11 @@ export const useDownloadReceipt = (signingInfoData: SigningInfo | null) => {
   return { download, isLoading };
 };
 
-export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResponse | AttachmentError> = (
-  attachmentId
-) =>
+export const getAttachmentFile: (
+  messageId: string,
+  attachmentId: string
+) => Promise<AttachmentResponse | AttachmentError> = (messageId, attachmentId) =>
   apiService
-    .get<ArrayBuffer>(`/my-statistics/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
+    .get<ArrayBuffer>(`/my-statistics/${messageId}/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
     .then((res) => res)
     .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));
