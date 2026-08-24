@@ -52,7 +52,6 @@ import { getMunicipalityInfo } from './utils/getMunicipalityId';
 import { buildCorsOptions } from './utils/buildCorsOptions';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { normalizeGroup } from './utils/normalizeGroup';
-import { dataDir, dataPath } from './utils/util';
 
 const apiService = new ApiService();
 
@@ -230,8 +229,6 @@ class App {
     this.app.use((req, res, next) => {
       cors(buildCorsOptions(req.path))(req, res, next);
     });
-
-    this.app.use(`${BASE_URL_PREFIX}${dataPath()}`, express.static(dataDir('uploads')));
 
     this.app.set('trust proxy', 1);
 

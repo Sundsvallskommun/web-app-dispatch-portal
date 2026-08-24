@@ -110,7 +110,7 @@ const MyStatisticsDetails = () => {
     if (!id) return;
 
     try {
-      const attachmentFile = await getAttachmentFile(attachmentId);
+      const attachmentFile = await getAttachmentFile(id, attachmentId);
 
       if (attachmentFile.error) {
         snackBar({
