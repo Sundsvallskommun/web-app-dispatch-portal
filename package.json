@@ -1,0 +1,13 @@
+{
+  "name": "postportal",
+  "private": true,
+  "description": "Root orchestration for the postportal repo: git hooks and cross-package quality gates. The apps themselves (backend/, frontend/, admin/) are installed and built separately.",
+  "scripts": {
+    "prepare": "husky",
+    "test:backend": "yarn --cwd backend test",
+    "verify": "yarn test:backend"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

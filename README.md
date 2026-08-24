@@ -29,9 +29,11 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 git clone https://github.com/Sundsvallskommun/web-app-dispatch-portal.git
 ```
 
-2. Installera dependencies för både `backend` och `frontend`
+2. Installera dependencies. Kör i roten (sätter upp git-hooks via husky) och i varje paket:
 
 ```
+yarn install            # rot: husky (git-hooks)
+
 cd frontend
 yarn install
 
@@ -117,6 +119,20 @@ Motiveringstexten loggas vid uppstart och fångas i ett snapshot-test, så varje
 | `src/tests/default-auth.swagger.test.ts` | Swagger UI är nåbar utan session |
 
 Observera att statiska filer under `${BASE_URL_PREFIX}/files` (uppladdade logotyper) mountas före skyddet och därför fortsatt är åtkomliga utan session — de behövs på inloggningssidan.
+
+### Git-hooks (husky)
+
+Git-hooks hanteras av [husky](https://typicode.github.io/husky/) och sätts upp av `yarn install` i roten (via `prepare`-scriptet). Rot-`package.json` är enbart orkestrering — `backend`, `frontend` och `admin` installeras och byggs fortfarande var för sig.
+
+| Hook       | Vad den kör                                    |
+| ---------- | ---------------------------------------------- |
+| `pre-push` | `yarn --cwd backend test` (Vitest, unit tests) |
+
+Samma grind kan köras manuellt från roten med `yarn verify`.
+
+Frontend och admin har i dagsläget bara interaktiva Cypress-tester och ingår därför inte i hooken — de körs i CI (`.github/workflows/cypress.yml`, `.github/workflows/cypress-admin.yml`).
+
+Använd inte `git push --no-verify` för att kringgå grinden — åtgärda grundorsaken.
 
 ### Språkstöd
 

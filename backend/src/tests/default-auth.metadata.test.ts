@@ -7,6 +7,8 @@
 // This test is about declared intent. The runtime counterpart
 // (default-auth.runtime.test.ts) proves the app-level guard actually denies these requests.
 
+import { describe, expect, it } from 'vitest';
+
 import { PUBLIC_PATH_PREFIXES } from '@/config/public-paths';
 import { CONTROLLERS } from '@/controllers';
 import { collectRegisteredRoutes } from './helpers/routes';
