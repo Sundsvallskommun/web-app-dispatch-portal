@@ -17,7 +17,7 @@ interface ISection {
 export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
   const { isMinMd } = useThemeQueries();
   const qaItems = useHelpQA();
-  const { t, i18n } = useTranslation(['help-menu']);
+  const { t } = useTranslation(['help-menu']);
 
   const size = _size || (isMinMd ? 'md' : 'sm');
 
@@ -42,7 +42,7 @@ export const Help: React.FC<HelpProps> = ({ filterTag, size: _size }) => {
         },
         { header: t('help-menu:categoryHeaders.sms'), items: qaItems.filter((q) => [22, 23, 24].includes(Number(q.id))) },
       ],
-    [t, i18n.language]
+    [t]
   );
 
   const sections = useMemo(() => {

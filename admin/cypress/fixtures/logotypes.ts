@@ -1,6 +1,6 @@
 export const logotype1 = {
   id: '1',
-  host: 'logotyp1',
+  host: 'host1',
   display_name: 'Logotyp 1',
   logotype_lightmode:
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==',
@@ -12,7 +12,7 @@ export const logotype1 = {
 
 export const logotype2 = {
   id: '2',
-  host: 'logotyp2',
+  host: 'host2',
   display_name: 'Logotyp 2',
   logotype_lightmode:
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==',
@@ -24,7 +24,7 @@ export const logotype2 = {
 
 export const newLogotype = {
   id: '',
-  host: 'ny',
+  host: 'host1',
   display_name: 'Ny logotyp',
   logotype_lightmode:
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==',

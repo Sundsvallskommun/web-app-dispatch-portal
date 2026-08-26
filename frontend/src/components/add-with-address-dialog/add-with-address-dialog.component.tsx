@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Button, Input, FormControl, FormLabel, Modal, RadioButton, cx } from '@sk-web-gui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -79,12 +79,15 @@ export const AddWithAddressDialog: React.FC<AddWithAddressDialogProps> = ({
     onClose(data);
   };
 
-  useEffect(() => {
+  // Reset the dialog back to its first step whenever it is reopened.
+  const [wasOpen, setWasOpen] = useState<boolean>(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) {
       setIsAdding(false);
       setCurrent(0);
     }
-  }, [open]);
+  }
 
   const handleClose = () => {
     reset();

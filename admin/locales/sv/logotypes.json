@@ -16,6 +16,8 @@
     "lightmode_required": "Logotyp i light mode måste laddas upp",
     "darkmode_required": "Logotyp i dark mode måste laddas upp",
     "mime": "Endast SVG eller PNG är tillåtet",
-    "size": "Filen är för stor (max 4 MB)"
-  }
+    "size": "Filen är för stor (max 4 MB)",
+    "loading_hosts": "Kunde inte hämta värdar"
+  },
+  "select_host_placeholder": "Välj värd"
 }

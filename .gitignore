@@ -1,2 +1,3 @@
 # local used launch
 .vscode/launch.json
+frontend/tsconfig.tsbuildinfo
