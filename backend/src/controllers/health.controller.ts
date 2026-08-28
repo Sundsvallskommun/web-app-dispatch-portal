@@ -1,6 +1,7 @@
 import { getApiBase } from '@/config';
 import { User } from '@/interfaces/users.interface';
 import ApiService from '@/services/api.service';
+import { Public } from '@/middlewares/public.decorator';
 import { logger } from '@/utils/logger';
 import { Controller, Get } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
@@ -11,6 +12,7 @@ export class HealthController {
 
   @Get('/health/up')
   @OpenAPI({ summary: 'Return health check' })
+  @Public('Liveness probe - polled by infrastructure without a session')
   async up() {
     const url = `${getApiBase('simulatorserver')}/simulations/response?status=200%20OK`;
     const data = {

@@ -29,9 +29,11 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 git clone https://github.com/Sundsvallskommun/web-app-dispatch-portal.git
 ```
 
-2. Installera dependencies för både `backend` och `frontend`
+2. Installera dependencies. Kör i roten (sätter upp git-hooks via husky) och i varje paket:
 
 ```
+yarn install            # rot: husky (git-hooks)
+
 cd frontend
 yarn install
 
@@ -76,6 +78,61 @@ Om du vill ha data att arbeta med direkt kan du seeda databasen:
 ```
 yarn prisma:seed
 ```
+
+### Backend-routes och autentisering
+
+Alla routes i backenden kräver autentisering som standard — en inloggad session måste finnas, annars svarar servern 401. Det är inte möjligt att råka glömma bort skyddet på en ny endpoint.
+
+**Lägga till en ny skyddad route** — dekorera handler med `@UseBefore(authMiddleware)`:
+
+```ts
+import authMiddleware from '@middlewares/auth.middleware';
+import { UseBefore } from 'routing-controllers';
+
+@Get('/me')
+@UseBefore(authMiddleware)
+getUser() { ... }
+```
+
+Själva 401-svaret kommer inte från dekoratorn. Det kommer från en middleware som mountas framför hela `BASE_URL_PREFIX` innan controllers registreras (`createDefaultAuthGuard` i `backend/src/middlewares/default-auth.middleware.ts`) — den nekar allt som inte är märkt `@Public()`, så en ny route är skyddad så fort den finns. Dekoratorn behövs ändå: den deklarerar avsikten i koden. En route utan vare sig `@UseBefore(authMiddleware)` eller `@Public()` failar `default-auth.metadata.test.ts`, så skyddet kan varken glömmas bort eller tas bort tyst.
+
+**Lägga till en publik route** — dekorera handler med `@Public('motivering')`:
+
+```ts
+import { Public } from '@/middlewares/public.decorator';
+
+@Get('/health/up')
+@Public('Liveness probe - pollas av infrastrukturen utan session')
+async up() { ... }
+```
+
+Motiveringstexten loggas vid uppstart och fångas i ett snapshot-test, så varje förändring framgår i kodgranskning.
+
+**Lägga till en ny controller** — lägg till klassen i `src/controllers.ts`. Controllern täcks då automatiskt av autentiseringsskyddet och av auth-testerna.
+
+**Tester** — tre testsviter bevakar skyddet (kör med `yarn test` i `backend/`):
+
+| Fil | Vad den testar |
+| --- | --- |
+| `src/tests/default-auth.metadata.test.ts` | Källkodsnivå: varje route har antingen `@UseBefore(authMiddleware)` eller `@Public()` |
+| `src/tests/default-auth.runtime.test.ts` | Runtime: varje oskyddad route svarar 401 utan session |
+| `src/tests/default-auth.swagger.test.ts` | Swagger UI är nåbar utan session |
+
+Observera att statiska filer under `${BASE_URL_PREFIX}/files` (uppladdade logotyper) mountas före skyddet och därför fortsatt är åtkomliga utan session — de behövs på inloggningssidan.
+
+### Git-hooks (husky)
+
+Git-hooks hanteras av [husky](https://typicode.github.io/husky/) och sätts upp av `yarn install` i roten (via `prepare`-scriptet). Rot-`package.json` är enbart orkestrering — `backend`, `frontend` och `admin` installeras och byggs fortfarande var för sig.
+
+| Hook       | Vad den kör                                    |
+| ---------- | ---------------------------------------------- |
+| `pre-push` | `yarn --cwd backend test` (Vitest, unit tests) |
+
+Samma grind kan köras manuellt från roten med `yarn verify`.
+
+Frontend och admin har i dagsläget bara interaktiva Cypress-tester och ingår därför inte i hooken — de körs i CI (`.github/workflows/cypress.yml`, `.github/workflows/cypress-admin.yml`).
+
+Använd inte `git push --no-verify` för att kringgå grinden — åtgärda grundorsaken.
 
 ### Språkstöd
 
