@@ -230,6 +230,11 @@ class App {
       cors(buildCorsOptions(req.path))(req, res, next);
     });
 
+    this.app.use(BASE_URL_PREFIX, (_req, res, next) => {
+      res.set('Cache-Control', 'no-store');
+      next();
+    });
+
     this.app.set('trust proxy', 1);
 
     this.app.use(

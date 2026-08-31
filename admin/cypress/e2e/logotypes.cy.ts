@@ -1,4 +1,5 @@
 import { apiResponse } from 'cypress/fixtures/apiresponse';
+import { hostWithSubdomain } from '../fixtures/hosts';
 import { logotype1, logotype2, logotypeFile, newLogotype } from '../fixtures/logotypes';
 
 describe('Logotypes', () => {
@@ -52,6 +53,34 @@ describe('Logotypes', () => {
     });
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.wait('@save');
+  });
+
+  // Regression: fram till dess att `hostLabel` infördes sparades hela hostnamnet som `host`-värde,
+  // medan GET /logotypes filtrerar på `host.split('.')[0]`. Logotypen slutade då tyst att hittas.
+  it('saves the host label rather than the full hostname', () => {
+    cy.intercept('GET', '**/api/admin/hosts', apiResponse([hostWithSubdomain])).as('hosts');
+    cy.intercept('POST', '**/api/admin/logotypes', apiResponse(newLogotype)).as('save');
+
+    cy.get('[data-cy="mainmenu-resource-logotypes"]>span>button').click();
+    cy.contains('Skapa ny logotyp').click();
+
+    // Användaren ser hela hostnamnet, men värdet som skickas är etiketten.
+    cy.get('[data-cy="edit-logotype-host"] option')
+      .contains('ange.postportal-stage.kommuna.se')
+      .should('have.value', 'ange');
+
+    cy.get('[data-cy="edit-logotype-host"]').select(1);
+    cy.get('[data-cy="edit-logotype-host"]').should('have.value', 'ange');
+
+    cy.get('[data-cy="edit-logotype-display_name"]').type('Ånge');
+    cy.get('input[type=file]').eq(0).selectFile(logotypeFile, { force: true });
+    cy.get('input[type=file]').eq(1).selectFile(logotypeFile, { force: true });
+    cy.get('[data-cy="edit-toolbar-save"]').click();
+
+    cy.wait('@save').then(({ request }) => {
+      const host = request.body.values.find((value: { key: string }) => value.key === 'host');
+      expect(host.value).to.equal('ange');
+    });
   });
 
   it('edits a logotype', () => {
