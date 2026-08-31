@@ -11,7 +11,6 @@ export default function Logout() {
     });
     url.search = queries.toString();
     globalThis.location.href = url.toString();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <></>;

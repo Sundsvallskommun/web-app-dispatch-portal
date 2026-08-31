@@ -1,5 +1,3 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
@@ -11,15 +9,11 @@ import { Link } from '@sk-web-gui/react';
 import HeaderMenu from '@components/header-menu/header-menu.component';
 
 const Index = () => {
-  const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
   const user = useUserStore((state) => state.user);
   const { canSendLetter, canSendRegisteredLetter, canSendSMS } = user?.permissions ?? {};
-  const router = useRouter();
   const { t } = useTranslation(['common', 'start-page']);
 
-  useEffect(() => {
-    setIsCheckingPermissions(false);
-  }, [canSendSMS, canSendLetter, canSendRegisteredLetter, router]);
+  const isCheckingPermissions = !user?.name;
 
   return (
     <DefaultLayout title={t('start-page:appTitle')} headerMenu={<HeaderMenu />}>

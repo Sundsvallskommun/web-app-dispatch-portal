@@ -129,8 +129,8 @@ export const StatisticsPage = () => {
         {loaded && departmentStatistics.length === 0 && <p>{t('statistics:noStatisticsFound')}</p>}
         {loaded && departmentStatistics.length > 0 && (
           <AutoTable
-            footer={departmentStatistics.length >= 12}
-            pageSize={11}
+            footer={false}
+            pageSize={departmentStatistics.length}
             autodata={departmentStatistics.length > 0 ? departmentStatistics : []}
             autoheaders={headers}
           />

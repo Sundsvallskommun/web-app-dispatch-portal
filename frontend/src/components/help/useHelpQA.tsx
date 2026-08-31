@@ -1,7 +1,40 @@
 import { JSX, useMemo } from 'react';
 import { cx, Link, List } from '@sk-web-gui/react';
 import { Trans, useTranslation } from 'next-i18next';
+import type { TFunction } from 'i18next';
 import { EnumQATags, QAItem } from 'src/types';
+
+const splitInParagraphs = (text: string, id: string) =>
+  text.split('\n').map((paragraph, index) => (
+    <p
+      key={`helpparagraph-${id}-${index}`}
+      className={cx(index > 0 ? 'mt-8 leading-normal' : 'leading-normal', 'text-justify [hyphens:auto]')}
+    >
+      {paragraph}
+    </p>
+  ));
+
+const itemsFactory = (
+  t: TFunction,
+  ids: number[],
+  tags: EnumQATags[],
+  components?: { [key: string]: JSX.Element }
+) => {
+  if (components) {
+    return ids.map((i) => ({
+      id: String(i),
+      question: t(`help-menu:questionsAndAnswers.${i}.question`),
+      answer: <Trans i18nKey={`help-menu:questionsAndAnswers.${i}.answer`} components={components} />,
+      tags,
+    }));
+  }
+  return ids.map((i) => ({
+    id: String(i),
+    question: t(`help-menu:questionsAndAnswers.${i}.question`),
+    answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
+    tags,
+  }));
+};
 
 /**
  * Hook that provides a sorted array of help Q&A items with translations and tags.
@@ -19,41 +52,14 @@ import { EnumQATags, QAItem } from 'src/types';
  * // Returns items sorted by ID: [1, 2, 3, ..., 27, 28]
  */
 export const useHelpQA = (): QAItem[] => {
-  const { t, i18n } = useTranslation(['help-menu']);
-
-  const splitInParagraphs = (text: string, id: string) =>
-    text.split('\n').map((paragraph, index) => (
-      <p
-        key={`helpparagraph-${id}-${index}`}
-        className={cx(index > 0 ? 'mt-8 leading-normal' : 'leading-normal', 'text-justify [hyphens:auto]')}
-      >
-        {paragraph}
-      </p>
-    ));
-
-  const itemsFactory = (ids: number[], tags: EnumQATags[], components?: { [key: string]: JSX.Element }) => {
-    if (components) {
-      return ids.map((i) => ({
-        id: String(i),
-        question: t(`help-menu:questionsAndAnswers.${i}.question`),
-        answer: <Trans i18nKey={`help-menu:questionsAndAnswers.${i}.answer`} components={components} />,
-        tags,
-      }));
-    }
-    return ids.map((i) => ({
-      id: String(i),
-      question: t(`help-menu:questionsAndAnswers.${i}.question`),
-      answer: splitInParagraphs(t(`help-menu:questionsAndAnswers.${i}.answer`), String(i)),
-      tags,
-    }));
-  };
+  const { t } = useTranslation(['help-menu']);
 
   const items = useMemo(
     () =>
       [
-        ...itemsFactory([1], [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL]),
-        ...itemsFactory([2, 4, 5, 6, 7, 9, 12, 13, 16, 17, 18], [EnumQATags.MAIL, EnumQATags.REK_MAIL]),
-        ...itemsFactory([3, 8, 10, 14, 15], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
+        ...itemsFactory(t, [1], [EnumQATags.SMS, EnumQATags.MAIL, EnumQATags.REK_MAIL]),
+        ...itemsFactory(t, [2, 4, 5, 6, 7, 9, 12, 13, 16, 17, 18], [EnumQATags.MAIL, EnumQATags.REK_MAIL]),
+        ...itemsFactory(t, [3, 8, 10, 14, 15], [EnumQATags.MAIL, EnumQATags.REK_MAIL], {
           p: <p className="mt-4 mb-4 leading-normal text-justify [hyphens:auto]" />,
           br: <br />,
           List: <List listStyle="bullet" />,
@@ -66,18 +72,18 @@ export const useHelpQA = (): QAItem[] => {
             </a>
           ),
         }),
-        ...itemsFactory([11], [EnumQATags.MAIL], {
+        ...itemsFactory(t, [11], [EnumQATags.MAIL], {
           p: <p className="mt-4 leading-normal text-justify [hyphens:auto]" />,
           a: <Link href="/files/example-personnummer.csv" />,
         }),
-        ...itemsFactory([24], [EnumQATags.SMS], {
+        ...itemsFactory(t, [24], [EnumQATags.SMS], {
           p: <p className="mt-4 leading-normal text-justify [hyphens:auto]" />,
           a: <Link href="/files/example-mobilnummer.csv" />,
         }),
-        ...itemsFactory([19, 20, 21], [EnumQATags.REK_MAIL]),
-        ...itemsFactory([22, 23], [EnumQATags.SMS]),
+        ...itemsFactory(t, [19, 20, 21], [EnumQATags.REK_MAIL]),
+        ...itemsFactory(t, [22, 23], [EnumQATags.SMS]),
       ].sort((a, b) => Number(a.id) - Number(b.id)),
-    [i18n.language]
+    [t]
   );
 
   return items;

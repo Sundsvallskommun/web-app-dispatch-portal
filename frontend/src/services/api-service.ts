@@ -11,7 +11,6 @@ export interface ApiResponse<T> {
   message: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let isRedirectingToLogin = false;
 
 Router.events.on('routeChangeComplete', (route) => {

@@ -7,7 +7,7 @@ export const useCrudHelper = (resource: string) => {
   const message = useSnackbar();
   const { t } = useTranslation();
 
-  const handleGetOne = async <TData extends ResourceResponse<any> = ResourceResponse<unknown>>(getOne: () => TData) => {
+  const handleGetOne = async <T>(getOne: () => ResourceResponse<T>): Promise<T | undefined> => {
     const name = t(`${resource}:name_one`);
     try {
       const result = await getOne();
@@ -17,9 +17,7 @@ export const useCrudHelper = (resource: string) => {
     }
   };
 
-  const handleGetMany = async <TData extends ResourceResponse<any> = ResourceResponse<unknown>>(
-    getMany: () => TData
-  ) => {
+  const handleGetMany = async <T>(getMany: () => ResourceResponse<T>): Promise<T | undefined> => {
     const name = t(`${resource}:name_many`);
     try {
       const result = await getMany();
@@ -29,7 +27,7 @@ export const useCrudHelper = (resource: string) => {
     }
   };
 
-  const handleCreate = async <TData extends ResourceResponse<any> = ResourceResponse<unknown>>(create: () => TData) => {
+  const handleCreate = async <T>(create: () => ResourceResponse<T>): Promise<T | undefined> => {
     const name = t(`${resource}:name_one`);
     try {
       const result = await create();
@@ -42,7 +40,7 @@ export const useCrudHelper = (resource: string) => {
     }
   };
 
-  const handleUpdate = async <TData extends ResourceResponse<any> = ResourceResponse<unknown>>(update: () => TData) => {
+  const handleUpdate = async <T>(update: () => ResourceResponse<T>): Promise<T | undefined> => {
     const name = t(`${resource}:name_one`);
     try {
       const result = await update();
@@ -55,7 +53,7 @@ export const useCrudHelper = (resource: string) => {
     }
   };
 
-  const handleRemove = async <TData extends ResourceResponse<any> = ResourceResponse<unknown>>(remove: () => TData) => {
+  const handleRemove = async <T>(remove: () => ResourceResponse<T>): Promise<T | undefined> => {
     const name = t(`${resource}:name_one`);
     try {
       const result = await remove();

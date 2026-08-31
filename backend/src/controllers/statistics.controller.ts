@@ -65,6 +65,31 @@ export class StatisticsController {
     }
   }
 
+  /**
+   * Resolves a message through the user-scoped history path, so it only succeeds if the
+   * message belongs to the requesting user. Endpoints whose own upstream path is not
+   * user-scoped must call this before using a client-supplied message id, otherwise any
+   * authenticated user can read any message in the municipality.
+   *
+   * Throws 404 when the message is not the user's, so callers cannot tell a foreign
+   * message apart from a non-existing one.
+   */
+  private async getOwnMessage(req: RequestWithUser, municipalityId: string, id: string): Promise<UserMessage> {
+    const { username } = req.user;
+    const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/history/users/${username}/messages/${id}`;
+
+    try {
+      const result = await this.apiService.get<UserMessage>({ url }, req.user);
+      return result.data;
+    } catch (error) {
+      if (error instanceof HttpException && error.status === 404) {
+        logger.warn(`User ${username} requested message ${id} which is not theirs, or does not exist`);
+        throw new HttpException(404, 'Message not found');
+      }
+      throw error;
+    }
+  }
+
   @Get('/my-statistics/:id')
   @OpenAPI({ summary: 'Return my statistics message' })
   @UseBefore(authMiddleware)
@@ -73,19 +98,10 @@ export class StatisticsController {
     @Res() response: any,
     @Param('id') id: string,
   ): Promise<UserMessage> {
-    try {
-      const municipalityId = await getMunicipalityId(req);
-      const { username } = req.user;
-      const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/history/users/${username}/messages/${id}`;
-      const result = await this.apiService.get<UserMessage>({ url }, req.user);
+    const municipalityId = await getMunicipalityId(req);
+    const message = await this.getOwnMessage(req, municipalityId, id);
 
-      const message = result.data;
-
-      return response.send(message);
-    } catch (error) {
-      logger.error('Error getting statistics: ', error);
-      throw new HttpException(500, 'Error getting statistics');
-    }
+    return response.send(message);
   }
 
   @Get('/signing-info/:id')
@@ -97,6 +113,9 @@ export class StatisticsController {
     @Param('id') id: string,
   ): Promise<Response> {
     const municipalityId = await getMunicipalityId(req);
+
+    await this.getOwnMessage(req, municipalityId, id);
+
     try {
       const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/history/messages/${id}/signinginfo`;
       const params = { limit: 9000 };
@@ -104,7 +123,7 @@ export class StatisticsController {
 
       return response.status(200).json(result.data);
     } catch (error) {
-      if (response.status(502)) {
+      if (error instanceof HttpException && (error.status === 404 || error.status === 502)) {
         return response.status(404).json({
           message: `Signing information belonging to letter with id '${id}' and municipalityId '${municipalityId}' not found`,
         });
@@ -118,8 +137,11 @@ export class StatisticsController {
   @OpenAPI({ summary: 'Return receipt PDF' })
   @UseBefore(authMiddleware)
   async getReceipt(@Req() req: RequestWithUser, @Res() res: Response, @Param('id') id: string): Promise<any> {
+    const municipalityId = await getMunicipalityId(req);
+
+    await this.getOwnMessage(req, municipalityId, id);
+
     try {
-      const municipalityId = await getMunicipalityId(req);
       const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/history/messages/${id}/receipt`;
 
       const result = await this.apiService.get(
@@ -141,22 +163,34 @@ export class StatisticsController {
     }
   }
 
-  @Get('/my-statistics/attachment/:attachmentId')
+  @Get('/my-statistics/:id/attachment/:attachmentId')
   @Header('Cross-Origin-Embedder-Policy', 'require-corp')
   @Header('Cross-Origin-Resource-Policy', 'cross-origin')
   @Header('Content-Type', 'application/pdf')
-  @OpenAPI({ summary: 'Return the attachment' })
+  @OpenAPI({ summary: 'Return an attachment belonging to one of my messages' })
   @UseBefore(authMiddleware)
-  async getAttachment(@Req() req: RequestWithUser, @Param('attachmentId') attachmentId: string): Promise<any> {
+  async getAttachment(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Param('attachmentId') attachmentId: string,
+  ): Promise<any> {
+    const municipalityId = await getMunicipalityId(req);
+
+    const message = await this.getOwnMessage(req, municipalityId, id);
+
+    if (!message.attachments?.some(attachment => attachment.attachmentId === attachmentId)) {
+      logger.warn(`User ${req.user.username} requested attachment ${attachmentId} which is not part of message ${id}`);
+      throw new HttpException(404, 'Attachment not found');
+    }
+
     try {
-      const municipalityId = await getMunicipalityId(req);
       const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/attachments/${attachmentId}`;
       const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);
       // NOTE: send the raw file
       return result.data;
     } catch (error) {
-      logger.error('Error getting statistics: ', error);
-      throw new HttpException(500, 'Error getting statistics');
+      logger.error('Error getting attachment: ', error);
+      throw new HttpException(500, 'Error getting attachment');
     }
   }
 }

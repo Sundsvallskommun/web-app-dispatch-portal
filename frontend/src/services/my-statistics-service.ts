@@ -97,25 +97,37 @@ export const useMyLetterList = (): {
   return { letters, lettersLoaded };
 };
 
+const emptyUserMessage = createEmptyUserMessage();
+
 export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean } => {
-  const [message, setMessage] = useState<UserMessage>(createEmptyUserMessage());
-  const [loaded, setLoaded] = useState<boolean>(false);
+  // Stored together with the id it was fetched for, so message and loaded can be
+  // derived rather than reset through the effect.
+  const [resolved, setResolved] = useState<{ messageId: string; message: UserMessage } | null>(null);
 
   useEffect(() => {
     if (!messageId) {
-      setLoaded(true);
       return;
     }
-    apiService.get<UserMessage>(`my-statistics/${messageId}`).then((res) => {
-      if (!res.data) return;
 
-      const message = res.data;
-      setMessage(message);
-      setLoaded(true);
+    let cancelled = false;
+
+    apiService.get<UserMessage>(`my-statistics/${messageId}`).then((res) => {
+      if (cancelled || !res.data) return;
+
+      setResolved({ messageId, message: res.data });
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [messageId]);
 
-  return { message, loaded };
+  const isCurrent = resolved?.messageId === messageId;
+
+  return {
+    message: isCurrent ? resolved.message : emptyUserMessage,
+    loaded: !messageId || isCurrent,
+  };
 };
 
 export const useGetSigningInfo = (letterId: string) => {
@@ -177,10 +189,11 @@ export const useDownloadReceipt = (signingInfoData: SigningInfo | null) => {
   return { download, isLoading };
 };
 
-export const getAttachmentFile: (attachmentId: string) => Promise<AttachmentResponse | AttachmentError> = (
-  attachmentId
-) =>
+export const getAttachmentFile: (
+  messageId: string,
+  attachmentId: string
+) => Promise<AttachmentResponse | AttachmentError> = (messageId, attachmentId) =>
   apiService
-    .get<ArrayBuffer>(`/my-statistics/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
+    .get<ArrayBuffer>(`/my-statistics/${messageId}/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
     .then((res) => res)
     .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));

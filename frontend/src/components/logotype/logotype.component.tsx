@@ -1,37 +1,38 @@
-import { ColorSchemeMode, Divider, useGui } from '@sk-web-gui/react';
-import React from 'react';
+import { ColorSchemeMode, Logo, useGui } from '@sk-web-gui/react';
 import { useLogotypeStore } from '@services/logotypes-service';
 import { useTranslation } from 'react-i18next';
 import NextLink from 'next/link';
+import React from 'react';
 
 export const Logotype: React.FC = () => {
   const logotype = useLogotypeStore((state) => state.logotype);
   const { t } = useTranslation();
-
   const { colorScheme, preferredColorScheme } = useGui();
 
-  const mode: string = colorScheme === ColorSchemeMode.System ? preferredColorScheme : colorScheme;
-  const logo =
-    (mode === 'dark' ? logotype.logotype_darkmode : logotype.logotype_lightmode) ||
-    logotype.logotype_lightmode ||
-    logotype.logotype_darkmode;
+  const mode = colorScheme === ColorSchemeMode.System ? preferredColorScheme : colorScheme;
+  const src =
+    (mode === 'dark' ? logotype?.logotype_darkmode : logotype?.logotype_lightmode) ||
+    logotype?.logotype_lightmode ||
+    logotype?.logotype_darkmode;
+
+  const displayName = logotype?.display_name || t('common:appSubTitle');
 
   return (
-    <NextLink data-cy="logotype-component" href="/" className="flex justify-center items-center gap-8">
-      {logo ? (
-        <>
-          <img
-            src={logo}
-            alt={t('common:logotype.alt', { display_name: logotype.display_name })}
-            className="h-[50px] w-auto max-h-[50px]"
-          />
-          <Divider className="sk-logo-divider border-1 m-1" orientation="vertical" />
-        </>
-      ) : null}
-      <div className="flex flex-col hover:underline">
-        <span className="sk-logo-title text-dark-primary">{t('common:appTitle')}</span>
-        <span className="sk-logo-subtitle">{logotype.display_name}</span>
-      </div>
+    <NextLink data-cy="logotype-component" href="/">
+      <Logo
+        variant="service"
+        title={t('common:appTitle')}
+        subtitle={displayName}
+        symbol={
+          src ? (
+            <img
+              className="w-full h-full py-4 object-contain"
+              src={src}
+              alt={t('common:logotype.alt', { display_name: displayName })}
+            />
+          ) : null
+        }
+      />
     </NextLink>
   );
 };

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import EmptyLayout from '../layouts/empty-layout/empty-layout.component';
 import { useRouter } from 'next/router';
 import { Button, FormErrorMessage } from '@sk-web-gui/react';
@@ -12,16 +12,20 @@ import LoaderFullScreen from '@components/loader/loader-fullscreen';
 
 export function Start() {
   const router = useRouter();
-  const [message, setMessage] = useState<string>();
-  const [mounting, setMounting] = useState<boolean>(true);
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const initalFocus = useRef<HTMLButtonElement>(null);
   const setInitalFocus = () => {
     setTimeout(() => {
-      initalFocus.current && initalFocus.current.focus();
+      initalFocus.current?.focus();
     });
   };
+
+  const failMessage = router.query?.failMessage;
+  const message = failMessage ? t(`login:errors.${failMessage}`) : undefined;
+  // Any failure other than NOT_AUTHORIZED means the form is shown instead of
+  // bouncing the user straight back to SSO.
+  const showLogin = !!failMessage && failMessage !== 'NOT_AUTHORIZED';
 
   const onLogin = () => {
     // NOTE: send user to login with SSO
@@ -41,20 +45,17 @@ export function Start() {
 
   useEffect(() => {
     setInitalFocus();
-    if (router.query?.failMessage) {
-      setMessage(t(`login:errors.${router.query.failMessage}`));
-    }
   }, [router]);
 
   useEffect(() => {
-    if (router.query?.failMessage && router.query.failMessage !== 'NOT_AUTHORIZED') {
-      setMounting(false);
+    if (showLogin) {
       return;
     }
     onLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return mounting ? (
+  return !showLogin ? (
     <LoaderFullScreen />
   ) : (
     <>

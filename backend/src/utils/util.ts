@@ -55,15 +55,6 @@ export const formatOrgNr = (orgNr: string, format: OrgNumberFormat = OrgNumberFo
   return format === OrgNumberFormat.DASH ? orgNumber.substring(0, 6) + '-' + orgNumber.substring(6, 10) : orgNumber;
 };
 
-export const dataPath = (path?: string): string => {
-  const fullpath = path ? `/${path}` : '';
-  return '/files' + fullpath;
-};
-
-export const dataDir = (path: string): string => {
-  return __dirname + '/../../data/' + path;
-};
-
 // Convert Arabic-Indic (٠–٩) and Eastern Arabic-Indic (۰–۹) numerals to ASCII
 export function normalizeDigits(input: string): string {
   if (!input) return input;
