@@ -18,29 +18,11 @@ import { GuardFixtureController, PublicControllerFixture } from './fixtures/guar
 import { collectRegisteredRoutes, toConcretePath } from './helpers/routes';
 import { startServer, TestServer } from './helpers/server';
 
-vi.mock('@/services/api.service', async importOriginal => {
-  const actual = await importOriginal<typeof import('@/services/api.service')>();
-  const stub = vi.fn(() => Promise.resolve({ data: {} }));
-  return {
-    ...actual,
-    default: class {
-      get = stub;
-      post = stub;
-      patch = stub;
-      put = stub;
-      delete = stub;
-    },
-  };
-});
+vi.mock('@/services/api.service', async importOriginal =>
+  (await import('./helpers/module-mocks.js')).apiServiceMock(importOriginal),
+);
 
-// The Prisma client talks to a SQLite file that a test run has no business touching -
-// host/IDP lookups only happen on the authenticated paths this suite never reaches.
-vi.mock('@/utils/prisma', () => ({
-  default: {
-    host: { findFirst: vi.fn(), findMany: vi.fn() },
-    iDP: { findFirst: vi.fn(), findMany: vi.fn() },
-  },
-}));
+vi.mock('@/utils/prisma', async () => (await import('./helpers/module-mocks.js')).prismaMock());
 
 describe('default-deny auth (runtime)', () => {
   let server: TestServer;
