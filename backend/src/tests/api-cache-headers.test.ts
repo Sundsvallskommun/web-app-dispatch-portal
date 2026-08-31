@@ -17,27 +17,11 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { collectRegisteredRoutes, toConcretePath } from './helpers/routes';
 import { startServer, TestServer } from './helpers/server';
 
-vi.mock('@/services/api.service', async importOriginal => {
-  const actual = await importOriginal<typeof import('@/services/api.service')>();
-  const stub = vi.fn(() => Promise.resolve({ data: {} }));
-  return {
-    ...actual,
-    default: class {
-      get = stub;
-      post = stub;
-      patch = stub;
-      put = stub;
-      delete = stub;
-    },
-  };
-});
+vi.mock('@/services/api.service', async importOriginal =>
+  (await import('./helpers/module-mocks.js')).apiServiceMock(importOriginal),
+);
 
-vi.mock('@/utils/prisma', () => ({
-  default: {
-    host: { findFirst: vi.fn(), findMany: vi.fn() },
-    iDP: { findFirst: vi.fn(), findMany: vi.fn() },
-  },
-}));
+vi.mock('@/utils/prisma', async () => (await import('./helpers/module-mocks.js')).prismaMock());
 
 describe('API cache headers', () => {
   let server: TestServer;
