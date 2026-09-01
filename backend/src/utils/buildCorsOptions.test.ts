@@ -1,43 +1,47 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
 describe('buildCorsOptions', () => {
   afterEach(() => {
-    jest.resetModules();
-    jest.clearAllMocks();
+    vi.resetModules();
+    vi.clearAllMocks();
   });
 
-  const loadModule = (nodeEnv = 'production') => {
-    const isAllowedOrigin = jest.fn();
+  const loadModule = async (nodeEnv = 'production') => {
+    const isAllowedOrigin = vi.fn();
 
-    jest.doMock('@config', () => ({
+    vi.doMock('@config', () => ({
       BASE_URL_PREFIX: '/api',
       CREDENTIALS: true,
       NODE_ENV: nodeEnv,
     }));
 
-    jest.doMock('./isAllowedOrigin', () => ({
+    vi.doMock('./isAllowedOrigin', () => ({
       isAllowedOrigin,
     }));
 
-    const module = require('./buildCorsOptions') as typeof import('./buildCorsOptions');
+    const module = await import('./buildCorsOptions.js');
 
     return { ...module, isAllowedOrigin };
   };
 
   it('bypasses the SAML login callback path', async () => {
-    const { isCorsOriginAllowedForPath, isAllowedOrigin } = loadModule();
+    const { isCorsOriginAllowedForPath, isAllowedOrigin } = await loadModule();
 
     await expect(isCorsOriginAllowedForPath('/api/saml/login/callback', 'https://blocked.example')).resolves.toBe(true);
     expect(isAllowedOrigin).not.toHaveBeenCalled();
   });
 
   it('bypasses the SAML logout callback path', async () => {
-    const { isCorsOriginAllowedForPath, isAllowedOrigin } = loadModule();
+    const { isCorsOriginAllowedForPath, isAllowedOrigin } = await loadModule();
 
-    await expect(isCorsOriginAllowedForPath('/api/saml/logout/callback', 'https://blocked.example')).resolves.toBe(true);
+    await expect(isCorsOriginAllowedForPath('/api/saml/logout/callback', 'https://blocked.example')).resolves.toBe(
+      true,
+    );
     expect(isAllowedOrigin).not.toHaveBeenCalled();
   });
 
   it('keeps rejecting disallowed origins for non-callback paths', async () => {
-    const { buildCorsOptions, isAllowedOrigin } = loadModule();
+    const { buildCorsOptions, isAllowedOrigin } = await loadModule();
     isAllowedOrigin.mockResolvedValue(false);
 
     const originHandler = buildCorsOptions('/api/users').origin as (
@@ -57,7 +61,7 @@ describe('buildCorsOptions', () => {
   });
 
   it('keeps allowing origins in development mode', async () => {
-    const { isCorsOriginAllowedForPath, isAllowedOrigin } = loadModule('development');
+    const { isCorsOriginAllowedForPath, isAllowedOrigin } = await loadModule('development');
     isAllowedOrigin.mockResolvedValue(false);
 
     await expect(isCorsOriginAllowedForPath('/api/users', 'https://blocked.example')).resolves.toBe(true);

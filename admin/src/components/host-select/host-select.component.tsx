@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { MessagingSettingsDto } from '@interfaces/messaging-settings';
+import { hostLabel } from '@utils/host-label';
 
 interface HostSelectProps extends React.ComponentPropsWithoutRef<typeof Select> {
   field: string;
@@ -40,7 +41,10 @@ export const HostSelect: React.FC<HostSelectProps> = ({ field, currentHost, ...r
   }, []);
 
   const options = useMemo(
-    () => hosts.filter((h) => h.name && (h.name === currentHost || !takenHosts.has(h.name))),
+    () =>
+      hosts.filter((h): h is Host & { name: string } =>
+        Boolean(h.name && (hostLabel(h.name) === currentHost || !takenHosts.has(hostLabel(h.name))))
+      ),
     [hosts, takenHosts, currentHost]
   );
 
@@ -52,7 +56,7 @@ export const HostSelect: React.FC<HostSelectProps> = ({ field, currentHost, ...r
       <Select className="w-full" data-cy="edit-logotype-host" {...rest} {...register(field)}>
         <Select.Option value="">{t('logotypes:select_host_placeholder')}</Select.Option>
         {options.map((host) => (
-          <Select.Option key={`host-select-${host.id}`} value={host.name}>
+          <Select.Option key={`host-select-${host.id}`} value={hostLabel(host.name)}>
             {host.name}
           </Select.Option>
         ))}

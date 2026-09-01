@@ -30,6 +30,16 @@ export const host3: Host = {
   updatedAt: '2026-01-01',
 };
 
+export const hostWithSubdomain: Host = {
+  id: 5,
+  name: 'ange.postportal-stage.kommuna.se',
+  municipalityId: 2260,
+  domain: 'ANGEDOMAIN',
+  idpId: 2,
+  createdAt: '2026-01-01',
+  updatedAt: '2026-01-01',
+};
+
 export const newHost: Host = {
   id: 4,
   name: 'newhost',

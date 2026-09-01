@@ -1,0 +1,40 @@
+name: Unit Tests
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    name: Unit Tests Backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: backend/yarn.lock
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile --silent --network-timeout 1000000
+
+      # No postinstall hook generates it, and src/utils/prisma.ts constructs a PrismaClient
+      # at import time - without this the suites that import a controller fail to load.
+      - name: Generate Prisma client
+        run: yarn prisma:generate
+
+      - name: Run unit tests
+        run: yarn test:coverage
