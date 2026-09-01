@@ -1,5 +1,6 @@
 import React, { ReactNode, useRef } from 'react';
 import Head from 'next/head';
+import VersionInfo from '@components/version-info/version-info.component';
 
 interface DefaultLayoutProps {
   title: string;
@@ -23,6 +24,7 @@ const DefaultLayout = ({ title, pageheader, children, headerMenu }: DefaultLayou
         <div className="main-container flex-grow">
           <div className="container">{children}</div>
         </div>
+        <VersionInfo />
       </main>
     </div>
   );

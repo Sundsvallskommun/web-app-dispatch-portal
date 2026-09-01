@@ -19,6 +19,9 @@
 /out
 **/next-env.d.ts
 
+# generated at build time by scripts/generate-version.js
+/public/version.json
+
 # production
 /build
 
