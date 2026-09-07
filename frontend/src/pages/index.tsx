@@ -3,7 +3,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useUserStore } from '@services/user-service/user-service';
 import { useTranslation } from 'next-i18next';
-import { Mail, MailCheck, Smartphone } from 'lucide-react';
+import { Mail, MailCheck, Smartphone, Pencil } from 'lucide-react';
 import MainCard from '@components/main-card/main-card.component';
 import { Link } from '@sk-web-gui/react';
 import HeaderMenu from '@components/header-menu/header-menu.component';
@@ -24,9 +24,9 @@ const Index = () => {
               <h1 className="text-large text-dark-secondary font-sans font-normal m-0">{t('start-page:subtitle')}</h1>
               <p className="header-font text-display-3-lg text-dark-primary ">{`${t('start-page:header')}`}</p>
             </div>
-            <div className="flex flex-col items-start self-stretch flex-1 basis-0 gap-32 lg:flex-row">
+            <div className="grid grid-flow-row self-stretch gap-32 lg:grid-cols-2">
               {canSendLetter && (
-                <Link href={'/send/mail'} className="start-link flex-1 w-full">
+                <Link href={'/send/mail'} className="start-link w-full">
                   <MainCard
                     icon={<Mail />}
                     title={t('start-page:letter')}
@@ -35,7 +35,7 @@ const Index = () => {
                 </Link>
               )}
               {canSendRegisteredLetter && (
-                <Link href={'/send/rek-mail'} className="start-link flex-1 w-full">
+                <Link href={'/send/rek-mail'} className="start-link w-full">
                   <MainCard
                     icon={<MailCheck />}
                     title={t('start-page:recLetter')}
@@ -44,7 +44,7 @@ const Index = () => {
                 </Link>
               )}
               {canSendSMS && (
-                <Link href="/send/sms" className="start-link flex-1 w-full">
+                <Link href="/send/sms" className="start-link w-full">
                   <MainCard
                     icon={<Smartphone />}
                     title={t('start-page:sms')}
@@ -52,6 +52,14 @@ const Index = () => {
                   />
                 </Link>
               )}
+              {/* Add canSendEsigning permission check when it's available */}
+              <Link href="/send/esigning" className="start-link w-full">
+                <MainCard
+                  icon={<Pencil />}
+                  title={t('start-page:eSigning')}
+                  contentText={t('start-page:eSigningDescription')}
+                />
+              </Link>
             </div>
           </div>
         </div>
