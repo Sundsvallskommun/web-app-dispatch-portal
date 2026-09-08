@@ -17,6 +17,8 @@ interface SingleRecipientProps {
   onAdd?: (recipient: Recipient, email: string) => void;
 }
 
+const emailPattern = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
+
 export const SingleRecipient: React.FC<SingleRecipientProps> = ({
   sendType,
   requireEmail = false,
@@ -40,7 +42,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({
 
   const isRek = sendType === formSendType.REK_MAIL;
   const isPersonOnly = isRek || sendType === formSendType.ESIGNING;
-  const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const emailIsValid = emailPattern.test(email.trim());
   const canSubmit = !requireEmail || emailIsValid;
 
   const renderFormMessage = () => {
@@ -65,9 +67,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({
 
     (isPersonOnly || isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits))
       .then((res) => {
-        const alreadyExists = (existingPartyIds ?? recipients.map((rec) => rec?.partyId)).some(
-          (partyId) => partyId === res?.partyId
-        );
+        const alreadyExists = (existingPartyIds ?? recipients.map((rec) => rec?.partyId)).includes(res?.partyId);
         if (alreadyExists) {
           setError(t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'));
           return;

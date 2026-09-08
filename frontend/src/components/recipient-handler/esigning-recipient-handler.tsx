@@ -13,7 +13,7 @@ import { SingleRecipient } from './components/single-recipient.component';
 type Signatory = SendEsigningForm['signatories'][number];
 
 const EsigningRecipientHandler = () => {
-  const { t } = useTranslation(['send-esigning', 'send-mail', 'common']);
+  const { t } = useTranslation(['send-esigning', 'common']);
 
   const {
     watch,
@@ -111,9 +111,7 @@ const EsigningRecipientHandler = () => {
             onClick={() => handleRemove((item as Signatory).partyId)}
             leftIcon={<Icon icon={<Trash />} />}
             showBackground
-          >
-            {t('common:remove')}
-          </Button>
+          />
         </div>
       ),
     } as AutoTableHeader,

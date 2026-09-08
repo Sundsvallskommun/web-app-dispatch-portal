@@ -108,7 +108,7 @@ const FormStepper = <T extends FieldValues>({
   );
 
   return (
-    <div className={cx('flex flex-col', isMaxSm ? '' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
+    <div className={cx('flex flex-col', isMaxSm ? 'w-full' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
       {success ? (
         <SuccessContainer
           onClick={handleOnResetSuccess}
