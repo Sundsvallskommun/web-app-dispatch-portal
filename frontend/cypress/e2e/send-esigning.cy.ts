@@ -6,28 +6,33 @@ const organizationNumber = '5566778899';
 describe('Send esigning flow', () => {
   beforeEach(() => {
     cy.intercept('POST', '**/api/recipient?*', (req) => {
-      req.reply(recipient(req.body?.personNumber ?? '', 'DIGITAL_MAIL'));
+      req.reply(recipient(req.body?.personNumber ?? ''));
     }).as('recipient');
     cy.visit('/send/esigning');
   });
 
-  it('should only allow personal numbers and not preview an organization number', () => {
-    cy.intercept('POST', '**/api/org-recipient*', orgRecipient(organizationNumber, 'SNAIL_MAIL')).as('orgRecipient');
+  it('should look up people only, never organizations', () => {
+    cy.intercept('POST', '**/api/org-recipient*', orgRecipient(organizationNumber)).as('orgRecipient');
     cy.get('.sk-form-label').should('contain.text', 'Sök mottagare med personnummer');
     cy.get('[data-cy="recipient-search-field"]').type(organizationNumber, { force: true });
     cy.get('[data-cy="preview-recipient"]').should('not.exist');
+
+    cy.get('[data-cy="recipient-search-field"]').type('12', { force: true });
+    cy.wait('@recipient');
+    cy.get('[data-cy="preview-recipient"]').should('be.visible');
+    cy.get('@orgRecipient.all').should('have.length', 0);
   });
 
   it('should not allow a signatory to be added until a valid email is given', () => {
     search(personalNumber.first);
-    cy.get('[data-cy="preview-recipient"]').contains('Lägg till').should('be.disabled');
+    cy.get('[data-cy="preview-recipient"]').contains('button', 'Lägg till').should('be.disabled');
 
     cy.get('[data-cy="signatory-email-input"]').type('inte-en-epost', { force: true });
     cy.get('[data-cy="preview-recipient"]').should('contain.text', 'Ange en giltig e-postadress.');
-    cy.get('[data-cy="preview-recipient"]').contains('Lägg till').should('be.disabled');
+    cy.get('[data-cy="preview-recipient"]').contains('button', 'Lägg till').should('be.disabled');
 
     cy.get('[data-cy="signatory-email-input"]').type('@exempel.se', { force: true });
-    cy.get('[data-cy="preview-recipient"]').contains('Lägg till').should('not.be.disabled');
+    cy.get('[data-cy="preview-recipient"]').contains('button', 'Lägg till').should('not.be.disabled');
   });
 
   it('should add a signatory with name, personal number and email', () => {
@@ -55,15 +60,15 @@ describe('Send esigning flow', () => {
   });
 
   it('should reorder signatories with the arrows', () => {
-    addSignatory(personalNumber.first, 'forst@exempel.se');
-    addSignatory(personalNumber.second, 'andra@exempel.se');
-    expectOrder(['forst@exempel.se', 'andra@exempel.se']);
+    addSignatory(personalNumber.first, 'test1@exempel.se');
+    addSignatory(personalNumber.second, 'test2@exempel.se');
+    expectOrder(['test1@exempel.se', 'test2@exempel.se']);
 
     cy.get('[data-cy="signatory-table"] tbody tr').eq(0).find('[data-cy="move-signatory-down-button"]').click();
-    expectOrder(['andra@exempel.se', 'forst@exempel.se']);
+    expectOrder(['test2@exempel.se', 'test1@exempel.se']);
 
     cy.get('[data-cy="signatory-table"] tbody tr').eq(1).find('[data-cy="move-signatory-up-button"]').click();
-    expectOrder(['forst@exempel.se', 'andra@exempel.se']);
+    expectOrder(['test1@exempel.se', 'test2@exempel.se']);
   });
 });
 
@@ -77,7 +82,7 @@ const search = (personNumber: string) => {
 const addSignatory = (personNumber: string, email: string) => {
   search(personNumber);
   cy.get('[data-cy="signatory-email-input"]').type(email, { force: true });
-  cy.get('[data-cy="preview-recipient"]').contains('Lägg till').click();
+  cy.get('[data-cy="preview-recipient"]').contains('button', 'Lägg till').click();
   cy.get('[data-cy="preview-recipient"]').should('not.exist');
 };
 
