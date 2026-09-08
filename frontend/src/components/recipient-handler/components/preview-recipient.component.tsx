@@ -1,6 +1,7 @@
 import { Button, cx, Icon } from '@sk-web-gui/react';
 import { formatLegalId } from '@utils/helpers';
 import { Check, X } from 'lucide-react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formSendType } from 'src/constants';
 import { Recipient } from 'src/data-contracts/backend/data-contracts';
@@ -12,9 +13,19 @@ interface PreviewRecipientProps {
   handleSubmit: () => void;
   sendType: SendType;
   searchValue: string;
+  children?: ReactNode;
+  submitDisabled?: boolean;
 }
 
-const PreviewRecipient = ({ recipient, loading, handleSubmit, sendType, searchValue }: PreviewRecipientProps) => {
+const PreviewRecipient = ({
+  recipient,
+  loading,
+  handleSubmit,
+  sendType,
+  searchValue,
+  children,
+  submitDisabled = false,
+}: PreviewRecipientProps) => {
   const isEligible = recipient?.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE';
   const successClasses = 'border-gronsta-surface-primary bg-gronsta-background-100';
   const errorClasses = 'border-error-surface-primary bg-error-background-100';
@@ -63,9 +74,12 @@ const PreviewRecipient = ({ recipient, loading, handleSubmit, sendType, searchVa
       {isRekMail && isEligible && alert}
 
       {isEligible ? (
-        <Button className="mt-16" color="vattjom" onClick={() => handleSubmit()}>
-          {t('send-mail:recipientHandler.addRecipient')}
-        </Button>
+        <>
+          {children}
+          <Button className="mt-16" color="vattjom" disabled={submitDisabled} onClick={() => handleSubmit()}>
+            {t('send-mail:recipientHandler.addRecipient')}
+          </Button>
+        </>
       ) : (
         alert
       )}

@@ -1,5 +1,5 @@
 import { getOrgRecipient, getRecipient, useMessageStore } from '@services/recipient-service';
-import { FormControl, FormLabel, SearchField, Spinner, useConfirm } from '@sk-web-gui/react';
+import { FormControl, FormLabel, Input, SearchField, Spinner, useConfirm } from '@sk-web-gui/react';
 import React, { KeyboardEvent, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -12,15 +12,24 @@ import CustomFormErrorMessage from '@components/custom-form-error-message/custom
 
 interface SingleRecipientProps {
   sendType: SendType;
+  requireEmail?: boolean;
+  existingPartyIds?: Array<string | undefined>;
+  onAdd?: (recipient: Recipient, email: string) => void;
 }
 
-export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) => {
+export const SingleRecipient: React.FC<SingleRecipientProps> = ({
+  sendType,
+  requireEmail = false,
+  existingPartyIds,
+  onAdd,
+}) => {
   const [error, setError] = useState<string | undefined>(undefined);
   const [foundRecipient, setFoundRecipient] = useState<Recipient | undefined>(undefined);
   const [isLoadingRecipients, setIsLoadingRecipients] = useState(false);
   const { recipients, setRecipients } = useMessageStore();
   const confirm = useConfirm();
   const [value, setValue] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const { t } = useTranslation();
   const digits = value.replace(/\D/g, '');
 
@@ -30,6 +39,9 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   } = useFormContext<RecipientListFormModel>();
 
   const isRek = sendType === formSendType.REK_MAIL;
+  const isPersonOnly = isRek || sendType === formSendType.ESIGNING;
+  const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const canSubmit = !requireEmail || emailIsValid;
 
   const renderFormMessage = () => {
     if (errors.storeRecipients?.message) {
@@ -39,7 +51,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
     } else {
       return (
         <p className="text-small">
-          {t(`send-mail:recipientHandler.searchIdentity${isRek ? 'NumberHelperRek' : 'NumberHelper'}`)}
+          {t(`send-mail:recipientHandler.searchIdentity${isPersonOnly ? 'NumberHelperRek' : 'NumberHelper'}`)}
         </p>
       );
     }
@@ -51,9 +63,11 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
 
     const isCitizen = digits.length === 12;
 
-    (isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits))
+    (isPersonOnly || isCitizen ? getRecipient(digits, isRek) : getOrgRecipient(digits))
       .then((res) => {
-        const alreadyExists = recipients.find((rec) => rec?.partyId === res?.partyId);
+        const alreadyExists = (existingPartyIds ?? recipients.map((rec) => rec?.partyId)).some(
+          (partyId) => partyId === res?.partyId
+        );
         if (alreadyExists) {
           setError(t('send-mail:recipientHandler.fetchRecipientError.alreadyExists'));
           return;
@@ -70,7 +84,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
   };
 
   useEffect(() => {
-    const readyToFetch = isRek ? digits.length === 12 : digits.length === 10 || digits.length === 12;
+    const readyToFetch = isPersonOnly ? digits.length === 12 : digits.length === 10 || digits.length === 12;
     if (!readyToFetch) {
       return;
     }
@@ -88,7 +102,16 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
       }
       return;
     }
-    if (foundRecipient?.deliveryMethod === 'DELIVERY_NOT_POSSIBLE') return;
+    if (foundRecipient?.deliveryMethod === 'DELIVERY_NOT_POSSIBLE' || !canSubmit) return;
+
+    if (onAdd) {
+      onAdd(foundRecipient, email.trim());
+      setFoundRecipient(undefined);
+      setValue('');
+      setEmail('');
+      setError(undefined);
+      return;
+    }
 
     if (sendType === formSendType.REK_MAIL && recipients.length > 0) {
       confirm
@@ -127,7 +150,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
       <div className="flex flex-col w-full gap-8 pb-24">
         <FormLabel>
           {t(
-            isRek
+            isPersonOnly
               ? 'send-mail:recipientHandler.searchIdentityNumberRek'
               : 'send-mail:recipientHandler.searchIdentityNumber'
           )}
@@ -144,6 +167,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
           onKeyDown={handleEnter}
           onReset={() => {
             setValue('');
+            setEmail('');
             setError(undefined);
             setFoundRecipient(undefined);
           }}
@@ -163,7 +187,24 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({ sendType }) =>
           handleSubmit={handleSubmitSingleRecipient}
           sendType={sendType}
           searchValue={value}
-        />
+          submitDisabled={!canSubmit}
+        >
+          {requireEmail && (
+            <FormControl className="w-full mt-16" invalid={!!email && !emailIsValid}>
+              <FormLabel>{t('send-esigning:recipientHandler.emailLabelInfo')}</FormLabel>
+              <Input
+                data-cy="signatory-email-input"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={handleEnter}
+              />
+              {!!email && !emailIsValid && (
+                <CustomFormErrorMessage message={t('send-esigning:recipientHandler.errors.invalidEmail')} />
+              )}
+            </FormControl>
+          )}
+        </PreviewRecipient>
       </div>
     </FormControl>
   );
