@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 interface FileAttachmentFormModel {
-  attachmentList: UploadFile[];
+  [field: string]: UploadFile[];
 }
 
 interface PdfErrorKeys {
@@ -18,9 +18,17 @@ interface UsePdfFileHandlerOptions {
   errorKeys: PdfErrorKeys;
   maxFileSizeMB: number;
   maxFiles: number;
+  fieldName?: string;
+  usedBytesElsewhere?: number;
 }
 
-export const usePdfFileHandler = ({ errorKeys, maxFileSizeMB, maxFiles }: UsePdfFileHandlerOptions) => {
+export const usePdfFileHandler = ({
+  errorKeys,
+  maxFileSizeMB,
+  maxFiles,
+  fieldName = 'attachmentList',
+  usedBytesElsewhere = 0,
+}: UsePdfFileHandlerOptions) => {
   const {
     setError,
     setValue,
@@ -58,13 +66,13 @@ export const usePdfFileHandler = ({ errorKeys, maxFileSizeMB, maxFiles }: UsePdf
     const incoming = event.target.value ?? [];
     if (incoming.length === 0) return;
 
-    const current = getValues('attachmentList') ?? [];
+    const current = getValues(fieldName) ?? [];
     const accepted: UploadFile[] = [];
     const messages: string[] = [];
 
     const currentNames = new Set(current.map((a) => a.file?.name).filter(Boolean) as string[]);
     const maxBytes = maxFileSizeMB * 1024 * 1024;
-    let currentBytes = current.reduce((sum, a) => sum + (a.file?.size ?? 0), 0);
+    let currentBytes = usedBytesElsewhere + current.reduce((sum, a) => sum + (a.file?.size ?? 0), 0);
 
     for (const item of incoming) {
       const fileErrors = getFileErrors(item, {
@@ -87,25 +95,25 @@ export const usePdfFileHandler = ({ errorKeys, maxFileSizeMB, maxFiles }: UsePdf
     const errorMessages = Array.from(new Set(messages));
 
     if (errorMessages.length > 0) {
-      setError('attachmentList', { message: errorMessages.join('\n') });
+      setError(fieldName, { message: errorMessages.join('\n') });
     } else {
-      clearErrors('attachmentList');
+      clearErrors(fieldName);
     }
 
     if (accepted.length > 0) {
-      setValue('attachmentList', [...current, ...accepted]);
+      setValue(fieldName, [...current, ...accepted]);
     }
   };
 
   const handleError = (msg: string) => {
     if (msg.startsWith('Filen är för stor')) {
-      setError('attachmentList', { message: msg });
+      setError(fieldName, { message: msg });
       return;
     }
-    setError('attachmentList', { message: t(errorKeys.badFile) });
+    setError(fieldName, { message: t(errorKeys.badFile) });
   };
 
-  const pdfError = errors?.attachmentList;
+  const pdfError = errors?.[fieldName];
 
   return { handleFiles, handleError, pdfError };
 };

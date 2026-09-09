@@ -1,4 +1,6 @@
 export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
+export const MAX_ESIGNING_TOTAL_SIZE_MB = 1.5;
+export const MAX_ESIGNING_ATTACHMENTS = 4;
 
 export interface FileInfo {
   name: string;

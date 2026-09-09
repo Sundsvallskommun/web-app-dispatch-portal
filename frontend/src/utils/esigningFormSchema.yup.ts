@@ -2,6 +2,13 @@ import * as yup from 'yup';
 
 export const esigningFormSchema = yup
   .object({
+    subject: yup.string().required('send-esigning:attachmentHandler.errors.noSubject'),
+    signatoryDocument: yup
+      .array()
+      .default([])
+      .min(1, 'send-esigning:attachmentHandler.errors.noSigningDocument')
+      .max(1, 'send-esigning:attachmentHandler.errors.oneSigningDocument'),
+    attachmentList: yup.array().default([]),
     signatories: yup
       .array()
       .of(
