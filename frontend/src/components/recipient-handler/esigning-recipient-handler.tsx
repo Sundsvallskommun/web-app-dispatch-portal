@@ -86,6 +86,7 @@ const EsigningRecipientHandler = () => {
               onClick={() => handleMove(index, -1)}
               leftIcon={<Icon icon={<ArrowUp />} />}
               iconButton
+              variant="ghost"
             />
             <Button
               data-cy="move-signatory-down-button"
@@ -94,14 +95,14 @@ const EsigningRecipientHandler = () => {
               onClick={() => handleMove(index, 1)}
               leftIcon={<Icon icon={<ArrowDown />} />}
               iconButton
+              variant="ghost"
             />
             <Button
               data-cy="delete-signatory-button"
               aria-label={t('common:remove')}
-              variant="tertiary"
+              variant="ghost"
               onClick={() => handleRemove(signatory.partyId)}
               leftIcon={<Icon icon={<Trash />} />}
-              showBackground
             />
           </div>
         );
