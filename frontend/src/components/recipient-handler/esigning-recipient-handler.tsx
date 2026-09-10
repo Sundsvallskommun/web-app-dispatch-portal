@@ -62,12 +62,12 @@ const EsigningRecipientHandler = () => {
           </div>
         );
       },
-    } as AutoTableHeader,
+    },
     {
       label: t('send-esigning:recipientHandler.emailLabel'),
       isColumnSortable: false,
       renderColumn: (_value, item) => <span data-cy="signatory-email">{(item as Signatory).email}</span>,
-    } as AutoTableHeader,
+    },
     {
       label: t('send-esigning:recipientHandler.order'),
       screenReaderOnly: true,
@@ -107,7 +107,7 @@ const EsigningRecipientHandler = () => {
           </div>
         );
       },
-    } as AutoTableHeader,
+    },
   ];
 
   return (
