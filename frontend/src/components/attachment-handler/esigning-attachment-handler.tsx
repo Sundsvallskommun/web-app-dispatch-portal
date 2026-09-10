@@ -12,7 +12,7 @@ import {
   ProgressBar,
   UploadFile,
 } from '@sk-web-gui/react';
-import { MAX_ESIGNING_ATTACHMENTS, MAX_ESIGNING_TOTAL_SIZE_MB } from '@utils/file.utils';
+import { MAX_ESIGNING_ATTACHMENTS, MAX_ESIGNING_TOTAL_SIZE_MB, toFileSizeParts } from '@utils/file.utils';
 import { File, Pencil } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
@@ -81,16 +81,24 @@ const EsigningAttachmentHandler = () => {
     );
   };
 
+  const fileSizeDescription = (file: UploadFile) => {
+    const { size, unit } = toFileSizeParts(file.file?.size);
+
+    return unit === 'mb'
+      ? t('send-esigning:attachmentHandler.fileSizeMb', { size })
+      : t('send-esigning:attachmentHandler.fileSizeKb', { size });
+  };
+
   return (
     <div className="w-full flex justify-center">
       <HandlerWrapper title={t('send-esigning:attachmentHandler.title')}>
-        <FormControl className="w-full" size="md">
-          <FormLabel className="text-label-medium">{t('send-esigning:attachmentHandler.subjectLabel')}</FormLabel>
-          <p className="text-secondary pb-8">{t('send-esigning:attachmentHandler.subjectDescription')}</p>
+        <FormControl className="w-full mt-[-38px]" size="md">
+          <FormLabel className="sr-only">{t('send-esigning:attachmentHandler.title')}</FormLabel>
+          <p className="text-secondary">{t('send-esigning:attachmentHandler.subjectDescription')}</p>
           <Input
             invalid={!!errors?.subject}
             data-cy="esigning-subject"
-            className="max-w-[467px]"
+            className="max-w-[500px]"
             {...register('subject')}
             placeholder={t('send-esigning:attachmentHandler.subjectPlaceholder')}
           />
@@ -103,7 +111,7 @@ const EsigningAttachmentHandler = () => {
           <p className="text-secondary">{t('send-esigning:attachmentHandler.signingDocumentDescription')}</p>
           <FormControl id="signatoryDocument" className="w-full">
             <FileUpload.Field
-              className="w-full"
+              className="w-full pt-8"
               name="signatoryDocument"
               data-cy="signing-document-input"
               maxFileSizeMB={MAX_ESIGNING_TOTAL_SIZE_MB}
@@ -127,7 +135,7 @@ const EsigningAttachmentHandler = () => {
           <p className="text-secondary">{t('send-esigning:attachmentHandler.attachmentsDescription')}</p>
           <FormControl id="attachmentList" className="w-full">
             <FileUpload.Field
-              className="w-full"
+              className="w-full pt-8"
               name="attachmentList"
               data-cy="attachment-input"
               maxFileSizeMB={MAX_ESIGNING_TOTAL_SIZE_MB}
@@ -169,12 +177,14 @@ const EsigningAttachmentHandler = () => {
                     index={index}
                     file={file}
                     iconProps={{ icon: <Icon icon={isSignatoryDocument(file) ? <Pencil /> : <File />} /> }}
+                    nameProps={{ description: fileSizeDescription(file) }}
                     actionsProps={{
                       showRemove: true,
                       onRemove: handleRemove,
                       extraActions: (
                         <Label
                           data-cy="document-type-label"
+                          className="order-1"
                           rounded
                           inverted
                           color={isSignatoryDocument(file) ? 'gronsta' : 'vattjom'}

@@ -2,6 +2,14 @@ export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
 export const MAX_ESIGNING_TOTAL_SIZE_MB = 1.5;
 export const MAX_ESIGNING_ATTACHMENTS = 4;
 
+export const toFileSizeParts = (bytes = 0) => {
+  const kilobytes = bytes / 1024;
+
+  return kilobytes >= 1000
+    ? { size: kilobytes / 1024, unit: 'mb' as const }
+    : { size: kilobytes, unit: 'kb' as const };
+};
+
 export interface FileInfo {
   name: string;
   extension: string;
