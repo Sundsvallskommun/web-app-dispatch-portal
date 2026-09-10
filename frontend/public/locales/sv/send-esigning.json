@@ -1,3 +1,19 @@
 {
-  "eSigning": "E-signering"
+  "eSigning": "E-signering",
+  "recipientHandler": {
+    "title": "Lägg till vem/vilka som ska signera",
+    "signersLabel": "Tillagda signatörer",
+    "signersDescription": "Signatörerna signerar en i taget, i den ordning de listas nedan. Byt ordning med pilarna.",
+    "noSigners": "Inga signatörer tillagda än.",
+    "emailLabelInfo": "E-postadress (obligatoriskt)",
+    "emailLabel": "E-postadress",
+    "recipients": "Signatörer",
+    "order": "Ordning",
+    "moveUp": "Flytta {name} uppåt i signeringsordningen",
+    "moveDown": "Flytta {name} nedåt i signeringsordningen",
+    "errors": {
+      "invalidEmail": "Ange en giltig e-postadress.",
+      "noSignatory": "Du måste lägga till minst en signatör."
+    }
+  }
 }
