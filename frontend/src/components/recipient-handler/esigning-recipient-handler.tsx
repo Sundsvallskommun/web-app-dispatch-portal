@@ -62,59 +62,52 @@ const EsigningRecipientHandler = () => {
           </div>
         );
       },
-    } as AutoTableHeader,
+    },
     {
       label: t('send-esigning:recipientHandler.emailLabel'),
       isColumnSortable: false,
       renderColumn: (_value, item) => <span data-cy="signatory-email">{(item as Signatory).email}</span>,
-    } as AutoTableHeader,
+    },
     {
       label: t('send-esigning:recipientHandler.order'),
       screenReaderOnly: true,
       columnPosition: 'right',
       isColumnSortable: false,
       renderColumn: (_value, item) => {
-        const index = signatories.indexOf(item as Signatory);
+        const signatory = item as Signatory;
+        const index = signatories.indexOf(signatory);
+
         return (
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-1 justify-end items-center gap-4">
             <Button
               data-cy="move-signatory-up-button"
-              aria-label={t('send-esigning:recipientHandler.moveUp', { name: (item as Signatory).name })}
+              aria-label={t('send-esigning:recipientHandler.moveUp', { name: signatory.name })}
               disabled={index <= 0}
               onClick={() => handleMove(index, -1)}
               leftIcon={<Icon icon={<ArrowUp />} />}
               iconButton
+              variant="ghost"
             />
             <Button
               data-cy="move-signatory-down-button"
-              aria-label={t('send-esigning:recipientHandler.moveDown', { name: (item as Signatory).name })}
+              aria-label={t('send-esigning:recipientHandler.moveDown', { name: signatory.name })}
               disabled={index < 0 || index >= signatories.length - 1}
               onClick={() => handleMove(index, 1)}
               leftIcon={<Icon icon={<ArrowDown />} />}
               iconButton
+              variant="ghost"
+            />
+            <Button
+              data-cy="delete-signatory-button"
+              aria-label={t('common:remove')}
+              variant="ghost"
+              onClick={() => handleRemove(signatory.partyId)}
+              leftIcon={<Icon icon={<Trash />} />}
             />
           </div>
         );
       },
-    } as AutoTableHeader,
-    {
-      label: t('common:remove'),
-      screenReaderOnly: true,
-      columnPosition: 'right',
-      isColumnSortable: false,
-      renderColumn: (_value, item) => (
-        <div className="flex flex-1 justify-end text-right">
-          <Button
-            data-cy="delete-signatory-button"
-            aria-label={t('common:remove')}
-            variant="tertiary"
-            onClick={() => handleRemove((item as Signatory).partyId)}
-            leftIcon={<Icon icon={<Trash />} />}
-            showBackground
-          />
-        </div>
-      ),
-    } as AutoTableHeader,
+    },
   ];
 
   return (

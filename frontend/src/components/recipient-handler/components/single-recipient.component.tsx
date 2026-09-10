@@ -200,7 +200,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({
                 onKeyDown={handleEnter}
               />
               {!!email && !emailIsValid && (
-                <CustomFormErrorMessage message={t('send-esigning:recipientHandler.errors.invalidEmail')} />
+                <CustomFormErrorMessage message="send-esigning:recipientHandler.errors.invalidEmail" />
               )}
             </FormControl>
           )}
