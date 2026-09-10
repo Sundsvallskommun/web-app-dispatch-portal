@@ -2,16 +2,17 @@
   "eSigning": "E-signering",
   "stepper": {
     "recipients": "Mottagare",
-    "attachments": "Ämne och filer"
+    "attachments": "Ämne och filer",
+    "review": "Granska"
   },
   "recipientHandler": {
     "title": "Lägg till vem/vilka som ska signera",
     "signersLabel": "Tillagda signatörer",
-    "signersDescription": "Signatörerna signerar en i taget, i den ordning de listas nedan. Byt ordning med pilarna.",
+    "signersDescription": "Signatörerna signerar en i taget, i den ordning de listas nedan.",
     "noSigners": "Inga signatörer tillagda än.",
     "emailLabelInfo": "E-postadress (obligatoriskt)",
     "emailLabel": "E-postadress",
-    "recipients": "Signatörer",
+    "recipients": "Signatör",
     "order": "Ordning",
     "moveUp": "Flytta {name} uppåt i signeringsordningen",
     "moveDown": "Flytta {name} nedåt i signeringsordningen",
@@ -45,5 +46,12 @@
       "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB.",
       "duplicateFileName": "En fil med samma namn är redan uppladdad. Ändra filnamnet innan du laddar upp igen."
     }
+  },
+  "reviewHandler": {
+    "title": "Granska",
+    "description": "Signatörerna signerar en i taget, i den ordning de listas nedan.",
+    "signatories": "Signatörer",
+    "subject": "Ämne",
+    "attachments": "Bifogade filer"
   }
 }

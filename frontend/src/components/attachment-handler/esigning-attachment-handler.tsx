@@ -1,21 +1,13 @@
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 import { usePdfFileHandler } from '@components/file-upload/hooks/use-pdf-file-handler';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
-import {
-  Divider,
-  FileUpload,
-  FormControl,
-  FormLabel,
-  Icon,
-  Input,
-  Label,
-  ProgressBar,
-  UploadFile,
-} from '@sk-web-gui/react';
-import { MAX_ESIGNING_ATTACHMENTS, MAX_ESIGNING_TOTAL_SIZE_MB, toFileSizeParts } from '@utils/file.utils';
+import { Divider, FileUpload, FormControl, FormLabel, Icon, Input, ProgressBar, UploadFile } from '@sk-web-gui/react';
+import { MAX_ESIGNING_ATTACHMENTS, MAX_ESIGNING_TOTAL_SIZE_MB } from '@utils/file.utils';
 import { File, Pencil } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
+import { useEsigningDocuments } from 'src/hooks/useEsigningDocuments';
+import { DocumentTypeLabel } from '@components/file-upload/document-type-label.component';
 
 interface EsigningAttachmentFormModel {
   subject: string;
@@ -37,16 +29,13 @@ const EsigningAttachmentHandler = () => {
   const { t } = useTranslation(['send-esigning', 'common']);
   const {
     register,
-    watch,
     setValue,
     getValues,
     formState: { errors },
   } = useFormContext<EsigningAttachmentFormModel>();
 
-  const signatoryDocument = watch('signatoryDocument') ?? [];
-  const attachmentList = watch('attachmentList') ?? [];
-
-  const combinedDocumentList = [...signatoryDocument, ...attachmentList];
+  const { signatoryDocument, attachmentList, combinedDocumentList, isSignatoryDocument, fileSizeDescription } =
+    useEsigningDocuments();
 
   const documentBytes = bytesOf(signatoryDocument);
   const attachmentBytes = bytesOf(attachmentList);
@@ -69,8 +58,6 @@ const EsigningAttachmentHandler = () => {
 
   const usedMB = ((documentBytes + attachmentBytes) / (1024 * 1024)).toFixed(1);
 
-  const isSignatoryDocument = (file: UploadFile) => signatoryDocument.some((item) => item.id === file.id);
-
   const handleRemove = (file: UploadFile) => {
     const field = isSignatoryDocument(file) ? 'signatoryDocument' : 'attachmentList';
 
@@ -79,14 +66,6 @@ const EsigningAttachmentHandler = () => {
       (getValues(field) ?? []).filter((item) => item.id !== file.id),
       { shouldValidate: true, shouldDirty: true }
     );
-  };
-
-  const fileSizeDescription = (file: UploadFile) => {
-    const { size, unit } = toFileSizeParts(file.file?.size);
-
-    return unit === 'mb'
-      ? t('send-esigning:attachmentHandler.fileSizeMb', { size })
-      : t('send-esigning:attachmentHandler.fileSizeKb', { size });
   };
 
   return (
@@ -181,21 +160,7 @@ const EsigningAttachmentHandler = () => {
                     actionsProps={{
                       showRemove: true,
                       onRemove: handleRemove,
-                      extraActions: (
-                        <Label
-                          data-cy="document-type-label"
-                          className="order-1"
-                          rounded
-                          inverted
-                          color={isSignatoryDocument(file) ? 'gronsta' : 'vattjom'}
-                        >
-                          {t(
-                            isSignatoryDocument(file)
-                              ? 'send-esigning:attachmentHandler.signingLabel'
-                              : 'send-esigning:attachmentHandler.attachmentLabel'
-                          )}
-                        </Label>
-                      ),
+                      extraActions: <DocumentTypeLabel isSignatoryDocument={isSignatoryDocument(file)} />,
                     }}
                   />
                 ))}

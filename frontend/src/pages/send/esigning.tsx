@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { useEsigningStepValidation } from 'src/hooks/useEsigningStepValidation';
 import EsigningRecipientHandler from '@components/recipient-handler/esigning-recipient-handler';
 import EsigningAttachmentHandler from '@components/attachment-handler/esigning-attachment-handler';
+import EsigningReviewHandler from '@components/review-handler/esigning-review-handler.component';
 
 const initialValues = {
   signatories: [],
@@ -55,6 +56,11 @@ export default function SendEsigningPage() {
               valid: hasSubject && hasSignatoryDocument,
               validationProperties: ['subject', 'signatoryDocument'],
               onNextClick: useEsigningStepValidation(clearErrors, trigger, ['subject', 'signatoryDocument']),
+            },
+            {
+              label: t('send-esigning:stepper.review'),
+              component: <EsigningReviewHandler />,
+              valid: true,
             },
           ]}
           controls={controls}

@@ -10,7 +10,7 @@ import { useFormContext } from 'react-hook-form';
 import { formSendType } from '../../constants';
 import { SingleRecipient } from './components/single-recipient.component';
 
-type Signatory = SendEsigningForm['signatories'][number];
+export type Signatory = SendEsigningForm['signatories'][number];
 
 const EsigningRecipientHandler = () => {
   const { t } = useTranslation(['send-esigning', 'common']);
