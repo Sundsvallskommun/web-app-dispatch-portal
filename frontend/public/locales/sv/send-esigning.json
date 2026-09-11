@@ -33,7 +33,6 @@
     "noAttachments": "Du har inte bifogat några filer än.",
     "signingLabel": "Signering",
     "attachmentLabel": "Bilaga",
-    "usedSpace": "Använt utrymme: {files} MB av {limit} MB",
     "fileSizeKb": "{size, number(maximumFractionDigits: 0)} kB",
     "fileSizeMb": "{size, number(maximumFractionDigits: 1)} MB",
     "errors": {
@@ -43,7 +42,6 @@
       "wrongFileType": "Ogiltigt filformat. Endast PDF-filer kan laddas upp.",
       "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
       "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
-      "totalSize": "Totala filstorleken ({total} MB) överskrider gränsen på {maxMB} MB.",
       "duplicateFileName": "En fil med samma namn är redan uppladdad. Ändra filnamnet innan du laddar upp igen."
     }
   },
