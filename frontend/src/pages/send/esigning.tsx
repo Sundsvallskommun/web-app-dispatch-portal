@@ -11,9 +11,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useEsigningStepValidation } from 'src/hooks/useEsigningStepValidation';
 import EsigningRecipientHandler from '@components/recipient-handler/esigning-recipient-handler';
+import EsigningAttachmentHandler from '@components/attachment-handler/esigning-attachment-handler';
 
 const initialValues = {
   signatories: [],
+  subject: '',
+  signatoryDocument: [],
+  attachmentList: [],
 };
 
 export default function SendEsigningPage() {
@@ -26,7 +30,10 @@ export default function SendEsigningPage() {
 
   const { t } = useTranslation(['common', 'send-esigning']);
   const [success, setSuccess] = useState(false);
-  const { trigger, clearErrors } = controls;
+  const { watch, trigger, clearErrors } = controls;
+
+  const hasSignatoryDocument = (watch('signatoryDocument') ?? []).length > 0;
+  const hasSubject = (watch('subject') ?? '').length > 0;
 
   return (
     <DefaultLayout
@@ -37,10 +44,17 @@ export default function SendEsigningPage() {
         <FormStepper<SendEsigningForm>
           steps={[
             {
-              label: t('common:stepper.recipient'),
+              label: t('send-esigning:stepper.recipients'),
               component: <EsigningRecipientHandler />,
               validationProperties: ['signatories'],
               onNextClick: useEsigningStepValidation(clearErrors, trigger, ['signatories']),
+            },
+            {
+              label: t('send-esigning:stepper.attachments'),
+              component: <EsigningAttachmentHandler />,
+              valid: hasSubject && hasSignatoryDocument,
+              validationProperties: ['subject', 'signatoryDocument'],
+              onNextClick: useEsigningStepValidation(clearErrors, trigger, ['subject', 'signatoryDocument']),
             },
           ]}
           controls={controls}

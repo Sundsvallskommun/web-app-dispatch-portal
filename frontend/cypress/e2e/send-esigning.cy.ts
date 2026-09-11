@@ -70,6 +70,41 @@ describe('Send esigning flow', () => {
     cy.get('[data-cy="signatory-table"] tbody tr').eq(1).find('[data-cy="move-signatory-up-button"]').click();
     expectOrder(['test1@exempel.se', 'test2@exempel.se']);
   });
+
+  describe('Subject and files', () => {
+    beforeEach(() => {
+      addSignatory(personalNumber.first, 'test1@exempel.se');
+      cy.get('[data-cy="next-button"]').click();
+      cy.get('[data-cy="esigning-subject"]').should('exist');
+    });
+
+    it('should upload a signing document and an attachment, and label them by type', () => {
+      cy.get('#file-upload-signatoryDocument').selectFile('cypress/files/document1.pdf', { force: true });
+      cy.get('#file-upload-attachmentList').selectFile('cypress/files/document2.pdf', { force: true });
+
+      cy.get('[data-cy="combined-document-list"]').contains('document1.pdf').should('be.visible');
+      cy.get('[data-cy="combined-document-list"]').contains('document2.pdf').should('be.visible');
+      cy.get('[data-cy="document-type-label"]').eq(0).should('contain.text', 'Signering');
+      cy.get('[data-cy="document-type-label"]').eq(1).should('contain.text', 'Bilaga');
+    });
+
+    it('should show an error when the file is not a pdf', () => {
+      cy.get('#file-upload-signatoryDocument').selectFile('cypress/files/personal-numbers.csv', { force: true });
+      cy.get('.sk-form-error-message').should('contain.text', 'Endast PDF-filer kan laddas upp');
+      cy.get('[data-cy="combined-document-list"]').should('not.exist');
+    });
+
+    it('should remove a single file and leave the others', () => {
+      cy.get('#file-upload-signatoryDocument').selectFile('cypress/files/document1.pdf', { force: true });
+      cy.get('#file-upload-attachmentList').selectFile('cypress/files/document2.pdf', { force: true });
+      cy.get('[data-cy="combined-document-list"]').contains('document1.pdf').should('be.visible');
+
+      cy.get('[data-cy="combined-document-list"]').find('button[aria-label="Ta bort bifogad fil"]').first().click();
+
+      cy.get('[data-cy="combined-document-list"]').contains('document1.pdf').should('not.exist');
+      cy.get('[data-cy="combined-document-list"]').contains('document2.pdf').should('be.visible');
+    });
+  });
 });
 
 const search = (personNumber: string) => {
