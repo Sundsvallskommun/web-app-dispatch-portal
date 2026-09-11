@@ -1,18 +1,8 @@
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 import { usePdfFileHandler } from '@components/file-upload/hooks/use-pdf-file-handler';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
-import {
-  Divider,
-  FileUpload,
-  FormControl,
-  FormLabel,
-  Icon,
-  Input,
-  Label,
-  ProgressBar,
-  UploadFile,
-} from '@sk-web-gui/react';
-import { MAX_ESIGNING_ATTACHMENTS, MAX_ESIGNING_TOTAL_SIZE_MB, toFileSizeParts } from '@utils/file.utils';
+import { Divider, FileUpload, FormControl, FormLabel, Icon, Input, Label, UploadFile } from '@sk-web-gui/react';
+import { MAX_ESIGNING_FILE_SIZE_MB, toFileSizeParts } from '@utils/file.utils';
 import { File, Pencil } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
@@ -23,11 +13,11 @@ interface EsigningAttachmentFormModel {
   attachmentList: UploadFile[];
 }
 
-const bytesOf = (files: UploadFile[] = []) => files.reduce((sum, item) => sum + (item.file?.size ?? 0), 0);
+const fileNamesOf = (files: UploadFile[] = []) =>
+  files.map((item) => item.file?.name).filter((name): name is string => !!name);
 
 const errorKeys = {
   badFile: 'send-esigning:attachmentHandler.errors.wrongFileType',
-  totalSize: 'send-esigning:attachmentHandler.errors.totalSize',
   duplicateFileName: 'send-esigning:attachmentHandler.errors.duplicateFileName',
   emptyFile: 'send-esigning:attachmentHandler.errors.emptyFile',
   maxNumberFiles: 'send-esigning:attachmentHandler.errors.maxNumberFiles',
@@ -48,26 +38,18 @@ const EsigningAttachmentHandler = () => {
 
   const combinedDocumentList = [...signatoryDocument, ...attachmentList];
 
-  const documentBytes = bytesOf(signatoryDocument);
-  const attachmentBytes = bytesOf(attachmentList);
-
   const documentUpload = usePdfFileHandler({
     errorKeys,
-    maxFileSizeMB: MAX_ESIGNING_TOTAL_SIZE_MB,
     maxFiles: 1,
     fieldName: 'signatoryDocument',
-    usedBytesElsewhere: attachmentBytes,
+    existingFileNames: fileNamesOf(attachmentList),
   });
 
   const attachmentUpload = usePdfFileHandler({
     errorKeys,
-    maxFileSizeMB: MAX_ESIGNING_TOTAL_SIZE_MB,
-    maxFiles: MAX_ESIGNING_ATTACHMENTS,
     fieldName: 'attachmentList',
-    usedBytesElsewhere: documentBytes,
+    existingFileNames: fileNamesOf(signatoryDocument),
   });
-
-  const usedMB = ((documentBytes + attachmentBytes) / (1024 * 1024)).toFixed(1);
 
   const isSignatoryDocument = (file: UploadFile) => signatoryDocument.some((item) => item.id === file.id);
 
@@ -114,18 +96,17 @@ const EsigningAttachmentHandler = () => {
               className="w-full pt-8"
               name="signatoryDocument"
               data-cy="signing-document-input"
-              maxFileSizeMB={MAX_ESIGNING_TOTAL_SIZE_MB}
+              maxFileSizeMB={MAX_ESIGNING_FILE_SIZE_MB}
               accept={['application/pdf']}
               onChange={documentUpload.handleFiles}
               onInvalid={documentUpload.handleError}
               allowMultiple={false}
               appendToContext={false}
+              invalid={!!documentUpload.pdfError}
+              data-invalid={!!documentUpload.pdfError}
             />
             {documentUpload.pdfError && (
               <CustomFormErrorMessage message={documentUpload.pdfError.message?.toString()} />
-            )}
-            {!documentUpload.pdfError && errors?.signatoryDocument && (
-              <CustomFormErrorMessage message={errors.signatoryDocument.message?.toString()} />
             )}
           </FormControl>
         </div>
@@ -138,12 +119,14 @@ const EsigningAttachmentHandler = () => {
               className="w-full pt-8"
               name="attachmentList"
               data-cy="attachment-input"
-              maxFileSizeMB={MAX_ESIGNING_TOTAL_SIZE_MB}
+              maxFileSizeMB={MAX_ESIGNING_FILE_SIZE_MB}
               accept={['application/pdf']}
               onChange={attachmentUpload.handleFiles}
               onInvalid={attachmentUpload.handleError}
               allowMultiple={true}
               appendToContext={false}
+              invalid={!!attachmentUpload.pdfError}
+              data-invalid={!!attachmentUpload.pdfError}
             />
             {attachmentUpload.pdfError && (
               <CustomFormErrorMessage message={attachmentUpload.pdfError.message?.toString()} />
@@ -151,20 +134,6 @@ const EsigningAttachmentHandler = () => {
           </FormControl>
         </div>
 
-        <div className="w-full flex flex-col gap-8">
-          <p className="text-small" data-cy="used-space">
-            {t('send-esigning:attachmentHandler.usedSpace', {
-              files: usedMB.replace('.', ','),
-              limit: MAX_ESIGNING_TOTAL_SIZE_MB.toString().replace('.', ','),
-            })}
-          </p>
-          <ProgressBar
-            size="md"
-            color="vattjom"
-            steps={MAX_ESIGNING_TOTAL_SIZE_MB * 10}
-            current={Number(usedMB) * 10}
-          />
-        </div>
         <div className="w-full flex flex-col gap-8">
           <h3 className="text-label-medium">{t('send-esigning:attachmentHandler.attachmentListLabel')}</h3>
           {combinedDocumentList.length === 0 && <p>{t('send-esigning:attachmentHandler.noAttachments')}</p>}

@@ -1,6 +1,5 @@
 export const MAX_ATTACHMENT_FILE_SIZE_MB = 1.5;
-export const MAX_ESIGNING_TOTAL_SIZE_MB = 1.5;
-export const MAX_ESIGNING_ATTACHMENTS = 4;
+export const MAX_ESIGNING_FILE_SIZE_MB = 2;
 
 export const toFileSizeParts = (bytes = 0) => {
   const kilobytes = bytes / 1024;

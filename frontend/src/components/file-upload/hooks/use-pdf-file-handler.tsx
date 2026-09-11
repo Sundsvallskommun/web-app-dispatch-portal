@@ -8,7 +8,7 @@ interface FileAttachmentFormModel {
 
 interface PdfErrorKeys {
   badFile: string;
-  totalSize: string;
+  totalSize?: string;
   duplicateFileName: string;
   emptyFile: string;
   maxNumberFiles: string;
@@ -16,10 +16,10 @@ interface PdfErrorKeys {
 
 interface UsePdfFileHandlerOptions {
   errorKeys: PdfErrorKeys;
-  maxFileSizeMB: number;
-  maxFiles: number;
+  maxFileSizeMB?: number;
+  maxFiles?: number;
   fieldName?: string;
-  usedBytesElsewhere?: number;
+  existingFileNames?: string[];
 }
 
 export const usePdfFileHandler = ({
@@ -27,7 +27,7 @@ export const usePdfFileHandler = ({
   maxFileSizeMB,
   maxFiles,
   fieldName = 'attachmentList',
-  usedBytesElsewhere = 0,
+  existingFileNames = [],
 }: UsePdfFileHandlerOptions) => {
   const {
     setError,
@@ -45,7 +45,7 @@ export const usePdfFileHandler = ({
       currentBytes,
       totalCount,
       maxBytes,
-    }: { currentNames: Set<string>; currentBytes: number; totalCount: number; maxBytes: number }
+    }: { currentNames: Set<string>; currentBytes: number; totalCount: number; maxBytes?: number }
   ): string[] => {
     const file = item.file;
     const name = file?.name;
@@ -54,8 +54,10 @@ export const usePdfFileHandler = ({
 
     if (file?.size === 0) errors.push(t(errorKeys.emptyFile));
     if (name && currentNames.has(name)) errors.push(t(errorKeys.duplicateFileName, { fileName: name }));
-    if (totalCount >= maxFiles) errors.push(t(errorKeys.maxNumberFiles, { allowMax: maxFiles }));
-    if (nextBytes > maxBytes) {
+    if (maxFiles !== undefined && totalCount >= maxFiles) {
+      errors.push(t(errorKeys.maxNumberFiles, { allowMax: maxFiles }));
+    }
+    if (maxBytes !== undefined && errorKeys.totalSize && nextBytes > maxBytes) {
       errors.push(t(errorKeys.totalSize, { total: (nextBytes / 1024 / 1024).toFixed(1), maxMB: maxFileSizeMB }));
     }
 
@@ -70,9 +72,12 @@ export const usePdfFileHandler = ({
     const accepted: UploadFile[] = [];
     const messages: string[] = [];
 
-    const currentNames = new Set(current.map((a) => a.file?.name).filter(Boolean) as string[]);
-    const maxBytes = maxFileSizeMB * 1024 * 1024;
-    let currentBytes = usedBytesElsewhere + current.reduce((sum, a) => sum + (a.file?.size ?? 0), 0);
+    const currentNames = new Set([
+      ...existingFileNames,
+      ...(current.map((a) => a.file?.name).filter(Boolean) as string[]),
+    ]);
+    const maxBytes = maxFileSizeMB !== undefined ? maxFileSizeMB * 1024 * 1024 : undefined;
+    let currentBytes = current.reduce((sum, a) => sum + (a.file?.size ?? 0), 0);
 
     for (const item of incoming) {
       const fileErrors = getFileErrors(item, {
