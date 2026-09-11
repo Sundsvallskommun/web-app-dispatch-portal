@@ -1,13 +1,12 @@
 import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
 import { usePdfFileHandler } from '@components/file-upload/hooks/use-pdf-file-handler';
 import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
-import { Divider, FileUpload, FormControl, FormLabel, Icon, Input, Label, UploadFile } from '@sk-web-gui/react';
-import { MAX_ESIGNING_FILE_SIZE_MB, toFileSizeParts } from '@utils/file.utils';
-import { File, Pencil } from 'lucide-react';
+import { Divider, FileUpload, FormControl, FormLabel, Input, UploadFile } from '@sk-web-gui/react';
+import { MAX_ESIGNING_FILE_SIZE_MB } from '@utils/file.utils';
 import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 import { useEsigningDocuments } from 'src/hooks/useEsigningDocuments';
-import { DocumentTypeLabel } from '@components/file-upload/document-type-label.component';
+import { EsigningDocumentList } from '@components/file-upload/esigning-document-list.component';
 
 interface EsigningAttachmentFormModel {
   subject: string;
@@ -34,8 +33,7 @@ const EsigningAttachmentHandler = () => {
     formState: { errors },
   } = useFormContext<EsigningAttachmentFormModel>();
 
-  const { signatoryDocument, attachmentList, combinedDocumentList, isSignatoryDocument, fileSizeDescription } =
-    useEsigningDocuments();
+  const { signatoryDocument, attachmentList, combinedDocumentList, isSignatoryDocument } = useEsigningDocuments();
 
   const documentUpload = usePdfFileHandler({
     errorKeys,
@@ -126,26 +124,7 @@ const EsigningAttachmentHandler = () => {
         <div className="w-full flex flex-col gap-8">
           <h3 className="text-label-medium">{t('send-esigning:attachmentHandler.attachmentListLabel')}</h3>
           {combinedDocumentList.length === 0 && <p>{t('send-esigning:attachmentHandler.noAttachments')}</p>}
-          {combinedDocumentList.length > 0 && (
-            <div data-cy="combined-document-list">
-              <FileUpload.List files={combinedDocumentList} showIcon={true}>
-                {combinedDocumentList.map((file, index) => (
-                  <FileUpload.ListItem
-                    key={file.id}
-                    index={index}
-                    file={file}
-                    iconProps={{ icon: <Icon icon={isSignatoryDocument(file) ? <Pencil /> : <File />} /> }}
-                    nameProps={{ description: fileSizeDescription(file) }}
-                    actionsProps={{
-                      showRemove: true,
-                      onRemove: handleRemove,
-                      extraActions: <DocumentTypeLabel isSignatoryDocument={isSignatoryDocument(file)} />,
-                    }}
-                  />
-                ))}
-              </FileUpload.List>
-            </div>
-          )}
+          {combinedDocumentList.length > 0 && <EsigningDocumentList onRemove={handleRemove} />}
         </div>
       </HandlerWrapper>
     </div>
