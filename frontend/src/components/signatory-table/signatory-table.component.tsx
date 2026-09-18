@@ -8,6 +8,12 @@ import { useFormContext } from 'react-hook-form';
 
 export type Signatory = SendEsigningForm['signatories'][number];
 
+const swapSignatories = (signatories: Array<Signatory>, a: number, b: number): Array<Signatory> => {
+  const reordered = [...signatories];
+  [reordered[a], reordered[b]] = [reordered[b], reordered[a]];
+  return reordered;
+};
+
 interface SignatoryTableProps {
   showActions?: boolean;
 }
@@ -26,13 +32,11 @@ export const SignatoryTable: React.FC<SignatoryTableProps> = ({ showActions = fa
     );
   };
 
-  const handleMove = (index: number, offset: number) => {
-    const target = index + offset;
-    if (index < 0 || target < 0 || target >= signatories.length) return;
-
-    const reordered = [...signatories];
-    [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
-    setValue('signatories', reordered, { shouldValidate: true, shouldDirty: true });
+  const handleMove = (fromIndex: number, toIndex: number) => {
+    setValue('signatories', swapSignatories(signatories, fromIndex, toIndex), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   const actions: Array<AutoTableHeader> = showActions
@@ -52,7 +56,7 @@ export const SignatoryTable: React.FC<SignatoryTableProps> = ({ showActions = fa
                   data-cy="move-signatory-up-button"
                   aria-label={t('send-esigning:recipientHandler.moveUp', { name: signatory.name })}
                   disabled={index <= 0}
-                  onClick={() => handleMove(index, -1)}
+                  onClick={() => handleMove(index, index - 1)}
                   leftIcon={<Icon icon={<ArrowUp />} />}
                   iconButton
                   variant="ghost"
@@ -61,7 +65,7 @@ export const SignatoryTable: React.FC<SignatoryTableProps> = ({ showActions = fa
                   data-cy="move-signatory-down-button"
                   aria-label={t('send-esigning:recipientHandler.moveDown', { name: signatory.name })}
                   disabled={index < 0 || index >= signatories.length - 1}
-                  onClick={() => handleMove(index, 1)}
+                  onClick={() => handleMove(index, index + 1)}
                   leftIcon={<Icon icon={<ArrowDown />} />}
                   iconButton
                   variant="ghost"

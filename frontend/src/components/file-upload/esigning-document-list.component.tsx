@@ -35,11 +35,7 @@ export const EsigningDocumentList = ({ onRemove }: EsigningDocumentListProps) =>
                     inverted
                     color={isSignatory ? 'gronsta' : 'vattjom'}
                   >
-                    {t(
-                      isSignatory
-                        ? 'send-esigning:attachmentHandler.signingLabel'
-                        : 'send-esigning:attachmentHandler.attachmentLabel'
-                    )}
+                    {t(`send-esigning:attachmentHandler.${isSignatory ? 'signingLabel' : 'attachmentLabel'}`)}
                   </Label>
                 ),
               }}
