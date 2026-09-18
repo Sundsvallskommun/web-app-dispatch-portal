@@ -2,6 +2,7 @@ import { orgRecipient, recipient } from '../fixtures/recipient';
 
 const personalNumber = { first: '199011182475', second: '198501011234' };
 const organizationNumber = '5566778899';
+const subject = 'Avtal om anställning';
 
 describe('Send esigning flow', () => {
   beforeEach(() => {
@@ -105,6 +106,36 @@ describe('Send esigning flow', () => {
       cy.get('[data-cy="combined-document-list"]').contains('document2.pdf').should('be.visible');
     });
   });
+
+  describe('Review', () => {
+    beforeEach(() => {
+      addSignatory(personalNumber.first, 'test1@exempel.se');
+      addSignatory(personalNumber.second, 'test2@exempel.se');
+    });
+
+    it('should show the signatories, subject and files from the previous steps', () => {
+      goToReview();
+
+      expectOrder(['test1@exempel.se', 'test2@exempel.se']);
+      cy.get('[data-cy="signatory-name"]').eq(0).should('contain.text', 'Person Personsson');
+      cy.get('[data-cy="signatory-person-number"]').eq(0).should('contain.text', '19901118-2475');
+
+      cy.get('[data-cy="review-subject"]').should('contain.text', subject);
+
+      cy.get('[data-cy="combined-document-list"]').contains('document1.pdf').should('be.visible');
+      cy.get('[data-cy="combined-document-list"]').contains('document2.pdf').should('be.visible');
+      cy.get('[data-cy="document-type-label"]').eq(0).should('contain.text', 'Signering');
+      cy.get('[data-cy="document-type-label"]').eq(1).should('contain.text', 'Bilaga');
+    });
+
+    it('should list the signatories in the order set on the recipient step', () => {
+      cy.get('[data-cy="signatory-table"] tbody tr').eq(0).find('[data-cy="move-signatory-down-button"]').click();
+
+      goToReview();
+
+      expectOrder(['test2@exempel.se', 'test1@exempel.se']);
+    });
+  });
 });
 
 const search = (personNumber: string) => {
@@ -119,6 +150,18 @@ const addSignatory = (personNumber: string, email: string) => {
   cy.get('[data-cy="signatory-email-input"]').type(email, { force: true });
   cy.get('[data-cy="preview-recipient"]').contains('button', 'Lägg till').click();
   cy.get('[data-cy="preview-recipient"]').should('not.exist');
+};
+
+const goToReview = () => {
+  cy.get('[data-cy="next-button"]').click();
+
+  cy.get('[data-cy="esigning-subject"]').type(subject, { force: true });
+  cy.get('#file-upload-signatoryDocument').selectFile('cypress/files/document1.pdf', { force: true });
+  cy.get('#file-upload-attachmentList').selectFile('cypress/files/document2.pdf', { force: true });
+  cy.get('[data-cy="combined-document-list"]').contains('document2.pdf').should('be.visible');
+
+  cy.get('[data-cy="next-button"]').click();
+  cy.contains('h2', 'Granska').should('be.visible');
 };
 
 const expectOrder = (emails: string[]) => {
