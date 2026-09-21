@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import FormStepper from '@components/form-stepper/form-stepper.component';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useUserStore } from '@services/user-service/user-service';
 import { esigningFormSchema, SendEsigningForm } from '@utils/esigningFormSchema.yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -34,9 +36,23 @@ export default function SendEsigningPage() {
   const { t } = useTranslation(['common', 'send-esigning']);
   const [success, setSuccess] = useState(false);
   const { watch, trigger, clearErrors, reset } = controls;
+  const router = useRouter();
+  const { user } = useUserStore();
 
   const hasSignatoryDocument = (watch('signatoryDocument') ?? []).length > 0;
   const hasSubject = (watch('subject') ?? '').length > 0;
+
+  const recipientHandlerOnNextClick = useEsigningStepValidation(clearErrors, trigger, ['signatories']);
+  const attachmentHandlerOnNextClick = useEsigningStepValidation(clearErrors, trigger, [
+    'subject',
+    'signatoryDocument',
+  ]);
+
+  useEffect(() => {
+    if (!user.permissions.canSendEsigning) router.replace('/');
+  }, [user.permissions.canSendEsigning, router]);
+
+  if (!user.permissions.canSendEsigning) return null;
 
   return (
     <DefaultLayout
@@ -49,13 +65,13 @@ export default function SendEsigningPage() {
             {
               label: t('send-esigning:stepper.recipients'),
               component: <EsigningRecipientHandler />,
-              onNextClick: useEsigningStepValidation(clearErrors, trigger, ['signatories']),
+              onNextClick: recipientHandlerOnNextClick,
             },
             {
               label: t('send-esigning:stepper.attachments'),
               component: <EsigningAttachmentHandler />,
               valid: hasSubject && hasSignatoryDocument,
-              onNextClick: useEsigningStepValidation(clearErrors, trigger, ['subject', 'signatoryDocument']),
+              onNextClick: attachmentHandlerOnNextClick,
             },
             {
               label: t('send-esigning:stepper.review'),

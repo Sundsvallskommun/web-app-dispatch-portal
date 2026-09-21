@@ -10,7 +10,7 @@ import HeaderMenu from '@components/header-menu/header-menu.component';
 
 const Index = () => {
   const user = useUserStore((state) => state.user);
-  const { canSendLetter, canSendRegisteredLetter, canSendSMS } = user?.permissions ?? {};
+  const { canSendLetter, canSendRegisteredLetter, canSendSMS, canSendEsigning } = user?.permissions ?? {};
   const { t } = useTranslation(['common', 'start-page']);
 
   const isCheckingPermissions = !user?.name;
@@ -52,14 +52,15 @@ const Index = () => {
                   />
                 </Link>
               )}
-              {/* Add canSendEsigning permission check when it's available */}
-              <Link href="/send/esigning" className="start-link w-full">
-                <MainCard
-                  icon={<Pencil />}
-                  title={t('start-page:eSigning')}
-                  contentText={t('start-page:eSigningDescription')}
-                />
-              </Link>
+              {canSendEsigning && (
+                <Link href="/send/esigning" className="start-link w-full">
+                  <MainCard
+                    icon={<Pencil />}
+                    title={t('start-page:eSigning')}
+                    contentText={t('start-page:eSigningDescription')}
+                  />
+                </Link>
+              )}
             </div>
           </div>
         </div>

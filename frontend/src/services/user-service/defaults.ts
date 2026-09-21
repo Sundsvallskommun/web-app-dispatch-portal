@@ -5,6 +5,7 @@ export const defaultPermissions: Permissions = {
   canSendSMS: false,
   canSendLetter: true,
   canSendRegisteredLetter: false,
+  canSendEsigning: false,
 };
 
 export const emptyUser: User = {
