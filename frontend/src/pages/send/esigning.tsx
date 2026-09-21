@@ -13,6 +13,8 @@ import { useEsigningStepValidation } from 'src/hooks/useEsigningStepValidation';
 import EsigningRecipientHandler from '@components/recipient-handler/esigning-recipient-handler';
 import EsigningAttachmentHandler from '@components/attachment-handler/esigning-attachment-handler';
 import EsigningReviewHandler from '@components/review-handler/esigning-review-handler.component';
+import EsigningSubmitHandler from '@components/submit-handler/esigning-submit-handler';
+import { formSendType } from 'src/constants';
 
 const initialValues = {
   signatories: [],
@@ -31,7 +33,7 @@ export default function SendEsigningPage() {
 
   const { t } = useTranslation(['common', 'send-esigning']);
   const [success, setSuccess] = useState(false);
-  const { watch, trigger, clearErrors } = controls;
+  const { watch, trigger, clearErrors, reset } = controls;
 
   const hasSignatoryDocument = (watch('signatoryDocument') ?? []).length > 0;
   const hasSubject = (watch('subject') ?? '').length > 0;
@@ -47,14 +49,12 @@ export default function SendEsigningPage() {
             {
               label: t('send-esigning:stepper.recipients'),
               component: <EsigningRecipientHandler />,
-              validationProperties: ['signatories'],
               onNextClick: useEsigningStepValidation(clearErrors, trigger, ['signatories']),
             },
             {
               label: t('send-esigning:stepper.attachments'),
               component: <EsigningAttachmentHandler />,
               valid: hasSubject && hasSignatoryDocument,
-              validationProperties: ['subject', 'signatoryDocument'],
               onNextClick: useEsigningStepValidation(clearErrors, trigger, ['subject', 'signatoryDocument']),
             },
             {
@@ -63,9 +63,14 @@ export default function SendEsigningPage() {
               valid: true,
             },
           ]}
+          submitButton={<EsigningSubmitHandler onSuccess={() => setSuccess(true)} />}
           controls={controls}
           success={success}
-          onResetSuccess={() => setSuccess(false)}
+          onResetSuccess={() => {
+            reset(initialValues);
+            setSuccess(false);
+          }}
+          sendType={formSendType.ESIGNING}
         />
       </div>
     </DefaultLayout>

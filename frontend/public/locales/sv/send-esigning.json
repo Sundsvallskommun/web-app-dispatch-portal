@@ -50,6 +50,12 @@
     "description": "Signatörerna signerar en i taget, i den ordning de listas nedan.",
     "signatories": "Signatörer",
     "subject": "Ämne",
-    "attachments": "Bifogade filer"
+    "attachments": "Bifogade filer",
+    "error": "Något gick fel"
+  },
+  "success": {
+    "header": "Signeringsförfrågan är skickad!",
+    "description": "Följ status för din signeringsförfrågan under Dina utskick.",
+    "buttonMsg": "Skicka ny signeringsförfrågan"
   }
 }

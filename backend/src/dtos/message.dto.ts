@@ -22,6 +22,15 @@ export class RequestBodyRecMail {
   body?: string;
 }
 
+export class RequestBodyEsigning {
+  @IsString()
+  signatories: string;
+  @IsString()
+  subject: string;
+  @IsString()
+  document: string;
+}
+
 export class RequestBodyCsvMail {
   @IsString()
   csvId: string;
