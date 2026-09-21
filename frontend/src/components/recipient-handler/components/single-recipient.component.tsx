@@ -78,7 +78,13 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({
       .catch(() => {
         setIsLoadingRecipients(false);
         setFoundRecipient(undefined);
-        setError(t('send-mail:recipientHandler.fetchRecipientError.singleRecipient'));
+        setError(
+          t(
+            isPersonOnly
+              ? 'send-mail:recipientHandler.fetchRecipientError.singleRecipientRek'
+              : 'send-mail:recipientHandler.fetchRecipientError.singleRecipient'
+          )
+        );
       })
       .finally(() => setIsLoadingRecipients(false));
   };
