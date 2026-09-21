@@ -136,6 +136,43 @@ describe('Send esigning flow', () => {
       expectOrder(['test2@exempel.se', 'test1@exempel.se']);
     });
   });
+
+  describe('Send', () => {
+    beforeEach(() => {
+      cy.intercept('POST', '**/api/e-signing', {
+        statusCode: 200,
+        body: {
+          data: { signatories: [{ name: 'Person Personsson', email: 'test1@exempel.se' }] },
+          message: 'success',
+        },
+      }).as('esigning');
+
+      addSignatory(personalNumber.first, 'test1@exempel.se');
+      goToReview();
+    });
+
+    it('should send the signing request and show the success view', () => {
+      cy.contains('button', 'Skicka').click();
+
+      cy.wait('@esigning');
+      cy.contains('h1', 'Din signeringsförfrågan är skickad').should('be.visible');
+    });
+
+    it('should clear the form when sending a new signing request', () => {
+      cy.contains('button', 'Skicka').click();
+      cy.wait('@esigning');
+
+      cy.contains('button', 'Skicka ny signeringsförfrågan').click();
+
+      cy.contains('Inga signatörer tillagda än.').should('be.visible');
+
+      addSignatory(personalNumber.first, 'test1@exempel.se');
+      cy.get('[data-cy="next-button"]').click();
+
+      cy.get('[data-cy="esigning-subject"]').should('have.value', '');
+      cy.get('[data-cy="combined-document-list"]').should('not.exist');
+    });
+  });
 });
 
 const search = (personNumber: string) => {
