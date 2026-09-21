@@ -54,7 +54,7 @@
     "error": "Något gick fel"
   },
   "success": {
-    "header": "Signeringsförfrågan är skickad!",
+    "header": "Din signeringsförfrågan är skickad",
     "description": "Följ status för din signeringsförfrågan under Dina utskick.",
     "buttonMsg": "Skicka ny signeringsförfrågan"
   }
