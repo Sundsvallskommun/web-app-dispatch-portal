@@ -138,10 +138,9 @@ export class MessageController {
     return response.status(200).send({ data: res, message: 'success' });
   }
 
-  /* Add canSendEsigning permission check when it's available */
   @Post('/e-signing/')
   @OpenAPI({ summary: 'Send documents for signing to signatories' })
-  @UseBefore(authMiddleware)
+  @UseBefore(authMiddleware, hasPermissions(['canSendEsigning']))
   @ResponseSchema(MessageApiResponse)
   async sendEsigningMessage(
     @Req() req: RequestWithUser,
