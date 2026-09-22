@@ -1,4 +1,6 @@
-import { ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
+import { ESigningSignatory } from '@/responses/message.response';
+import { Type } from 'class-transformer';
+import { ArrayMinSize, IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class RequestBodyMail {
   @IsString()
@@ -20,6 +22,23 @@ export class RequestBodyRecMail {
   @IsString()
   @IsOptional()
   body?: string;
+}
+
+export class RequestBodyEsigning {
+  @IsString()
+  signatories: string;
+  @IsString()
+  subject: string;
+  @IsString()
+  document: string;
+}
+
+export class EsigningSignatoryList {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => ESigningSignatory)
+  signatories: ESigningSignatory[];
 }
 
 export class RequestBodyCsvMail {

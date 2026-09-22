@@ -35,9 +35,10 @@ const FormStepper = <T extends FieldValues>({
   sendType = formSendType.MAIL,
 }: FormStepperProps<T>) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const { t } = useTranslation(['common', 'send-mail']);
+  const { t } = useTranslation(['common', 'send-mail', 'send-esigning']);
   const { isMaxSm } = useThemeQueries();
-  const i18nSendType = `send-mail:success.${sendType === formSendType.MAIL ? 'mail' : 'rekMail'}`;
+  const mailType = sendType === formSendType.MAIL ? 'mail' : 'rekMail';
+  const i18nSendType = sendType === formSendType.ESIGNING ? 'send-esigning:success' : `send-mail:success.${mailType}`;
 
   const {
     formState: { errors },
@@ -108,7 +109,9 @@ const FormStepper = <T extends FieldValues>({
   );
 
   return (
-    <div className={cx('flex flex-col', isMaxSm ? 'w-full' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}>
+    <div
+      className={cx('flex flex-col', isMaxSm ? 'w-full' : 'max-w-[--w-max-stepper-content] w-[--w-stepper-content]')}
+    >
       {success ? (
         <SuccessContainer
           onClick={handleOnResetSuccess}

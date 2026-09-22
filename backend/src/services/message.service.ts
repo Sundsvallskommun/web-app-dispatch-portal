@@ -1,5 +1,11 @@
 import { getApiBase } from '@/config';
-import { Address, Recipient, RecipientDeliveryMethodEnum } from '@/data-contracts/postportalservice/data-contracts';
+import {
+  Address,
+  ESigningRequest,
+  ESigningSignatory,
+  Recipient,
+  RecipientDeliveryMethodEnum,
+} from '@/data-contracts/postportalservice/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { MessageResponseData } from '@/interfaces/message.interface';
 import { appendCsvFile } from '@/utils/csv-service/csv-service';
@@ -90,6 +96,11 @@ interface RecMessage {
   recipientPersonId: string;
   files: Express.Multer.File[];
 }
+interface EsigningMessage {
+  subject: string;
+  document: Express.Multer.File;
+  attachments: Express.Multer.File[];
+}
 
 export interface SMSDTO {
   message: string;
@@ -168,22 +179,26 @@ export const sendSmsMessageCsv: (
   return { csv: true };
 };
 
-function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
+export function appendPdfFile(form: FormData, fieldName: string, file: Express.Multer.File): void {
+  if (file.mimetype !== 'application/pdf') {
+    throw new Error(`Invalid mimetype "${file.mimetype}" — only application/pdf is allowed`);
+  }
+
+  if (!Buffer.isBuffer(file.buffer)) {
+    throw new TypeError(`Missing or invalid buffer for file: ${file.originalname}`);
+  }
+
+  form.append(fieldName, file.buffer, {
+    filename: file.originalname,
+    contentType: 'application/pdf',
+  });
+}
+
+export function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
   if (!files?.length) return;
 
   for (const file of files) {
-    if (file.mimetype !== 'application/pdf') {
-      throw new Error(`Invalid mimetype "${file.mimetype}" — only application/pdf is allowed`);
-    }
-
-    if (!Buffer.isBuffer(file.buffer)) {
-      throw new TypeError(`Missing or invalid buffer for file: ${file.originalname}`);
-    }
-
-    form.append('attachments', file.buffer, {
-      filename: file.originalname,
-      contentType: 'application/pdf',
-    });
+    appendPdfFile(form, 'attachments', file);
   }
 }
 
@@ -297,6 +312,46 @@ export const sendRecLetter: (
       const errorMessage = 'Error when sending registered letter';
       console.error(`${errorMessage}:`, e);
       logger.error(`${errorMessage}:`, e);
+      throw e;
+    });
+};
+
+export const sendEsigning: (
+  req: RequestWithUser,
+  api: ApiService,
+  signatories: ESigningSignatory[],
+  message: EsigningMessage,
+) => Promise<MessageResponseData> = async (req, api, signatories, message) => {
+  const { subject, document, attachments } = message;
+  const municipalityId = await getMunicipalityId(req);
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/e-signing`;
+
+  const request: ESigningRequest = {
+    subject: subject,
+    signatories: signatories,
+  };
+
+  const form = new FormData();
+
+  form.append('request', JSON.stringify(request), {
+    contentType: 'application/json',
+  });
+
+  appendPdfFile(form, 'document', document);
+  appendPdfAttachments(form, attachments);
+
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
+  };
+
+  return api
+    .post<string, FormData>({ url, data: form, headers }, req.user)
+    .then(async () => {
+      return { signatories };
+    })
+    .catch(e => {
+      logError('Error when sending for e-signing', e);
       throw e;
     });
 };

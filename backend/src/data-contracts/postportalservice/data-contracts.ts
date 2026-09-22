@@ -10,13 +10,6 @@
  * ---------------------------------------------------------------
  */
 
-/** Possible delivery methods */
-export enum DeliveryMethod {
-  DIGITAL_MAIL = "DIGITAL_MAIL",
-  SNAIL_MAIL = "SNAIL_MAIL",
-  DELIVERY_NOT_POSSIBLE = "DELIVERY_NOT_POSSIBLE",
-}
-
 /** Precheck request model */
 export interface PrecheckRequest {
   /**
@@ -106,7 +99,7 @@ export interface PrecheckRecipient {
   /** Party ID of the recipient */
   partyId?: string;
   /** Delivery method for the recipient */
-  deliveryMethod?: DeliveryMethod;
+  deliveryMethod?: PrecheckRecipientDeliveryMethodEnum;
   /** Reason when delivery method isn't available or an upstream lookup failed */
   reason?: string;
 }
@@ -206,11 +199,8 @@ export interface Address {
    * @minLength 1
    */
   city: string;
-  /**
-   * Country
-   * @minLength 1
-   */
-  country: string;
+  /** Country. Optional; typically omitted for domestic mail. */
+  country?: string;
 }
 
 /** Letter request model */
@@ -255,6 +245,94 @@ export interface LetterCsvRequest {
    * @minLength 1
    */
   contentType: string;
+}
+
+/** E-signing request model */
+export interface ESigningRequest {
+  /**
+   * The subject of the notification sent to the signatories
+   * @minLength 1
+   */
+  subject: string;
+  /** The body of the notification sent to the signatories */
+  body?: string;
+  /** The language used for the signing instance. Swedish is used if not provided */
+  language?: string;
+  /**
+   * Optional date and time when the signing request expires
+   * @format date-time
+   */
+  expires?: string;
+  /** @minItems 1 */
+  signatories: ESigningSignatory[];
+}
+
+/** A signatory that should sign the document */
+export interface ESigningSignatory {
+  /** The party id of the signatory */
+  partyId?: string;
+  /**
+   * The name of the signatory
+   * @minLength 1
+   */
+  name: string;
+  /**
+   * The email address of the signatory
+   * @format email
+   * @minLength 1
+   */
+  email: string;
+}
+
+/** The signatory that acted in a signing event */
+export interface EventSignatory {
+  /** The party id of the signatory */
+  partyId?: string;
+  /** The normalized action taken by the signatory */
+  action?: EventSignatoryActionEnum;
+  /** The reason given for the action, when provided */
+  reason?: string;
+}
+
+/** A signed document received in a signing event */
+export interface SignedDocument {
+  /** Descriptive name of the document */
+  name?: string;
+  /** The document file name including extension */
+  fileName?: string;
+  /** The document mime type */
+  mimeType?: string;
+  /**
+   * Base64-encoded content of the signed document
+   * @minLength 1
+   */
+  content: string;
+}
+
+/** A provider-neutral signing event delivered by api-service-e-signing */
+export interface SigningEvent {
+  /** The consumer's own reference echoed back by the provider (the Postportalen message id) */
+  customerReference?: string;
+  /**
+   * The signing provider's case id
+   * @minLength 1
+   */
+  providerCaseId: string;
+  /** The id of the signing provider that produced the event */
+  provider?: string;
+  /** The normalized event type */
+  eventType?: SigningEventEventTypeEnum;
+  /** The normalized case status */
+  status?: SigningEventStatusEnum;
+  /** The acting signatory, present on signatory events */
+  signatory?: EventSignatory;
+  /** The signed document, present only on a completed event */
+  signedDocument?: SignedDocument;
+  /**
+   * When the event occurred at the provider
+   * @format date-time
+   */
+  occurredAt?: string;
 }
 
 /** Statistics model */
@@ -459,8 +537,42 @@ export interface User {
 }
 
 /** Delivery method for the recipient */
+export enum PrecheckRecipientDeliveryMethodEnum {
+  DIGITAL_MAIL = "DIGITAL_MAIL",
+  SNAIL_MAIL = "SNAIL_MAIL",
+  DELIVERY_NOT_POSSIBLE = "DELIVERY_NOT_POSSIBLE",
+}
+
+/** Delivery method for the recipient */
 export enum RecipientDeliveryMethodEnum {
   DIGITAL_MAIL = "DIGITAL_MAIL",
   SNAIL_MAIL = "SNAIL_MAIL",
   DELIVERY_NOT_POSSIBLE = "DELIVERY_NOT_POSSIBLE",
+}
+
+/** The normalized action taken by the signatory */
+export enum EventSignatoryActionEnum {
+  APPROVED = "APPROVED",
+  DECLINED = "DECLINED",
+}
+
+/** The normalized event type */
+export enum SigningEventEventTypeEnum {
+  CASE_CREATED = "CASE_CREATED",
+  SIGNATORY_APPROVED = "SIGNATORY_APPROVED",
+  SIGNATORY_DECLINED = "SIGNATORY_DECLINED",
+  CASE_COMPLETED = "CASE_COMPLETED",
+  CASE_WITHDRAWN = "CASE_WITHDRAWN",
+  CASE_EXPIRED = "CASE_EXPIRED",
+  CASE_HALTED = "CASE_HALTED",
+  CASE_REACTIVATED = "CASE_REACTIVATED",
+}
+
+/** The normalized case status */
+export enum SigningEventStatusEnum {
+  INITIATED = "INITIATED",
+  PENDING = "PENDING",
+  SIGNED = "SIGNED",
+  EXPIRED = "EXPIRED",
+  FAILED = "FAILED",
 }
