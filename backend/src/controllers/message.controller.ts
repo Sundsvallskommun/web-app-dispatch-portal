@@ -1,5 +1,6 @@
 import { Address, ESigningSignatory, Recipient } from '@/data-contracts/postportalservice/data-contracts';
 import {
+  EsigningSignatoryList,
   RequestBodyCsvMail,
   RequestBodyCsvSMS,
   RequestBodyEsigning,
@@ -24,6 +25,7 @@ import {
 } from '@/services/message.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
+import { validateRequestBody } from '@/utils/validate';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Response } from 'express';
 import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
@@ -153,6 +155,8 @@ export class MessageController {
       throw new HttpException(400, 'Could not parse signatory list');
     }
 
+    await validateRequestBody(EsigningSignatoryList, { signatories });
+
     const document = files.find(file => file.originalname === body.document);
 
     if (!document) {
@@ -165,9 +169,6 @@ export class MessageController {
       subject: body.subject,
       document,
       attachments,
-    }).catch(e => {
-      logError('Error when sending for e-signing', e);
-      throw e;
     });
 
     return response.send({ data: res, message: 'success' });

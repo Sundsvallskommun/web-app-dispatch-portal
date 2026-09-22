@@ -32,6 +32,7 @@ const PreviewRecipient = ({
   const { t } = useTranslation(['send-mail']);
   const eligibleStatus = isEligible ? 'success' : 'error';
   const isRekMail = sendType === formSendType.REK_MAIL;
+  const canAdd = sendType === formSendType.ESIGNING || isEligible;
   const isOrganization = !!recipient?.orgNumber;
   const personNumberIsEqual = recipient?.personNumber === searchValue.replace('-', '');
   const orgNumberIsEqual = recipient?.orgNumber === searchValue.replace('-', '');
@@ -73,7 +74,7 @@ const PreviewRecipient = ({
       )}
       {isRekMail && isEligible && alert}
 
-      {isEligible ? (
+      {canAdd ? (
         <>
           {children}
           <Button className="mt-16" color="vattjom" disabled={submitDisabled} onClick={() => handleSubmit()}>
