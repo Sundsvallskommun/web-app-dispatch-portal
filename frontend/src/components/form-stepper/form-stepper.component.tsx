@@ -38,7 +38,7 @@ const FormStepper = <T extends FieldValues>({
   const { t } = useTranslation(['common', 'send-mail', 'send-esigning']);
   const { isMaxSm } = useThemeQueries();
   const mailType = sendType === formSendType.MAIL ? 'mail' : 'rekMail';
-  const i18nSendType = sendType === formSendType.ESIGNING ? 'send-esigning:success' : `send-mail:success.${mailType}`;
+  const i18nSendType = sendType === formSendType.E_SIGNING ? 'send-esigning:success' : `send-mail:success.${mailType}`;
 
   const {
     formState: { errors },
