@@ -86,7 +86,7 @@ export default function SendEsigningPage() {
             reset(initialValues);
             setSuccess(false);
           }}
-          sendType={formSendType.ESIGNING}
+          sendType={formSendType.E_SIGNING}
         />
       </div>
     </DefaultLayout>

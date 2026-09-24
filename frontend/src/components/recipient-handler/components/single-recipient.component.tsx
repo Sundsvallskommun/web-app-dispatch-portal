@@ -41,8 +41,8 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({
   } = useFormContext<RecipientListFormModel>();
 
   const isRek = sendType === formSendType.REK_MAIL;
-  const isPersonOnly = isRek || sendType === formSendType.ESIGNING;
-  const ignoresDeliveryMethod = sendType === formSendType.ESIGNING;
+  const isPersonOnly = isRek || sendType === formSendType.E_SIGNING;
+  const ignoresDeliveryMethod = sendType === formSendType.E_SIGNING;
   const emailIsValid = emailPattern.test(email.trim());
   const canSubmit = !requireEmail || emailIsValid;
 

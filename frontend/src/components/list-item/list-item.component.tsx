@@ -20,6 +20,8 @@ export const getMessagePrefixUrl = (type: string) => {
       return '/my-statistics/sms';
     case formSendType.DIGITAL_REGISTERED_LETTER:
       return '/my-statistics/rek-mail';
+    case formSendType.E_SIGNING:
+      return '/my-statistics/e-signing';
     default:
       return '/my-statistics/mail';
   }
@@ -36,6 +38,8 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
         return t('common:textMessage');
       case formSendType.DIGITAL_REGISTERED_LETTER:
         return t('common:recLetter');
+      case formSendType.E_SIGNING:
+        return t('common:esigning')  
       case formSendType.SNAIL_MAIL:
       case formSendType.DIGITAL_MAIL:
       case formSendType.EMAIL:

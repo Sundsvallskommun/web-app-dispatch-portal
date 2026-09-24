@@ -33,7 +33,7 @@ const EsigningRecipientHandler = () => {
       <HandlerWrapper title={t('send-esigning:recipientHandler.title')}>
         <div className="w-full gap-32">
           <SingleRecipient
-            sendType={formSendType.ESIGNING}
+            sendType={formSendType.E_SIGNING}
             requireEmail
             existingPartyIds={signatories.map((signatory) => signatory.partyId)}
             onAdd={(recipient, email) =>
