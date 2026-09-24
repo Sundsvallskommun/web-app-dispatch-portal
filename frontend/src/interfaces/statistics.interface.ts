@@ -62,6 +62,11 @@ export enum EnumSigningState {
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
 }
+export enum EnumEsigningStatus {
+  PENDING = 'PENDING',
+  SIGNED = 'SIGNED',
+  DECLINED = 'DECLINED',
+}
 export interface Letter {
   messageId: string;
   subject: string;

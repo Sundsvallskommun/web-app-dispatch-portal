@@ -191,9 +191,14 @@ export const useDownloadReceipt = (signingInfoData: SigningInfo | null) => {
 
 export const getAttachmentFile: (
   messageId: string,
-  attachmentId: string
+  attachmentId?: string
 ) => Promise<AttachmentResponse | AttachmentError> = (messageId, attachmentId) =>
   apiService
-    .get<ArrayBuffer>(`/my-statistics/${messageId}/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
+    .get<ArrayBuffer>(
+      attachmentId
+        ? `/my-statistics/${messageId}/attachment/${attachmentId}`
+        : `/my-statistics/${messageId}/signed-document`,
+      { responseType: 'arraybuffer' }
+    )
     .then((res) => res)
     .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));

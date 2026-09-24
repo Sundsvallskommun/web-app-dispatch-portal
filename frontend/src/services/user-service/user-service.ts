@@ -18,8 +18,16 @@ const getMe: () => Promise<ServiceResponse<User>> = () => {
     }));
 };
 
+const getAvatar: () => Promise<string | undefined> = () => {
+  return apiService
+    .get<Blob>('user/avatar?width=44', { responseType: 'blob' })
+    .then((res) => (res.data.size > 0 ? URL.createObjectURL(res.data) : undefined))
+    .catch(() => undefined);
+};
+
 interface State {
   user: User;
+  avatar?: string;
 }
 interface Actions {
   setUser: (user: User) => void;
@@ -29,6 +37,7 @@ interface Actions {
 
 const initialState: State = {
   user: emptyUser,
+  avatar: undefined,
 };
 
 export const useUserStore = create<State & Actions>()(
@@ -42,10 +51,16 @@ export const useUserStore = create<State & Actions>()(
         if (!res.error && res.data) {
           user = res.data;
           set(() => ({ user }));
+
+          if (!get().avatar) {
+            getAvatar().then((avatar) => set(() => ({ avatar })));
+          }
         }
         return { data: user };
       },
       reset: () => {
+        const { avatar } = get();
+        if (avatar) URL.revokeObjectURL(avatar);
         set(initialState);
       },
     }),

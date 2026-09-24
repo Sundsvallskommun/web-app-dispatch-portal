@@ -48,7 +48,7 @@
   "reviewHandler": {
     "title": "Granska",
     "description": "Signatörerna signerar en i taget, i den ordning de listas nedan.",
-    "signatories": "Signatörer",
+    "signatories": "Signatörer ({count})",
     "subject": "Ämne",
     "attachments": "Bifogade filer",
     "error": "Något gick fel"

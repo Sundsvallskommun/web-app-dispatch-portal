@@ -11,6 +11,7 @@ const EsigningReviewHandler = () => {
   const { watch } = useFormContext<SendEsigningForm>();
 
   const subject = watch('subject');
+  const signatories = watch('signatories') ?? [];
 
   const { combinedDocumentList } = useEsigningDocuments();
 
@@ -28,7 +29,9 @@ const EsigningReviewHandler = () => {
         description={t('send-esigning:reviewHandler.description')}
       >
         <div className="w-full flex flex-col gap-8">
-          <h3 className="text-label-medium">{t('send-esigning:reviewHandler.signatories')}</h3>
+          <h3 className="text-label-medium">
+            {t('send-esigning:reviewHandler.signatories', { count: signatories.length })}
+          </h3>
           <SignatoryTable />
         </div>
 
