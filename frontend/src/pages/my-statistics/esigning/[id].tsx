@@ -95,7 +95,7 @@ const MyStatisticsDetails = () => {
     try {
       const attachmentFile = await getAttachmentFile(id, signed ? undefined : file.attachmentId);
 
-      if (typeof attachmentFile.error !== 'undefined') {
+      if (attachmentFile.error !== undefined) {
         snackBar({
           message: t('statistics:myStatistics.failedFetchingFile', { fileName: file.fileName }),
           status: 'error',
@@ -121,22 +121,22 @@ const MyStatisticsDetails = () => {
     }
   };
 
+  const breadCrumb = (
+    <Breadcrumb>
+      <Breadcrumb.Item>
+        <Breadcrumb.Link href="/my-statistics">{t('common:mainMenu.myStatistics')}</Breadcrumb.Link>
+      </Breadcrumb.Item>
+      <Breadcrumb.Item currentPage>
+        <Breadcrumb.Link>{t('statistics:myStatistics.esigningSubject', { subject: subject })}</Breadcrumb.Link>
+      </Breadcrumb.Item>
+    </Breadcrumb>
+  );
+
   return (
     <DefaultLayout
       title={`Postportalen`}
       headerMenu={<HeaderMenu />}
-      pageheader={
-        <PageHeader color="transparent">
-          <Breadcrumb>
-            <Breadcrumb.Item>
-              <Breadcrumb.Link href="/my-statistics">{t('common:mainMenu.myStatistics')}</Breadcrumb.Link>
-            </Breadcrumb.Item>
-            <Breadcrumb.Item currentPage>
-              <Breadcrumb.Link>{t('statistics:myStatistics.esigningSubject', { subject: subject })}</Breadcrumb.Link>
-            </Breadcrumb.Item>
-          </Breadcrumb>
-        </PageHeader>
-      }
+      pageheader={<PageHeader color="transparent">{breadCrumb}</PageHeader>}
     >
       {loaded ? (
         <div
