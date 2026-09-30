@@ -53,7 +53,7 @@ export const useUserStore = create<State & Actions>()(
           set(() => ({ user }));
 
           if (!get().avatar) {
-            getAvatar().then((avatar) => set(() => ({ avatar })));
+            void getAvatar().then((avatar) => set(() => ({ avatar })));
           }
         }
         return { data: user };

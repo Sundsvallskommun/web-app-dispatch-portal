@@ -67,7 +67,8 @@
     "errors": {
       "FailedGettingFile": "Det Misslyckades med att hämta filen ({subject})",
       "someMessagesNotSent": "Ett eller flera brev gick inte att skicka. Kontrollera listan nedan och gör ett nytt utskick för att försök skicka dem igen.",
-      "messagesSendingFailed": "Brevet gick inte att skicka. Gör ett nytt utskick för att försök skicka det igen."
+      "messagesSendingFailed": "Brevet gick inte att skicka. Gör ett nytt utskick för att försök skicka det igen.",
+      "esigningDeclined": "En eller flera mottagare har nekat signeringsförfrågan. Gör om hela signeringsförfrågan för att försöka igen."
     }
   }
 }
