@@ -16,7 +16,7 @@ import {
 import { File, Download, Pencil } from 'lucide-react';
 import { getAttachmentFile, useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
-import { EnumEsigningStatus, MessageAttachment } from '@interfaces/statistics.interface';
+import { EnumEsigningProcessState, EnumEsigningStatus, MessageAttachment } from '@interfaces/statistics.interface';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import HeaderMenu from '@components/header-menu/header-menu.component';
@@ -34,15 +34,30 @@ const MyStatisticsDetails = () => {
 
   const [loadingFile, setLoadingFile] = useState<string | null>(null);
   const { message, loaded } = useMessage(id ?? '');
-  const { recipients, attachments, sentAt, subject } = message;
+  const { recipients, attachments, sentAt, subject, signingStatus } = message;
   const signingDocument = attachments[0];
+  const caseState = signingStatus?.signingProcessState;
 
-  const isSigned = recipients.length > 0 && recipients.every((r) => (r.status as string) === EnumEsigningStatus.SIGNED);
+  const isSigned = caseState === EnumEsigningProcessState.SIGNED;
+
+  const getSignatoryStatus = (status: string): string => {
+    const endsPendingSignatories =
+      caseState === EnumEsigningProcessState.EXPIRED ||
+      caseState === EnumEsigningProcessState.HALTED ||
+      caseState === EnumEsigningProcessState.FAILED;
+
+    return status === EnumEsigningStatus.PENDING && endsPendingSignatories ? caseState : status;
+  };
 
   const headers: Array<AutoTableHeader | string> = [
     {
       label: capitalize(t('statistics:myStatistics.recipient')),
       property: 'recipient',
+      isColumnSortable: false,
+    },
+    {
+      label: t('statistics:myStatistics.email'),
+      property: 'email',
       isColumnSortable: false,
     },
     {
@@ -66,7 +81,8 @@ const MyStatisticsDetails = () => {
         )}
       </>
     ),
-    status: r.status,
+    email: r?.email ?? '-',
+    status: getSignatoryStatus(r.status),
   }));
 
   const getAttachment = async (file: MessageAttachment, signed = false) => {

@@ -19,6 +19,7 @@
     },
     "recipient": "mottagare",
     "address": "Adress",
+    "email": "E-postadress",
     "deliveryMethod": "Leveranssätt",
     "recipientDescription": "Mottagaren har 30 dagar på sig att öppna och signera brevet i Kivra. När brevet är signerat kan ett mottagningsbevis laddas ner.",
     "unknown": "Okänd",
@@ -53,7 +54,9 @@
     "esigningStatus": {
       "sent": "Skickat",
       "signed": "Signerat",
-      "declined": "Nekat"
+      "declined": "Nekat",
+      "expired": "Löpt ut",
+      "failed": "Avbruten"
     },
     "downloadReceipt": "Ladda ner mottagningsbevis",
     "downloading": "Hämtar mottagningsbevis..",
