@@ -32,6 +32,13 @@ describe('My statistics esigning', () => {
     cy.contains('button', 'Ladda ner signerat dokument').should('be.disabled');
   });
 
+  it('should show an alert when the case has been declined', () => {
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('DECLINED'));
+    cy.visit(`/my-statistics/esigning/${messageId}`);
+
+    cy.contains('En eller flera mottagare har nekat signeringsförfrågan').should('be.visible');
+  });
+
   it('should enable download when the case is signed', () => {
     cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('SIGNED'));
     cy.visit(`/my-statistics/esigning/${messageId}`);

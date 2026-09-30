@@ -23,6 +23,7 @@ import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatLegalId } from '@utils/helpers';
 import { capitalize } from 'underscore.string';
 import { EsigningStatusLabel } from '@components/esigning-status-label/esigning-status-label.component';
+import CustomAlert from '@components/custom-alert/custom-alert-component';
 
 const SIGNED_DOCUMENT = 'signed-document';
 
@@ -39,6 +40,7 @@ const MyStatisticsDetails = () => {
   const caseState = signingStatus?.signingProcessState;
 
   const isSigned = caseState === EnumEsigningProcessState.SIGNED;
+  const isDeclined = caseState === EnumEsigningProcessState.DECLINED;
 
   const getSignatoryStatus = (status: string): string => {
     const endsPendingSignatories =
@@ -145,6 +147,8 @@ const MyStatisticsDetails = () => {
             <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.esigningSubject', { subject: subject })}</h1>
             <p>{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
           </div>
+
+          {isDeclined && <CustomAlert title={t('statistics:myStatistics.errors.esigningDeclined')} />}
 
           <div>
             <h3 className="pb-4 text-label-medium">
