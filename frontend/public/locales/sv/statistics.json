@@ -38,7 +38,7 @@
     "recLetterSubject": "{subject} (Rekommenderat Brev)",
     "esigningSubject": "{subject} (E-signering)",
     "signatories": "Signatörer ({count})",
-    "signatoryDescription": "Varje signatör har 30 dagar på sig att öppna och signera brevet, räknat från att det blir deras tur att signera.",
+    "signatoryDescription": "Alla signatörer har 30 dagar på sig att öppna och signera brevet, räknat från att det skickades. Det signerade dokumentet går att ladda ner nedan när alla har signerat.",
     "noMessagesExist": "Du har inte gjort några utskick än. ",
     "failedFetchingFile": "Misslyckades med att hämta filen {fileName}",
     "sms": "Sms",
