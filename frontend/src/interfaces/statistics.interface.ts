@@ -97,6 +97,7 @@ export interface LetterListItem {
   subject: string;
   sent: string;
   letterState?: EnumLetterState;
+  signingProcessState?: EnumSigningState | EnumEsigningProcessState;
 }
 
 export interface RecAttachment {

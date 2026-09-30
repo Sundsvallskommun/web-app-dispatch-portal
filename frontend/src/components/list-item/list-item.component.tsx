@@ -9,6 +9,7 @@ import 'dayjs/locale/sv';
 import Link from 'next/link';
 import { formSendType } from 'src/constants';
 import { LetterStateLabel } from '@components/letter-state-label/letter-state-label.component';
+import { EsigningStatusLabel } from '@components/esigning-status-label/esigning-status-label.component';
 
 interface ListItemComponentProps {
   data: LetterListItem;
@@ -54,6 +55,13 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
     return type === formSendType.SMS;
   };
 
+  const renderStateLabel = () => {
+    if (data?.messageType === formSendType.E_SIGNING) {
+      return <EsigningStatusLabel status={data.signingProcessState} />;
+    }
+    return data?.letterState ? <LetterStateLabel state={data.letterState} /> : null;
+  };
+
   return (
     <Link
       href={`${getMessagePrefixUrl(data?.messageType)}/${data?.id}`}
@@ -78,7 +86,7 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
         </div>
 
         <div className="flex flex-1 justify-end gap-x-80">
-          {data?.letterState ? <LetterStateLabel state={data.letterState} /> : null}
+          {renderStateLabel()}
           <Icon icon={<ChevronRight />} />
         </div>
       </div>

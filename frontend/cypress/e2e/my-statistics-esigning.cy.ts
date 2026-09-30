@@ -21,6 +21,29 @@ describe('My statistics esigning', () => {
     cy.viewport('macbook-16');
   });
 
+  it('should show the case state in the list and navigate to the details', () => {
+    cy.intercept('GET', '**/api/my-statistics', {
+      messages: [
+        {
+          messageId,
+          type: 'E_SIGNING',
+          subject: 'Avtal',
+          sentAt: '2026-09-25T10:00:00',
+          signingStatus: { signingProcessState: 'EXPIRED' },
+        },
+      ],
+    });
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('EXPIRED'));
+    cy.visit('/my-statistics');
+
+    cy.get('[data-cy="my-statistics-list"] a')
+      .contains('Avtal (E-signering)')
+      .closest('a')
+      .should('contain', 'Löpt ut')
+      .click();
+    cy.location('pathname').should('contain', `/my-statistics/esigning/${messageId}`);
+  });
+
   it('should show pending signatories as expired and disable download when the case has expired', () => {
     cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('EXPIRED'));
     cy.visit(`/my-statistics/esigning/${messageId}`);
