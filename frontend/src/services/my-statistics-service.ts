@@ -59,6 +59,7 @@ export const useMyStatistics = (): {
       id: letter.messageId,
       messageType: letter.type,
       letterState: letter.signingStatus?.letterState ?? undefined,
+      signingProcessState: letter.signingStatus?.signingProcessState ?? undefined,
       sent: letter.sentAt,
       subject: letter.subject,
     }));
