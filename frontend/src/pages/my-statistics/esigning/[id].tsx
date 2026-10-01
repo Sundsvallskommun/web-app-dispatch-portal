@@ -173,7 +173,8 @@ const MyStatisticsDetails = () => {
                     disabled={!isSigned}
                     loading={loadingFile === SIGNED_DOCUMENT}
                     onClick={() => getAttachment(signingDocument, true)}
-                    variant="tertiary"
+                    color="vattjom"
+                    size="sm"
                     aria-label={`${t('statistics:myStatistics.showSignedDocument')} ${signingDocument.fileName}`}
                   >
                     {t('statistics:myStatistics.showSignedDocument')} <Icon icon={<Download />} />
@@ -203,6 +204,7 @@ const MyStatisticsDetails = () => {
                         <Button
                           loading={loadingFile === file.attachmentId}
                           onClick={() => getAttachment(file)}
+                          size="sm"
                           variant="tertiary"
                           aria-label={`${t('statistics:myStatistics.showAttachment')} ${file.fileName}`}
                         >
