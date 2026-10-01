@@ -361,6 +361,11 @@ export interface Statistics {
    * @format int64
    */
   digitalRegisteredLetter?: number;
+  /**
+   * Number of e-signing signatures requested
+   * @format int64
+   */
+  esigning?: number;
 }
 
 export interface Pageable {
@@ -390,7 +395,7 @@ export interface Message {
    * @format date-time
    */
   sentAt?: string;
-  /** Status for signing process. Only applicable for message type DIGITAL_REGISTERED_LETTER */
+  /** Status for signing process. Only applicable for message type DIGITAL_REGISTERED_LETTER and E_SIGNING */
   signingStatus?: SigningStatus;
   /**
    * Total number of recipients to whom the message has been sent
@@ -437,9 +442,14 @@ export interface PagingMetaData {
 
 /** Signing status model */
 export interface SigningStatus {
-  /** Present state for the letter */
+  /** Present state for the letter. Not used for E_SIGNING */
   letterState?: string;
-  /** Present state for the signing process */
+  /**
+   * Present state for the signing process.
+   *
+   * - DIGITAL_REGISTERED_LETTER: PENDING, COMPLETED or FAILED
+   * - E_SIGNING: INITIATED, PENDING, SIGNED, EXPIRED, CANCELLED, DECLINED, HALTED or FAILED
+   */
   signingProcessState?: string;
 }
 
@@ -463,7 +473,7 @@ export interface MessageDetails {
    * @format date-time
    */
   sentAt?: string;
-  /** Status for signing process. Only applicable for message type DIGITAL_REGISTERED_LETTER */
+  /** Status for signing process. Only applicable for message type DIGITAL_REGISTERED_LETTER and E_SIGNING */
   signingStatus?: SigningStatus;
   attachments?: AttachmentDetails[];
   recipients?: RecipientDetails[];
@@ -478,6 +488,8 @@ export interface RecipientDetails {
   legalId?: string;
   /** Mobile number */
   mobileNumber?: string;
+  /** E-mail address */
+  email?: string;
   /** Street address */
   streetAddress?: string;
   /** Zip code */

@@ -26,6 +26,7 @@ export interface Recipient {
   name: string;
   partyId?: string;
   mobileNumber?: string;
+  email?: string;
   streetAddress?: string;
   zipCode?: string;
   city?: string;
@@ -62,15 +63,27 @@ export enum EnumSigningState {
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
 }
+export enum EnumEsigningStatus {
+  PENDING = 'PENDING',
+  SIGNED = 'SIGNED',
+  DECLINED = 'DECLINED',
+}
+export enum EnumEsigningProcessState {
+  INITIATED = 'INITIATED',
+  PENDING = 'PENDING',
+  SIGNED = 'SIGNED',
+  EXPIRED = 'EXPIRED',
+  CANCELLED = 'CANCELLED',
+  DECLINED = 'DECLINED',
+  HALTED = 'HALTED',
+  FAILED = 'FAILED',
+}
 export interface Letter {
   messageId: string;
   subject: string;
   type: EnumLetterType;
   sentAt: string;
-  signingStatus: {
-    letterState: EnumLetterState;
-    signingProcessState: EnumSigningState;
-  };
+  signingStatus: SigningStatus;
   numberOfRecipients: number;
 }
 export interface UserLetters {
@@ -127,8 +140,8 @@ export interface UserMessage {
 }
 
 export interface SigningStatus {
-  letterState: EnumLetterState;
-  signingProcessState: EnumSigningState;
+  letterState?: EnumLetterState;
+  signingProcessState?: EnumSigningState | EnumEsigningProcessState;
 }
 
 export function createEmptyUserMessage(): UserMessage {

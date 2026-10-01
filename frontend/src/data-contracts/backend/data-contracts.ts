@@ -126,42 +126,6 @@ export interface AdminUserApiResponse {
   message: string;
 }
 
-export interface RequestBodyMail {
-  recipients: string;
-  addresses: string;
-  subject: string;
-  body?: string;
-}
-
-export interface RequestBodyRecMail {
-  recipientPersonId: string;
-  subject: string;
-  body?: string;
-}
-
-export interface RequestBodyEsigning {
-  signatories: string;
-  subject: string;
-  document: string;
-}
-
-export interface RequestBodyCsvMail {
-  csvId: string;
-  subject: string;
-  body?: string;
-}
-
-export interface RequestBodyCsvSMS {
-  csvId: string;
-  message: string;
-}
-
-export interface RequestBodySMS {
-  /** @minItems 1 */
-  recipients: string[];
-  message: string;
-}
-
 export interface Address {
   firstName?: string;
   lastName?: string;
@@ -224,6 +188,47 @@ export interface Message {
 
 export interface MessageApiResponse {
   data: Message;
+  message: string;
+}
+
+export interface RequestBodyMail {
+  recipients: string;
+  addresses: string;
+  subject: string;
+  body?: string;
+}
+
+export interface RequestBodyRecMail {
+  recipientPersonId: string;
+  subject: string;
+  body?: string;
+}
+
+export interface RequestBodyEsigning {
+  signatories: string;
+  subject: string;
+  document: string;
+}
+
+export interface EsigningSignatoryList {
+  /** @minItems 1 */
+  signatories: ESigningSignatory[];
+}
+
+export interface RequestBodyCsvMail {
+  csvId: string;
+  subject: string;
+  body?: string;
+}
+
+export interface RequestBodyCsvSMS {
+  csvId: string;
+  message: string;
+}
+
+export interface RequestBodySMS {
+  /** @minItems 1 */
+  recipients: string[];
   message: string;
 }
 
