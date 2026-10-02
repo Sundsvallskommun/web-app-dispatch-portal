@@ -31,6 +31,7 @@
     "attachment": "Bilaga",
     "showAttachment": "Ladda ner",
     "showSignedDocument": "Ladda ner signerat dokument",
+    "cancelEsigning": "Återkalla e-signering",
     "all": "Alla leveranssätt",
     "SMSMessagePrefixUrl": "/my-statistics/sms",
     "emailMessagePrefixUrl": "/my-statistics/mail",
@@ -56,6 +57,7 @@
       "signed": "Signerat",
       "declined": "Nekat",
       "expired": "Löpt ut",
+      "cancelled": "Återkallad",
       "failed": "Avbruten"
     },
     "downloadReceipt": "Ladda ner mottagningsbevis",
@@ -68,7 +70,9 @@
       "FailedGettingFile": "Det Misslyckades med att hämta filen ({subject})",
       "someMessagesNotSent": "Ett eller flera brev gick inte att skicka. Kontrollera listan nedan och gör ett nytt utskick för att försök skicka dem igen.",
       "messagesSendingFailed": "Brevet gick inte att skicka. Gör ett nytt utskick för att försök skicka det igen.",
-      "esigningDeclined": "En eller flera mottagare har nekat signeringsförfrågan. Gör om hela signeringsförfrågan för att försöka igen."
+      "esigningDeclined": "En eller flera mottagare har nekat signeringsförfrågan. Gör om hela signeringsförfrågan för att försöka igen.",
+      "esigningCancelled": "Denna signering har återkallats och är inte aktiv.",
+      "cancelEsigningFailed": "Det gick inte att återkalla signeringsförfrågan. Försök igen."
     }
   }
 }

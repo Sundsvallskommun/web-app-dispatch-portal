@@ -15,6 +15,7 @@ import { hasPermissions } from '@/middlewares/permissions.middleware';
 import { MessageApiResponse } from '@/responses/message.response';
 import ApiService from '@/services/api.service';
 import {
+  cancelEsigning,
   logError,
   sendEsigning,
   sendLetter,
@@ -28,7 +29,7 @@ import { logger } from '@/utils/logger';
 import { validateRequestBody } from '@/utils/validate';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Response } from 'express';
-import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
+import { Body, Controller, Delete, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 @Controller()
@@ -202,5 +203,18 @@ export class MessageController {
       logger.error('Error sending csv message', error);
       throw new HttpException(500, 'Internal server error');
     }
+  }
+
+  @Delete('/e-signing/:id')
+  @OpenAPI({ summary: 'Cancel an ongoing esigning' })
+  @UseBefore(authMiddleware, hasPermissions(['canSendEsigning']))
+  async cancelEsigningMessage(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Res() response: Response,
+  ): Promise<Response> {
+    await cancelEsigning(req, this.apiService, id);
+
+    return response.status(204).send();
   }
 }
