@@ -5,4 +5,5 @@ export interface DepartmentStatistics {
   digitalMail: number;
   sms: number;
   digitalRegisteredLetter: number;
+  esigning: number;
 }
