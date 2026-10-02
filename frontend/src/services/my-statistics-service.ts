@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { apiService } from '@services/api-service';
 import {
   LetterListItem,
@@ -100,10 +100,11 @@ export const useMyLetterList = (): {
 
 const emptyUserMessage = createEmptyUserMessage();
 
-export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean } => {
+export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean; refresh: () => void } => {
   // Stored together with the id it was fetched for, so message and loaded can be
   // derived rather than reset through the effect.
   const [resolved, setResolved] = useState<{ messageId: string; message: UserMessage } | null>(null);
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     if (!messageId) {
@@ -121,13 +122,16 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
     return () => {
       cancelled = true;
     };
-  }, [messageId]);
+  }, [messageId, reloadCount]);
+
+  const refresh = useCallback(() => setReloadCount((count) => count + 1), []);
 
   const isCurrent = resolved?.messageId === messageId;
 
   return {
     message: isCurrent ? resolved.message : emptyUserMessage,
     loaded: !messageId || isCurrent,
+    refresh,
   };
 };
 

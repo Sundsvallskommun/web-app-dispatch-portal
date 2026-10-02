@@ -6,6 +6,7 @@ import {
   Recipient,
   RecipientDeliveryMethodEnum,
 } from '@/data-contracts/postportalservice/data-contracts';
+import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { MessageResponseData } from '@/interfaces/message.interface';
 import { appendCsvFile } from '@/utils/csv-service/csv-service';
@@ -354,6 +355,31 @@ export const sendEsigning: (
       logError('Error when sending for e-signing', e);
       throw e;
     });
+};
+
+export const cancelEsigning: (req: RequestWithUser, api: ApiService, id: string) => Promise<void> = async (
+  req,
+  api,
+  id,
+) => {
+  const municipalityId = await getMunicipalityId(req);
+  const { username } = req.user;
+
+  const ownMessageUrl = `${POSTPORTALSERVICE_PATH}/${municipalityId}/history/users/${username}/messages/${id}`;
+  await api.get({ url: ownMessageUrl }, req.user).catch(e => {
+    if (e instanceof HttpException && e.status === 404) {
+      logger.warn(`User ${username} tried to cancel e-signing ${id} which is not theirs, or does not exist`);
+      throw new HttpException(404, 'Esigning not found');
+    }
+    throw e;
+  });
+
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/e-signing/${id}`;
+
+  await api.delete({ url }, req.user).catch(e => {
+    logError('Error when cancelling e-signing', e);
+    throw e;
+  });
 };
 
 export const sendLetterCsv: (
