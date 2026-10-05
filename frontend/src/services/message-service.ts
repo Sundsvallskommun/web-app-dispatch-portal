@@ -95,23 +95,18 @@ export const sendMessage: (
 };
 
 const appendEsigningFiles = async (formData: FormData, files: UploadFile[]) => {
-  const blobObjects = await Promise.all(
-    files.map((uploadFile) => {
-      const fileItem = uploadFile.file;
-
-      if (!fileItem) {
-        console.error('Error: file could not be processed because it is missing its file.');
-        return undefined;
-      }
-
-      return file2blob(fileItem);
-    })
-  );
-
-  for (const blobObject of blobObjects) {
-    if (blobObject) {
-      formData.append(`files`, blobObject.blob, blobObject.attachment.name);
+  const fileItems = files.flatMap((uploadFile) => {
+    if (!uploadFile.file) {
+      console.error('Error: file could not be processed because it is missing its file.');
+      return [];
     }
+    return [uploadFile.file];
+  });
+
+  const blobObjects = await Promise.all(fileItems.map((fileItem) => file2blob(fileItem)));
+
+  for (const { attachment, blob } of blobObjects) {
+    formData.append(`files`, blob, attachment.name);
   }
 };
 
