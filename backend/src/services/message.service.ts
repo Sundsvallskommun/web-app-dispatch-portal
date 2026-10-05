@@ -348,9 +348,7 @@ export const sendEsigning: (
 
   return api
     .post<string, FormData>({ url, data: form, headers }, req.user)
-    .then(async () => {
-      return { signatories };
-    })
+    .then(() => ({ signatories }))
     .catch(e => {
       logError('Error when sending for e-signing', e);
       throw e;
