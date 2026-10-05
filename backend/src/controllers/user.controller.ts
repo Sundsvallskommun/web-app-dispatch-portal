@@ -59,16 +59,20 @@ export class UserController {
     }
     const municipalityId = await getMunicipalityId(req);
     const url = `${getApiBase('employee')}/${municipalityId}/${personId}/personimage`;
-    const res = await this.apiService.get<any>(
-      {
-        url,
-        responseType: 'arraybuffer',
-        params: {
-          width: width,
+    try {
+      const res = await this.apiService.get<any>(
+        {
+          url,
+          responseType: 'arraybuffer',
+          params: {
+            width: width,
+          },
         },
-      },
-      req.user,
-    );
-    return res.data;
+        req.user,
+      );
+      return res.data;
+    } catch {
+      throw new HttpException(404, 'Person image not found');
+    }
   }
 }
