@@ -78,7 +78,8 @@ export const useHelpQA = (): QAItem[] => {
         }),
         ...itemsFactory(t, [24], [EnumQATags.SMS], {
           p: <p className="mt-4 leading-normal text-justify [hyphens:auto]" />,
-          a: <Link href="/files/example-mobilnummer.csv" />,
+          exampleFileLink: <Link href="/files/example-mobilnummer.csv" />,
+          searchPersonLink: <Link href="https://sokperson.sundsvall.se/" target="_blank" rel="noopener noreferrer" />,
         }),
         ...itemsFactory(t, [19, 20, 21], [EnumQATags.REK_MAIL]),
         ...itemsFactory(t, [22, 23], [EnumQATags.SMS]),
