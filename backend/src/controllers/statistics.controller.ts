@@ -34,6 +34,7 @@ export class StatisticsController {
           digitalMail: dep.digitalMail,
           registeredMail: dep.digitalRegisteredLetter,
           sms: dep.sms,
+          esigning: dep.esigning,
         });
       });
 
