@@ -149,6 +149,13 @@ export const sendEsigning: (data: SendEsigningForm) => Promise<Message> = async 
   return res.data.data;
 };
 
+export const cancelEsigning: (id: string) => Promise<void> = async (id) => {
+  await apiService.delete(`e-signing/${id}`).catch((e) => {
+    console.error('Something went wrong when cancelling e-signing:', e);
+    throw e;
+  });
+};
+
 export const sendCsvMessage: (data: FormModel) => Promise<Message> = async (data) => {
   if (!data.recipientList[0]) {
     throw new Error('No csv file included');

@@ -36,6 +36,12 @@ export const EsigningStatusLabel: React.FC<EsigningStatusLabelProps> = ({ status
           {t('statistics:myStatistics.esigningStatus.expired')}
         </Label>
       );
+    case EnumEsigningProcessState.CANCELLED:
+      return (
+        <Label inverted rounded>
+          {t('statistics:myStatistics.esigningStatus.cancelled')}
+        </Label>
+      );
     case EnumEsigningProcessState.HALTED:
     case EnumEsigningProcessState.FAILED:
       return (

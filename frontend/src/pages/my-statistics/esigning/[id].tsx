@@ -12,8 +12,9 @@ import {
   useSnackbar,
   Divider,
   Label,
+  Alert,
 } from '@sk-web-gui/react';
-import { File, Download, Pencil } from 'lucide-react';
+import { File, Download, Pencil, CircleX } from 'lucide-react';
 import { getAttachmentFile, useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { EnumEsigningProcessState, EnumEsigningStatus, MessageAttachment } from '@interfaces/statistics.interface';
@@ -23,7 +24,7 @@ import HeaderMenu from '@components/header-menu/header-menu.component';
 import { formatLegalId } from '@utils/helpers';
 import { capitalize } from 'underscore.string';
 import { EsigningStatusLabel } from '@components/esigning-status-label/esigning-status-label.component';
-import CustomAlert from '@components/custom-alert/custom-alert-component';
+import { cancelEsigning } from '@services/message-service';
 
 const SIGNED_DOCUMENT = 'signed-document';
 
@@ -34,21 +35,43 @@ const MyStatisticsDetails = () => {
   const { t } = useTranslation(['common', 'statistics']);
 
   const [loadingFile, setLoadingFile] = useState<string | null>(null);
-  const { message, loaded } = useMessage(id ?? '');
+  const [cancelling, setCancelling] = useState(false);
+  const { message, loaded, refresh } = useMessage(id ?? '');
   const { recipients, attachments, sentAt, subject, signingStatus } = message;
   const signingDocument = attachments[0];
   const caseState = signingStatus?.signingProcessState;
 
   const isSigned = caseState === EnumEsigningProcessState.SIGNED;
   const isDeclined = caseState === EnumEsigningProcessState.DECLINED;
+  const isCancelled = caseState === EnumEsigningProcessState.CANCELLED;
+  const canCancel = caseState === EnumEsigningProcessState.INITIATED || caseState === EnumEsigningProcessState.PENDING;
 
   const getSignatoryStatus = (status: string): string => {
     const endsPendingSignatories =
       caseState === EnumEsigningProcessState.EXPIRED ||
       caseState === EnumEsigningProcessState.HALTED ||
-      caseState === EnumEsigningProcessState.FAILED;
+      caseState === EnumEsigningProcessState.FAILED ||
+      caseState === EnumEsigningProcessState.CANCELLED;
 
     return status === EnumEsigningStatus.PENDING && endsPendingSignatories ? caseState : status;
+  };
+
+  const handleCancel = async () => {
+    if (!id) return;
+
+    setCancelling(true);
+
+    try {
+      await cancelEsigning(id);
+      refresh();
+    } catch {
+      snackBar({
+        message: t('statistics:myStatistics.errors.cancelEsigningFailed'),
+        status: 'error',
+      });
+    } finally {
+      setCancelling(false);
+    }
   };
 
   const headers: Array<AutoTableHeader | string> = [
@@ -143,12 +166,26 @@ const MyStatisticsDetails = () => {
           data-cy="send-type-item"
           className="flex flex-col w-full mx-auto p-32 bg-background-content shadow-50 rounded-14 gap-56"
         >
-          <div>
-            <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.esigningSubject', { subject: subject })}</h1>
-            <p>{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
+          <div className="flex flex-row justify-between">
+            <div className="flex flex-col">
+              <h1 className="text-h4-lg mb-8">{t('statistics:myStatistics.esigningSubject', { subject: subject })}</h1>
+              <p>{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
+            </div>
+            <div className="flex flex-col">
+              <Button
+                size="sm"
+                variant="primary"
+                disabled={!canCancel}
+                loading={cancelling}
+                onClick={handleCancel}
+              >
+                {t('statistics:myStatistics.cancelEsigning')} <Icon icon={<CircleX />} />
+              </Button>
+            </div>
           </div>
 
-          {isDeclined && <CustomAlert title={t('statistics:myStatistics.errors.esigningDeclined')} />}
+          {isDeclined && <Alert type="error">{t('statistics:myStatistics.errors.esigningDeclined')}</Alert>}
+          {isCancelled && <Alert type="neutral">{t('statistics:myStatistics.errors.esigningCancelled')}</Alert>}
 
           <div>
             <h3 className="pb-4 text-label-medium">

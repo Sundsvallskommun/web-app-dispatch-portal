@@ -68,4 +68,30 @@ describe('My statistics esigning', () => {
 
     cy.contains('button', 'Ladda ner signerat dokument').should('be.enabled');
   });
+
+  it('should only allow cancelling while the case is pending', () => {
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('PENDING'));
+    cy.visit(`/my-statistics/esigning/${messageId}`);
+    cy.contains('button', 'Återkalla e-signering').should('be.enabled');
+
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('SIGNED'));
+    cy.visit(`/my-statistics/esigning/${messageId}`);
+    cy.contains('button', 'Återkalla e-signering').should('be.disabled');
+  });
+
+  it('should cancel the case and show it as cancelled', () => {
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('PENDING')).as('getMessage');
+    cy.intercept('DELETE', `**/api/e-signing/${messageId}`, { statusCode: 204 }).as('cancelEsigning');
+    cy.visit(`/my-statistics/esigning/${messageId}`);
+    cy.wait('@getMessage');
+
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('CANCELLED')).as('getCancelledMessage');
+    cy.contains('button', 'Återkalla e-signering').click();
+
+    cy.wait('@cancelEsigning');
+    cy.wait('@getCancelledMessage');
+    cy.contains('Denna signering har återkallats och är inte aktiv.').should('be.visible');
+    cy.get('[data-cy="esigning-signatory-table"]').should('contain', 'Återkallad');
+    cy.contains('button', 'Återkalla e-signering').should('be.disabled');
+  });
 });
