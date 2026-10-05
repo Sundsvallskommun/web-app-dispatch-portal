@@ -174,7 +174,7 @@ const MyStatisticsDetails = () => {
             <div className="flex flex-col">
               <Button
                 size="sm"
-                variant="tertiary"
+                variant="primary"
                 disabled={!canCancel}
                 loading={cancelling}
                 onClick={handleCancel}
