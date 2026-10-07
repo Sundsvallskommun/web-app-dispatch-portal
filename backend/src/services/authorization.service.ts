@@ -10,6 +10,7 @@ export const defaultPermissions: () => Permissions = () => ({
   canSendSMS: false,
   canSendLetter: true,
   canSendRegisteredLetter: false,
+  canSendEsigning: false,
 });
 
 /**
@@ -45,6 +46,7 @@ export const getPermissions = async (req: RequestWithUser, apiService: ApiServic
 
   permissions.canSendSMS = settingsMap['sms_enabled'] === 'true';
   permissions.canSendRegisteredLetter = settingsMap['rek_enabled'] === 'true';
+  permissions.canSendEsigning = settingsMap['esign_enabled'] === 'true';
 
   return permissions;
 };

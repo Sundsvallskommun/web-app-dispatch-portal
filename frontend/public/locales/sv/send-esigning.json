@@ -1,0 +1,61 @@
+{
+  "eSigning": "E-signering",
+  "stepper": {
+    "recipients": "Mottagare",
+    "attachments": "Ämne och filer",
+    "review": "Granska"
+  },
+  "recipientHandler": {
+    "title": "Lägg till vem/vilka som ska signera",
+    "signersLabel": "Tillagda signatörer",
+    "signersDescription": "Signatörerna signerar en i taget, i den ordning de listas nedan.",
+    "noSigners": "Inga signatörer tillagda än.",
+    "emailLabelInfo": "E-postadress (obligatoriskt)",
+    "emailLabel": "E-postadress",
+    "recipients": "Signatör",
+    "order": "Ordning",
+    "moveUp": "Flytta {name} uppåt i signeringsordningen",
+    "moveDown": "Flytta {name} nedåt i signeringsordningen",
+    "errors": {
+      "invalidEmail": "Ange en giltig e-postadress.",
+      "noSignatory": "Du måste lägga till minst en signatör."
+    }
+  },
+  "attachmentHandler": {
+    "title": "Ämne",
+    "subjectDescription": "Visas för signatörerna i e-postmeddelandet.",
+    "subjectPlaceholder": "Namn på signeringsdokument",
+    "signingDocumentLabel": "Dokument för signering",
+    "signingDocumentDescription": "Bifoga det dokument som ska signeras. Endast 1 fil (PDF).",
+    "attachmentsLabel": "Bilagor (valfritt)",
+    "attachmentsDescription": "Bakgrundsmaterial eller andra dokument som ska följa med men inte signeras.",
+    "attachmentListLabel": "Bifogade filer",
+    "noAttachments": "Du har inte bifogat några filer än.",
+    "signingLabel": "Signering",
+    "attachmentLabel": "Bilaga",
+    "fileSizeKb": "{size, number(maximumFractionDigits: 0)} kB",
+    "fileSizeMb": "{size, number(maximumFractionDigits: 1)} MB",
+    "errors": {
+      "noSubject": "Ange ett ämne för utskicket.",
+      "noSigningDocument": "Du måste ladda upp ett dokument för signering.",
+      "oneSigningDocument": "Endast ett dokument kan signeras.",
+      "wrongFileType": "Ogiltigt filformat. Endast PDF-filer kan laddas upp.",
+      "emptyFile": "Filen du försöker bifoga är tom. Försök igen.",
+      "maxNumberFiles": "För många valda filer - max {allowMax} st kan läggas till.",
+      "duplicateFileName": "En fil med samma namn är redan uppladdad. Ändra filnamnet innan du laddar upp igen."
+    }
+  },
+  "reviewHandler": {
+    "title": "Granska",
+    "description": "Signatörerna signerar en i taget, i den ordning de listas nedan.",
+    "signatories": "Signatörer ({count})",
+    "subject": "Ämne",
+    "attachments": "Bifogade filer",
+    "error": "Något gick fel"
+  },
+  "success": {
+    "header": "Din signeringsförfrågan är skickad",
+    "description": "Följ status för din signeringsförfrågan under Dina utskick.",
+    "buttonMsg": "Skicka ny signeringsförfrågan"
+  }
+}

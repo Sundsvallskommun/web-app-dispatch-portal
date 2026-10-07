@@ -9,6 +9,7 @@ import 'dayjs/locale/sv';
 import Link from 'next/link';
 import { formSendType } from 'src/constants';
 import { LetterStateLabel } from '@components/letter-state-label/letter-state-label.component';
+import { EsigningStatusLabel } from '@components/esigning-status-label/esigning-status-label.component';
 
 interface ListItemComponentProps {
   data: LetterListItem;
@@ -20,6 +21,8 @@ export const getMessagePrefixUrl = (type: string) => {
       return '/my-statistics/sms';
     case formSendType.DIGITAL_REGISTERED_LETTER:
       return '/my-statistics/rek-mail';
+    case formSendType.E_SIGNING:
+      return '/my-statistics/esigning';
     default:
       return '/my-statistics/mail';
   }
@@ -36,6 +39,8 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
         return t('common:textMessage');
       case formSendType.DIGITAL_REGISTERED_LETTER:
         return t('common:recLetter');
+      case formSendType.E_SIGNING:
+        return t('common:esigning');
       case formSendType.SNAIL_MAIL:
       case formSendType.DIGITAL_MAIL:
       case formSendType.EMAIL:
@@ -48,6 +53,13 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
 
   const isSMS = (type: string) => {
     return type === formSendType.SMS;
+  };
+
+  const renderStateLabel = () => {
+    if (data?.messageType === formSendType.E_SIGNING) {
+      return <EsigningStatusLabel status={data.signingProcessState} />;
+    }
+    return data?.letterState ? <LetterStateLabel state={data.letterState} /> : null;
   };
 
   return (
@@ -74,7 +86,7 @@ export const ListItem: React.FC<ListItemComponentProps> = (props) => {
         </div>
 
         <div className="flex flex-1 justify-end gap-x-80">
-          {data?.letterState ? <LetterStateLabel state={data.letterState} /> : null}
+          {renderStateLabel()}
           <Icon icon={<ChevronRight />} />
         </div>
       </div>

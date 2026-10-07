@@ -34,6 +34,7 @@ export class StatisticsController {
           digitalMail: dep.digitalMail,
           registeredMail: dep.digitalRegisteredLetter,
           sms: dep.sms,
+          esigning: dep.esigning,
         });
       });
 
@@ -191,6 +192,28 @@ export class StatisticsController {
     } catch (error) {
       logger.error('Error getting attachment: ', error);
       throw new HttpException(500, 'Error getting attachment');
+    }
+  }
+
+  @Get('/my-statistics/:id/signed-document')
+  @Header('Content-Type', 'application/pdf')
+  @OpenAPI({ summary: 'Return the signed document belonging to one of my messages' })
+  @UseBefore(authMiddleware)
+  async getSignedDocument(@Req() req: RequestWithUser, @Param('id') id: string): Promise<any> {
+    const municipalityId = await getMunicipalityId(req);
+
+    await this.getOwnMessage(req, municipalityId, id);
+
+    try {
+      const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/history/messages/${id}/signed-document`;
+      const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);
+      return result.data;
+    } catch (error) {
+      if (error instanceof HttpException && error.status === 404) {
+        throw new HttpException(404, 'Signed document not found');
+      }
+      logger.error('Error getting signed document: ', error);
+      throw new HttpException(500, 'Error getting signed document');
     }
   }
 }

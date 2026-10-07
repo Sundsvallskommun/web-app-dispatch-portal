@@ -1,17 +1,35 @@
-import { Address, Recipient } from '@/data-contracts/postportalservice/data-contracts';
-import { RequestBodyCsvMail, RequestBodyCsvSMS, RequestBodyMail, RequestBodyRecMail, RequestBodySMS } from '@/dtos/message.dto';
+import { Address, ESigningSignatory, Recipient } from '@/data-contracts/postportalservice/data-contracts';
+import {
+  EsigningSignatoryList,
+  RequestBodyCsvMail,
+  RequestBodyCsvSMS,
+  RequestBodyEsigning,
+  RequestBodyMail,
+  RequestBodyRecMail,
+  RequestBodySMS,
+} from '@/dtos/message.dto';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { MessageResponse } from '@/interfaces/message.interface';
 import { hasPermissions } from '@/middlewares/permissions.middleware';
 import { MessageApiResponse } from '@/responses/message.response';
 import ApiService from '@/services/api.service';
-import { logError, sendLetter, sendLetterCsv, sendRecLetter, sendSmsMessage, sendSmsMessageCsv } from '@/services/message.service';
+import {
+  cancelEsigning,
+  logError,
+  sendEsigning,
+  sendLetter,
+  sendLetterCsv,
+  sendRecLetter,
+  sendSmsMessage,
+  sendSmsMessageCsv,
+} from '@/services/message.service';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
+import { validateRequestBody } from '@/utils/validate';
 import authMiddleware from '@middlewares/auth.middleware';
 import { Response } from 'express';
-import { Body, Controller, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
+import { Body, Controller, Delete, Param, Post, Req, Res, UploadedFiles, UseBefore } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 @Controller()
@@ -121,6 +139,42 @@ export class MessageController {
     return response.status(200).send({ data: res, message: 'success' });
   }
 
+  @Post('/e-signing/')
+  @OpenAPI({ summary: 'Send documents for signing to signatories' })
+  @UseBefore(authMiddleware, hasPermissions(['canSendEsigning']))
+  @ResponseSchema(MessageApiResponse)
+  async sendEsigningMessage(
+    @Req() req: RequestWithUser,
+    @Body() body: RequestBodyEsigning,
+    @Res() response: Response<MessageResponse>,
+    @UploadedFiles('files', { options: fileUploadOptions, required: true }) files: Express.Multer.File[],
+  ): Promise<Response<MessageResponse>> {
+    let signatories: ESigningSignatory[];
+    try {
+      signatories = JSON.parse(body.signatories);
+    } catch (error) {
+      throw new HttpException(400, 'Could not parse signatory list');
+    }
+
+    await validateRequestBody(EsigningSignatoryList, { signatories });
+
+    const document = files.find(file => file.originalname === body.document);
+
+    if (!document) {
+      throw new HttpException(400, 'Signing document missing');
+    }
+
+    const attachments = files.filter(file => file !== document);
+
+    const res = await sendEsigning(req, this.apiService, signatories, {
+      subject: body.subject,
+      document,
+      attachments,
+    });
+
+    return response.send({ data: res, message: 'success' });
+  }
+
   @Post('/csv-message/')
   @OpenAPI({ summary: 'Send attachment to recipients from csv file' })
   @UseBefore(authMiddleware, hasPermissions(['canSendLetter']))
@@ -149,5 +203,18 @@ export class MessageController {
       logger.error('Error sending csv message', error);
       throw new HttpException(500, 'Internal server error');
     }
+  }
+
+  @Delete('/e-signing/:id')
+  @OpenAPI({ summary: 'Cancel an ongoing esigning' })
+  @UseBefore(authMiddleware, hasPermissions(['canSendEsigning']))
+  async cancelEsigningMessage(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Res() response: Response,
+  ): Promise<Response> {
+    await cancelEsigning(req, this.apiService, id);
+
+    return response.status(204).send();
   }
 }

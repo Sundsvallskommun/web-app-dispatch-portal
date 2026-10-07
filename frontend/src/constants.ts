@@ -6,5 +6,6 @@ export const formSendType = {
   EMAIL: 'EMAIL',
   LETTER: 'LETTER',
   REK_MAIL: 'REK-MAIL',
+  E_SIGNING: 'E_SIGNING',
   DIGITAL_REGISTERED_LETTER: 'DIGITAL_REGISTERED_LETTER',
 } as const;

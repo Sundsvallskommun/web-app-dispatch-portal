@@ -10,5 +10,7 @@
   "sendImportantDoc": "Skicka viktiga dokument tryggt via Kivra när en kvittens från mottagaren behövs.",
   "price20kr": "Pris: 20 kr/mottagare",
   "fastMethodToShare": "Ett snabbt sätt att nå mottagaren när viktig information behöver delas.",
-  "sms": "Sms"
+  "sms": "Sms",
+  "eSigning": "E-signering",
+  "eSigningDescription": "Få dokument signerade digitalt av en eller flera mottagare."
 }

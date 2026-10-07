@@ -2,6 +2,7 @@ export interface Permissions {
   canSendSMS: boolean;
   canSendLetter: boolean;
   canSendRegisteredLetter: boolean;
+  canSendEsigning: boolean;
 }
 export interface User {
   id: number;

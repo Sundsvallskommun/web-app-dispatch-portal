@@ -132,6 +132,7 @@ const samlStrategy = new MultiSamlStrategy(
           canSendSMS: false,
           canSendLetter: true,
           canSendRegisteredLetter: false,
+          canSendEsigning: false,
         },
       };
 

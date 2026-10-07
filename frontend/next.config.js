@@ -24,6 +24,7 @@ envalid.cleanEnv(process.env, {
 });
 
 module.exports = withBundleAnalyzer({
+  turbopack: { root: __dirname },
   basePath: process.env.NEXT_PUBLIC_BASEPATH ?? process.env.NEXT_PUBLIC_BASE_PATH ?? process.env.BASE_PATH ?? '',
   experimental: {},
   output: 'standalone',
