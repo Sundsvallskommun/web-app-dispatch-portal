@@ -51,7 +51,8 @@
     "signatories": "Signatörer ({count})",
     "subject": "Ämne",
     "attachments": "Bifogade filer",
-    "error": "Något gick fel"
+    "error": "Något gick fel",
+    "sendingInfo": "Utskicket kan ta upp till en minut."
   },
   "success": {
     "header": "Din signeringsförfrågan är skickad",
