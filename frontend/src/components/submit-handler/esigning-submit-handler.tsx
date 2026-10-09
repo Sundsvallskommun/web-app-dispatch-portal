@@ -47,7 +47,7 @@ const EsigningSubmitHandler = ({ onSuccess }: EsigningSubmitHandlerProps) => {
         {t('common:send')}
       </Button>
       <output className="absolute right-0 top-full mt-16 flex flex-row items-center gap-8 whitespace-nowrap text-base">
-        {!isSending && (
+        {isSending && (
           <>
             <Icon icon={<Info />} size={20} />
             <span>{t('send-esigning:reviewHandler.sendingInfo')}</span>
