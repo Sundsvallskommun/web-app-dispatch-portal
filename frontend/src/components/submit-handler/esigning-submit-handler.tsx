@@ -1,7 +1,7 @@
 import { sendEsigning } from '@services/message-service';
-import { Button, useSnackbar } from '@sk-web-gui/react';
+import { Button, Icon, useSnackbar } from '@sk-web-gui/react';
 import { SendEsigningForm } from '@utils/esigningFormSchema.yup';
-import { SendHorizonal } from 'lucide-react';
+import { Info, SendHorizonal } from 'lucide-react';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -34,17 +34,27 @@ const EsigningSubmitHandler = ({ onSuccess }: EsigningSubmitHandlerProps) => {
   };
 
   return (
-    <Button
-      variant="primary"
-      color="vattjom"
-      disabled={!isValid}
-      rightIcon={<SendHorizonal />}
-      loading={isSending}
-      loadingText={t('common:sending')}
-      onClick={() => handleSend()}
-    >
-      {t('common:send')}
-    </Button>
+    <div className="relative">
+      <Button
+        variant="primary"
+        color="vattjom"
+        disabled={!isValid}
+        rightIcon={<SendHorizonal />}
+        loading={isSending}
+        loadingText={t('common:sending')}
+        onClick={() => handleSend()}
+      >
+        {t('common:send')}
+      </Button>
+      <output className="absolute right-0 top-full mt-16 flex flex-row items-center gap-8 whitespace-nowrap text-base">
+        {isSending && (
+          <>
+            <Icon icon={<Info />} size={20} />
+            <span>{t('send-esigning:reviewHandler.sendingInfo')}</span>
+          </>
+        )}
+      </output>
+    </div>
   );
 };
 
