@@ -46,17 +46,14 @@ const EsigningSubmitHandler = ({ onSuccess }: EsigningSubmitHandlerProps) => {
       >
         {t('common:send')}
       </Button>
-      <div
-        role="status"
-        className="absolute right-0 top-full mt-16 flex flex-row items-center gap-8 whitespace-nowrap text-base"
-      >
-        {isSending && (
+      <output className="absolute right-0 top-full mt-16 flex flex-row items-center gap-8 whitespace-nowrap text-base">
+        {!isSending && (
           <>
             <Icon icon={<Info />} size={20} />
-            <p>{t('send-esigning:reviewHandler.sendingInfo')}</p>
+            <span>{t('send-esigning:reviewHandler.sendingInfo')}</span>
           </>
         )}
-      </div>
+      </output>
     </div>
   );
 };
