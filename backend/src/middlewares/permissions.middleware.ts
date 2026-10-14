@@ -5,7 +5,7 @@ import { Permissions } from '@interfaces/users.interface';
 import { logger } from '@utils/logger';
 
 export const hasPermissions =
-  (permissions: Array<keyof Permissions>) => async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  (permissions: Array<keyof Permissions>) => (req: RequestWithUser, res: Response, next: NextFunction) => {
     const userPermissions = req.user?.permissions || [];
     if (permissions.every(permission => userPermissions[permission])) {
       next();

@@ -9,7 +9,7 @@ export class DepartmentsController {
   @Get('/my-department')
   @OpenAPI({ summary: 'Return all available departments (and companies)' })
   @UseBefore(authMiddleware)
-  async getMyDepartment(@Req() req: RequestWithUser, @Res() response: Response): Promise<Response> {
+  getMyDepartment(@Req() req: RequestWithUser, @Res() response: Response): Response {
     const user = req.user;
     const orgtree = user.orgTree ?? '';
 
