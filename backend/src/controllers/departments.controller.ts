@@ -1,5 +1,6 @@
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
+import { Response } from 'express';
 import { Controller, Get, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
@@ -8,7 +9,7 @@ export class DepartmentsController {
   @Get('/my-department')
   @OpenAPI({ summary: 'Return all available departments (and companies)' })
   @UseBefore(authMiddleware)
-  async getMyDepartment(@Req() req: RequestWithUser, @Res() response: any): Promise<any> {
+  async getMyDepartment(@Req() req: RequestWithUser, @Res() response: Response): Promise<Response> {
     const user = req.user;
     const orgtree = user.orgTree ?? '';
 

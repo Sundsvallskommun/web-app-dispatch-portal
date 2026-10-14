@@ -1,7 +1,7 @@
 import { ValidationError, validate } from 'class-validator';
 
 import { HttpException } from '@exceptions/HttpException';
-import { plainToInstance } from 'class-transformer';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 
 export const getAllNestedErrors = (error: ValidationError) => {
   if (error.constraints) {
@@ -19,8 +19,8 @@ export const getAllNestedErrors = (error: ValidationError) => {
  * @returns ValidationError[]
  */
 export const validateObject = async (
-  schema: any,
-  data: any,
+  schema: ClassConstructor<object>,
+  data: unknown,
   skipMissingProperties = false,
   whitelist = true,
   forbidNonWhitelisted = true,
@@ -33,7 +33,7 @@ export const validateObject = async (
  * @param schema Should be a `class-validator` object
  * @param body should be the object to validate
  */
-export const validateRequestBody = async (schema, body) => {
+export const validateRequestBody = async (schema: ClassConstructor<object>, body: unknown) => {
   const errors = await validateObject(schema, body);
   if (errors.length > 0) {
     const message = errors.map(getAllNestedErrors).join(', ');

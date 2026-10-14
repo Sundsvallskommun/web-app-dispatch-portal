@@ -20,7 +20,7 @@ export const defaultPermissions: () => Permissions = () => ({
  */
 export const getRoles = (groups: string[]): InternalRole[] => {
   const roles: InternalRole[] = [];
-  for (let group of groups) {
+  for (const group of groups) {
     const groupLower = group.toLowerCase();
     const role = roleADMapping[groupLower];
     if (role) {
@@ -61,7 +61,7 @@ export const getMessagingUserSettings: (req: RequestWithUser, api: ApiService) =
     'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
   };
   return api
-    .get<any>({ url, headers }, req.user)
+    .get<MessagingSettings[]>({ url, headers }, req.user)
     .then(async (_res: ApiResponse<MessagingSettings[]>) => {
       return _res.data;
     })

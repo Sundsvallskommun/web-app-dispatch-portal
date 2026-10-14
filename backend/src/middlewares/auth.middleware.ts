@@ -8,10 +8,9 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     } else {
       next(new HttpException(401, 'NOT_AUTHORIZED'));
     }
-  } catch (error) {
+  } catch {
     next(new HttpException(401, 'AUTH_FAILED'));
   }
 };
 
 export default authMiddleware;
-

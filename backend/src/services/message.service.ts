@@ -13,7 +13,7 @@ import { appendCsvFile } from '@/utils/csv-service/csv-service';
 import { getMunicipalityId } from '@/utils/getMunicipalityId';
 import { logger } from '@/utils/logger';
 import FormData from 'form-data';
-import ApiService, { ApiResponse } from './api.service';
+import ApiService from './api.service';
 
 export interface LetterRequest {
   subject: string;
@@ -125,7 +125,7 @@ export const sendSmsMessage: (
   };
   return api
     .post<string, SMSDTO>({ url, data, headers }, req.user)
-    .then(async (_res: ApiResponse<string>) => {
+    .then(async () => {
       return recipients;
     })
     .catch(e => {
@@ -306,7 +306,7 @@ export const sendRecLetter: (
 
   return api
     .post<string, FormData>({ url, data: form, headers }, req.user)
-    .then(async (res: ApiResponse<string>) => {
+    .then(async () => {
       return { recipientPersonId: recipientPersonId };
     })
     .catch(e => {
@@ -413,7 +413,7 @@ export const sendLetterCsv: (
   return { csv: true };
 };
 
-export const logError = (errorMessage: string, e: any) => {
+export const logError = (errorMessage: string, e: unknown) => {
   console.error(`${errorMessage}:`, e);
   logger.error(`${errorMessage}:`, e);
 };

@@ -22,7 +22,9 @@ const main = async () => {
     await exec(`curl -o "${swaggerPath}" ${API_BASE_URL}/${api.name}/${api.version}/api-docs`);
     console.log(`- ${api.name} ${api.version}`);
 
-    await exec(`npx swagger-typescript-api generate --path "${swaggerPath}" -o "${apiDir}" --modular --no-client --extract-enums`);
+    await exec(
+      `npx swagger-typescript-api generate --path "${swaggerPath}" -o "${apiDir}" --modular --no-client --extract-enums`,
+    );
 
     await new Promise(res => setTimeout(res, 100));
 

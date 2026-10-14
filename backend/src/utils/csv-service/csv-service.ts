@@ -8,8 +8,7 @@ export const appendCsvFile = (csvFile: Express.Multer.File, fieldName: string, f
   }
 
   if (!Buffer.isBuffer(csvFile.buffer)) {
-    // eslint-disable-next-line no-explicit-any
-    csvFile.buffer = Buffer.from((csvFile.buffer as any).data);
+    csvFile.buffer = Buffer.from((csvFile.buffer as unknown as { data: number[] }).data);
     if (!Buffer.isBuffer(csvFile.buffer)) {
       throw new TypeError('Csv file buffer missing');
     }

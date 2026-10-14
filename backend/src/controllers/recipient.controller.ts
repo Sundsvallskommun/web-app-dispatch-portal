@@ -67,7 +67,7 @@ export class RecipientController {
         throw new HttpException(404, 'Citizen message settings not found');
       }
 
-      let data: ExtendedRecipient = {
+      const data: ExtendedRecipient = {
         partyId,
         deliveryMethod: recipient.deliveryMethod as unknown as RecipientDeliveryMethodEnum,
         reason: recipient.reason,

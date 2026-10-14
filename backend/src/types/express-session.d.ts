@@ -6,7 +6,7 @@ declare module 'express-session' {
   interface Session {
     returnTo?: string;
     user?: User;
-    passport?: any;
+    passport?: { user?: User };
     messages: string[];
     municipalityId?: string;
     host?: string;
