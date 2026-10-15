@@ -91,7 +91,7 @@ export class MessageController {
     try {
       recipients = JSON.parse(body.recipients);
       addresses = JSON.parse(body.addresses);
-    } catch (error) {
+    } catch {
       throw new Error('Could not parse recipient list');
     }
 
@@ -152,7 +152,7 @@ export class MessageController {
     let signatories: ESigningSignatory[];
     try {
       signatories = JSON.parse(body.signatories);
-    } catch (error) {
+    } catch {
       throw new HttpException(400, 'Could not parse signatory list');
     }
 

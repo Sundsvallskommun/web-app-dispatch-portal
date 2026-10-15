@@ -53,6 +53,9 @@ import { buildCorsOptions } from './utils/buildCorsOptions';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { normalizeGroup } from './utils/normalizeGroup';
 
+// passport-saml does not export the request type its logout() expects.
+type SamlLogoutRequest = Parameters<MultiSamlStrategy['logout']>[0];
+
 const apiService = new ApiService();
 
 // Rate limiter for sensitive endpoints, e.g., SAML login callback
@@ -138,7 +141,7 @@ const samlStrategy = new MultiSamlStrategy(
 
       const { municipalityId, domain } = await getMunicipalityInfo(req);
 
-      const employeeDetails = await apiService.get<any>(
+      const employeeDetails = await apiService.get<{ personid: string; orgTree?: string }>(
         { url: `${getApiBase('employee')}/${municipalityId}/portalpersondata/${domain}/${employee}` },
         dummyUser,
       );
@@ -173,11 +176,10 @@ const samlStrategy = new MultiSamlStrategy(
       }
       done({ ...err, name: 'AUTH_FAILED' });
     }
-    // eslint-disable-next-line Strategy does not like its own typing
-  } as any,
+  },
   async function (_req: Request, _profile: Profile, done: VerifiedCallback) {
     return done(null, {});
-  } as any,
+  },
 );
 
 class App {
@@ -223,7 +225,7 @@ class App {
     this.app.use(morgan(LOG_FORMAT, { stream }));
     this.app.use(hpp());
     this.app.use(helmet());
-    this.app.use(compression() as any);
+    this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
@@ -319,7 +321,7 @@ class App {
         next();
       },
       (req, res, next) => {
-        samlStrategy.logout(req as any, () => {
+        samlStrategy.logout(req as SamlLogoutRequest, () => {
           req.logout(async err => {
             if (err) {
               return next(err);

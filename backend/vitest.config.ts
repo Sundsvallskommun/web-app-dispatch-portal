@@ -16,9 +16,9 @@ export default defineConfig({
     // routing-controllers / class-validator depend on `emitDecoratorMetadata`, which esbuild
     // (Vitest's default transform) does not emit. SWC does, so we transform with it instead.
     swc.vite({
-      // The repo root .swcrc exists for the `build:swc` script and sets `module: commonjs`
-      // plus its own baseUrl/paths. @swc/core reads it automatically and unplugin-swc does
-      // not suppress it, which rewrites the @/* imports into broken relative requires.
+      // Keep @swc/core from picking up any stray .swcrc: a file-level config would set
+      // `module: commonjs` plus its own baseUrl/paths, which rewrites the @/* imports into
+      // broken relative requires. All SWC options live here instead.
       swcrc: false,
       jsc: {
         parser: { syntax: 'typescript', decorators: true },

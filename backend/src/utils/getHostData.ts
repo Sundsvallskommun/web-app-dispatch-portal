@@ -27,7 +27,9 @@ export const normalizeCertificate = (value?: string | null): string | null | und
   if (!value) return value;
 
   const trimmedValue = value.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n');
-  const withPrefix = trimmedValue.startsWith(CERTIFICATE_PREFIX) ? trimmedValue : `${CERTIFICATE_PREFIX}${trimmedValue}`;
+  const withPrefix = trimmedValue.startsWith(CERTIFICATE_PREFIX)
+    ? trimmedValue
+    : `${CERTIFICATE_PREFIX}${trimmedValue}`;
   return withPrefix.endsWith(CERTIFICATE_SUFFIX) ? withPrefix : `${withPrefix}${CERTIFICATE_SUFFIX}`;
 };
 

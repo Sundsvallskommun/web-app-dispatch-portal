@@ -33,7 +33,7 @@ export class HealthController {
         canSendEsigning: false,
       },
     };
-    const res = await this.apiService.post<{ status: string }, any>({ url, data }, dummyUser).catch(e => {
+    const res = await this.apiService.post<{ status: string }, typeof data>({ url, data }, dummyUser).catch(e => {
       logger.error('Error when doing health check:', e);
       return e;
     });
