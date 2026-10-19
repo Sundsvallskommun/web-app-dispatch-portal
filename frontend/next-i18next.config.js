@@ -9,7 +9,7 @@ const LOCALES_DIR = './public/locales';
 // files in public/locales/<defaultLocale> instead of maintaining it by hand.
 const namespacesFromDisk = () => {
   if (typeof window !== 'undefined') return undefined;
-  const fs = require('fs');
+  const fs = require('node:fs');
   return fs
     .readdirSync(`${LOCALES_DIR}/${i18n.defaultLocale}`)
     .filter((file) => file.endsWith('.json') && !file.endsWith('.missing.json'))
