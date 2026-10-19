@@ -5,7 +5,7 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 
-export default [
+const config = [
   {
     ignores: ['src/**/data-contracts/**'],
   },
@@ -15,7 +15,7 @@ export default [
   {
     plugins: { 'react-refresh': reactRefresh },
     languageOptions: {
-      globals: { ...globals.node, ...globals.browser, ...globals.jest },
+      globals: { ...globals.node, ...globals.browser },
     },
     rules: {
       'react-refresh/only-export-components': [
@@ -32,7 +32,18 @@ export default [
         },
       ],
       '@typescript-eslint/no-explicit-any': 'error',
+      // Promoted to error in eslint-plugin-react-hooks 7.1. Kept as a warning for now; revisit when refactoring the affected effects.
+      'react-hooks/set-state-in-effect': 'warn',
+    },
+  },
+  {
+    // Root config files and build scripts are CommonJS and are loaded by Node/Next with require().
+    files: ['*.config.js', 'scripts/**/*.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
   eslintConfigPrettier,
 ];
+
+export default config;

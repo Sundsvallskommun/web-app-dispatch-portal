@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 const envalid = require('envalid');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
@@ -23,11 +22,12 @@ envalid.cleanEnv(process.env, {
 });
 
 module.exports = withBundleAnalyzer({
+  turbopack: { root: __dirname },
   output: 'standalone',
   images: {
-    remotePatterns: [{ hostname: process.env.DOMAIN_NAME || 'localhost' }],
-    formats: ['image/avif', 'image/webp'],
-    dangerouslyAllowSVG: true,
+    // The only next/image usage is a fixed-size logotype preview for admin users, so optimisation adds nothing.
+    // Disabling it turns off the /_next/image endpoint (sharp decoding of remote, user-uploaded images, SSRF surface).
+    unoptimized: true,
   },
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   transpilePackages: ['lucide-react'],

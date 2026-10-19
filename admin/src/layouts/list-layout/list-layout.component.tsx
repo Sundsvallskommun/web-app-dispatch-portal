@@ -6,7 +6,7 @@ import { Header } from '@layouts/header/header.component';
 import Main from '@layouts/main/main.component';
 import { Spinner } from '@sk-web-gui/react';
 import { useResource } from '@utils/use-resource';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
 
 interface ListLayoutProp {

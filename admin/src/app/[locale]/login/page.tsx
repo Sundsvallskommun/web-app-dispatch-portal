@@ -5,7 +5,7 @@ import Main from '@layouts/main/main.component';
 import { Button, FormErrorMessage } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
 import { appURL } from '@utils/app-url';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { redirect, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { capitalize } from 'underscore.string';
