@@ -11,6 +11,7 @@ import type { AppProps } from 'next/app';
 import { useEffect, useMemo, useState } from 'react';
 import { AppWrapper } from '../contexts/app.context';
 import { appWithTranslation } from 'next-i18next';
+import nextI18NextConfig from '../../next-i18next.config';
 import { useLogotypeStore } from '@services/logotypes-service';
 
 dayjs.extend(utc);
@@ -63,4 +64,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default appWithTranslation(MyApp);
+export default appWithTranslation(MyApp, nextI18NextConfig);
