@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 const envalid = require('envalid');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
@@ -23,11 +22,10 @@ envalid.cleanEnv(process.env, {
 });
 
 module.exports = withBundleAnalyzer({
+  turbopack: { root: __dirname },
   output: 'standalone',
   images: {
-    remotePatterns: [{ hostname: process.env.DOMAIN_NAME || 'localhost' }],
-    formats: ['image/avif', 'image/webp'],
-    dangerouslyAllowSVG: true,
+    unoptimized: true,
   },
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   transpilePackages: ['lucide-react'],
