@@ -14,6 +14,7 @@ export interface Permissions {
   canSendSMS: boolean;
   canSendLetter: boolean;
   canSendRegisteredLetter: boolean;
+  canSendEsigning: boolean;
 }
 
 /** Internal roles */

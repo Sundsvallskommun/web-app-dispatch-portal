@@ -5,6 +5,7 @@ import { Permissions } from '@/interfaces/users.interface';
 import ApiService from '@/services/api.service';
 import { getMunicipalityId } from '@/utils/getMunicipalityId';
 import authMiddleware from '@middlewares/auth.middleware';
+import { Response } from 'express';
 import { Controller, Get, Header, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
@@ -15,8 +16,8 @@ interface UserData {
   username: string;
   permissions: Permissions;
   email: string;
-  avatar?: any;
-  orgTree?: any;
+  avatar?: string;
+  orgTree?: string;
 }
 
 @Controller()
@@ -26,7 +27,7 @@ export class UserController {
   @Get('/me')
   @OpenAPI({ summary: 'Return current user' })
   @UseBefore(authMiddleware)
-  async getUser(@Req() req: RequestWithUser, @Res() response: any): Promise<UserData> {
+  getUser(@Req() req: RequestWithUser, @Res() response: Response): Response {
     const { name, username, givenName, surname, permissions, email, orgTree } = req.user;
 
     if (!name) {
@@ -51,7 +52,7 @@ export class UserController {
   @Header('Content-Type', 'image/jpeg')
   @Header('Cross-Origin-Embedder-Policy', 'require-corp')
   @Header('Cross-Origin-Resource-Policy', 'cross-origin')
-  async getMyEmployeeImage(@Req() req: RequestWithUser, @QueryParam('width') width): Promise<any> {
+  async getMyEmployeeImage(@Req() req: RequestWithUser, @QueryParam('width') width: string): Promise<Buffer> {
     const { personId } = req.user;
 
     if (!personId) {
@@ -59,16 +60,20 @@ export class UserController {
     }
     const municipalityId = await getMunicipalityId(req);
     const url = `${getApiBase('employee')}/${municipalityId}/${personId}/personimage`;
-    const res = await this.apiService.get<any>(
-      {
-        url,
-        responseType: 'arraybuffer',
-        params: {
-          width: width,
+    try {
+      const res = await this.apiService.get<Buffer>(
+        {
+          url,
+          responseType: 'arraybuffer',
+          params: {
+            width: width,
+          },
         },
-      },
-      req.user,
-    );
-    return res.data;
+        req.user,
+      );
+      return res.data;
+    } catch {
+      throw new HttpException(404, 'Person image not found');
+    }
   }
 }

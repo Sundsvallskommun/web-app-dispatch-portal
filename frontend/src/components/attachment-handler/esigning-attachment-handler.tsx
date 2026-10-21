@@ -1,0 +1,134 @@
+import CustomFormErrorMessage from '@components/custom-form-error-message/custom-form-error-message.component';
+import { usePdfFileHandler } from '@components/file-upload/hooks/use-pdf-file-handler';
+import HandlerWrapper from '@components/handler-wrapper/handler-wrapper.component';
+import { Divider, FileUpload, FormControl, FormLabel, Input, UploadFile } from '@sk-web-gui/react';
+import { MAX_ESIGNING_FILE_SIZE_MB } from '@utils/file.utils';
+import { useTranslation } from 'next-i18next';
+import { useFormContext } from 'react-hook-form';
+import { useEsigningDocuments } from 'src/hooks/useEsigningDocuments';
+import { EsigningDocumentList } from '@components/file-upload/esigning-document-list.component';
+
+interface EsigningAttachmentFormModel {
+  subject: string;
+  signatoryDocument: UploadFile[];
+  attachmentList: UploadFile[];
+}
+
+const fileNamesOf = (files: UploadFile[] = []) =>
+  files.map((item) => item.file?.name).filter((name): name is string => !!name);
+
+const errorKeys = {
+  badFile: 'send-esigning:attachmentHandler.errors.wrongFileType',
+  duplicateFileName: 'send-esigning:attachmentHandler.errors.duplicateFileName',
+  emptyFile: 'send-esigning:attachmentHandler.errors.emptyFile',
+  maxNumberFiles: 'send-esigning:attachmentHandler.errors.maxNumberFiles',
+};
+
+const EsigningAttachmentHandler = () => {
+  const { t } = useTranslation(['send-esigning', 'common']);
+  const {
+    register,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useFormContext<EsigningAttachmentFormModel>();
+
+  const { signatoryDocument, attachmentList, combinedDocumentList, isSignatoryDocument } = useEsigningDocuments();
+
+  const documentUpload = usePdfFileHandler({
+    errorKeys,
+    maxFiles: 1,
+    fieldName: 'signatoryDocument',
+    existingFileNames: fileNamesOf(attachmentList),
+  });
+
+  const attachmentUpload = usePdfFileHandler({
+    errorKeys,
+    fieldName: 'attachmentList',
+    existingFileNames: fileNamesOf(signatoryDocument),
+  });
+
+  const handleRemove = (file: UploadFile) => {
+    const field = isSignatoryDocument(file) ? 'signatoryDocument' : 'attachmentList';
+
+    setValue(
+      field,
+      (getValues(field) ?? []).filter((item) => item.id !== file.id),
+      { shouldValidate: true, shouldDirty: true }
+    );
+  };
+
+  return (
+    <div className="w-full flex justify-center">
+      <HandlerWrapper title={t('send-esigning:attachmentHandler.title')}>
+        <FormControl className="w-full mt-[-38px]" size="md">
+          <FormLabel className="sr-only">{t('send-esigning:attachmentHandler.title')}</FormLabel>
+          <p className="text-secondary">{t('send-esigning:attachmentHandler.subjectDescription')}</p>
+          <Input
+            invalid={!!errors?.subject}
+            data-cy="esigning-subject"
+            className="max-w-[500px]"
+            {...register('subject')}
+            placeholder={t('send-esigning:attachmentHandler.subjectPlaceholder')}
+          />
+          {errors?.subject && <CustomFormErrorMessage message={errors.subject.message?.toString()} />}
+        </FormControl>
+
+        <div className="w-full flex flex-col gap-8">
+          <Divider className="mb-30" />
+          <h3 className="text-label-medium">{t('send-esigning:attachmentHandler.signingDocumentLabel')}</h3>
+          <p className="text-secondary">{t('send-esigning:attachmentHandler.signingDocumentDescription')}</p>
+          <FormControl id="signatoryDocument" className="w-full">
+            <FileUpload.Field
+              className="w-full pt-8"
+              name="signatoryDocument"
+              data-cy="signing-document-input"
+              maxFileSizeMB={MAX_ESIGNING_FILE_SIZE_MB}
+              accept={['application/pdf']}
+              onChange={documentUpload.handleFiles}
+              onInvalid={documentUpload.handleError}
+              allowMultiple={false}
+              appendToContext={false}
+              invalid={!!documentUpload.pdfError}
+              data-invalid={!!documentUpload.pdfError}
+            />
+            {documentUpload.pdfError && (
+              <CustomFormErrorMessage message={documentUpload.pdfError.message?.toString()} />
+            )}
+          </FormControl>
+        </div>
+
+        <div className="w-full flex flex-col gap-8">
+          <h3 className="text-label-medium">{t('send-esigning:attachmentHandler.attachmentsLabel')}</h3>
+          <p className="text-secondary">{t('send-esigning:attachmentHandler.attachmentsDescription')}</p>
+          <FormControl id="attachmentList" className="w-full">
+            <FileUpload.Field
+              className="w-full pt-8"
+              name="attachmentList"
+              data-cy="attachment-input"
+              maxFileSizeMB={MAX_ESIGNING_FILE_SIZE_MB}
+              accept={['application/pdf']}
+              onChange={attachmentUpload.handleFiles}
+              onInvalid={attachmentUpload.handleError}
+              allowMultiple={true}
+              appendToContext={false}
+              invalid={!!attachmentUpload.pdfError}
+              data-invalid={!!attachmentUpload.pdfError}
+            />
+            {attachmentUpload.pdfError && (
+              <CustomFormErrorMessage message={attachmentUpload.pdfError.message?.toString()} />
+            )}
+          </FormControl>
+        </div>
+
+        <div className="w-full flex flex-col gap-8">
+          <h3 className="text-label-medium">{t('send-esigning:attachmentHandler.attachmentListLabel')}</h3>
+          {combinedDocumentList.length === 0 && <p>{t('send-esigning:attachmentHandler.noAttachments')}</p>}
+          {combinedDocumentList.length > 0 && <EsigningDocumentList onRemove={handleRemove} />}
+        </div>
+      </HandlerWrapper>
+    </div>
+  );
+};
+
+export default EsigningAttachmentHandler;

@@ -1,7 +1,16 @@
 import { Attachment } from '@components/attachment-handler/attachment-handler';
 import { SMSRequest, SMSStatus } from '@interfaces/sms';
 import { FormModel } from '@pages/send/mail';
-import { Address, Message, MessageApiResponse, Recipient } from 'src/data-contracts/backend/data-contracts';
+import { UploadFile } from '@sk-web-gui/react';
+import { SendEsigningForm } from '@utils/esigningFormSchema.yup';
+import {
+  Address,
+  ESigningSignatory,
+  Message,
+  MessageApiResponse,
+  Recipient,
+  RequestBodyEsigning,
+} from 'src/data-contracts/backend/data-contracts';
 import { ApiResponse, apiService } from './api-service';
 import { file2blob, FileInfo } from '@utils/file.utils';
 
@@ -83,6 +92,70 @@ export const sendMessage: (
     });
 
   return res.data.data;
+};
+
+const appendEsigningFiles = async (formData: FormData, files: UploadFile[]) => {
+  const fileItems = files.flatMap((uploadFile) => {
+    if (!uploadFile.file) {
+      console.error('Error: file could not be processed because it is missing its file.');
+      return [];
+    }
+    return [uploadFile.file];
+  });
+
+  const blobObjects = await Promise.all(fileItems.map((fileItem) => file2blob(fileItem)));
+
+  for (const { attachment, blob } of blobObjects) {
+    formData.append(`files`, blob, attachment.name);
+  }
+};
+
+export const sendEsigning: (data: SendEsigningForm) => Promise<Message> = async (data) => {
+  const document: UploadFile | undefined = data.signatoryDocument[0];
+
+  if (!document?.file) {
+    throw new Error('No signing document included');
+  }
+
+  const signatories: ESigningSignatory[] = data.signatories.map((signatory) => ({
+    partyId: signatory.partyId,
+    name: signatory.name,
+    email: signatory.email,
+  }));
+
+  const requestBody: RequestBodyEsigning = {
+    subject: data.subject,
+    document: document.file.name,
+    signatories: JSON.stringify(signatories),
+  };
+
+  const esigningFormData = new FormData();
+
+  await appendEsigningFiles(esigningFormData, [document, ...data.attachmentList]);
+
+  for (const [field, value] of Object.entries(requestBody)) {
+    if (value !== undefined) {
+      esigningFormData.append(field, value);
+    }
+  }
+
+  const res = await apiService
+    .post<MessageApiResponse, FormData>(`e-signing`, esigningFormData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .catch((e) => {
+      console.error('Something went wrong when sending for e-signing:', e);
+      throw e;
+    });
+
+  return res.data.data;
+};
+
+export const cancelEsigning: (id: string) => Promise<void> = async (id) => {
+  await apiService.delete(`e-signing/${id}`).catch((e) => {
+    console.error('Something went wrong when cancelling e-signing:', e);
+    throw e;
+  });
 };
 
 export const sendCsvMessage: (data: FormModel) => Promise<Message> = async (data) => {

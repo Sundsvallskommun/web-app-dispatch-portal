@@ -1,12 +1,19 @@
 import { getApiBase } from '@/config';
-import { Address, Recipient, RecipientDeliveryMethodEnum } from '@/data-contracts/postportalservice/data-contracts';
+import {
+  Address,
+  ESigningRequest,
+  ESigningSignatory,
+  Recipient,
+  RecipientDeliveryMethodEnum,
+} from '@/data-contracts/postportalservice/data-contracts';
+import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { MessageResponseData } from '@/interfaces/message.interface';
 import { appendCsvFile } from '@/utils/csv-service/csv-service';
 import { getMunicipalityId } from '@/utils/getMunicipalityId';
 import { logger } from '@/utils/logger';
 import FormData from 'form-data';
-import ApiService, { ApiResponse } from './api.service';
+import ApiService from './api.service';
 
 export interface LetterRequest {
   subject: string;
@@ -90,6 +97,11 @@ interface RecMessage {
   recipientPersonId: string;
   files: Express.Multer.File[];
 }
+interface EsigningMessage {
+  subject: string;
+  document: Express.Multer.File;
+  attachments: Express.Multer.File[];
+}
 
 export interface SMSDTO {
   message: string;
@@ -113,7 +125,7 @@ export const sendSmsMessage: (
   };
   return api
     .post<string, SMSDTO>({ url, data, headers }, req.user)
-    .then(async (_res: ApiResponse<string>) => {
+    .then(async () => {
       return recipients;
     })
     .catch(e => {
@@ -168,22 +180,26 @@ export const sendSmsMessageCsv: (
   return { csv: true };
 };
 
-function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
+export function appendPdfFile(form: FormData, fieldName: string, file: Express.Multer.File): void {
+  if (file.mimetype !== 'application/pdf') {
+    throw new Error(`Invalid mimetype "${file.mimetype}" — only application/pdf is allowed`);
+  }
+
+  if (!Buffer.isBuffer(file.buffer)) {
+    throw new TypeError(`Missing or invalid buffer for file: ${file.originalname}`);
+  }
+
+  form.append(fieldName, file.buffer, {
+    filename: file.originalname,
+    contentType: 'application/pdf',
+  });
+}
+
+export function appendPdfAttachments(form: FormData, files?: Express.Multer.File[]): void {
   if (!files?.length) return;
 
   for (const file of files) {
-    if (file.mimetype !== 'application/pdf') {
-      throw new Error(`Invalid mimetype "${file.mimetype}" — only application/pdf is allowed`);
-    }
-
-    if (!Buffer.isBuffer(file.buffer)) {
-      throw new TypeError(`Missing or invalid buffer for file: ${file.originalname}`);
-    }
-
-    form.append('attachments', file.buffer, {
-      filename: file.originalname,
-      contentType: 'application/pdf',
-    });
+    appendPdfFile(form, 'attachments', file);
   }
 }
 
@@ -290,7 +306,7 @@ export const sendRecLetter: (
 
   return api
     .post<string, FormData>({ url, data: form, headers }, req.user)
-    .then(async (res: ApiResponse<string>) => {
+    .then(async () => {
       return { recipientPersonId: recipientPersonId };
     })
     .catch(e => {
@@ -299,6 +315,69 @@ export const sendRecLetter: (
       logger.error(`${errorMessage}:`, e);
       throw e;
     });
+};
+
+export const sendEsigning: (
+  req: RequestWithUser,
+  api: ApiService,
+  signatories: ESigningSignatory[],
+  message: EsigningMessage,
+) => Promise<MessageResponseData> = async (req, api, signatories, message) => {
+  const { subject, document, attachments } = message;
+  const municipalityId = await getMunicipalityId(req);
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/e-signing`;
+
+  const request: ESigningRequest = {
+    subject: subject,
+    signatories: signatories,
+  };
+
+  const form = new FormData();
+
+  form.append('request', JSON.stringify(request), {
+    contentType: 'application/json',
+  });
+
+  appendPdfFile(form, 'document', document);
+  appendPdfAttachments(form, attachments);
+
+  const headers = {
+    ...form.getHeaders(),
+    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
+  };
+
+  return api
+    .post<string, FormData>({ url, data: form, headers }, req.user)
+    .then(() => ({ signatories }))
+    .catch(e => {
+      logError('Error when sending for e-signing', e);
+      throw e;
+    });
+};
+
+export const cancelEsigning: (req: RequestWithUser, api: ApiService, id: string) => Promise<void> = async (
+  req,
+  api,
+  id,
+) => {
+  const municipalityId = await getMunicipalityId(req);
+  const { username } = req.user;
+
+  const ownMessageUrl = `${POSTPORTALSERVICE_PATH}/${municipalityId}/history/users/${username}/messages/${id}`;
+  await api.get({ url: ownMessageUrl }, req.user).catch(e => {
+    if (e instanceof HttpException && e.status === 404) {
+      logger.warn(`User ${username} tried to cancel e-signing ${id} which is not theirs, or does not exist`);
+      throw new HttpException(404, 'Esigning not found');
+    }
+    throw e;
+  });
+
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/e-signing/${id}`;
+
+  await api.delete({ url }, req.user).catch(e => {
+    logError('Error when cancelling e-signing', e);
+    throw e;
+  });
 };
 
 export const sendLetterCsv: (
@@ -334,7 +413,7 @@ export const sendLetterCsv: (
   return { csv: true };
 };
 
-export const logError = (errorMessage: string, e: any) => {
+export const logError = (errorMessage: string, e: unknown) => {
   console.error(`${errorMessage}:`, e);
   logger.error(`${errorMessage}:`, e);
 };

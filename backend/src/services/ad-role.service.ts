@@ -6,11 +6,10 @@ export type RoleADMapping = {
   [key: string]: InternalRoleEnum;
 };
 
-let mapping: RoleADMapping = {};
+const mapping: RoleADMapping = {};
 
 for (const group of parseConfiguredGroups(ADMIN_GROUP)) {
   mapping[group] = InternalRoleEnum.Admin;
 }
 
 export const roleADMapping: RoleADMapping = mapping;
-

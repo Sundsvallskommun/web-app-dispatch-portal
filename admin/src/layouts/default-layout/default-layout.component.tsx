@@ -5,7 +5,7 @@ import { useUserStore } from '@services/user-service/user-service';
 import { Avatar, ColorSchemeMode, Icon, Logo, PopupMenu } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { Check, ChevronRight, Monitor, Moon, Sun } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import NextLink from 'next/link';
 import { capitalize } from 'underscore.string';
 import { useShallow } from 'zustand/react/shallow';

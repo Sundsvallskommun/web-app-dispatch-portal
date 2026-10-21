@@ -1,4 +1,4 @@
-import { plainToInstance } from 'class-transformer';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { RequestHandler } from 'express';
 import { HttpException } from '@exceptions/HttpException';
@@ -11,7 +11,7 @@ const getAllNestedErrors = (error: ValidationError) => {
 };
 
 export const validationMiddleware = (
-  type: any,
+  type: ClassConstructor<object>,
   value: string | 'body' | 'query' | 'params' = 'body',
   skipMissingProperties = false,
   whitelist = true,

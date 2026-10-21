@@ -19,6 +19,7 @@
     },
     "recipient": "mottagare",
     "address": "Adress",
+    "email": "E-postadress",
     "deliveryMethod": "Leveranssätt",
     "recipientDescription": "Mottagaren har 30 dagar på sig att öppna och signera brevet i Kivra. När brevet är signerat kan ett mottagningsbevis laddas ner.",
     "unknown": "Okänd",
@@ -26,12 +27,19 @@
     "message": "Meddelande",
     "description": "Här hittar du dina skickade brev.",
     "attachments": "Bifogade filer",
+    "signingDocument": "Signering",
+    "attachment": "Bilaga",
     "showAttachment": "Ladda ner",
+    "showSignedDocument": "Ladda ner signerat dokument",
+    "cancelEsigning": "Återkalla e-signering",
     "all": "Alla leveranssätt",
     "SMSMessagePrefixUrl": "/my-statistics/sms",
     "emailMessagePrefixUrl": "/my-statistics/mail",
     "letterSubject": "{subject} (Brev)",
     "recLetterSubject": "{subject} (Rekommenderat Brev)",
+    "esigningSubject": "{subject} (E-signering)",
+    "signatories": "Signatörer ({count})",
+    "signatoryDescription": "Alla signatörer har 30 dagar på sig att öppna och signera brevet, räknat från att det skickades. Det signerade dokumentet går att ladda ner nedan när alla har signerat.",
     "noMessagesExist": "Du har inte gjort några utskick än. ",
     "failedFetchingFile": "Misslyckades med att hämta filen {fileName}",
     "sms": "Sms",
@@ -44,6 +52,14 @@
       "failed": "Misslyckat",
       "expired": "Löpt ut"
     },
+    "esigningStatus": {
+      "sent": "Skickat",
+      "signed": "Signerat",
+      "declined": "Nekat",
+      "expired": "Löpt ut",
+      "cancelled": "Återkallad",
+      "failed": "Avbruten"
+    },
     "downloadReceipt": "Ladda ner mottagningsbevis",
     "downloading": "Hämtar mottagningsbevis..",
     "receiptStatus": {
@@ -53,7 +69,10 @@
     "errors": {
       "FailedGettingFile": "Det Misslyckades med att hämta filen ({subject})",
       "someMessagesNotSent": "Ett eller flera brev gick inte att skicka. Kontrollera listan nedan och gör ett nytt utskick för att försök skicka dem igen.",
-      "messagesSendingFailed": "Brevet gick inte att skicka. Gör ett nytt utskick för att försök skicka det igen."
+      "messagesSendingFailed": "Brevet gick inte att skicka. Gör ett nytt utskick för att försök skicka det igen.",
+      "esigningDeclined": "En eller flera mottagare har nekat signeringsförfrågan. Gör om hela signeringsförfrågan för att försöka igen.",
+      "esigningCancelled": "Denna signering har återkallats och är inte aktiv.",
+      "cancelEsigningFailed": "Det gick inte att återkalla signeringsförfrågan. Försök igen."
     }
   }
 }

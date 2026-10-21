@@ -19,7 +19,7 @@ export class StatisticsController {
   @Get('/statistics/departments')
   @OpenAPI({ summary: 'Return department statistics' })
   @UseBefore(authMiddleware)
-  async getStatistics(@Req() req: RequestWithUser, @Res() response: any): Promise<DepartmentStatistics> {
+  async getStatistics(@Req() req: RequestWithUser, @Res() response: Response): Promise<Response> {
     try {
       const municipalityId = await getMunicipalityId(req);
       const { year, month } = req.query;
@@ -34,6 +34,7 @@ export class StatisticsController {
           digitalMail: dep.digitalMail,
           registeredMail: dep.digitalRegisteredLetter,
           sms: dep.sms,
+          esigning: dep.esigning,
         });
       });
 
@@ -95,9 +96,9 @@ export class StatisticsController {
   @UseBefore(authMiddleware)
   async getMyStatisticsMessage(
     @Req() req: RequestWithUser,
-    @Res() response: any,
+    @Res() response: Response<UserMessage>,
     @Param('id') id: string,
-  ): Promise<UserMessage> {
+  ): Promise<Response<UserMessage>> {
     const municipalityId = await getMunicipalityId(req);
     const message = await this.getOwnMessage(req, municipalityId, id);
 
@@ -136,7 +137,7 @@ export class StatisticsController {
   @Get('/receipt/:id')
   @OpenAPI({ summary: 'Return receipt PDF' })
   @UseBefore(authMiddleware)
-  async getReceipt(@Req() req: RequestWithUser, @Res() res: Response, @Param('id') id: string): Promise<any> {
+  async getReceipt(@Req() req: RequestWithUser, @Res() res: Response, @Param('id') id: string): Promise<Response> {
     const municipalityId = await getMunicipalityId(req);
 
     await this.getOwnMessage(req, municipalityId, id);
@@ -173,7 +174,7 @@ export class StatisticsController {
     @Req() req: RequestWithUser,
     @Param('id') id: string,
     @Param('attachmentId') attachmentId: string,
-  ): Promise<any> {
+  ): Promise<Buffer> {
     const municipalityId = await getMunicipalityId(req);
 
     const message = await this.getOwnMessage(req, municipalityId, id);
@@ -185,12 +186,34 @@ export class StatisticsController {
 
     try {
       const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/attachments/${attachmentId}`;
-      const result = await this.apiService.get({ url, responseType: 'arraybuffer' }, req.user);
+      const result = await this.apiService.get<Buffer>({ url, responseType: 'arraybuffer' }, req.user);
       // NOTE: send the raw file
       return result.data;
     } catch (error) {
       logger.error('Error getting attachment: ', error);
       throw new HttpException(500, 'Error getting attachment');
+    }
+  }
+
+  @Get('/my-statistics/:id/signed-document')
+  @Header('Content-Type', 'application/pdf')
+  @OpenAPI({ summary: 'Return the signed document belonging to one of my messages' })
+  @UseBefore(authMiddleware)
+  async getSignedDocument(@Req() req: RequestWithUser, @Param('id') id: string): Promise<Buffer> {
+    const municipalityId = await getMunicipalityId(req);
+
+    await this.getOwnMessage(req, municipalityId, id);
+
+    try {
+      const url = `${this.POSTPORTALSERVICE_PATH}/${municipalityId}/history/messages/${id}/signed-document`;
+      const result = await this.apiService.get<Buffer>({ url, responseType: 'arraybuffer' }, req.user);
+      return result.data;
+    } catch (error) {
+      if (error instanceof HttpException && error.status === 404) {
+        throw new HttpException(404, 'Signed document not found');
+      }
+      logger.error('Error getting signed document: ', error);
+      throw new HttpException(500, 'Error getting signed document');
     }
   }
 }

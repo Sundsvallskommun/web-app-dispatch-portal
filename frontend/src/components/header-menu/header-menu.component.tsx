@@ -3,7 +3,6 @@ import { mainMenuItems } from '@components/main-menu/main-menu-items';
 import { MainMenu } from '@components/main-menu/main-menu.component';
 import { useUserStore } from '@services/user-service/user-service';
 import { Header, Icon, PopupMenu, UserMenu, useThemeQueries } from '@sk-web-gui/react';
-import { apiURL } from '@utils/api-url';
 import NextLink from 'next/link';
 import { useShallow } from 'zustand/shallow';
 import { Menu } from 'lucide-react';
@@ -15,6 +14,7 @@ const HeaderMenu = () => {
   const { isMinMd } = useThemeQueries();
   const user = useUserStore(useShallow((state) => state.user));
   const { t } = useTranslation(['common']);
+  const avatar = useUserStore((state) => state.avatar);
 
   const setFocusToMain = () => {
     const contentElement = document.getElementById('content');
@@ -40,7 +40,7 @@ const HeaderMenu = () => {
                 initials={`${user.givenName.charAt(0)}${user.surname.charAt(0)}`}
                 menuTitle={`${user.name} (${user.username})`}
                 menuGroups={userMenuGroups}
-                image={apiURL(`/user/avatar?width=44`)}
+                image={avatar}
               />
             </span>
           }

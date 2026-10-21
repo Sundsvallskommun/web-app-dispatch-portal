@@ -12,6 +12,7 @@
   "receiver": "Mottagare",
   "letter": "Brev",
   "recLetter": "Rekommenderat brev",
+  "esigning": "E-signering",
   "textMessage": "Sms",
   "stepper": {
     "recipient": "Mottagare",

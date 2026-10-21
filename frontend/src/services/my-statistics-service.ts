@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { apiService } from '@services/api-service';
 import {
   LetterListItem,
@@ -59,6 +59,7 @@ export const useMyStatistics = (): {
       id: letter.messageId,
       messageType: letter.type,
       letterState: letter.signingStatus?.letterState ?? undefined,
+      signingProcessState: letter.signingStatus?.signingProcessState ?? undefined,
       sent: letter.sentAt,
       subject: letter.subject,
     }));
@@ -99,10 +100,11 @@ export const useMyLetterList = (): {
 
 const emptyUserMessage = createEmptyUserMessage();
 
-export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean } => {
+export const useMessage = (messageId: string): { message: UserMessage; loaded: boolean; refresh: () => void } => {
   // Stored together with the id it was fetched for, so message and loaded can be
   // derived rather than reset through the effect.
   const [resolved, setResolved] = useState<{ messageId: string; message: UserMessage } | null>(null);
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     if (!messageId) {
@@ -120,13 +122,16 @@ export const useMessage = (messageId: string): { message: UserMessage; loaded: b
     return () => {
       cancelled = true;
     };
-  }, [messageId]);
+  }, [messageId, reloadCount]);
+
+  const refresh = useCallback(() => setReloadCount((count) => count + 1), []);
 
   const isCurrent = resolved?.messageId === messageId;
 
   return {
     message: isCurrent ? resolved.message : emptyUserMessage,
     loaded: !messageId || isCurrent,
+    refresh,
   };
 };
 
@@ -191,9 +196,14 @@ export const useDownloadReceipt = (signingInfoData: SigningInfo | null) => {
 
 export const getAttachmentFile: (
   messageId: string,
-  attachmentId: string
+  attachmentId?: string
 ) => Promise<AttachmentResponse | AttachmentError> = (messageId, attachmentId) =>
   apiService
-    .get<ArrayBuffer>(`/my-statistics/${messageId}/attachment/${attachmentId}`, { responseType: 'arraybuffer' })
+    .get<ArrayBuffer>(
+      attachmentId
+        ? `/my-statistics/${messageId}/attachment/${attachmentId}`
+        : `/my-statistics/${messageId}/signed-document`,
+      { responseType: 'arraybuffer' }
+    )
     .then((res) => res)
     .catch((e) => ({ error: e.response?.status ?? 'UNKNOWN ERROR' }));

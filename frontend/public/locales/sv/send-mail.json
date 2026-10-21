@@ -97,6 +97,7 @@
     "fetchRecipientError": {
       "alreadyExists": "Personen är redan tillagd",
       "singleRecipient": "Kunde inte hämta mottagare. Har du angivit person- eller organisationsnumret korrekt?",
+      "singleRecipientRek": "Kunde inte hämta mottagare. Har du angivit personnumret korrekt?",
       "csvFile": "Kunde inte kontrollera CSV-fil. Kontrollera din fil, och försök igen."
     },
     "personalNumberError": {

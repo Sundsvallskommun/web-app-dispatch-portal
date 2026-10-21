@@ -32,6 +32,10 @@ const headers: Array<AutoTableHeader | string> = [
     property: 'sms',
     label: 'Sms',
   },
+  {
+    property: 'esigning',
+    label: 'E-signering',
+  },
 ];
 
 const generateMonthOptions = () => {

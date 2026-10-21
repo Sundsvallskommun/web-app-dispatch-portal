@@ -8,7 +8,7 @@ import EditLayout from '@layouts/edit-layout/edit-layout.component';
 import { useRouteGuard } from '@utils/routeguard.hook';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { useResource } from '@utils/use-resource';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

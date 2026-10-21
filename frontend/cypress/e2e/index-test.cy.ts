@@ -5,8 +5,8 @@ describe('Index page', () => {
     cy.visit('/');
   });
 
-  it('should have three boxes for letter, recommended letter and sms', () => {
-    const expectedPaths = ['/send/mail', '/send/rek-mail', '/send/sms'];
+  it('should have four boxes for letter, recommended letter, sms and esigning', () => {
+    const expectedPaths = ['/send/mail', '/send/rek-mail', '/send/sms', '/send/esigning'];
 
     cy.get('a.start-link').should('have.length', expectedPaths.length);
 
