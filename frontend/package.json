@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "yarn@1.22.22",
   "scripts": {
+    "predev": "node scripts/generate-version.js",
     "dev": "dotenv next dev",
-    "prebuild": "node scripts/generate-version.js",
     "build": "next build",
     "start": "dotenv next start",
     "generate:contracts": "cross-env NODE_ENV=development npx tsx ./src/swagger-typescript-api.ts",
