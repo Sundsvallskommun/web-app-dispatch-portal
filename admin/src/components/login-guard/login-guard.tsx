@@ -20,10 +20,13 @@ export const LoginGuard: React.FC<{ children?: React.ReactNode }> = ({ children 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!isLoading && !user.name && !pathname.startsWith('/login')) {
+  const shouldRedirect = !isLoading && !user.name && !pathname.startsWith('/login');
+
+  useEffect(() => {
+    if (!shouldRedirect) return;
     const path = globalThis.location.pathname.startsWith('/logout') ? '/' : globalThis.location.pathname;
     router.push(`/login?path=${path}`);
-  }
+  }, [shouldRedirect, router]);
 
   if (isLoading || (!user.name && !pathname.startsWith('/login'))) {
     return <LoaderFullScreen />;
