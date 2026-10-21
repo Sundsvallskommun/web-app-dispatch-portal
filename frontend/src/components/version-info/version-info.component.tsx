@@ -12,6 +12,7 @@ export const VersionInfo = () => {
   const [version, setVersion] = useState<Version | null>(null);
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
     const controller = new AbortController();
     axios
       .get<Version>(appURL('/version.json'), { signal: controller.signal })
