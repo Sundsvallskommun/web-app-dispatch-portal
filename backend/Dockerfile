@@ -42,4 +42,4 @@ USER nodejs
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["node", "./dist/server.js"]
+CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && exec node ./dist/server.js"]
