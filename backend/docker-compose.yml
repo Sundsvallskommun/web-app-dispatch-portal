@@ -1,0 +1,17 @@
+# Local PostgreSQL for development: docker compose --env-file .env.development.local up -d
+# Same image as in OpenShift, so the database behaves the same in both places.
+services:
+  postgres:
+    image: quay.io/sclorg/postgresql-16-c9s:latest
+    container_name: dispatch-portal-postgres
+    environment:
+      POSTGRESQL_USER: postportal
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.development.local}
+      POSTGRESQL_DATABASE: postportal
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres:/var/lib/pgsql/data
+
+volumes:
+  postgres:

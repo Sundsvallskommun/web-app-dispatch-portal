@@ -1,4 +1,4 @@
-import { Host as HostModel } from '@prisma/client';
+import { Host as HostModel } from '@prisma-generated/postgresql';
 import { Type } from 'class-transformer';
 import { IsDateString, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { IDP } from './idp.response';
