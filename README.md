@@ -83,11 +83,11 @@ yarn prisma:generate
 yarn prisma:migrate
 ```
 
-Med PostgreSQL, som lokalt körs i Docker med samma image som i OpenShift. Sätt `DATABASE_PROVIDER=postgresql` i `.env.development.local` och byt `<password>` i `DATABASE_URL` mot `POSTGRESQL_PASSWORD` från `backend/docker-compose.yml`:
+Med PostgreSQL, som lokalt körs i Docker med samma image som i OpenShift. Sätt i `.env.development.local` `DATABASE_PROVIDER=postgresql`, välj ett lösenord i `POSTGRES_PASSWORD` och använd samma lösenord i stället för `<password>` i `DATABASE_URL`. Compose läser lösenordet från samma fil:
 
 ```
 cd backend
-docker compose up -d
+docker compose --env-file .env.development.local up -d
 yarn prisma:generate
 yarn prisma:migrate
 ```

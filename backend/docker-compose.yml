@@ -1,4 +1,4 @@
-# Local PostgreSQL for development: docker compose up -d
+# Local PostgreSQL for development: docker compose --env-file .env.development.local up -d
 # Same image as in OpenShift, so the database behaves the same in both places.
 services:
   postgres:
@@ -6,7 +6,7 @@ services:
     container_name: dispatch-portal-postgres
     environment:
       POSTGRESQL_USER: postportal
-      POSTGRESQL_PASSWORD: postportal
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.development.local}
       POSTGRESQL_DATABASE: postportal
     ports:
       - '5432:5432'
