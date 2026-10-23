@@ -83,7 +83,7 @@ yarn prisma:generate
 yarn prisma:migrate
 ```
 
-Med PostgreSQL, som lokalt körs i Docker med samma image som i OpenShift. Sätt `DATABASE_PROVIDER=postgresql` i `.env.development.local`, exempelvärdet för `DATABASE_URL` matchar `backend/docker-compose.yml`:
+Med PostgreSQL, som lokalt körs i Docker med samma image som i OpenShift. Sätt `DATABASE_PROVIDER=postgresql` i `.env.development.local` och byt `<password>` i `DATABASE_URL` mot `POSTGRESQL_PASSWORD` från `backend/docker-compose.yml`:
 
 ```
 cd backend
