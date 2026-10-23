@@ -497,12 +497,7 @@ class App {
 
   private initializeDataFolders() {
     if (ENABLE_LOCAL_STORAGE === 'true') {
-      logger.info(`Database and Session data folders initialized (ENABLE_LOCAL_STORAGE: ${ENABLE_LOCAL_STORAGE})`);
-      const databaseDir: string = join(__dirname, '../data/database');
-      if (!existsSync(databaseDir)) {
-        mkdirSync(databaseDir, { recursive: true });
-      }
-
+      logger.info(`Session data folder initialized (ENABLE_LOCAL_STORAGE: ${ENABLE_LOCAL_STORAGE})`);
       const sessionsDir: string = join(__dirname, '../data/sessions');
       if (!existsSync(sessionsDir)) {
         mkdirSync(sessionsDir, { recursive: true });
