@@ -9,7 +9,7 @@
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "prisma:migrate": "prisma migrate deploy",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "prisma generate --schema prisma/sqlite/schema.prisma && prisma generate --schema prisma/postgresql/schema.prisma",
     "prisma:new-migrate": "dotenv -e .env.development.local yarn prisma migrate dev",
     "prisma:seed": "prisma db seed",
     "generate:contracts": "dotenv -e NODE_ENV=development ts-node ./src/swagger-typescript-api.ts",

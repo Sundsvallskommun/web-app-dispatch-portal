@@ -1,4 +1,4 @@
-import { Host } from '@prisma/client';
+import { Host } from '@prisma-generated/postgresql';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateHostDto implements Pick<Host, 'name' | 'municipalityId' | 'idpId'> {

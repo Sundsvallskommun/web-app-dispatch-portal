@@ -1,0 +1,22 @@
+-- CreateTable
+CREATE TABLE "Host" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "municipalityId" INTEGER NOT NULL,
+    "idpId" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Host_idpId_fkey" FOREIGN KEY ("idpId") REFERENCES "IDP" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "IDP" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "entryPoint" TEXT NOT NULL,
+    "idpCert" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Host_name_key" ON "Host"("name");
