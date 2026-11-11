@@ -162,7 +162,8 @@
     "singleRecipient": {
       "error": {
         "default": "Kan ej lägga till mottagaren",
-        "INELIGIBLE_MINOR": "Mottagaren är underårig"
+        "INELIGIBLE_MINOR": "Mottagaren är underårig",
+        "cannotReceiveDigitalMail": "Mottagaren kan inte ta emot digital post"
       }
     }
   },

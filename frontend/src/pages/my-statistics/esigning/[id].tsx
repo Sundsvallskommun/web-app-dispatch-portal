@@ -14,7 +14,7 @@ import {
   Label,
   Alert,
 } from '@sk-web-gui/react';
-import { File, Download, Pencil, CircleX } from 'lucide-react';
+import { File, Download, Pencil, CircleX, Forward } from 'lucide-react';
 import { getAttachmentFile, useMessage } from '@services/my-statistics-service';
 import dayjs from 'dayjs';
 import { EnumEsigningProcessState, EnumEsigningStatus, MessageAttachment } from '@interfaces/statistics.interface';
@@ -25,6 +25,8 @@ import { formatLegalId } from '@utils/helpers';
 import { capitalize } from 'underscore.string';
 import { EsigningStatusLabel } from '@components/esigning-status-label/esigning-status-label.component';
 import { cancelEsigning } from '@services/message-service';
+import { ForwardEsigningModal } from '@components/forward-esigning-modal/forward-esigning-modal.component';
+import { useUserStore } from '@services/user-service/user-service';
 
 const SIGNED_DOCUMENT = 'signed-document';
 
@@ -36,6 +38,9 @@ const MyStatisticsDetails = () => {
 
   const [loadingFile, setLoadingFile] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [forwardOpen, setForwardOpen] = useState(false);
+  const { user } = useUserStore();
+  const canForward = user.permissions.canSendEsigning && user.permissions.canSendLetter;
   const { message, loaded, refresh } = useMessage(id ?? '');
   const { recipients, attachments, sentAt, subject, signingStatus } = message;
   const signingDocument = attachments[0];
@@ -172,13 +177,7 @@ const MyStatisticsDetails = () => {
               <p>{sentAt ? dayjs(sentAt).format('YYYY-MM-DD, HH.mm') : ''}</p>
             </div>
             <div className="flex flex-col">
-              <Button
-                size="sm"
-                variant="primary"
-                disabled={!canCancel}
-                loading={cancelling}
-                onClick={handleCancel}
-              >
+              <Button size="sm" variant="primary" disabled={!canCancel} loading={cancelling} onClick={handleCancel}>
                 {t('statistics:myStatistics.cancelEsigning')} <Icon icon={<CircleX />} />
               </Button>
             </div>
@@ -205,7 +204,18 @@ const MyStatisticsDetails = () => {
                 />
               )}
               {signingDocument && (
-                <div className="flex-1 flex-col self-end">
+                <div className="flex flex-row self-end gap-8">
+                  {canForward && (
+                    <Button
+                      disabled={!isSigned}
+                      onClick={() => setForwardOpen(true)}
+                      color="vattjom"
+                      size="sm"
+                      aria-label={`${t('statistics:myStatistics.forwardSignedDocument')} ${signingDocument.fileName}`}
+                    >
+                      {t('statistics:myStatistics.forwardSignedDocument')} <Icon icon={<Forward />} />
+                    </Button>
+                  )}
                   <Button
                     disabled={!isSigned}
                     loading={loadingFile === SIGNED_DOCUMENT}
@@ -270,13 +280,16 @@ const MyStatisticsDetails = () => {
       ) : (
         <Spinner />
       )}
+      {id && canForward && (
+        <ForwardEsigningModal messageId={id} open={forwardOpen} onClose={() => setForwardOpen(false)} />
+      )}
     </DefaultLayout>
   );
 };
 
 export const getServerSideProps = async ({ locale }: { locale: string }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'statistics'])),
+    ...(await serverSideTranslations(locale, ['common', 'statistics', 'send-mail'])),
   },
 });
 
