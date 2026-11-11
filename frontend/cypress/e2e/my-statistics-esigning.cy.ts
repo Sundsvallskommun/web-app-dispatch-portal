@@ -1,3 +1,5 @@
+import { recipient } from '../fixtures/recipient';
+
 const messageId = '00000000-0000-0000-0000-000000000009';
 
 const message = (signingProcessState: string) => ({
@@ -93,5 +95,45 @@ describe('My statistics esigning', () => {
     cy.contains('Denna signering har återkallats och är inte aktiv.').should('be.visible');
     cy.get('[data-cy="esigning-signatory-table"]').should('contain', 'Återkallad');
     cy.contains('button', 'Återkalla e-signering').should('be.disabled');
+  });
+
+  it('should not allow forwarding to a recipient who cannot receive digital mail', () => {
+    const personNumber = '199001012385';
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('SIGNED'));
+    cy.intercept('POST', '**/api/recipient?*', recipient(personNumber, 'SNAIL_MAIL')).as('recipient');
+    cy.visit(`/my-statistics/esigning/${messageId}`);
+
+    cy.contains('button', 'Vidarebefordra signerat dokument').click();
+    cy.get('[data-cy="forward-esigning-modal"]').within(() => {
+      cy.get('[data-cy="recipient-search-field"]').type(personNumber, { force: true });
+      cy.wait('@recipient');
+      cy.get('[data-cy="preview-recipient"]').should('contain.text', 'Mottagaren kan inte ta emot digital post');
+      cy.get('[data-cy="preview-recipient"]').contains('button', 'Lägg till').should('not.exist');
+      cy.get('[data-cy="send-forward-button"]').should('be.disabled');
+    });
+  });
+
+  it('should forward the signed document to the added recipients', () => {
+    const personNumber = '199001012385';
+    cy.intercept('GET', `**/api/my-statistics/${messageId}`, message('SIGNED'));
+    cy.intercept('POST', '**/api/recipient?*', recipient(personNumber, 'DIGITAL_MAIL')).as('recipient');
+    cy.intercept('POST', `**/api/e-signing/${messageId}/forward`, { statusCode: 204 }).as('forwardEsigning');
+    cy.visit(`/my-statistics/esigning/${messageId}`);
+
+    cy.contains('button', 'Vidarebefordra signerat dokument').click();
+    cy.get('[data-cy="forward-esigning-modal"]').within(() => {
+      cy.get('[data-cy="send-forward-button"]').should('be.disabled');
+      cy.get('[data-cy="recipient-search-field"]').type(personNumber, { force: true });
+      cy.wait('@recipient');
+      cy.get('[data-cy="preview-recipient"]').contains('button', 'Lägg till').click();
+      cy.get('[data-cy="forward-recipient-table"]').should('contain', 'Person Personsson');
+      cy.get('[data-cy="send-forward-button"]').click();
+    });
+
+    cy.wait('@forwardEsigning')
+      .its('request.body')
+      .should('deep.equal', { recipientPartyIds: [`party-${personNumber}`] });
+    cy.contains('Det signerade dokumentet har skickats.').should('be.visible');
+    cy.get('[data-cy="forward-esigning-modal"]').should('not.exist');
   });
 });

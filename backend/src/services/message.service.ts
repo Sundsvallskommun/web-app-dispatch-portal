@@ -3,6 +3,8 @@ import {
   Address,
   ESigningRequest,
   ESigningSignatory,
+  ForwardDocumentRequest,
+  MessageDetails,
   Recipient,
   RecipientDeliveryMethodEnum,
 } from '@/data-contracts/postportalservice/data-contracts';
@@ -355,22 +357,61 @@ export const sendEsigning: (
     });
 };
 
+const getOwnEsigning = async (
+  req: RequestWithUser,
+  api: ApiService,
+  municipalityId: string,
+  id: string,
+  action: string,
+): Promise<MessageDetails> => {
+  const { username } = req.user;
+  const ownMessageUrl = `${POSTPORTALSERVICE_PATH}/${municipalityId}/history/users/${username}/messages/${id}`;
+
+  return api
+    .get<MessageDetails>({ url: ownMessageUrl }, req.user)
+    .then(res => res.data)
+    .catch(e => {
+      if (e instanceof HttpException && e.status === 404) {
+        logger.warn(`User ${username} tried to ${action} e-signing ${id} which is not theirs, or does not exist`);
+        throw new HttpException(404, 'Esigning not found');
+      }
+      throw e;
+    });
+};
+
+export const forwardEsigning: (
+  req: RequestWithUser,
+  api: ApiService,
+  id: string,
+  recipientPartyIds: string[],
+) => Promise<void> = async (req, api, id, recipientPartyIds) => {
+  const municipalityId = await getMunicipalityId(req);
+  const { subject } = await getOwnEsigning(req, api, municipalityId, id, 'forward');
+
+  const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/e-signing/${id}/forward`;
+  const data: ForwardDocumentRequest = {
+    subject: subject || '-',
+    body: '-',
+    contentType: 'text/plain',
+    recipientPartyIds,
+  };
+  const headers = {
+    'X-Sent-By': `type=adAccount; ${req.user.username.toLowerCase()}`,
+  };
+
+  await api.post<void, ForwardDocumentRequest>({ url, data, headers }, req.user).catch(e => {
+    logError('Error when forwarding signed document', e);
+    throw e;
+  });
+};
+
 export const cancelEsigning: (req: RequestWithUser, api: ApiService, id: string) => Promise<void> = async (
   req,
   api,
   id,
 ) => {
   const municipalityId = await getMunicipalityId(req);
-  const { username } = req.user;
-
-  const ownMessageUrl = `${POSTPORTALSERVICE_PATH}/${municipalityId}/history/users/${username}/messages/${id}`;
-  await api.get({ url: ownMessageUrl }, req.user).catch(e => {
-    if (e instanceof HttpException && e.status === 404) {
-      logger.warn(`User ${username} tried to cancel e-signing ${id} which is not theirs, or does not exist`);
-      throw new HttpException(404, 'Esigning not found');
-    }
-    throw e;
-  });
+  await getOwnEsigning(req, api, municipalityId, id, 'cancel');
 
   const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/e-signing/${id}`;
 

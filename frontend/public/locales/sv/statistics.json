@@ -31,6 +31,14 @@
     "attachment": "Bilaga",
     "showAttachment": "Ladda ner",
     "showSignedDocument": "Ladda ner signerat dokument",
+    "forwardSignedDocument": "Vidarebefordra signerat dokument",
+    "forward": {
+      "description": "Det signerade dokumentet skickas som ett digitalt brev. Mottagarna behöver ha en digital brevlåda.",
+      "recipients": "Tillagda mottagare ({count})",
+      "noRecipients": "Du har inte lagt till några mottagare än.",
+      "send": "Skicka",
+      "success": "Det signerade dokumentet har skickats."
+    },
     "cancelEsigning": "Återkalla e-signering",
     "all": "Alla leveranssätt",
     "SMSMessagePrefixUrl": "/my-statistics/sms",
@@ -72,7 +80,8 @@
       "messagesSendingFailed": "Brevet gick inte att skicka. Gör ett nytt utskick för att försök skicka det igen.",
       "esigningDeclined": "En eller flera mottagare har nekat signeringsförfrågan. Gör om hela signeringsförfrågan för att försöka igen.",
       "esigningCancelled": "Denna signering har återkallats och är inte aktiv.",
-      "cancelEsigningFailed": "Det gick inte att återkalla signeringsförfrågan. Försök igen."
+      "cancelEsigningFailed": "Det gick inte att återkalla signeringsförfrågan. Försök igen.",
+      "forwardEsigningFailed": "Det gick inte att vidarebefordra det signerade dokumentet. Försök igen."
     }
   }
 }

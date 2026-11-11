@@ -4,6 +4,7 @@ import {
   RequestBodyCsvMail,
   RequestBodyCsvSMS,
   RequestBodyEsigning,
+  RequestBodyForwardEsigning,
   RequestBodyMail,
   RequestBodyRecMail,
   RequestBodySMS,
@@ -16,6 +17,7 @@ import { MessageApiResponse } from '@/responses/message.response';
 import ApiService from '@/services/api.service';
 import {
   cancelEsigning,
+  forwardEsigning,
   logError,
   sendEsigning,
   sendLetter,
@@ -214,6 +216,21 @@ export class MessageController {
     @Res() response: Response,
   ): Promise<Response> {
     await cancelEsigning(req, this.apiService, id);
+
+    return response.status(204).send();
+  }
+
+  @Post('/e-signing/:id/forward')
+  @OpenAPI({ summary: 'Forward the signed document of a completed esigning as a digital letter' })
+  @UseBefore(authMiddleware, hasPermissions(['canSendEsigning', 'canSendLetter']))
+  async forwardEsigningMessage(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() body: RequestBodyForwardEsigning,
+    @Res() response: Response,
+  ): Promise<Response> {
+    await validateRequestBody(RequestBodyForwardEsigning, body);
+    await forwardEsigning(req, this.apiService, id, body.recipientPartyIds);
 
     return response.status(204).send();
   }

@@ -284,6 +284,24 @@ export interface ESigningSignatory {
   email: string;
 }
 
+/** Forward document request model */
+export interface ForwardDocumentRequest {
+  /**
+   * The subject of the letter
+   * @minLength 1
+   */
+  subject: string;
+  /** The body of the letter */
+  body?: string;
+  /** The content type of the body */
+  contentType?: string;
+  /**
+   * List of party ids of the recipients
+   * @minItems 1
+   */
+  recipientPartyIds: string[];
+}
+
 /** The signatory that acted in a signing event */
 export interface EventSignatory {
   /** The party id of the signatory */

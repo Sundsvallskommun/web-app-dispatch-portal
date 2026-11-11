@@ -41,7 +41,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({
   } = useFormContext<RecipientListFormModel>();
 
   const isRek = sendType === formSendType.REK_MAIL;
-  const isPersonOnly = isRek || sendType === formSendType.E_SIGNING;
+  const isPersonOnly = isRek || sendType === formSendType.E_SIGNING || sendType === formSendType.DIGITAL_MAIL;
   const ignoresDeliveryMethod = sendType === formSendType.E_SIGNING;
   const emailIsValid = emailPattern.test(email.trim());
   const canSubmit = !requireEmail || emailIsValid;
@@ -110,6 +110,7 @@ export const SingleRecipient: React.FC<SingleRecipientProps> = ({
       return;
     }
     if ((!ignoresDeliveryMethod && foundRecipient?.deliveryMethod === 'DELIVERY_NOT_POSSIBLE') || !canSubmit) return;
+    if (sendType === formSendType.DIGITAL_MAIL && foundRecipient?.deliveryMethod !== 'DIGITAL_MAIL') return;
 
     if (onAdd) {
       onAdd(foundRecipient, email.trim());
