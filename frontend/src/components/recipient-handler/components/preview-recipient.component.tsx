@@ -17,6 +17,16 @@ interface PreviewRecipientProps {
   submitDisabled?: boolean;
 }
 
+const getEligibility = (sendType: SendType, recipient: Recipient | undefined) => {
+  if (sendType === formSendType.DIGITAL_MAIL) {
+    const isEligible = recipient?.deliveryMethod === 'DIGITAL_MAIL';
+    const receivesPaperMail = recipient?.deliveryMethod === 'SNAIL_MAIL';
+    return { isEligible, errorReason: receivesPaperMail ? 'cannotReceiveDigitalMail' : recipient?.reason };
+  }
+
+  return { isEligible: recipient?.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE', errorReason: recipient?.reason };
+};
+
 const PreviewRecipient = ({
   recipient,
   loading,
@@ -26,12 +36,7 @@ const PreviewRecipient = ({
   children,
   submitDisabled = false,
 }: PreviewRecipientProps) => {
-  const isDigitalOnly = sendType === formSendType.DIGITAL_MAIL;
-  const isEligible = isDigitalOnly
-    ? recipient?.deliveryMethod === 'DIGITAL_MAIL'
-    : recipient?.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE';
-  const errorReason =
-    isDigitalOnly && recipient?.deliveryMethod === 'SNAIL_MAIL' ? 'cannotReceiveDigitalMail' : recipient?.reason;
+  const { isEligible, errorReason } = getEligibility(sendType, recipient);
   const successClasses = 'border-gronsta-surface-primary bg-gronsta-background-100';
   const errorClasses = 'border-error-surface-primary bg-error-background-100';
   const { t } = useTranslation(['send-mail']);
