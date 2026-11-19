@@ -386,7 +386,14 @@ export const forwardEsigning: (
   recipientPartyIds: string[],
 ) => Promise<void> = async (req, api, id, recipientPartyIds) => {
   const municipalityId = await getMunicipalityId(req);
-  const { subject } = await getOwnEsigning(req, api, municipalityId, id, 'forward');
+  const { subject, signingStatus } = await getOwnEsigning(req, api, municipalityId, id, 'forward');
+
+  if (signingStatus?.signingProcessState !== 'SIGNED') {
+    logger.warn(
+      `User ${req.user.username} tried to forward e-signing ${id} in state ${signingStatus?.signingProcessState ?? 'unknown'}`,
+    );
+    throw new HttpException(409, 'Only signed documents can be forwarded');
+  }
 
   const url = `${POSTPORTALSERVICE_PATH}/${municipalityId}/messages/e-signing/${id}/forward`;
   const data: ForwardDocumentRequest = {
