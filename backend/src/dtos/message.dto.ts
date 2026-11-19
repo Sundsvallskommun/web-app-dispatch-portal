@@ -1,6 +1,6 @@
 import { ESigningSignatory } from '@/responses/message.response';
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsArray, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
 
 export class RequestBodyMail {
   @IsString()
@@ -31,6 +31,13 @@ export class RequestBodyEsigning {
   subject: string;
   @IsString()
   document: string;
+}
+
+export class RequestBodyForwardEsigning {
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsUUID('all', { each: true })
+  recipientPartyIds: string[];
 }
 
 export class EsigningSignatoryList {
