@@ -10,6 +10,7 @@ import {
   MessageApiResponse,
   Recipient,
   RequestBodyEsigning,
+  RequestBodyForwardEsigning,
 } from 'src/data-contracts/backend/data-contracts';
 import { ApiResponse, apiService } from './api-service';
 import { file2blob, FileInfo } from '@utils/file.utils';
@@ -156,6 +157,18 @@ export const cancelEsigning: (id: string) => Promise<void> = async (id) => {
     console.error('Something went wrong when cancelling e-signing:', e);
     throw e;
   });
+};
+
+export const forwardEsigning: (id: string, recipientPartyIds: string[]) => Promise<void> = async (
+  id,
+  recipientPartyIds
+) => {
+  await apiService
+    .post<void, RequestBodyForwardEsigning>(`e-signing/${id}/forward`, { recipientPartyIds })
+    .catch((e) => {
+      console.error('Something went wrong when forwarding signed document:', e);
+      throw e;
+    });
 };
 
 export const sendCsvMessage: (data: FormModel) => Promise<Message> = async (data) => {
