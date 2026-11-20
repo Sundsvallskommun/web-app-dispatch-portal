@@ -210,6 +210,11 @@ export interface RequestBodyEsigning {
   document: string;
 }
 
+export interface RequestBodyForwardEsigning {
+  /** @minItems 1 */
+  recipientPartyIds: string[];
+}
+
 export interface EsigningSignatoryList {
   /** @minItems 1 */
   signatories: ESigningSignatory[];

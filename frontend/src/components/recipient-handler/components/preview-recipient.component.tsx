@@ -17,6 +17,16 @@ interface PreviewRecipientProps {
   submitDisabled?: boolean;
 }
 
+const getEligibility = (sendType: SendType, recipient: Recipient | undefined) => {
+  if (sendType === formSendType.DIGITAL_MAIL) {
+    const isEligible = recipient?.deliveryMethod === 'DIGITAL_MAIL';
+    const receivesPaperMail = recipient?.deliveryMethod === 'SNAIL_MAIL';
+    return { isEligible, errorReason: receivesPaperMail ? 'cannotReceiveDigitalMail' : recipient?.reason };
+  }
+
+  return { isEligible: recipient?.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE', errorReason: recipient?.reason };
+};
+
 const PreviewRecipient = ({
   recipient,
   loading,
@@ -26,7 +36,7 @@ const PreviewRecipient = ({
   children,
   submitDisabled = false,
 }: PreviewRecipientProps) => {
-  const isEligible = recipient?.deliveryMethod !== 'DELIVERY_NOT_POSSIBLE';
+  const { isEligible, errorReason } = getEligibility(sendType, recipient);
   const successClasses = 'border-gronsta-surface-primary bg-gronsta-background-100';
   const errorClasses = 'border-error-surface-primary bg-error-background-100';
   const { t } = useTranslation(['send-mail']);
@@ -49,7 +59,7 @@ const PreviewRecipient = ({
       <Icon color={isEligible ? 'success' : 'error'} icon={isEligible ? <Check /> : <X />} />
       {isRekMail
         ? t(`send-mail:recipientHandler.rekMail.${eligibleStatus}`)
-        : t(`send-mail:recipientHandler.singleRecipient.error.${recipient?.reason}`, {
+        : t(`send-mail:recipientHandler.singleRecipient.error.${errorReason}`, {
             defaultValue: t(`send-mail:recipientHandler.singleRecipient.error.default`),
           })}
     </div>
