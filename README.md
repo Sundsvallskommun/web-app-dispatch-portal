@@ -64,13 +64,40 @@ redigera `.env.development.local` för behov. URLer, nycklar och cert behöver f
 - `SAML_ENTRY_SSO` behöver pekas till en SAML IDP
 - `SAML_IDP_PUBLIC_CERT` ska stämma överens med IDPens cert
 - `SAML_PRIVATE_KEY` och `SAML_PUBLIC_KEY` behöver bara fyllas i korrekt om man kör mot en riktig IDP
+- `DATABASE_PROVIDER` väljer databas, se nästa steg
 
-5. Initiera databas för backend
+5. Initiera databasen för backend
+
+Backend kan köra mot SQLite eller PostgreSQL, och `DATABASE_PROVIDER` styr vilken:
+
+| Värde              | Databas                                   | Används i     |
+| ------------------ | ----------------------------------------- | ------------- |
+| `sqlite` (default) | Fil i `backend/data/database/database.db` | PM2-servrarna |
+| `postgresql`       | Servern i `DATABASE_URL`                  | OpenShift     |
+
+Med SQLite:
 
 ```
 cd backend
 yarn prisma:generate
 yarn prisma:migrate
+```
+
+Med PostgreSQL, som lokalt körs i Docker med samma image som i OpenShift. Sätt i `.env.development.local` `DATABASE_PROVIDER=postgresql`, välj ett lösenord i `POSTGRES_PASSWORD` och använd samma lösenord i stället för `<password>` i `DATABASE_URL`. Compose läser lösenordet från samma fil:
+
+```
+cd backend
+docker compose --env-file .env.development.local up -d
+yarn prisma:generate
+yarn prisma:migrate
+```
+
+`yarn prisma:generate` genererar klienter för båda databaserna, och appen väljer en vid start. Schemat finns därför i två versioner, `prisma/sqlite/schema.prisma` och `prisma/postgresql/schema.prisma`, med varsin `migrations`-mapp. Ändras en modell ska den ändras i båda scheman och få en migrering för var och en. `src/tests/prisma-schemas.test.ts` failar om modellerna skiljer sig åt.
+
+För att skapa en ny migrering, kör `yarn prisma:new-migrate` en gång med `DATABASE_PROVIDER=sqlite` och en gång med `DATABASE_PROVIDER=postgresql`. Prisma behöver då skapa en temporär databas i PostgreSQL, så ge den lokala användaren rätt till det en gång:
+
+```
+docker exec dispatch-portal-postgres psql -c "alter role postportal createdb"
 ```
 
 Om du vill ha data att arbeta med direkt kan du seeda databasen:

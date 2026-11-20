@@ -1,5 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { PrismaClient } from '@prisma-generated/postgresql';
+import { PrismaClient as SqlitePrismaClient } from '@prisma-generated/sqlite';
+const prisma =
+  process.env.DATABASE_PROVIDER === 'postgresql'
+    ? new PrismaClient()
+    : (new SqlitePrismaClient() as unknown as PrismaClient);
 async function main() {
   const idp = await prisma.iDP.upsert({
     where: { id: 1 },

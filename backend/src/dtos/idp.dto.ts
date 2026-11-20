@@ -1,4 +1,4 @@
-import { IDP } from '@prisma/client';
+import { IDP } from '@prisma-generated/postgresql';
 import { IsOptional, IsString } from 'class-validator';
 
 export class CreateIdpDto implements Pick<IDP, 'name' | 'entryPoint' | 'idpCert'> {

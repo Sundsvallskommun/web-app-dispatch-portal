@@ -6,6 +6,7 @@ export const CREDENTIALS = process.env.CREDENTIALS === 'true';
 export const SWAGGER_ENABLED = process.env.SWAGGER_ENABLED === 'true';
 export const SESSION_MEMORY = process.env.SESSION_MEMORY === 'true';
 export const SESSION_STORE = process.env.SESSION_STORE || 'memory';
+export const DATABASE_PROVIDER = process.env.DATABASE_PROVIDER || 'sqlite';
 export const REDIS_HOST = process.env.REDIS_HOST;
 export const REDIS_PORT = process.env.REDIS_PORT;
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD;

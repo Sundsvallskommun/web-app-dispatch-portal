@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/services/api.service';
-import { IDP as IDPModel } from '@prisma/client';
+import { IDP as IDPModel } from '@prisma-generated/postgresql';
 import { Type } from 'class-transformer';
 import { IsDateString, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
 
